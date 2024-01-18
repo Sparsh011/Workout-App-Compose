@@ -5,12 +5,8 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
-import com.sparshchadha.workout_app.ui.navigation.BottomNavGraph
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.SearchDishScreen
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
@@ -24,6 +20,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+
             WorkoutAppTheme {
                 val navHostController = rememberNavController()
                 viewModel.updateSearchQuery("Pizza")

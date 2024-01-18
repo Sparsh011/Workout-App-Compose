@@ -3,6 +3,7 @@ package com.sparshchadha.workout_app.data.repository
 import android.net.http.HttpException
 import android.os.Build
 import androidx.annotation.RequiresExtension
+import com.sparshchadha.workout_app.BuildConfig
 import com.sparshchadha.workout_app.data.remote.FoodApi
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
@@ -20,7 +21,7 @@ class FoodRepositoryImpl(
         emit(Resource.Loading())
 
         try {
-            val remoteDishes = api.getNutritionalValue(query = foodSearchQuery, apiKey = "+Wkcb/aibY4SPFtnSApKSA==H0izmNWqHckMMHMd")
+            val remoteDishes = api.getNutritionalValue(query = foodSearchQuery, apiKey = BuildConfig.FOOD_API_KEY)
             val mappedRemoteDishes = mutableListOf<NutritionalValueDto>()
 //            remoteArticles.items.forEach {
 //                mappedRemoteArticles.add(it.toStackOverflowEntity())
