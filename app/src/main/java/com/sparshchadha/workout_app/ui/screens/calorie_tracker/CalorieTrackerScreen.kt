@@ -55,26 +55,26 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.sparshchadha.workout_app.ui.components.bottom_bar.SearchScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBackgroundColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryCreamColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGradientEnd
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGradientStart
-import com.sparshchadha.workout_app.util.ColorsUtil.primarySearchBarColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryFoodCardBackground
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreen
 
 
 @Composable
-fun CalorieTrackerComposable() {
-    CalorieTrackerScreen()
+fun CalorieTrackerComposable(navController: NavHostController) {
+    CalorieTrackerScreen(navController = navController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalorieTrackerScreen() {
+fun CalorieTrackerScreen(navController: NavHostController) {
     var caloriesGoal by remember {
         mutableFloatStateOf(1000F)
     }
@@ -114,6 +114,7 @@ fun CalorieTrackerScreen() {
                 active = false,
                 onActiveChange = {
                     // navigate to search dish composable like swiggy
+                    navController.navigate(SearchScreen.SearchFood.route)
                 },
                 placeholder = {
                     Text(text = "Search Your Dish...", color = primaryDarkGray)
@@ -140,9 +141,9 @@ fun CalorieTrackerScreen() {
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp),
                 colors = SearchBarDefaults.colors(
-                    containerColor = primarySearchBarColor,
+                    containerColor = primaryBackgroundColor,
                     inputFieldColors = TextFieldDefaults.textFieldColors(
-                        focusedTextColor = primaryCreamColor
+                        focusedTextColor = primaryFoodCardBackground
                     )
                 ),
                 shape = RoundedCornerShape(size = 10.dp)
@@ -167,8 +168,8 @@ fun CalorieTrackerScreen() {
                         .size(indicatorSize)
                         .align(Center),
                     strokeWidth = trackWidth,
-                    gradientStart = primaryGradientStart,
-                    gradientEnd = primaryGradientEnd,
+                    gradientStart = primaryBlue,
+                    gradientEnd = primaryGreen,
                     trackColor = Color.LightGray,
                 )
             }
@@ -198,7 +199,7 @@ fun CalorieTrackerScreen() {
                     .clickable {
                         showCaloriesGoalBottomSheet = true
                     },
-                color = primaryCreamColor,
+                color = primaryFoodCardBackground,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center
             )
@@ -247,6 +248,7 @@ fun ShowModalBottomSheet(
 ) {
     ModalBottomSheet(
         sheetState = sheetState,
+        containerColor = Color.Black,
         onDismissRequest = {
             onSheetDismissed()
         },
@@ -387,10 +389,4 @@ private fun DrawScope.drawCircularIndicator(
             style = stroke
         )
     }
-}
-
-@Preview
-@Composable
-fun CalorieTrackerScreenPrev() {
-    CalorieTrackerScreen()
 }

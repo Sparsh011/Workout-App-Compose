@@ -1,12 +1,15 @@
 package com.sparshchadha.workout_app.ui.components.bottom_bar
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -18,6 +21,7 @@ fun BottomBar(navHostController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.CalorieTracker,
         BottomBarScreen.WorkoutScreen,
+        BottomBarScreen.ProfileScreen
     )
 
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()

@@ -4,10 +4,10 @@ import androidx.compose.ui.graphics.Color
 
 object ColorsUtil {
     val primaryBackgroundColor : Color = Color(37, 43, 54)
-    val primaryGradientStart : Color = Color(96, 239, 255)
-    val primaryGradientEnd: Color =  Color(0, 255, 135)
+    val primaryBlue : Color = Color(96, 239, 255)
+    val primaryGreen: Color =  Color(0, 255, 135)
     val primaryDarkGray: Color = Color(97, 103, 122)
     val primaryLightGray: Color = Color(216, 217, 218)
-    val primaryCreamColor: Color = Color(255, 246, 224)
-    val primarySearchBarColor : Color =  Color(37, 43, 60)
+    val primaryFoodCardBackground: Color = Color(240, 251, 253, 255)
+    val primaryBlack : Color =  Color(37, 43, 60)
 }
