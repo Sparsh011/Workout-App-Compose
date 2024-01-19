@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.Dimensions.DISH_TITLE_SIZE
+import com.sparshchadha.workout_app.util.Dimensions.TITLE_SIZE
 
 @Composable
 fun FoodCard(
@@ -104,7 +104,7 @@ private fun FoodCardComposable(
                 text = foodItemName,
                 modifier = Modifier.weight(0.7f),
                 fontWeight = FontWeight.Bold,
-                fontSize = DISH_TITLE_SIZE,
+                fontSize = TITLE_SIZE,
                 color = Color.Black
             )
             Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = ColorsUtil.primaryDarkGray)

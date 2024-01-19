@@ -59,7 +59,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.ui.components.bottom_bar.SearchScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
@@ -114,7 +114,7 @@ fun CalorieTrackerScreen(navController: NavHostController) {
                 active = false,
                 onActiveChange = {
                     // navigate to search dish composable like swiggy
-                    navController.navigate(SearchScreen.SearchFood.route)
+                    navController.navigate(UtilityScreen.SearchFood.route)
                 },
                 placeholder = {
                     Text(text = "Search Your Dish...", color = primaryDarkGray)

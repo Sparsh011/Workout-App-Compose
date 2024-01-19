@@ -10,20 +10,23 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.ui.components.bottom_bar.SearchScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerComposable
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.SearchDishScreen
 import com.sparshchadha.workout_app.ui.screens.profile.ProfileScreenComposable
 import com.sparshchadha.workout_app.ui.screens.workout.WorkoutScreenComposable
+import com.sparshchadha.workout_app.ui.screens.workout.yoga.YogaDifficultyLevels
+import com.sparshchadha.workout_app.ui.screens.workout.yoga.YogaPosesScreen
 import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
+import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    searchFoodViewModel: SearchFoodViewModel
+    searchFoodViewModel: SearchFoodViewModel,
+    workoutViewModel: WorkoutViewModel
 ) {
     NavHost(navController = navController, startDestination = BottomBarScreen.CalorieTracker.route) {
         // Workout Tracker
@@ -31,7 +34,7 @@ fun NavGraph(
             route = BottomBarScreen.WorkoutScreen.route,
             enterTransition = {
                 slideInHorizontally(
-                    initialOffsetX = { fullWidth -> -fullWidth },
+                    initialOffsetX = { fullWidth -> fullWidth },
                     animationSpec = tween(
                         durationMillis = 300
                     )
@@ -50,11 +53,12 @@ fun NavGraph(
         ) {
             WorkoutScreenComposable(
                 gymWorkoutCategories = listOf(
-                    "Beginner",
-                    "Intermediate",
-                    "Advanced",
-                    "Calisthenics"
-                )
+                    YogaDifficultyLevels.BEGINNER,
+                    YogaDifficultyLevels.INTERMEDIATE,
+                    YogaDifficultyLevels.EXPERT
+                ),
+                workoutViewModel = workoutViewModel,
+                navController = navController
             )
         }
 
@@ -67,7 +71,7 @@ fun NavGraph(
 
         // Search Screen
         composable(
-            route = SearchScreen.SearchFood.route,
+            route = UtilityScreen.SearchFood.route,
             enterTransition = {
                 slideInVertically(
                     animationSpec = tween(durationMillis = 1000),
@@ -106,6 +110,19 @@ fun NavGraph(
             }
         ) {
             ProfileScreenComposable()
+        }
+
+        // Yoga Screen
+        composable(
+            route = UtilityScreen.YogaPoses.route,
+            enterTransition = {
+                slideInVertically(
+                    animationSpec = tween(durationMillis = 1000),
+                    initialOffsetY = { -it / 2 }
+                )
+            },
+        ) {
+            YogaPosesScreen(workoutViewModel = workoutViewModel)
         }
     }
 }

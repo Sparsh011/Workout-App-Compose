@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.ui.screens.workout
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,55 +43,52 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.screens.workout.yoga.YogaDifficultyLevels
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.Extensions.capitalize
+import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun WorkoutScreenComposable(gymWorkoutCategories: List<String>) {
+fun WorkoutScreenComposable(
+    gymWorkoutCategories: List<YogaDifficultyLevels>,
+    workoutViewModel: WorkoutViewModel,
+    navController: NavController,
+) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
     val items = listOf(Icons.Default.Favorite, Icons.Default.Face, Icons.Default.Email)
     val selectedItem = remember { mutableStateOf<ImageVector?>(null) }
+    val context = LocalContext.current
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
             CustomModalDrawerSheet(items = items, selectedItem = selectedItem, scope = scope, drawerState = drawerState)
         },
         content = {
-            WorkoutScreen(scope = scope, gymWorkoutCategories = gymWorkoutCategories, drawerState = drawerState)
+            WorkoutScreen(scope = scope, gymWorkoutCategories = gymWorkoutCategories, drawerState = drawerState, workoutViewModel = workoutViewModel, navController = navController, context = context)
         }
     )
 }
 
-@Composable
-fun CustomModalDrawerSheet(items: List<ImageVector>, selectedItem: MutableState<ImageVector?>, scope: CoroutineScope, drawerState: DrawerState) {
-    val context = LocalContext.current
-    ModalDrawerSheet {
-        Spacer(Modifier.height(12.dp))
-        items.forEach { item ->
-            NavigationDrawerItem(
-                icon = { Icon(item, contentDescription = null) },
-                label = { Text(item.name) },
-                selected = item == selectedItem.value,
-                onClick = {
-                    scope.launch { drawerState.close() }
-                    selectedItem.value = item
-                    Toast.makeText(context, "Selected item - ${selectedItem.value!!.name}", Toast.LENGTH_SHORT).show()
-                },
-                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-            )
-        }
-    }
-}
 
 @Composable
-fun WorkoutScreen(scope: CoroutineScope, gymWorkoutCategories: List<String>, drawerState: DrawerState) {
-
+fun WorkoutScreen(
+    scope: CoroutineScope,
+    gymWorkoutCategories: List<YogaDifficultyLevels>,
+    drawerState: DrawerState,
+    workoutViewModel: WorkoutViewModel,
+    navController: NavController,
+    context: Context
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -101,7 +99,7 @@ fun WorkoutScreen(scope: CoroutineScope, gymWorkoutCategories: List<String>, dra
         item(
             span = { GridItemSpan(2) }
         ) {
-            Row (
+            Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
@@ -125,6 +123,7 @@ fun WorkoutScreen(scope: CoroutineScope, gymWorkoutCategories: List<String>, dra
             }
         }
 
+        // Gym workout
         header {
             Text(
                 text = "Gym Workout",
@@ -136,9 +135,18 @@ fun WorkoutScreen(scope: CoroutineScope, gymWorkoutCategories: List<String>, dra
         }
 
         items(gymWorkoutCategories) {
-            GymWorkoutComposable(modifier = Modifier.padding(all = 20.dp), category = it)
+            WorkoutComposable(
+                modifier = Modifier.padding(all = 20.dp),
+                category = it,
+                onWorkoutSelection = { difficultyLevel ->
+//                    workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
+                    // navigate to gym screen
+                    Toast.makeText(context, "Clicked $difficultyLevel", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
 
+        // Yoga poses
         header {
             Text(
                 text = "Yoga Poses",
@@ -150,7 +158,20 @@ fun WorkoutScreen(scope: CoroutineScope, gymWorkoutCategories: List<String>, dra
         }
 
         items(gymWorkoutCategories) {
-            GymWorkoutComposable(modifier = Modifier.padding(all = 20.dp), category = it)
+            WorkoutComposable(
+                modifier = Modifier.padding(all = 20.dp),
+                category = it,
+                onWorkoutSelection = { difficultyLevel ->
+                    workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
+                    // navigate to yoga screen
+                    workoutViewModel.getYogaPoses()
+                    navController.navigate(route = UtilityScreen.YogaPoses.route) {
+                        popUpTo(BottomBarScreen.WorkoutScreen.route) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
 
         header {
@@ -163,51 +184,72 @@ fun WorkoutScreen(scope: CoroutineScope, gymWorkoutCategories: List<String>, dra
             )
         }
 
-        item {
-            GymWorkoutComposable(modifier = Modifier.padding(all = 20.dp), category = "Gym Workout")
-        }
-
-        item {
-            GymWorkoutComposable(modifier = Modifier.padding(all = 20.dp), category = "Yoga Session")
-        }
+//        item {
+//            WorkoutComposable(modifier = Modifier.padding(all = 20.dp), category = "Gym Workout")
+//        }
+//
+//        item {
+//            WorkoutComposable(modifier = Modifier.padding(all = 20.dp), category = "Yoga Session")
+//        }
     }
 
 }
 
 @Composable
-fun GymWorkoutComposable(modifier: Modifier, category: String) {
-    PopulateCategory(category = category, modifier = modifier, textColor = Color.White)
+fun WorkoutComposable(modifier: Modifier, category: YogaDifficultyLevels, onWorkoutSelection: (YogaDifficultyLevels) -> Unit) {
+    PopulateCategory(category = category, modifier = modifier, textColor = Color.White, onWorkoutSelection = onWorkoutSelection)
 }
 
 @Composable
-fun PopulateCategory(category: String, modifier: Modifier, textColor: Color) {
-    Card (
+fun PopulateCategory(category: YogaDifficultyLevels, modifier: Modifier, textColor: Color, onWorkoutSelection: (YogaDifficultyLevels) -> Unit) {
+    Card(
         modifier = Modifier
             .fillMaxSize(1f)
-            .padding(all = 20.dp),
+            .padding(all = 20.dp)
+            .clickable {
+                onWorkoutSelection(category)
+            },
         colors = CardDefaults.cardColors(
             containerColor = ColorsUtil.primaryDarkGray
         )
-    ){
-        Text(text = category, color = textColor, modifier = modifier.align(Alignment.CenterHorizontally), textAlign = TextAlign.Center)
+    ) {
+        Text(
+            text = category.name.lowercase().capitalize(),
+            color = textColor,
+            modifier = modifier.align(Alignment.CenterHorizontally),
+            textAlign = TextAlign.Center
+        )
     }
 }
 
-@Preview
-@Composable
-fun MainActPreview() {
-    WorkoutScreenComposable(
-        gymWorkoutCategories = listOf(
-            "Beginner",
-            "Intermediate",
-            "Advanced",
-            "Calisthenics"
-        )
-    )
-}
-
 fun LazyGridScope.header(
-    content: @Composable LazyGridItemScope.() -> Unit
+    content: @Composable LazyGridItemScope.() -> Unit,
 ) {
     item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
+}
+
+@Composable
+fun CustomModalDrawerSheet(
+    items: List<ImageVector>,
+    selectedItem: MutableState<ImageVector?>,
+    scope: CoroutineScope,
+    drawerState: DrawerState,
+) {
+    val context = LocalContext.current
+    ModalDrawerSheet {
+        Spacer(Modifier.height(12.dp))
+        items.forEach { item ->
+            NavigationDrawerItem(
+                icon = { Icon(item, contentDescription = null) },
+                label = { Text(item.name) },
+                selected = item == selectedItem.value,
+                onClick = {
+                    scope.launch { drawerState.close() }
+                    selectedItem.value = item
+                    Toast.makeText(context, "Selected item - ${selectedItem.value!!.name}", Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+            )
+        }
+    }
 }

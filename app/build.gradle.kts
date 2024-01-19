@@ -108,6 +108,12 @@ dependencies {
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
     // endregion
 
+    // region accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+    // endregion
+
+    // region lottie
+    implementation("com.airbnb.android:lottie-compose:6.3.0")
+    // endregion
 
 }

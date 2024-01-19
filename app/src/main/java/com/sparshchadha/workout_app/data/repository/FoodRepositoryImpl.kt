@@ -4,7 +4,7 @@ import android.net.http.HttpException
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.sparshchadha.workout_app.BuildConfig
-import com.sparshchadha.workout_app.data.remote.FoodApi
+import com.sparshchadha.workout_app.data.remote.api.FoodApi
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.util.Resource

@@ -30,12 +30,22 @@ sealed class BottomBarScreen(
     )
 }
 
-sealed class SearchScreen(
+sealed class UtilityScreen(
     val route: String,
     val title: String
 ) {
-    object SearchFood: SearchScreen(
+    object SearchFood: UtilityScreen(
         route = "SearchFoodScreen",
         title = "Search Food Items"
+    )
+
+    object YogaPoses: UtilityScreen(
+        route = "YogaPosesScreen",
+        title = "Yoga Poses"
+    )
+
+    object GymWorkout: UtilityScreen(
+        route = "GymWorkoutScreen",
+        title = "Gym Workouts"
     )
 }
