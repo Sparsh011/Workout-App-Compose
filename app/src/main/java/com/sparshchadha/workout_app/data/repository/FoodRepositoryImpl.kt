@@ -22,12 +22,8 @@ class FoodRepositoryImpl(
 
         try {
             val remoteDishes = api.getNutritionalValue(query = foodSearchQuery, apiKey = BuildConfig.FOOD_API_KEY)
-            val mappedRemoteDishes = mutableListOf<NutritionalValueDto>()
-//            remoteArticles.items.forEach {
-//                mappedRemoteArticles.add(it.toStackOverflowEntity())
-//            }
+//            val mappedRemoteDishes = mutableListOf<NutritionalValueDto>()
             emit(Resource.Success(remoteDishes))
-
 
         } catch (e: HttpException) {
             emit(
@@ -38,10 +34,5 @@ class FoodRepositoryImpl(
                 Resource.Error(error = e)
             )
         }
-
-//        val newArticles = dao.getArticles()
-//        val cachedDishes = dao.getCachedDishes()
-//        emit(Resource.Success(cachedDishes))
-
     }
 }

@@ -6,6 +6,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -27,6 +28,7 @@ android {
         val properties = Properties()
         properties.load(project.rootProject.file("local.properties").inputStream())
         buildConfigField("String", "FOOD_API_KEY", "\"${properties["FOOD_API_KEY"]}\"")
+        buildConfigField("String", "PEXELS_API_KEY", "\"${properties["PEXELS_API_KEY"]}\"")
     }
 
     buildTypes {
@@ -105,4 +107,7 @@ dependencies {
     debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
     // endregion
+
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+
 }

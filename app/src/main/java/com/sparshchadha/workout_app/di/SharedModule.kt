@@ -5,8 +5,12 @@ import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.sparshchadha.workout_app.data.remote.FoodApi
+import com.sparshchadha.workout_app.data.remote.PexelsApi
+import com.sparshchadha.workout_app.data.remote.dto.pexels.PexelResponseDto
 import com.sparshchadha.workout_app.data.repository.FoodRepositoryImpl
+import com.sparshchadha.workout_app.data.repository.PexelsRepositoryImpl
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
+import com.sparshchadha.workout_app.domain.repository.PexelsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,14 +35,19 @@ object SharedModule {
 
     @Provides
     @Singleton
-    fun provideFoodApi(
+    fun provideHttpClient(
         @ApplicationContext context: Context
-    ) : FoodApi {
-
-        val okHttpClient = OkHttpClient.Builder()
+        ) : OkHttpClient {
+        return OkHttpClient.Builder()
             .addInterceptor(ChuckerInterceptor(context))
             .build()
+    }
 
+    @Provides
+    @Singleton
+    fun provideFoodApi(
+        okHttpClient: OkHttpClient
+    ) : FoodApi {
         return Retrofit.Builder()
             .baseUrl(FoodApi.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -48,6 +57,20 @@ object SharedModule {
             .create(FoodApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun providePexelApi(
+        okHttpClient: OkHttpClient
+    ) : PexelsApi {
+        return Retrofit.Builder()
+            .baseUrl(PexelsApi.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+            .client(okHttpClient)
+            .build()
+            .create(PexelsApi::class.java)
+    }
+
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @Provides
     @Singleton
@@ -55,5 +78,14 @@ object SharedModule {
         api: FoodApi
     ) : FoodItemsRepository {
         return FoodRepositoryImpl(api)
+    }
+
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+    @Provides
+    @Singleton
+    fun providePexelsRepository(
+        api: PexelsApi
+    ) : PexelsRepository {
+        return PexelsRepositoryImpl(api)
     }
 }
