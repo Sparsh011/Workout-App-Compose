@@ -138,13 +138,13 @@ private fun toggleCardExpansion(isExpanded: Boolean, collapseCard: () -> Unit, e
 fun NutritionalValueText(nutrient: String, quantityOfNutrient: String, unit: String = "grams") {
     Text(
         buildAnnotatedString {
-            withStyle(style = SpanStyle(color = ColorsUtil.primaryBlack, fontWeight = FontWeight.Bold)) {
+            withStyle(style = SpanStyle(color = ColorsUtil.textColor, fontWeight = FontWeight.Bold)) {
                 append("$nutrient : ")
             }
             append("$quantityOfNutrient $unit")
         },
         modifier = Modifier
             .padding(horizontal = 20.dp, vertical = 5.dp),
-        color = ColorsUtil.primaryBlack
+        color = ColorsUtil.textColor
     )
 }

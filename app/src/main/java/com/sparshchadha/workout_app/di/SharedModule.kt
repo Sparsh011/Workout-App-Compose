@@ -5,14 +5,15 @@ import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.sparshchadha.workout_app.data.remote.api.FoodApi
+import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
 import com.sparshchadha.workout_app.data.remote.api.PexelsApi
 import com.sparshchadha.workout_app.data.remote.api.YogaApi
 import com.sparshchadha.workout_app.data.repository.FoodRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.PexelsRepositoryImpl
-import com.sparshchadha.workout_app.data.repository.YogaRepositoryImpl
+import com.sparshchadha.workout_app.data.repository.WorkoutRepositoryImpl
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
-import com.sparshchadha.workout_app.domain.repository.YogaRepository
+import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,6 +23,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -34,6 +36,8 @@ object SharedModule {
         @ApplicationContext context: Context
         ) : OkHttpClient {
         return OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(ChuckerInterceptor(context))
             .build()
     }
@@ -80,6 +84,20 @@ object SharedModule {
             .create(YogaApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideGymExercisesApi(
+        okHttpClient: OkHttpClient
+    ) : GymExercisesApi {
+        return Retrofit.Builder()
+            .baseUrl(GymExercisesApi.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+            .client(okHttpClient)
+            .build()
+            .create(GymExercisesApi::class.java)
+    }
+
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @Provides
     @Singleton
@@ -101,9 +119,10 @@ object SharedModule {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @Provides
     @Singleton
-    fun provideYogaRepository(
-        api: YogaApi
-    ) : YogaRepository {
-        return YogaRepositoryImpl(api)
+    fun provideWorkoutRepository(
+        yogaApi: YogaApi,
+        gymExercisesApi: GymExercisesApi
+    ) : WorkoutRepository {
+        return WorkoutRepositoryImpl(yogaApi = yogaApi, gymExercisesApi = gymExercisesApi)
     }
 }
