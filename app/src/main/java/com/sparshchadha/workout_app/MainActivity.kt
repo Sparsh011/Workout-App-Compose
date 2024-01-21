@@ -1,10 +1,12 @@
 package com.sparshchadha.workout_app
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.Scaffold
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.NavGraph
@@ -25,6 +27,15 @@ class MainActivity : ComponentActivity() {
 
             WorkoutAppTheme {
                 val navHostController = rememberNavController()
+
+                // for checking why yoga api failing in release build, DONT REMOVE YET
+                val showT = workoutViewModel.showErrorToast
+                val context = LocalContext.current
+                val msg = workoutViewModel.showErrorMessageInToast
+
+                if (showT.value) {
+                    Toast.makeText(context, "Error - ${msg.value}", Toast.LENGTH_SHORT).show()
+                }
                 Scaffold (
                     bottomBar = {
                         BottomBar(navHostController = navHostController)

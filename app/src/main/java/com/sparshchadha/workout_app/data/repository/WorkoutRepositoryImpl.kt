@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.data.repository
 
-import android.net.http.HttpException
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.sparshchadha.workout_app.BuildConfig
@@ -13,7 +12,6 @@ import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.io.IOException
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class WorkoutRepositoryImpl (
@@ -27,11 +25,7 @@ class WorkoutRepositoryImpl (
         try {
             val remoteYogaPoses = yogaApi.getYogaPosesByDifficulty(difficulty = difficulty.name.lowercase())
             emit(Resource.Success(remoteYogaPoses))
-        } catch (e: HttpException) {
-            emit(
-                Resource.Error(error = e)
-            )
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             emit(
                 Resource.Error(error = e)
             )
@@ -47,11 +41,7 @@ class WorkoutRepositoryImpl (
                 apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
             )
             emit(Resource.Success(remoteExercises))
-        } catch (e: HttpException) {
-            emit(
-                Resource.Error(error = e)
-            )
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             emit(
                 Resource.Error(error = e)
             )
@@ -67,11 +57,7 @@ class WorkoutRepositoryImpl (
                 apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
             )
             emit(Resource.Success(remoteExercises))
-        } catch (e: HttpException) {
-            emit(
-                Resource.Error(error = e)
-            )
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             emit(
                 Resource.Error(error = e)
             )
@@ -87,11 +73,7 @@ class WorkoutRepositoryImpl (
                 apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
             )
             emit(Resource.Success(remoteExercises))
-        } catch (e: HttpException) {
-            emit(
-                Resource.Error(error = e)
-            )
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             emit(
                 Resource.Error(error = e)
             )
@@ -107,11 +89,7 @@ class WorkoutRepositoryImpl (
                 apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
             )
             emit(Resource.Success(remoteExercises))
-        } catch (e: HttpException) {
-            emit(
-                Resource.Error(error = e)
-            )
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             emit(
                 Resource.Error(error = e)
             )

@@ -34,12 +34,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.capitalize
@@ -49,6 +51,7 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 @Composable
 fun YogaPosesScreen(
     workoutViewModel: WorkoutViewModel,
+    navController: NavController,
 ) {
     val yogaPoses = workoutViewModel.yogaPoses.value
     val difficultyLevel = workoutViewModel.getCurrentYogaDifficultyLevel()
@@ -59,16 +62,21 @@ fun YogaPosesScreen(
     if (yogaPoses != null) {
         Scaffold(
             topBar = {
-                Row (
-                    modifier = Modifier.fillMaxWidth()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding()
-                ){
+                ) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = null,
                         tint = Color.Black,
-                        modifier = Modifier.align(CenterVertically)
+                        modifier = Modifier
+                            .align(CenterVertically)
                             .padding(horizontal = 10.dp)
+                            .clickable {
+                                navController.popBackStack(BottomBarScreen.WorkoutScreen.route, inclusive = false)
+                            }
                     )
 
                     Text(
@@ -76,7 +84,8 @@ fun YogaPosesScreen(
                         color = Color.Black,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(20.dp)
+                        modifier = Modifier
+                            .padding(20.dp)
                             .fillMaxWidth(0.8f)
                             .align(CenterVertically),
                         textAlign = TextAlign.Center
@@ -85,7 +94,8 @@ fun YogaPosesScreen(
             }
         ) {
             LazyColumn(
-                modifier = Modifier.background(Color.White)
+                modifier = Modifier
+                    .background(Color.White)
                     .padding(paddingValues = it),
                 horizontalAlignment = CenterHorizontally
             ) {

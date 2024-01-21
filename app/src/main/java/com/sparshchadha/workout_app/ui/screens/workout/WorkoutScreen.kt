@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.ui.screens.workout.gym.CategoryType
 import com.sparshchadha.workout_app.util.ColorsUtil
@@ -100,28 +99,28 @@ fun WorkoutScreen(
                        workoutViewModel.updateCategoryTypeForGymWorkout(
                            categoryType = CategoryType.WORKOUT_TYPE
                        )
-                       navController.navigate(UtilityScreen.GymWorkout.route)
+                       navController.navigate(UtilityScreen.SelectExerciseCategory.route)
                    }
 
                    "Body Part" -> {
                        workoutViewModel.updateCategoryTypeForGymWorkout(
                            categoryType = CategoryType.MUSCLE_TYPE
                        )
-                       navController.navigate(UtilityScreen.GymWorkout.route)
+                       navController.navigate(UtilityScreen.SelectExerciseCategory.route)
                    }
 
                    "Difficulty" -> {
                        workoutViewModel.updateCategoryTypeForGymWorkout(
                            categoryType = CategoryType.DIFFICULTY_LEVEL
                        )
-                       navController.navigate(UtilityScreen.GymWorkout.route)
+                       navController.navigate(UtilityScreen.SelectExerciseCategory.route)
                    }
 
                    "Search Exercise" -> {
                        workoutViewModel.updateCategoryTypeForGymWorkout(
                            categoryType = CategoryType.SEARCH_EXERCISE
                        )
-                       navController.navigate(UtilityScreen.SearchFood.route)
+                       navController.navigate("SearchScreen/exercises")
                    }
                }
            })
@@ -146,11 +145,7 @@ fun WorkoutScreen(
                     workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
                     // navigate to yoga screen
                     workoutViewModel.getYogaPoses()
-                    navController.navigate(route = UtilityScreen.YogaPoses.route) {
-                        popUpTo(BottomBarScreen.WorkoutScreen.route) {
-                            inclusive = true
-                        }
-                    }
+                    navController.navigate(route = UtilityScreen.YogaPoses.route)
                 },
                 textColor = Color.Black
             )

@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -31,7 +31,7 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 @Composable
 fun SelectExerciseCategory(
     workoutViewModel: WorkoutViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
 
     when (workoutViewModel.getCurrentCategoryTypeForGymWorkout()) {
@@ -42,6 +42,9 @@ fun SelectExerciseCategory(
                 onCategoryItemSelected = {
                     workoutViewModel.getExercisesByDifficulty(difficultyLevel = it.replace(' ', '_'))
                     navController.navigate("ExercisesScreen/$it")
+                },
+                onBackButtonPressed = {
+                    navController.popBackStack(BottomBarScreen.WorkoutScreen.route, inclusive = false)
                 }
             )
         }
@@ -53,6 +56,9 @@ fun SelectExerciseCategory(
                 onCategoryItemSelected = {
                     workoutViewModel.getExercisesByWorkoutType(workoutType = it.replace(' ', '_'))
                     navController.navigate("ExercisesScreen/$it")
+                },
+                onBackButtonPressed = {
+                    navController.popBackStack(BottomBarScreen.WorkoutScreen.route, inclusive = false)
                 }
             )
         }
@@ -64,6 +70,9 @@ fun SelectExerciseCategory(
                 onCategoryItemSelected = {
                     workoutViewModel.getExercisesByMuscle(muscleType = it.replace(' ', '_'))
                     navController.navigate("ExercisesScreen/$it")
+                },
+                onBackButtonPressed = {
+                    navController.popBackStack(BottomBarScreen.WorkoutScreen.route, inclusive = false)
                 }
             )
         }
@@ -75,35 +84,15 @@ fun SelectExerciseCategory(
 }
 
 @Composable
-fun ExerciseCategoryItems(categoryItems: List<String>, topBarDescription: String, onCategoryItemSelected: (String) -> Unit) {
+fun ExerciseCategoryItems(
+    categoryItems: List<String>,
+    topBarDescription: String,
+    onCategoryItemSelected: (String) -> Unit,
+    onBackButtonPressed: () -> Unit,
+) {
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding()
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = null,
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(horizontal = 10.dp)
-                )
-
-                Text(
-                    text = topBarDescription,
-                    color = Color.Black,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .fillMaxWidth(0.8f)
-                        .align(Alignment.CenterVertically),
-                    textAlign = TextAlign.Center
-                )
-            }
+           ScaffoldTopBar(topBarDescription = topBarDescription, onBackButtonPressed = onBackButtonPressed)
         },
         containerColor = Color.White
     ) {
@@ -154,4 +143,37 @@ fun CategoryItemComposable(categoryItem: String, onCategoryItemSelected: (String
         thickness = 1.dp,
         modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
     )
+}
+
+@Composable
+fun ScaffoldTopBar(topBarDescription: String, onBackButtonPressed: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding()
+    ) {
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = null,
+            tint = Color.Black,
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(horizontal = 10.dp)
+                .clickable {
+                    onBackButtonPressed()
+                }
+        )
+
+        Text(
+            text = topBarDescription,
+            color = Color.Black,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(0.8f)
+                .align(Alignment.CenterVertically),
+            textAlign = TextAlign.Start
+        )
+    }
 }

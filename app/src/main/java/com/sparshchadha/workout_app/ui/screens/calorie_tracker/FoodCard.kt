@@ -37,7 +37,7 @@ fun FoodCard(
     saturatedFat: String,
     expandCard: () -> Unit,
     collapseCard: () -> Unit,
-    expandCardState: Boolean,
+    shouldExpandCard: Boolean
 ) {
 
     FoodCardComposable(
@@ -55,10 +55,10 @@ fun FoodCard(
         collapseCard = {
             collapseCard()
         },
-        isExpanded = expandCardState,
+        isExpanded = shouldExpandCard,
         expandCard = {
             expandCard()
-        }
+        },
     )
 }
 

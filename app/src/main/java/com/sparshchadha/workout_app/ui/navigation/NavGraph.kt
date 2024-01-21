@@ -15,7 +15,7 @@ import androidx.navigation.navArgument
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerComposable
-import com.sparshchadha.workout_app.ui.screens.calorie_tracker.SearchDishScreen
+import com.sparshchadha.workout_app.ui.components.SearchScreen
 import com.sparshchadha.workout_app.ui.screens.profile.ProfileScreenComposable
 import com.sparshchadha.workout_app.ui.screens.workout.WorkoutScreenComposable
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
@@ -81,7 +81,7 @@ fun NavGraph(
 
         // Search Screen
         composable(
-            route = UtilityScreen.SearchFood.route,
+            route = UtilityScreen.SearchScreen.route,
             enterTransition = {
                 slideInVertically(
                     animationSpec = tween(durationMillis = 1000),
@@ -91,10 +91,16 @@ fun NavGraph(
             exitTransition = {
                 slideOutVertically()
             }
-        ) {
-            SearchDishScreen(searchFoodViewModel = searchFoodViewModel, paddingValues = paddingValues, onCloseClicked = {
-                navController.popBackStack()
-            })
+        ) { backStackEntry ->
+            SearchScreen(
+                searchFoodViewModel = searchFoodViewModel,
+                paddingValues = paddingValues,
+                onCloseClicked = {
+                    navController.popBackStack()
+                },
+                searchFor = backStackEntry.arguments?.getString("searchFor"),
+                workoutViewModel = workoutViewModel
+            )
         }
 
         // Profile Screen
@@ -138,12 +144,12 @@ fun NavGraph(
                 )
             }
         ) {
-            YogaPosesScreen(workoutViewModel = workoutViewModel)
+            YogaPosesScreen(workoutViewModel = workoutViewModel, navController = navController)
         }
 
         // Get Exercises After Selecting Workout Type
         composable(
-            route = UtilityScreen.GymWorkout.route,
+            route = UtilityScreen.SelectExerciseCategory.route,
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { fullWidth -> fullWidth },

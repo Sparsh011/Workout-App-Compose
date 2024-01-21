@@ -31,6 +31,9 @@ class WorkoutViewModel @Inject constructor(
 
     private var _selectedCategoryForGymExercise = mutableStateOf(CategoryType.WORKOUT_TYPE)
 
+    var showErrorToast = mutableStateOf(false)
+    var showErrorMessageInToast = mutableStateOf("")
+
     fun getYogaPoses() {
         viewModelScope.launch {
             val poses = workoutRepository.getYogaPosesByDifficulty(difficulty = _difficultyForYoga.value)
@@ -41,8 +44,13 @@ class WorkoutViewModel @Inject constructor(
                         _yogaPoses.value = response.data
                     }
 
-                    else -> {
-                        Log.e(TAG, "getYogaPoses: Unable To Get Poses!")
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Error -> {
+                        showErrorToast.value = true
+                        showErrorMessageInToast.value = response.error?.message.toString()
                     }
                 }
             }

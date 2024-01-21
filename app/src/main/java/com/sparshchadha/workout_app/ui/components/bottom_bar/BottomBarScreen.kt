@@ -34,9 +34,9 @@ sealed class UtilityScreen(
     val route: String,
     val title: String
 ) {
-    object SearchFood: UtilityScreen(
-        route = "SearchFoodScreen",
-        title = "Search Food Items"
+    object SearchScreen: UtilityScreen(
+        route = "SearchScreen/{searchFor}",
+        title = "Search"
     )
 
     object YogaPoses: UtilityScreen(
@@ -44,9 +44,9 @@ sealed class UtilityScreen(
         title = "Yoga Poses"
     )
 
-    object GymWorkout: UtilityScreen(
-        route = "GymWorkoutScreen",
-        title = "Gym Workouts"
+    object SelectExerciseCategory: UtilityScreen(
+        route = "SelectExerciseCategory",
+        title = "Select Exercise Category"
     )
 
     object ExercisesScreen: UtilityScreen(
