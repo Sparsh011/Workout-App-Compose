@@ -1,5 +1,7 @@
 package com.sparshchadha.workout_app.ui.screens.workout.yoga
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,8 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,11 +33,13 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.airbnb.lottie.compose.LottieAnimation
@@ -47,17 +53,33 @@ import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
+private const val TAG = "YogaPosesScreennn"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YogaPosesScreen(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
 ) {
+    Log.e(TAG, "YogaPosesScreen: Error : recomp count")
     val yogaPoses = workoutViewModel.yogaPoses.value
     val difficultyLevel = workoutViewModel.getCurrentYogaDifficultyLevel()
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation))
     val progress by animateLottieCompositionAsState(composition)
+
+    // Inside your Composable function
+    val errorEvent by workoutViewModel.errorEventFlow.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    errorEvent?.let { event ->
+        when (event) {
+            is WorkoutViewModel.UIEvent.ShowError -> {
+                Toast.makeText(context, "Error : ${event.errorMessage}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
 
     if (yogaPoses != null) {
         Scaffold(

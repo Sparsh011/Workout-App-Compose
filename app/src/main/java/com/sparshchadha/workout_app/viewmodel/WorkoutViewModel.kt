@@ -11,7 +11,13 @@ import com.sparshchadha.workout_app.ui.screens.workout.gym.CategoryType
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -34,6 +40,9 @@ class WorkoutViewModel @Inject constructor(
     var showErrorToast = mutableStateOf(false)
     var showErrorMessageInToast = mutableStateOf("")
 
+    private val _errorEventFlow = MutableStateFlow<UIEvent?>(value = null)
+    val errorEventFlow = _errorEventFlow.asStateFlow()
+
     fun getYogaPoses() {
         viewModelScope.launch {
             val poses = workoutRepository.getYogaPosesByDifficulty(difficulty = _difficultyForYoga.value)
@@ -49,8 +58,12 @@ class WorkoutViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        showErrorToast.value = true
-                        showErrorMessageInToast.value = response.error?.message.toString()
+                        Log.e(TAG, "getYogaPoses: in viewmodel")
+                        _errorEventFlow.emit(
+                            UIEvent.ShowError(
+                                errorMessage = "Error - ${response.error?.message}"
+                            )
+                        )
                     }
                 }
             }
@@ -67,8 +80,16 @@ class WorkoutViewModel @Inject constructor(
                         _exercises.value = response.data
                     }
 
-                    else -> {
-                        Log.e(TAG, "getYogaPoses: Unable To Get Poses!")
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Error -> {
+                        _errorEventFlow.emit(
+                            UIEvent.ShowError(
+                                errorMessage = "Error - ${response.error?.message}"
+                            )
+                        )
                     }
                 }
             }
@@ -85,8 +106,16 @@ class WorkoutViewModel @Inject constructor(
                         _exercises.value = response.data
                     }
 
-                    else -> {
-                        Log.e(TAG, "getYogaPoses: Unable To Get Poses!")
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Error -> {
+                        _errorEventFlow.emit(
+                            UIEvent.ShowError(
+                                errorMessage = "Error - ${response.error?.message}"
+                            )
+                        )
                     }
                 }
             }
@@ -103,8 +132,16 @@ class WorkoutViewModel @Inject constructor(
                         _exercises.value = response.data
                     }
 
-                    else -> {
-                        Log.e(TAG, "getYogaPoses: Unable To Get Poses!")
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Error -> {
+                        _errorEventFlow.emit(
+                            UIEvent.ShowError(
+                                errorMessage = "Error - ${response.error?.message}"
+                            )
+                        )
                     }
                 }
             }
@@ -121,8 +158,16 @@ class WorkoutViewModel @Inject constructor(
                         _exercises.value = response.data
                     }
 
-                    else -> {
-                        Log.e(TAG, "getYogaPoses: Unable To Get Poses!")
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Error -> {
+                        _errorEventFlow.emit(
+                            UIEvent.ShowError(
+                                errorMessage = "Error - ${response.error?.message}"
+                            )
+                        )
                     }
                 }
             }
@@ -140,4 +185,12 @@ class WorkoutViewModel @Inject constructor(
     }
 
     fun getCurrentCategoryTypeForGymWorkout(): CategoryType = _selectedCategoryForGymExercise.value
+
+    sealed class UIEvent {
+        data class ShowError(val errorMessage: String) : UIEvent()
+//        data class ConfirmAccountChanged(val confirmAccount: String): UIEvent()
+//        data class CodeChanged(val code: String): UIEvent()
+//        data class NameChanged(val name: String): UIEvent()
+//        object Submit: UIEvent()
+    }
 }
