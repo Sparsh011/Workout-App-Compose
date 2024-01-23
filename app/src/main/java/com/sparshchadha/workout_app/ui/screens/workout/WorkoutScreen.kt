@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,7 +36,6 @@ fun WorkoutScreenComposable(
     navController: NavController,
     gymWorkoutCategories: List<String>,
 ) {
-
     WorkoutScreen(
         difficultyLevels = difficultyLevels,
         workoutViewModel = workoutViewModel,
@@ -54,7 +52,6 @@ fun WorkoutScreen(
     navController: NavController,
     gymWorkoutCategories: List<String>,
 ) {
-    val context = LocalContext.current
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -93,37 +90,40 @@ fun WorkoutScreen(
         }
 
         items(gymWorkoutCategories) {
-           PopulateWorkoutCategories(category = it, modifier = Modifier.padding(20.dp), onCategorySelection = { categorySelected ->
-               when(categorySelected) {
-                   "Program" -> {
-                       workoutViewModel.updateCategoryTypeForGymWorkout(
-                           categoryType = CategoryType.WORKOUT_TYPE
-                       )
-                       navController.navigate(UtilityScreen.SelectExerciseCategory.route)
-                   }
+            PopulateWorkoutCategories(
+                category = it,
+                modifier = Modifier.padding(20.dp),
+                onCategorySelection = { categorySelected ->
+                    when (categorySelected) {
+                        "Program" -> {
+                            workoutViewModel.updateCategoryTypeForGymWorkout(
+                                categoryType = CategoryType.WORKOUT_TYPE
+                            )
+                            navController.navigate(UtilityScreen.SelectExerciseCategory.route)
+                        }
 
-                   "Body Part" -> {
-                       workoutViewModel.updateCategoryTypeForGymWorkout(
-                           categoryType = CategoryType.MUSCLE_TYPE
-                       )
-                       navController.navigate(UtilityScreen.SelectExerciseCategory.route)
-                   }
+                        "Body Part" -> {
+                            workoutViewModel.updateCategoryTypeForGymWorkout(
+                                categoryType = CategoryType.MUSCLE_TYPE
+                            )
+                            navController.navigate(UtilityScreen.SelectExerciseCategory.route)
+                        }
 
-                   "Difficulty" -> {
-                       workoutViewModel.updateCategoryTypeForGymWorkout(
-                           categoryType = CategoryType.DIFFICULTY_LEVEL
-                       )
-                       navController.navigate(UtilityScreen.SelectExerciseCategory.route)
-                   }
+                        "Difficulty" -> {
+                            workoutViewModel.updateCategoryTypeForGymWorkout(
+                                categoryType = CategoryType.DIFFICULTY_LEVEL
+                            )
+                            navController.navigate(UtilityScreen.SelectExerciseCategory.route)
+                        }
 
-                   "Search Exercise" -> {
-                       workoutViewModel.updateCategoryTypeForGymWorkout(
-                           categoryType = CategoryType.SEARCH_EXERCISE
-                       )
-                       navController.navigate("SearchScreen/exercises")
-                   }
-               }
-           })
+                        "Search Exercise" -> {
+                            workoutViewModel.updateCategoryTypeForGymWorkout(
+                                categoryType = CategoryType.SEARCH_EXERCISE
+                            )
+                            navController.navigate("SearchScreen/exercises")
+                        }
+                    }
+                })
         }
 
         // Yoga poses
@@ -139,16 +139,14 @@ fun WorkoutScreen(
 
         items(difficultyLevels) {
             PopulateYogaDifficulty(
-                modifier = Modifier.padding(all = 20.dp),
                 yogaDifficulty = it,
-                onYogaDifficultySelection = { difficultyLevel ->
-                    workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
-                    // navigate to yoga screen
-                    workoutViewModel.getYogaPoses()
-                    navController.navigate(route = UtilityScreen.YogaPoses.route)
-                },
-                textColor = Color.Black
-            )
+                modifier = Modifier.padding(all = 20.dp)
+            ) { difficultyLevel ->
+                workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
+                // navigate to yoga screen
+                workoutViewModel.getYogaPoses()
+                navController.navigate(route = UtilityScreen.YogaPoses.route)
+            }
         }
 
         header {
@@ -168,7 +166,7 @@ fun WorkoutScreen(
 fun PopulateWorkoutCategories(
     category: String,
     modifier: Modifier,
-    onCategorySelection: (String) -> Unit
+    onCategorySelection: (String) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -178,12 +176,12 @@ fun PopulateWorkoutCategories(
                 onCategorySelection(category)
             },
         colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryFoodCardBackground
+            containerColor = ColorsUtil.primaryGreenCardBackground
         )
     ) {
         Text(
             text = category,
-            color = ColorsUtil.textColor,
+            color = ColorsUtil.primaryDarkTextColor,
             modifier = modifier.align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center
         )
@@ -194,7 +192,6 @@ fun PopulateWorkoutCategories(
 fun PopulateYogaDifficulty(
     yogaDifficulty: DifficultyLevel,
     modifier: Modifier,
-    textColor: Color,
     onYogaDifficultySelection: (DifficultyLevel) -> Unit,
 ) {
     Card(
@@ -205,12 +202,12 @@ fun PopulateYogaDifficulty(
                 onYogaDifficultySelection(yogaDifficulty)
             },
         colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryFoodCardBackground
+            containerColor = ColorsUtil.primaryGreenCardBackground
         )
     ) {
         Text(
             text = yogaDifficulty.name.lowercase().capitalize(),
-            color = ColorsUtil.textColor,
+            color = ColorsUtil.primaryDarkTextColor,
             modifier = modifier.align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center
         )

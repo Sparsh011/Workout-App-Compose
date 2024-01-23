@@ -59,10 +59,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryFoodCardBackground
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreen
 
 
@@ -97,7 +97,7 @@ fun CalorieTrackerScreen(navController: NavHostController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(1f)
-            .background(primaryBackgroundColor)
+            .background(primaryDarkTextColor)
     ) {
 
         // Search dishes to add calories
@@ -139,9 +139,9 @@ fun CalorieTrackerScreen(navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp),
                 colors = SearchBarDefaults.colors(
-                    containerColor = primaryBackgroundColor,
+                    containerColor = primaryDarkTextColor,
                     inputFieldColors = TextFieldDefaults.textFieldColors(
-                        focusedTextColor = primaryFoodCardBackground
+                        focusedTextColor = primaryGreenCardBackground
                     )
                 ),
                 shape = RoundedCornerShape(size = 10.dp)
@@ -197,7 +197,7 @@ fun CalorieTrackerScreen(navController: NavHostController) {
                     .clickable {
                         showCaloriesGoalBottomSheet = true
                     },
-                color = primaryFoodCardBackground,
+                color = primaryGreenCardBackground,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center
             )

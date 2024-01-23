@@ -123,7 +123,7 @@ fun CategoryItemComposable(categoryItem: String, onCategoryItemSelected: (String
         Text(
             text = categoryItem,
             fontSize = 20.sp,
-            color = ColorsUtil.primaryBackgroundColor,
+            color = ColorsUtil.primaryDarkTextColor,
             modifier = Modifier
                 .padding(20.dp)
                 .weight(0.8f)
@@ -133,7 +133,7 @@ fun CategoryItemComposable(categoryItem: String, onCategoryItemSelected: (String
         Icon(
             imageVector = Icons.Default.KeyboardArrowRight,
             contentDescription = null,
-            tint = ColorsUtil.primaryBackgroundColor,
+            tint = ColorsUtil.primaryDarkTextColor,
             modifier = Modifier.padding(20.dp)
         )
     }

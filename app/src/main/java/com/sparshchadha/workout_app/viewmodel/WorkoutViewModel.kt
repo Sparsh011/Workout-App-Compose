@@ -7,17 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
-import com.sparshchadha.workout_app.ui.screens.workout.gym.CategoryType
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
+import com.sparshchadha.workout_app.ui.screens.workout.gym.CategoryType
 import com.sparshchadha.workout_app.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -40,8 +36,9 @@ class WorkoutViewModel @Inject constructor(
     var showErrorToast = mutableStateOf(false)
     var showErrorMessageInToast = mutableStateOf("")
 
-    private val _errorEventFlow = MutableStateFlow<UIEvent?>(value = null)
-    val errorEventFlow = _errorEventFlow.asStateFlow()
+    private val _uiEventState = MutableStateFlow<UIEvent?>(value = null)
+    val uiEventStateFlow = _uiEventState.asStateFlow()
+
 
     fun getYogaPoses() {
         viewModelScope.launch {
@@ -51,15 +48,20 @@ class WorkoutViewModel @Inject constructor(
                 when (response) {
                     is Resource.Success -> {
                         _yogaPoses.value = response.data
+                        _uiEventState.emit(
+                            UIEvent.HideLoader
+                        )
                     }
 
                     is Resource.Loading -> {
-
+                        _uiEventState.emit(
+                            UIEvent.ShowLoader
+                        )
                     }
 
                     is Resource.Error -> {
                         Log.e(TAG, "getYogaPoses: in viewmodel")
-                        _errorEventFlow.emit(
+                        _uiEventState.emit(
                             UIEvent.ShowError(
                                 errorMessage = "Error - ${response.error?.message}"
                             )
@@ -78,14 +80,19 @@ class WorkoutViewModel @Inject constructor(
                 when (response) {
                     is Resource.Success -> {
                         _exercises.value = response.data
+                        _uiEventState.emit(
+                            UIEvent.HideLoader
+                        )
                     }
 
                     is Resource.Loading -> {
-
+                        _uiEventState.emit(
+                            UIEvent.ShowLoader
+                        )
                     }
 
                     is Resource.Error -> {
-                        _errorEventFlow.emit(
+                        _uiEventState.emit(
                             UIEvent.ShowError(
                                 errorMessage = "Error - ${response.error?.message}"
                             )
@@ -104,14 +111,19 @@ class WorkoutViewModel @Inject constructor(
                 when (response) {
                     is Resource.Success -> {
                         _exercises.value = response.data
+                        _uiEventState.emit(
+                            UIEvent.HideLoader
+                        )
                     }
 
                     is Resource.Loading -> {
-
+                        _uiEventState.emit(
+                            UIEvent.ShowLoader
+                        )
                     }
 
                     is Resource.Error -> {
-                        _errorEventFlow.emit(
+                        _uiEventState.emit(
                             UIEvent.ShowError(
                                 errorMessage = "Error - ${response.error?.message}"
                             )
@@ -130,14 +142,19 @@ class WorkoutViewModel @Inject constructor(
                 when (response) {
                     is Resource.Success -> {
                         _exercises.value = response.data
+                        _uiEventState.emit(
+                            UIEvent.HideLoader
+                        )
                     }
 
                     is Resource.Loading -> {
-
+                        _uiEventState.emit(
+                            UIEvent.ShowLoader
+                        )
                     }
 
                     is Resource.Error -> {
-                        _errorEventFlow.emit(
+                        _uiEventState.emit(
                             UIEvent.ShowError(
                                 errorMessage = "Error - ${response.error?.message}"
                             )
@@ -156,14 +173,19 @@ class WorkoutViewModel @Inject constructor(
                 when (response) {
                     is Resource.Success -> {
                         _exercises.value = response.data
+                        _uiEventState.emit(
+                            UIEvent.HideLoader
+                        )
                     }
 
                     is Resource.Loading -> {
-
+                        _uiEventState.emit(
+                            UIEvent.ShowLoader
+                        )
                     }
 
                     is Resource.Error -> {
-                        _errorEventFlow.emit(
+                        _uiEventState.emit(
                             UIEvent.ShowError(
                                 errorMessage = "Error - ${response.error?.message}"
                             )
@@ -188,9 +210,7 @@ class WorkoutViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class ShowError(val errorMessage: String) : UIEvent()
-//        data class ConfirmAccountChanged(val confirmAccount: String): UIEvent()
-//        data class CodeChanged(val code: String): UIEvent()
-//        data class NameChanged(val name: String): UIEvent()
-//        object Submit: UIEvent()
+        object HideLoader : UIEvent()
+        object ShowLoader : UIEvent()
     }
 }
