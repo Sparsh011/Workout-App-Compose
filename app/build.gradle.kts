@@ -29,6 +29,7 @@ android {
         properties.load(project.rootProject.file("local.properties").inputStream())
         buildConfigField("String", "FOOD_API_KEY", "\"${properties["FOOD_API_KEY"]}\"")
         buildConfigField("String", "PEXELS_API_KEY", "\"${properties["PEXELS_API_KEY"]}\"")
+        buildConfigField("String", "GYM_WORKOUTS_API_KEY", "\"${properties["GYM_WORKOUTS_API_KEY"]}\"")
     }
 
     buildTypes {
@@ -108,6 +109,16 @@ dependencies {
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
     // endregion
 
+    // region accompanist
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
+    // endregion
+
+    // region lottie
+    implementation("com.airbnb.android:lottie-compose:6.3.0")
+    // endregion
+
+    // region compose collectAsStateWithLifecycle
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    // endregion
 
 }

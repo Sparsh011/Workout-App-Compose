@@ -4,7 +4,7 @@ import android.net.http.HttpException
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.sparshchadha.workout_app.BuildConfig
-import com.sparshchadha.workout_app.data.remote.PexelsApi
+import com.sparshchadha.workout_app.data.remote.api.PexelsApi
 import com.sparshchadha.workout_app.data.remote.dto.pexels.PexelResponseDto
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.util.Resource

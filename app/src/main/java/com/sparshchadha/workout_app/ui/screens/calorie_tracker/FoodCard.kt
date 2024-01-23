@@ -20,7 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.Dimensions.DISH_TITLE_SIZE
+import com.sparshchadha.workout_app.util.Dimensions.TITLE_SIZE
 
 @Composable
 fun FoodCard(
@@ -37,7 +37,7 @@ fun FoodCard(
     saturatedFat: String,
     expandCard: () -> Unit,
     collapseCard: () -> Unit,
-    expandCardState: Boolean,
+    shouldExpandCard: Boolean
 ) {
 
     FoodCardComposable(
@@ -55,10 +55,10 @@ fun FoodCard(
         collapseCard = {
             collapseCard()
         },
-        isExpanded = expandCardState,
+        isExpanded = shouldExpandCard,
         expandCard = {
             expandCard()
-        }
+        },
     )
 }
 
@@ -81,7 +81,7 @@ private fun FoodCardComposable(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryFoodCardBackground
+            containerColor = ColorsUtil.primaryGreenCardBackground
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -104,7 +104,7 @@ private fun FoodCardComposable(
                 text = foodItemName,
                 modifier = Modifier.weight(0.7f),
                 fontWeight = FontWeight.Bold,
-                fontSize = DISH_TITLE_SIZE,
+                fontSize = TITLE_SIZE,
                 color = Color.Black
             )
             Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = ColorsUtil.primaryDarkGray)
@@ -138,13 +138,13 @@ private fun toggleCardExpansion(isExpanded: Boolean, collapseCard: () -> Unit, e
 fun NutritionalValueText(nutrient: String, quantityOfNutrient: String, unit: String = "grams") {
     Text(
         buildAnnotatedString {
-            withStyle(style = SpanStyle(color = ColorsUtil.primaryBlack, fontWeight = FontWeight.Bold)) {
+            withStyle(style = SpanStyle(color = ColorsUtil.primaryDarkTextColor, fontWeight = FontWeight.Bold)) {
                 append("$nutrient : ")
             }
             append("$quantityOfNutrient $unit")
         },
         modifier = Modifier
             .padding(horizontal = 20.dp, vertical = 5.dp),
-        color = ColorsUtil.primaryBlack
+        color = ColorsUtil.primaryDarkTextColor
     )
 }

@@ -59,18 +59,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.ui.components.bottom_bar.SearchScreen
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryFoodCardBackground
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreen
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
 
-
-@Composable
-fun CalorieTrackerComposable(navController: NavHostController) {
-    CalorieTrackerScreen(navController = navController)
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,7 +92,7 @@ fun CalorieTrackerScreen(navController: NavHostController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(1f)
-            .background(primaryBackgroundColor)
+            .background(Color.White)
     ) {
 
         // Search dishes to add calories
@@ -113,8 +107,7 @@ fun CalorieTrackerScreen(navController: NavHostController) {
                 },
                 active = false,
                 onActiveChange = {
-                    // navigate to search dish composable like swiggy
-                    navController.navigate(SearchScreen.SearchFood.route)
+                    navController.navigate("SearchScreen/food")
                 },
                 placeholder = {
                     Text(text = "Search Your Dish...", color = primaryDarkGray)
@@ -141,9 +134,9 @@ fun CalorieTrackerScreen(navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp),
                 colors = SearchBarDefaults.colors(
-                    containerColor = primaryBackgroundColor,
+                    containerColor = primaryDarkTextColor,
                     inputFieldColors = TextFieldDefaults.textFieldColors(
-                        focusedTextColor = primaryFoodCardBackground
+                        focusedTextColor = primaryGreenCardBackground
                     )
                 ),
                 shape = RoundedCornerShape(size = 10.dp)
@@ -199,7 +192,7 @@ fun CalorieTrackerScreen(navController: NavHostController) {
                     .clickable {
                         showCaloriesGoalBottomSheet = true
                     },
-                color = primaryFoodCardBackground,
+                color = primaryGreenCardBackground,
                 fontSize = 15.sp,
                 textAlign = TextAlign.Center
             )

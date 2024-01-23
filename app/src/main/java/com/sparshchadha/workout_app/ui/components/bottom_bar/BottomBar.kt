@@ -1,20 +1,20 @@
 package com.sparshchadha.workout_app.ui.components.bottom_bar
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.sparshchadha.workout_app.util.ColorsUtil
 
 @Composable
 fun BottomBar(navHostController: NavHostController) {
@@ -27,7 +27,10 @@ fun BottomBar(navHostController: NavHostController) {
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    BottomAppBar {
+    BottomAppBar(
+        containerColor = ColorsUtil.primaryLightGray,
+        contentColor = ColorsUtil.primaryBlack
+    ) {
         screens.forEach { screen ->
             AddItem(screen = screen, currentDestination = currentDestination, navHostController = navHostController)
         }
@@ -40,18 +43,50 @@ fun RowScope.AddItem(
     currentDestination: NavDestination?,
     navHostController: NavHostController,
 ) {
-    NavigationBarItem(selected = currentDestination?.hierarchy?.any {
+    val selected = (currentDestination?.hierarchy?.any {
         it.route == screen.route
-    } == true,
+    } == true)
+
+    NavigationBarItem(
+        selected = selected,
         onClick = {
             navHostController.navigate(screen.route) {
                 popUpTo(navHostController.graph.findStartDestination().id)
                 launchSingleTop = true
             }
-        }, icon = {
-            Icon(imageVector = screen.icon, contentDescription = null)
+        },
+        icon = {
+            if (selected) {
+                Icon(
+                    imageVector = screen.selectedIcon,
+                    contentDescription = null,
+                    tint = Color.Black
+                )
+
+            } else {
+                Icon(
+                    imageVector = screen.unselectedIcon,
+                    contentDescription = null,
+                    tint = ColorsUtil.unselectedBottomBarIconColor
+                )
+            }
         },
         label = {
-            Text(text = screen.title)
-        })
+            if (selected) {
+                Text(
+                    text = screen.title,
+                    color = Color.Black
+                )
+            } else {
+                Text(
+                    text = screen.title,
+                    color = ColorsUtil.unselectedBottomBarIconColor
+                )
+            }
+        },
+        colors = NavigationBarItemDefaults.colors(
+            indicatorColor = ColorsUtil.primaryLightGray,
+            selectedIconColor = Color.Black
+        )
+    )
 }

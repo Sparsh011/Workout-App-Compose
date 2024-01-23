@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.data.remote
+package com.sparshchadha.workout_app.data.remote.api
 
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import retrofit2.http.GET

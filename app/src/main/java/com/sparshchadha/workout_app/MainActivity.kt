@@ -12,11 +12,13 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
+import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel : SearchFoodViewModel by viewModels()
+    private val searchFoodViewModel : SearchFoodViewModel by viewModels()
+    private val workoutViewModel : WorkoutViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +27,17 @@ class MainActivity : ComponentActivity() {
 
             WorkoutAppTheme {
                 val navHostController = rememberNavController()
+
+                // for checking why yoga api failing in release build, DONT REMOVE YET
+                val showT = workoutViewModel.showErrorToast
+                val context = LocalContext.current
+                val msg = workoutViewModel.showErrorMessageInToast
+
+                val exercises = workoutViewModel.exercises.value
+
+                if (showT.value) {
+                    Toast.makeText(context, "Error - ${msg.value}", Toast.LENGTH_SHORT).show()
+                }
                 Scaffold (
                     bottomBar = {
                         BottomBar(navHostController = navHostController)
@@ -33,7 +46,9 @@ class MainActivity : ComponentActivity() {
                     NavGraph(
                         navController = navHostController,
                         paddingValues = it,
-                        searchFoodViewModel = viewModel
+                        searchFoodViewModel = searchFoodViewModel,
+                        workoutViewModel = workoutViewModel,
+                        exercises = exercises
                     )
                 }
             }

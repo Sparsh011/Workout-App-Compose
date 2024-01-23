@@ -1,112 +1,70 @@
 package com.sparshchadha.workout_app.ui.navigation
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.ui.components.bottom_bar.SearchScreen
-import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerComposable
-import com.sparshchadha.workout_app.ui.screens.calorie_tracker.SearchDishScreen
-import com.sparshchadha.workout_app.ui.screens.profile.ProfileScreenComposable
-import com.sparshchadha.workout_app.ui.screens.workout.WorkoutScreenComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.searchComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWorkoutComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.exercisesComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.workoutCategoryComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaComposable
 import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
+import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    searchFoodViewModel: SearchFoodViewModel
+    searchFoodViewModel: SearchFoodViewModel,
+    workoutViewModel: WorkoutViewModel,
+    exercises: GymWorkoutsDto?,
 ) {
-    NavHost(navController = navController, startDestination = BottomBarScreen.CalorieTracker.route) {
-        // Workout Tracker
-        composable(
-            route = BottomBarScreen.WorkoutScreen.route,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth ->
-                        -fullWidth
-                    },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            }
-        ) {
-            WorkoutScreenComposable(
-                gymWorkoutCategories = listOf(
-                    "Beginner",
-                    "Intermediate",
-                    "Advanced",
-                    "Calisthenics"
-                )
-            )
-        }
+    NavHost(navController = navController, startDestination = BottomBarScreen.WorkoutScreen.route) {
+        // Workout Tracker in Bottom Bar
+        bottomWorkoutComposable(
+            workoutViewModel = workoutViewModel,
+            navController = navController
+        )
 
-        // Calorie Tracker
-        composable(
-            route = BottomBarScreen.CalorieTracker.route
-        ) {
-            CalorieTrackerComposable(navController = navController)
-        }
+        // Calorie Tracker in Bottom Bar
+       calorieTrackerComposable(
+           navController = navController
+       )
 
         // Search Screen
-        composable(
-            route = SearchScreen.SearchFood.route,
-            enterTransition = {
-                slideInVertically(
-                    animationSpec = tween(durationMillis = 1000),
-                    initialOffsetY = { it / 2 }
-                )
-            },
-            exitTransition = {
-                slideOutVertically()
-            }
-        ) {
-            SearchDishScreen(searchFoodViewModel = searchFoodViewModel, paddingValues = paddingValues, onCloseClicked = {
-                navController.popBackStack()
-            })
-        }
+        searchComposable(
+            searchFoodViewModel = searchFoodViewModel,
+            workoutViewModel = workoutViewModel,
+            navController = navController,
+            paddingValues = paddingValues
+        )
 
         // Profile Screen
-        composable(
-            route = BottomBarScreen.ProfileScreen.route,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth ->
-                        -fullWidth
-                    },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            }
-        ) {
-            ProfileScreenComposable()
-        }
+        profileComposable()
+
+        // Yoga Screen
+        yogaComposable(
+            workoutViewModel = workoutViewModel,
+            navController = navController
+        )
+
+        // Selecting Workout Type
+       workoutCategoryComposable(
+           workoutViewModel = workoutViewModel,
+           navController = navController
+       )
+
+        // Exercises From Api
+        exercisesComposable(
+            navController = navController,
+            exercises = exercises,
+            workoutViewModel = workoutViewModel
+        )
     }
 }
 
