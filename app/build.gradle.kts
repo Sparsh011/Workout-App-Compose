@@ -117,4 +117,8 @@ dependencies {
     implementation("com.airbnb.android:lottie-compose:6.3.0")
     // endregion
 
+    // region compose collectAsStateWithLifecycle
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    // endregion
+
 }

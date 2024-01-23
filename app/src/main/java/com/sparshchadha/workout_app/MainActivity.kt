@@ -33,6 +33,8 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val msg = workoutViewModel.showErrorMessageInToast
 
+                val exercises = workoutViewModel.exercises.value
+
                 if (showT.value) {
                     Toast.makeText(context, "Error - ${msg.value}", Toast.LENGTH_SHORT).show()
                 }
@@ -45,7 +47,8 @@ class MainActivity : ComponentActivity() {
                         navController = navHostController,
                         paddingValues = it,
                         searchFoodViewModel = searchFoodViewModel,
-                        workoutViewModel = workoutViewModel
+                        workoutViewModel = workoutViewModel,
+                        exercises = exercises
                     )
                 }
             }

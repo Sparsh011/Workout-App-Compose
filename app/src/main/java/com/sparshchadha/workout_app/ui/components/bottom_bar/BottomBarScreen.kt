@@ -4,29 +4,36 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.List
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class BottomBarScreen(
     val route: String,
     val title: String,
-    val icon: ImageVector
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector
 ) {
     object CalorieTracker: BottomBarScreen(
         route = "CalorieTrackerScreen",
         title = "Track Calories",
-        icon = Icons.Default.Home
+        selectedIcon = Icons.Default.Home,
+        unselectedIcon = Icons.Outlined.Home
     )
 
     object WorkoutScreen: BottomBarScreen(
         route = "WorkoutScreen",
         title = "Workout",
-        icon = Icons.Default.List
+        selectedIcon = Icons.Default.List,
+        unselectedIcon = Icons.Outlined.List
     )
 
     object ProfileScreen: BottomBarScreen(
         route = "ProfileScreen",
         title = "Profile",
-        icon = Icons.Default.AccountCircle
+        selectedIcon = Icons.Default.AccountCircle,
+        unselectedIcon = Icons.Outlined.AccountCircle
     )
 }
 

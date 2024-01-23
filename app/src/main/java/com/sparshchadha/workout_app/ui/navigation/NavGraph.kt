@@ -1,27 +1,18 @@
 package com.sparshchadha.workout_app.ui.navigation
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
-import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerComposable
-import com.sparshchadha.workout_app.ui.components.SearchScreen
-import com.sparshchadha.workout_app.ui.screens.profile.ProfileScreenComposable
-import com.sparshchadha.workout_app.ui.screens.workout.WorkoutScreenComposable
-import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
-import com.sparshchadha.workout_app.ui.screens.workout.gym.ExercisesComposable
-import com.sparshchadha.workout_app.ui.screens.workout.gym.SelectExerciseCategory
-import com.sparshchadha.workout_app.ui.screens.workout.yoga.YogaPosesScreen
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWorkoutComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.exercisesComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.searchComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.workoutCategoryComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaComposable
 import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -30,180 +21,50 @@ fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
     searchFoodViewModel: SearchFoodViewModel,
-    workoutViewModel: WorkoutViewModel
+    workoutViewModel: WorkoutViewModel,
+    exercises: GymWorkoutsDto?,
 ) {
     NavHost(navController = navController, startDestination = BottomBarScreen.WorkoutScreen.route) {
-        // Workout Tracker
-        composable(
-            route = BottomBarScreen.WorkoutScreen.route,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth ->
-                        -fullWidth
-                    },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            }
-        ) {
-            WorkoutScreenComposable(
-                difficultyLevels = listOf(
-                    DifficultyLevel.BEGINNER,
-                    DifficultyLevel.INTERMEDIATE,
-                    DifficultyLevel.EXPERT
-                ),
-                workoutViewModel = workoutViewModel,
-                navController = navController,
-                gymWorkoutCategories = listOf(
-                    "Program",
-                    "Body Part",
-                    "Difficulty",
-                    "Search Exercise"
-                )
-            )
-        }
+        // Workout Tracker in Bottom Bar
+        bottomWorkoutComposable(
+            workoutViewModel = workoutViewModel,
+            navController = navController
+        )
 
-        // Calorie Tracker
-        composable(
-            route = BottomBarScreen.CalorieTracker.route
-        ) {
-            CalorieTrackerComposable(navController = navController)
-        }
+        // Calorie Tracker in Bottom Bar
+       calorieTrackerComposable(
+           navController = navController
+       )
 
         // Search Screen
-        composable(
-            route = UtilityScreen.SearchScreen.route,
-            enterTransition = {
-                slideInVertically(
-                    animationSpec = tween(durationMillis = 1000),
-                    initialOffsetY = { it / 2 }
-                )
-            },
-            exitTransition = {
-                slideOutVertically()
-            }
-        ) { backStackEntry ->
-            SearchScreen(
-                searchFoodViewModel = searchFoodViewModel,
-                paddingValues = paddingValues,
-                onCloseClicked = {
-                    navController.popBackStack()
-                },
-                searchFor = backStackEntry.arguments?.getString("searchFor"),
-                workoutViewModel = workoutViewModel
-            )
-        }
+        searchComposable(
+            searchFoodViewModel = searchFoodViewModel,
+            workoutViewModel = workoutViewModel,
+            navController = navController,
+            paddingValues = paddingValues
+        )
 
         // Profile Screen
-        composable(
-            route = BottomBarScreen.ProfileScreen.route,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth ->
-                        -fullWidth
-                    },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            }
-        ) {
-            ProfileScreenComposable()
-        }
+        profileComposable()
 
         // Yoga Screen
-        composable(
-            route = UtilityScreen.YogaPoses.route,
-            enterTransition = {
-                slideInVertically(
-                    animationSpec = tween(durationMillis = 1000),
-                    initialOffsetY = { -it / 2 }
-                )
-            },
-            exitTransition = {
-                slideOutVertically(
-                    animationSpec = tween(durationMillis = 1000),
-                    targetOffsetY = { -it / 2 }
-                )
-            }
-        ) {
-            YogaPosesScreen(workoutViewModel = workoutViewModel, navController = navController)
-        }
+        yogaComposable(
+            workoutViewModel = workoutViewModel,
+            navController = navController
+        )
 
-        // Get Exercises After Selecting Workout Type
-        composable(
-            route = UtilityScreen.SelectExerciseCategory.route,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth ->
-                        -fullWidth
-                    },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            }
-        ) {
-            SelectExerciseCategory(
-                workoutViewModel = workoutViewModel,
-                navController = navController
-            )
-        }
+        // Selecting Workout Type
+       workoutCategoryComposable(
+           workoutViewModel = workoutViewModel,
+           navController = navController
+       )
 
-        // Exercises List
-        composable(
-            arguments = listOf(navArgument("category") { type = NavType.StringType }),
-            route = UtilityScreen.ExercisesScreen.route,
-            enterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            },
-            exitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { fullWidth ->
-                        -fullWidth
-                    },
-                    animationSpec = tween(
-                        durationMillis = 300
-                    )
-                )
-            }
-        ) { backStackEntry ->
-            ExercisesComposable(
-                workoutViewModel = workoutViewModel,
-                navController = navController,
-                category = backStackEntry.arguments?.getString("category")
-            )
-        }
+        // Exercises From Api
+        exercisesComposable(
+            navController = navController,
+            exercises = exercises,
+            workoutViewModel = workoutViewModel
+        )
     }
 }
 

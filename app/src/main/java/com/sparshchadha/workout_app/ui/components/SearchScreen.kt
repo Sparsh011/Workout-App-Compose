@@ -62,6 +62,10 @@ fun SearchScreen(
     onCloseClicked: () -> Unit,
     searchFor: String?,
     workoutViewModel: WorkoutViewModel,
+    dishes: NutritionalValueDto?,
+    exercises: GymWorkoutsDto?,
+    workoutUIStateEvent: WorkoutViewModel.UIEvent?,
+    foodUIStateEvent: WorkoutViewModel.UIEvent?
 ) {
     var searchBarQuery by remember {
         mutableStateOf("")
@@ -72,8 +76,6 @@ fun SearchScreen(
     LaunchedEffect(key1 = Unit, block = {
         focusRequester.requestFocus()
     })
-
-    val dishes = searchFoodViewModel.foodItems.value
 
     Scaffold(
         containerColor = Color.White,
@@ -87,16 +89,12 @@ fun SearchScreen(
                     searchBarQuery = it
                 },
                 searchDish = {
-                    when (searchFor) {
-                        "food" -> {
-                            searchFoodViewModel.updateSearchQuery(searchQuery = searchBarQuery)
-                            searchFoodViewModel.getFoodItems()
-                        }
-
-                        "exercises" -> {
-                            workoutViewModel.getExercisesByName(searchQuery = searchBarQuery)
-                        }
-                    }
+                    handleSearchFor(
+                        searchFor = searchFor,
+                        searchBarQuery = searchBarQuery,
+                        searchFoodViewModel = searchFoodViewModel,
+                        workoutViewModel = workoutViewModel
+                    )
                 },
                 onCloseClicked = onCloseClicked
             )
@@ -104,15 +102,106 @@ fun SearchScreen(
     ) { localPaddingValues ->
         when (searchFor) {
             "food" -> {
-                FoodSearchResults(paddingValues = paddingValues, dishes = dishes, localPaddingValues = localPaddingValues)
+                HandleFoodSearch(
+                    foodUIStateEvent = foodUIStateEvent,
+                    paddingValues = paddingValues,
+                    localPaddingValues = localPaddingValues,
+                    dishes = dishes
+                )
             }
 
             "exercises" -> {
-                val exercises = workoutViewModel.exercises.value
+                HandleExercisesSearch(
+                    workoutUIStateEvent = workoutUIStateEvent,
+                    paddingValues = paddingValues,
+                    localPaddingValues = localPaddingValues,
+                    exercises = exercises
+                )
+            }
+        }
+    }
+}
+
+fun handleSearchFor(
+    searchFor: String?,
+    searchBarQuery: String,
+    searchFoodViewModel: SearchFoodViewModel,
+    workoutViewModel: WorkoutViewModel
+) {
+    when (searchFor) {
+        "food" -> {
+            searchFoodViewModel.updateSearchQuery(searchQuery = searchBarQuery)
+            searchFoodViewModel.getFoodItems()
+        }
+
+        "exercises" -> {
+            workoutViewModel.getExercisesByName(searchQuery = searchBarQuery)
+        }
+    }
+}
+
+@Composable
+fun HandleFoodSearch(
+    foodUIStateEvent: WorkoutViewModel.UIEvent?,
+    paddingValues: PaddingValues,
+    localPaddingValues: PaddingValues,
+    dishes: NutritionalValueDto?
+) {
+    foodUIStateEvent?.let { event ->
+        when (event) {
+            is WorkoutViewModel.UIEvent.ShowLoader -> {
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation)) // change later
+                val progress by animateLottieCompositionAsState(composition)
+                LottieAnimation(composition = composition, progress = { progress })
+            }
+
+            is WorkoutViewModel.UIEvent.HideLoader -> {
+                FoodSearchResults(
+                    paddingValues = paddingValues,
+                    dishes = dishes,
+                    localPaddingValues = localPaddingValues
+                )
+            }
+
+            is WorkoutViewModel.UIEvent.ShowError -> {
+                NoResultsFoundOrErrorDuringSearch(
+                    paddingValues = paddingValues,
+                    localPaddingValues = localPaddingValues,
+                    errorMessage = event.errorMessage
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun HandleExercisesSearch(
+    workoutUIStateEvent: WorkoutViewModel.UIEvent?,
+    paddingValues: PaddingValues,
+    localPaddingValues: PaddingValues,
+    exercises: GymWorkoutsDto?,
+) {
+    workoutUIStateEvent?.let { event ->
+        when (event) {
+            is WorkoutViewModel.UIEvent.ShowLoader -> {
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
+                val progress by animateLottieCompositionAsState(composition)
+                LottieAnimation(composition = composition, progress = { progress })
+            }
+
+            is WorkoutViewModel.UIEvent.HideLoader -> {
                 ExerciseSearchResults(
                     paddingValues = paddingValues,
                     exercises = exercises,
                     localPaddingValues = localPaddingValues
+                )
+            }
+
+            is WorkoutViewModel.UIEvent.ShowError -> {
+                NoResultsFoundOrErrorDuringSearch(
+                    paddingValues = paddingValues,
+                    localPaddingValues = localPaddingValues,
+                    errorMessage = event.errorMessage
                 )
             }
         }
@@ -122,7 +211,7 @@ fun SearchScreen(
 @Composable
 fun FoodSearchResults(paddingValues: PaddingValues, dishes: NutritionalValueDto?, localPaddingValues: PaddingValues) {
     if (dishes?.items?.isEmpty() == true) {
-        NoResultsFound(
+        NoResultsFoundOrErrorDuringSearch(
             paddingValues = paddingValues,
             localPaddingValues = localPaddingValues
         )
@@ -172,7 +261,7 @@ fun FoodSearchResults(paddingValues: PaddingValues, dishes: NutritionalValueDto?
 fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymWorkoutsDto?, localPaddingValues: PaddingValues) {
     exercises?.let {
         if (it.size == 0) {
-            NoResultsFound(
+            NoResultsFoundOrErrorDuringSearch(
                 paddingValues = paddingValues,
                 localPaddingValues = localPaddingValues
             )
@@ -211,7 +300,7 @@ fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymWorkoutsDt
 }
 
 @Composable
-fun NoResultsFound(paddingValues: PaddingValues, localPaddingValues: PaddingValues) {
+fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPaddingValues: PaddingValues, errorMessage: String = "") {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -226,14 +315,27 @@ fun NoResultsFound(paddingValues: PaddingValues, localPaddingValues: PaddingValu
             modifier = Modifier.padding(20.dp)
         )
 
-        Text(
-            text = "No Results Found!",
-            color = Color.Black,
-            modifier = Modifier.padding(20.dp)
-                .fillMaxWidth(),
-            fontSize = 30.sp,
-            textAlign = TextAlign.Center
-        )
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = "Error $errorMessage",
+                color = Color.Black,
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxWidth(),
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center
+            )
+        } else {
+            Text(
+                text = "No Results Found!",
+                color = Color.Black,
+                modifier = Modifier
+                    .padding(20.dp)
+                    .fillMaxWidth(),
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

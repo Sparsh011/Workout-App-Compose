@@ -27,26 +27,93 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExercisesComposable(workoutViewModel: WorkoutViewModel, navController: NavController, category: String?) {
-    val exercises = workoutViewModel.exercises.value
-
+fun ExercisesScreen(
+    navController: NavController,
+    category: String?,
+    exercises: GymWorkoutsDto?,
+    uiEventState: WorkoutViewModel.UIEvent?,
+) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
     val progress by animateLottieCompositionAsState(composition)
 
+    uiEventState?.let { event ->
+        when (event) {
+            is WorkoutViewModel.UIEvent.ShowLoader -> {
+                LottieAnimation(composition = composition, progress = { progress })
+            }
+
+            is WorkoutViewModel.UIEvent.HideLoader -> {
+                ShowExercises(
+                    category = category,
+                    navController = navController,
+                    exercises = exercises,
+                    composition = composition,
+                    progress = progress
+                )
+            }
+
+            is WorkoutViewModel.UIEvent.ShowError -> {
+                ShowErrorComposable(errorMessage = event.errorMessage)
+            }
+        }
+    }
+}
+
+@Composable
+fun ShowErrorComposable(errorMessage: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(20.dp)
+    ) {
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_results_found_animation))
+        val progress by animateLottieCompositionAsState(composition)
+
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.padding(20.dp)
+        )
+
+        Text(
+            text = "Unable To Find Exercises!\n $errorMessage",
+            color = Color.Black,
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
+            fontSize = 30.sp,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShowExercises(
+    category: String?,
+    navController: NavController,
+    exercises: GymWorkoutsDto?,
+    composition: LottieComposition?,
+    progress: Float,
+) {
     Scaffold(
         topBar = {
             val topBarDescription = category ?: "Exercises"
@@ -156,6 +223,6 @@ fun ExerciseSubTitlesAndDescription(subTitle: String, description: String) {
     Text(
         text = description,
         modifier = Modifier.padding(10.dp),
-        color = ColorsUtil.primaryBlack
+        color = ColorsUtil.primaryDarkTextColor
     )
 }

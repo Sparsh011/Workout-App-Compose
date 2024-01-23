@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.viewmodel
 
+import android.adservices.adselection.RemoveAdSelectionOverrideRequest
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -9,6 +10,8 @@ import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +27,9 @@ class SearchFoodViewModel @Inject constructor(
 
     private val _searchQuery = mutableStateOf("")
 
+    private val _uiEventState = MutableStateFlow<WorkoutViewModel.UIEvent?>(value = null)
+    val uiEventStateFlow = _uiEventState.asStateFlow()
+
 
     fun getFoodItems() {
         viewModelScope.launch {
@@ -33,10 +39,21 @@ class SearchFoodViewModel @Inject constructor(
                     is Resource.Success -> {
                         Log.e(TAG, "getFoodItems: response - ${result.data}")
                         _foodItems.value = result.data
+                        _uiEventState.emit(
+                            WorkoutViewModel.UIEvent.HideLoader
+                        )
                     }
 
-                    else -> {
-                        Log.e(TAG, "getFoodItems: Unable to get food items")
+                    is Resource.Loading -> {
+                        _uiEventState.emit(
+                            WorkoutViewModel.UIEvent.ShowLoader
+                        )
+                    }
+                    is Resource.Error -> {
+                        _uiEventState.emit(
+                            WorkoutViewModel.UIEvent.ShowError(errorMessage = result.error?.message.toString())
+                        )
+
                     }
                 }
             }

@@ -41,102 +41,123 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.ui.screens.workout.gym.ShowErrorComposable
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YogaPosesScreen(
-    workoutViewModel: WorkoutViewModel,
+    yogaPoses: YogaPosesDto?,
     navController: NavController,
+    difficultyLevel: String,
+    uiEventState: WorkoutViewModel.UIEvent?,
 ) {
-    val yogaPoses = workoutViewModel.yogaPoses.value
-    val difficultyLevel = workoutViewModel.getCurrentYogaDifficultyLevel()
-
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation))
     val progress by animateLottieCompositionAsState(composition)
 
-    if (yogaPoses != null) {
-        Scaffold(
-            topBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .align(CenterVertically)
-                            .padding(horizontal = 10.dp)
-                            .clickable {
-                                navController.popBackStack(BottomBarScreen.WorkoutScreen.route, inclusive = false)
-                            }
-                    )
+    uiEventState?.let { event ->
+        when (event) {
+            is WorkoutViewModel.UIEvent.ShowLoader -> {
+                LottieAnimation(composition = composition, progress = { progress })
+            }
 
-                    Text(
-                        text = "${difficultyLevel.lowercase().capitalize()} Yoga Poses",
-                        color = Color.Black,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(20.dp)
-                            .fillMaxWidth(0.8f)
-                            .align(CenterVertically),
-                        textAlign = TextAlign.Center
+            is WorkoutViewModel.UIEvent.HideLoader -> {
+                if (yogaPoses != null) {
+                    PopulateYogaPoses(
+                        yogaPoses = yogaPoses,
+                        navController = navController,
+                        difficultyLevel = difficultyLevel
                     )
+                } else {
+                    ShowErrorComposable(errorMessage = "")
                 }
             }
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .background(Color.White)
-                    .padding(paddingValues = it),
-                horizontalAlignment = CenterHorizontally
-            ) {
 
-                items(yogaPoses.poses) { pose ->
-                    var showBottomSheetWithAllDetails by remember {
-                        mutableStateOf(false)
-                    }
-
-                    val sheetState = rememberModalBottomSheetState()
-
-                    YogaPoseItemComposable(
-                        englishName = pose.english_name,
-                        description = pose.pose_description,
-                        sanskritName = pose.sanskrit_name,
-                        benefits = pose.pose_benefits,
-                        poseImage = pose.url_png,
-                        shouldShowBottomSheetWithDetails = showBottomSheetWithAllDetails,
-                        toggleBottomSheetWithDetails = { toggle ->
-                            showBottomSheetWithAllDetails = toggle
-                        },
-                        sheetState = sheetState
-                    )
-                }
+            is WorkoutViewModel.UIEvent.ShowError -> {
+                ShowErrorComposable(errorMessage = event.errorMessage)
             }
-        }
-    } else {
-        Column {
-            LottieAnimation(
-                composition = composition,
-                progress = {
-                    progress
-                }
-            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun YogaPoseItemComposable(
+fun PopulateYogaPoses(
+    yogaPoses: YogaPosesDto,
+    navController: NavController,
+    difficultyLevel: String,
+) {
+    Scaffold(
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .align(CenterVertically)
+                        .padding(horizontal = 10.dp)
+                        .clickable {
+                            navController.popBackStack(BottomBarScreen.WorkoutScreen.route, inclusive = false)
+                        }
+                )
+
+                Text(
+                    text = "${difficultyLevel.lowercase().capitalize()} Yoga Poses",
+                    color = Color.Black,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(20.dp)
+                        .fillMaxWidth(0.8f)
+                        .align(CenterVertically),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .background(Color.White)
+                .padding(paddingValues = it),
+            horizontalAlignment = CenterHorizontally
+        ) {
+
+            items(yogaPoses.poses) { pose ->
+                var showBottomSheetWithAllDetails by remember {
+                    mutableStateOf(false)
+                }
+
+                val sheetState = rememberModalBottomSheetState()
+
+                YogaPose(
+                    englishName = pose.english_name,
+                    description = pose.pose_description,
+                    sanskritName = pose.sanskrit_name,
+                    benefits = pose.pose_benefits,
+                    poseImage = pose.url_png,
+                    shouldShowBottomSheetWithDetails = showBottomSheetWithAllDetails,
+                    toggleBottomSheetWithDetails = { toggle ->
+                        showBottomSheetWithAllDetails = toggle
+                    },
+                    sheetState = sheetState
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun YogaPose(
     englishName: String,
     sanskritName: String,
     description: String,
@@ -172,7 +193,7 @@ fun YogaPoseItemComposable(
                     text = "$englishName ($sanskritName)",
                     fontWeight = FontWeight.Bold,
                     fontSize = Dimensions.TITLE_SIZE,
-                    color = ColorsUtil.primaryBackgroundColor,
+                    color = ColorsUtil.primaryDarkTextColor,
                     modifier = Modifier
                         .align(CenterHorizontally)
                         .padding(20.dp)
@@ -188,7 +209,7 @@ fun YogaPoseItemComposable(
 
                 Text(
                     text = benefits,
-                    color = ColorsUtil.primaryBackgroundColor,
+                    color = ColorsUtil.primaryDarkTextColor,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
                 )
@@ -203,7 +224,7 @@ fun YogaPoseItemComposable(
 
                 Text(
                     text = description,
-                    color = ColorsUtil.primaryBackgroundColor,
+                    color = ColorsUtil.primaryDarkTextColor,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
                 )
@@ -231,12 +252,12 @@ fun YogaPoseItemComposable(
                 text = "$englishName ($sanskritName)",
                 fontWeight = FontWeight.Bold,
                 fontSize = Dimensions.TITLE_SIZE,
-                color = ColorsUtil.primaryBackgroundColor
+                color = ColorsUtil.primaryDarkTextColor
             )
 
             Text(
                 text = benefits,
-                color = ColorsUtil.primaryBackgroundColor,
+                color = ColorsUtil.primaryDarkTextColor,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
