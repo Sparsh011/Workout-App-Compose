@@ -66,11 +66,6 @@ import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreen
 
 
-@Composable
-fun CalorieTrackerComposable(navController: NavHostController) {
-    CalorieTrackerScreen(navController = navController)
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalorieTrackerScreen(navController: NavHostController) {
@@ -97,7 +92,7 @@ fun CalorieTrackerScreen(navController: NavHostController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize(1f)
-            .background(primaryDarkTextColor)
+            .background(Color.White)
     ) {
 
         // Search dishes to add calories

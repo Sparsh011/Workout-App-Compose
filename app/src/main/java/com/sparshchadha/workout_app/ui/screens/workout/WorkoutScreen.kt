@@ -29,21 +29,6 @@ import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
-@Composable
-fun WorkoutScreenComposable(
-    difficultyLevels: List<DifficultyLevel>,
-    workoutViewModel: WorkoutViewModel,
-    navController: NavController,
-    gymWorkoutCategories: List<String>,
-) {
-    WorkoutScreen(
-        difficultyLevels = difficultyLevels,
-        workoutViewModel = workoutViewModel,
-        navController = navController,
-        gymWorkoutCategories = gymWorkoutCategories
-    )
-}
-
 
 @Composable
 fun WorkoutScreen(

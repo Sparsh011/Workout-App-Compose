@@ -4,7 +4,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerComposable
+import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerScreen
 
 fun NavGraphBuilder.calorieTrackerComposable(
     navController: NavHostController
@@ -12,6 +12,6 @@ fun NavGraphBuilder.calorieTrackerComposable(
     composable(
         route = BottomBarScreen.CalorieTracker.route
     ) {
-        CalorieTrackerComposable(navController = navController)
+        CalorieTrackerScreen(navController = navController)
     }
 }

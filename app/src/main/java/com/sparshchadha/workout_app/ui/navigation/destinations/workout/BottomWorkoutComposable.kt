@@ -8,6 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
+import com.sparshchadha.workout_app.ui.screens.workout.WorkoutScreen
 import com.sparshchadha.workout_app.ui.screens.workout.WorkoutScreenComposable
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -36,7 +37,7 @@ fun NavGraphBuilder.bottomWorkoutComposable(
             )
         }
     ) {
-        WorkoutScreenComposable(
+        WorkoutScreen(
             difficultyLevels = listOf(
                 DifficultyLevel.BEGINNER,
                 DifficultyLevel.INTERMEDIATE,
