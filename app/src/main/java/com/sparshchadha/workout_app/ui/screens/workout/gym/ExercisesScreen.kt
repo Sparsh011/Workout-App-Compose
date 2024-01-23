@@ -27,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -38,6 +37,8 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
+import com.sparshchadha.workout_app.ui.components.ErrorDuringFetch
+import com.sparshchadha.workout_app.ui.components.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -55,7 +56,10 @@ fun ExercisesScreen(
     uiEventState?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
-                LottieAnimation(composition = composition, progress = { progress })
+                ShowLoadingScreen(
+                    composition = composition,
+                    progress = progress
+                )
             }
 
             is WorkoutViewModel.UIEvent.HideLoader -> {
@@ -69,38 +73,9 @@ fun ExercisesScreen(
             }
 
             is WorkoutViewModel.UIEvent.ShowError -> {
-                ShowErrorComposable(errorMessage = event.errorMessage)
+                ErrorDuringFetch(errorMessage = event.errorMessage)
             }
         }
-    }
-}
-
-@Composable
-fun ShowErrorComposable(errorMessage: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(20.dp)
-    ) {
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_results_found_animation))
-        val progress by animateLottieCompositionAsState(composition)
-
-        LottieAnimation(
-            composition = composition,
-            progress = { progress },
-            modifier = Modifier.padding(20.dp)
-        )
-
-        Text(
-            text = "Unable To Find Exercises!\n $errorMessage",
-            color = Color.Black,
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth(),
-            fontSize = 30.sp,
-            textAlign = TextAlign.Center
-        )
     }
 }
 

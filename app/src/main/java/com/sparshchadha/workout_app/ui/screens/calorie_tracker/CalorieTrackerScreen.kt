@@ -59,11 +59,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreen
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
 
 
 @OptIn(ExperimentalMaterial3Api::class)

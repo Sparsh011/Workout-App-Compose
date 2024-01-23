@@ -36,14 +36,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
+import com.sparshchadha.workout_app.ui.components.ErrorDuringFetch
+import com.sparshchadha.workout_app.ui.components.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.ui.screens.workout.gym.ShowErrorComposable
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.capitalize
@@ -62,7 +62,10 @@ fun YogaPosesScreen(
     uiEventState?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
-                LottieAnimation(composition = composition, progress = { progress })
+                ShowLoadingScreen(
+                    composition = composition,
+                    progress = progress
+                )
             }
 
             is WorkoutViewModel.UIEvent.HideLoader -> {
@@ -73,12 +76,12 @@ fun YogaPosesScreen(
                         difficultyLevel = difficultyLevel
                     )
                 } else {
-                    ShowErrorComposable(errorMessage = "")
+                    ErrorDuringFetch(errorMessage = "")
                 }
             }
 
             is WorkoutViewModel.UIEvent.ShowError -> {
-                ShowErrorComposable(errorMessage = event.errorMessage)
+                ErrorDuringFetch(errorMessage = event.errorMessage)
             }
         }
     }

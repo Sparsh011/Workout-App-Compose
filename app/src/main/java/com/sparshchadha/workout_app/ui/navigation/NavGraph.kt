@@ -6,11 +6,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWorkoutComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.workout.exercisesComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.searchComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWorkoutComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.exercisesComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.workoutCategoryComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaComposable
 import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel

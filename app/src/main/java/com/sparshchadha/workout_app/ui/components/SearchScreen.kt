@@ -152,7 +152,10 @@ fun HandleFoodSearch(
             is WorkoutViewModel.UIEvent.ShowLoader -> {
                 val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation)) // change later
                 val progress by animateLottieCompositionAsState(composition)
-                LottieAnimation(composition = composition, progress = { progress })
+                ShowLoadingScreen(
+                    composition = composition,
+                    progress = progress
+                )
             }
 
             is WorkoutViewModel.UIEvent.HideLoader -> {
@@ -186,7 +189,10 @@ fun HandleExercisesSearch(
             is WorkoutViewModel.UIEvent.ShowLoader -> {
                 val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
                 val progress by animateLottieCompositionAsState(composition)
-                LottieAnimation(composition = composition, progress = { progress })
+                ShowLoadingScreen(
+                    composition = composition,
+                    progress = progress
+                )
             }
 
             is WorkoutViewModel.UIEvent.HideLoader -> {
@@ -295,46 +301,6 @@ fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymWorkoutsDt
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPaddingValues: PaddingValues, errorMessage: String = "") {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
-    ) {
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_results_found_animation))
-        val progress by animateLottieCompositionAsState(composition)
-
-        LottieAnimation(
-            composition = composition,
-            progress = { progress },
-            modifier = Modifier.padding(20.dp)
-        )
-
-        if (errorMessage.isNotEmpty()) {
-            Text(
-                text = "Error $errorMessage",
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth(),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center
-            )
-        } else {
-            Text(
-                text = "No Results Found!",
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth(),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center
-            )
         }
     }
 }
