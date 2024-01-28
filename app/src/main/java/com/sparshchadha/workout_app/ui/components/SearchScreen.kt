@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -33,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -51,6 +53,7 @@ import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodCard
 import com.sparshchadha.workout_app.ui.screens.workout.gym.Exercise
+import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -65,7 +68,7 @@ fun SearchScreen(
     dishes: NutritionalValueDto?,
     exercises: GymWorkoutsDto?,
     workoutUIStateEvent: WorkoutViewModel.UIEvent?,
-    foodUIStateEvent: WorkoutViewModel.UIEvent?
+    foodUIStateEvent: WorkoutViewModel.UIEvent?,
 ) {
     var searchBarQuery by remember {
         mutableStateOf("")
@@ -126,7 +129,7 @@ fun handleSearchFor(
     searchFor: String?,
     searchBarQuery: String,
     searchFoodViewModel: SearchFoodViewModel,
-    workoutViewModel: WorkoutViewModel
+    workoutViewModel: WorkoutViewModel,
 ) {
     when (searchFor) {
         "food" -> {
@@ -145,7 +148,7 @@ fun HandleFoodSearch(
     foodUIStateEvent: WorkoutViewModel.UIEvent?,
     paddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
-    dishes: NutritionalValueDto?
+    dishes: NutritionalValueDto?,
 ) {
     foodUIStateEvent?.let { event ->
         when (event) {
@@ -315,18 +318,21 @@ fun MySearchBar(
     onCloseClicked: () -> Unit,
 ) {
     Surface(
-        border = BorderStroke(2.dp, Color.White)
+        border = BorderStroke(2.dp, Color.White),
+        color = Color.White
     ) {
         TextField(
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
                 unfocusedTextColor = Color.Black,
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                disabledContainerColor = Color.White,
+                focusedContainerColor = ColorsUtil.primaryLightGray,
+                unfocusedContainerColor = ColorsUtil.primaryLightGray,
+                disabledContainerColor = ColorsUtil.primaryLightGray,
             ),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(10.dp)
+                .clip(RoundedCornerShape(5.dp))
                 .focusable(enabled = true)
                 .focusRequester(focusRequester = focusRequester),
             value = searchBarQuery,
@@ -335,16 +341,18 @@ fun MySearchBar(
             },
             placeholder = {
                 Text(
-                    color = Color.Black,
-                    text = "Search..."
+                    color = ColorsUtil.primaryDarkGray,
+                    text = "Search Here..."
                 )
             },
             singleLine = true,
             leadingIcon = {
-                IconButton(onClick = {
-                    searchDish()
-                    focusManager.clearFocus()
-                }) {
+                IconButton(
+                    onClick = {
+                        searchDish()
+                        focusManager.clearFocus()
+                    }
+                ){
                     Icon(
                         imageVector = Icons.Filled.Search,
                         tint = Color.Gray,
@@ -353,18 +361,19 @@ fun MySearchBar(
                 }
             },
             trailingIcon = {
-                IconButton(onClick = {
-                    if (searchBarQuery.isNotEmpty()) {
-                        updateSearchQuery("")
-                    } else {
-                        onCloseClicked()
+                IconButton(
+                    onClick = {
+                        if (searchBarQuery.isNotEmpty()) {
+                            updateSearchQuery("")
+                        } else {
+                            onCloseClicked()
+                        }
                     }
-                })
-                {
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Clear,
                         contentDescription = null,
-                        tint = Color.Black
+                        tint = Color.Gray
                     )
                 }
             },

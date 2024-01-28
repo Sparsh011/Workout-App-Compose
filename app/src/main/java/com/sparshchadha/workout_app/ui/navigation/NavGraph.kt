@@ -24,7 +24,7 @@ fun NavGraph(
     workoutViewModel: WorkoutViewModel,
     exercises: GymWorkoutsDto?,
 ) {
-    NavHost(navController = navController, startDestination = BottomBarScreen.WorkoutScreen.route) {
+    NavHost(navController = navController, startDestination = BottomBarScreen.CalorieTracker.route) {
         // Workout Tracker in Bottom Bar
         bottomWorkoutComposable(
             workoutViewModel = workoutViewModel,
@@ -33,7 +33,8 @@ fun NavGraph(
 
         // Calorie Tracker in Bottom Bar
        calorieTrackerComposable(
-           navController = navController
+           navController = navController,
+           paddingValues = paddingValues
        )
 
         // Search Screen

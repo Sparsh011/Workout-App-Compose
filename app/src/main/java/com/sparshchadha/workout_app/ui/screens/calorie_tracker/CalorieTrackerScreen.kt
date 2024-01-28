@@ -1,13 +1,13 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
-import android.widget.Toast
-import androidx.compose.foundation.Canvas
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,60 +15,54 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.progressSemantics
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreen
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
+import com.sparshchadha.workout_app.util.ColorsUtil
+import kotlinx.coroutines.launch
 
+private const val TAG = "CalorieTrackerScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CalorieTrackerScreen(navController: NavHostController) {
+fun CalorieTrackerScreen(
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+) {
     var caloriesGoal by remember {
         mutableFloatStateOf(1000F)
     }
@@ -77,7 +71,7 @@ fun CalorieTrackerScreen(navController: NavHostController) {
         mutableFloatStateOf(0F)
     }
 
-    var showCaloriesGoalBottomSheet by remember {
+    var shouldShowCaloriesBottomSheet by remember {
         mutableStateOf(false)
     }
     val sheetState = rememberModalBottomSheetState()
@@ -89,151 +83,223 @@ fun CalorieTrackerScreen(navController: NavHostController) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize(1f)
-            .background(Color.White)
-    ) {
-
-        // Search dishes to add calories
-        item {
-            SearchBar(
-                query = searchBarQuery,
-                onQueryChange = {
+    Scaffold(
+        topBar = {
+            SearchBarToLaunchSearchScreen(
+                searchBarQuery = searchBarQuery,
+                context = context,
+                navController = navController,
+                focusManager = focusManager,
+                updateSearchBarQuery = {
                     searchBarQuery = it
-                },
-                onSearch = {
-                    Toast.makeText(context, "Searching for $it", Toast.LENGTH_SHORT).show()
-                },
-                active = false,
-                onActiveChange = {
-                    navController.navigate("SearchScreen/food")
-                },
-                placeholder = {
-                    Text(text = "Search Your Dish...", color = primaryDarkGray)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = primaryDarkGray
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = null,
-                        modifier = Modifier.clickable {
-                            searchBarQuery = ""
-                            focusManager.clearFocus()
-                        },
-                        tint = primaryDarkGray
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                colors = SearchBarDefaults.colors(
-                    containerColor = primaryDarkTextColor,
-                    inputFieldColors = TextFieldDefaults.textFieldColors(
-                        focusedTextColor = primaryGreenCardBackground
-                    )
-                ),
-                shape = RoundedCornerShape(size = 10.dp)
-            ) {
-
-            }
+                }
+            )
         }
-
-        item {
-            // Calories consumed today
-            var progress: Float by remember { mutableFloatStateOf(0.8F) }
-            val indicatorSize = 50.dp
-            val trackWidth: Dp = (indicatorSize * .15f)
-
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                GradientProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .size(indicatorSize)
-                        .align(Center),
-                    strokeWidth = trackWidth,
-                    gradientStart = primaryBlue,
-                    gradientEnd = primaryGreen,
-                    trackColor = Color.LightGray,
+    ) { localPaddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+        ) {
+            // Show Today's calories and nutrients -
+            item {
+                CaloriesAndNutrientsConsumedToday(
+                    shouldShowCaloriesBottomSheet = shouldShowCaloriesBottomSheet,
+                    sheetState = sheetState,
+                    caloriesGoal,
+                    hideCaloriesBottomSheet = {
+                        shouldShowCaloriesBottomSheet = false
+                    },
+                    updateCaloriesGoal = {
+                        caloriesGoal = it
+                    },
+                    showCaloriesGoalBottomSheet = {
+                        shouldShowCaloriesBottomSheet = true
+                    }
                 )
             }
 
-            // Bottom sheet to update calories goal
-            if (showCaloriesGoalBottomSheet) {
-                ShowModalBottomSheet(
-                    sheetState = sheetState,
-                    caloriesGoal = caloriesGoal,
-                    onSheetDismissed = {
-                        showCaloriesGoalBottomSheet = false
-                    }
-                ) {
-                    caloriesGoal = it
-                    progress = caloriesGoal / 5000
-                }
+            item {
+                SelectDay()
             }
-        }
 
-        // Update calories button
-        item {
-            Text(
-                text = "Change Calories Goal",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-                    .clickable {
-                        showCaloriesGoalBottomSheet = true
+            // Today's consumed dishes -
+            item {
+                Text(
+                    buildAnnotatedString {
+                        append("Dishes Consumed ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = ColorsUtil.primaryDarkTextColor,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = TextUnit(24f, TextUnitType.Unspecified),
+                            )
+                        ) {
+                            append("Today")
+                        }
                     },
-                color = primaryGreenCardBackground,
-                fontSize = 15.sp,
-                textAlign = TextAlign.Center
-            )
-        }
+                    fontSize = TextUnit(24f, TextUnitType.Unspecified),
+                    color = ColorsUtil.primaryDarkTextColor,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.padding(15.dp)
+                )
+            }
 
-
-        // Today's consumed dishes -
-        items(listOf("Cake", "Pasta")) {
-            DishesConsumedToday(dish = it)
+            items(listOf("Cake", "Pasta", "Pizza", "Sandwich", "Burger", "Paneer")) {
+                FoodCard(
+                    foodItemName = it,
+                    calories = "100",
+                    sugar = "100",
+                    fiber = "100",
+                    sodium = "100",
+                    cholesterol = "100",
+                    protein = "100",
+                    carbohydrates = "100",
+                    servingSize = "100",
+                    totalFat = "100",
+                    saturatedFat = "100",
+                    expandCard = { /*TODO*/ },
+                    collapseCard = { /*TODO*/ },
+                    shouldExpandCard = false
+                )
+            }
         }
     }
 }
 
 @Composable
-fun DishesConsumedToday(dish: String) {
-    Card(
+fun SelectDay() {
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val list = listOf(
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+    )
+    LaunchedEffect(key1 = Unit) {
+        coroutineScope.launch {
+            listState.scrollToItem(list.size / 2)
+        }
+    }
+
+    var selectedItem by remember {
+        mutableIntStateOf(list.size / 2)
+    }
+
+    val visibleItems by remember {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val visibleItemsInfo = layoutInfo.visibleItemsInfo
+            if (layoutInfo.totalItemsCount == 0) {
+                0
+            } else {
+                val firstVisibleItem = visibleItemsInfo.first()
+                val lastVisibleItem = visibleItemsInfo.last()
+                lastVisibleItem.index - firstVisibleItem.index
+            }
+        }
+    }
+
+    LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(10.dp),
+        state = listState,
+        horizontalArrangement = Arrangement.Center
     ) {
-        Row(
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth()
-        ) {
-            Text(text = dish, modifier = Modifier.weight(0.7f))
-            Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.align(CenterVertically))
-            Text(
-                text = "5", modifier = Modifier
-                    .padding(5.dp)
-                    .align(CenterVertically)
-            )
-            Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.align(CenterVertically))
+        items(list.size) {
+            if (it == selectedItem) {
+                DayAndDate(
+                    date = it.toString(),
+                    day = "Mon",
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(ColorsUtil.primaryGreenCardBackground)
+                        .padding(10.dp)
+                        .fillParentMaxWidth(0.1f)
+                        .clickable {
+                            selectedItem = it
+                            coroutineScope.launch {
+                                if (it < 2 || it - (visibleItems / 2) < 0) {
+                                    listState.scrollToItem(it)
+                                } else {
+                                    listState.scrollToItem(it - (visibleItems / 2))
+                                }
+                            }
+                        },
+                )
 
+            } else {
+                DayAndDate(
+                    date = it.toString(),
+                    day = "Tues",
+                    modifier = Modifier
+                        .padding(horizontal = 10.dp)
+                        .padding(10.dp)
+                        .fillParentMaxWidth(0.1f)
+                        .clickable {
+                            selectedItem = it
+                            coroutineScope.launch {
+                                if (it - (visibleItems / 2) < 0) {
+                                    listState.scrollToItem(it)
+                                } else {
+                                    listState.scrollToItem(it - (visibleItems / 2))
+                                }
+                            }
+                        }
+                )
+            }
         }
+    }
+}
+
+@Composable
+fun DayAndDate(
+    date: String,
+    day: String,
+    modifier: Modifier,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = day,
+            fontSize = TextUnit(20f, TextUnitType.Unspecified),
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+        Spacer(modifier = Modifier.size(10.dp))
+        Text(
+            text = date,
+            fontSize = TextUnit(18f, TextUnitType.Unspecified),
+            color = ColorsUtil.primaryDarkTextColor
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowModalBottomSheet(
+fun UpdateCaloriesBottomSheet(
     sheetState: SheetState,
     caloriesGoal: Float,
     onSheetDismissed: () -> Unit,
@@ -264,7 +330,6 @@ fun ShowModalBottomSheet(
                 }
             }
         }
-
     }
 }
 
@@ -294,92 +359,4 @@ fun CaloriesConsumedAndSliderComposable(
         enabled = shouldEnableSlider,
         modifier = sliderModifier
     )
-}
-
-
-@Composable
-fun GradientProgressIndicator(
-    progress: Float,
-    modifier: Modifier = Modifier,
-    gradientStart: Color,
-    gradientEnd: Color,
-    trackColor: Color,
-    strokeWidth: Dp,
-) {
-    val stroke = with(LocalDensity.current) {
-        Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
-    }
-    Canvas(
-        modifier
-            .progressSemantics(progress)
-    ) {
-        // Start at 12 o'clock
-        val startAngle = 270f
-        val sweep = progress * 360f
-        drawDeterminateCircularIndicator(startAngle, 360f, trackColor, stroke)
-        drawCircularIndicator(
-            startAngle = startAngle,
-            sweep = sweep,
-            gradientStart = gradientStart,
-            gradientEnd = gradientEnd,
-            stroke = stroke
-        )
-    }
-}
-
-private fun DrawScope.drawDeterminateCircularIndicator(
-    startAngle: Float,
-    sweep: Float,
-    color: Color,
-    stroke: Stroke,
-) = drawCircularIndicator(startAngle, sweep, color, stroke)
-
-private fun DrawScope.drawCircularIndicator(
-    startAngle: Float,
-    sweep: Float,
-    color: Color,
-    stroke: Stroke,
-) {
-    // To draw this circle we need a rect with edges that line up with the midpoint of the stroke.
-    // To do this we need to remove half the stroke width from the total diameter for both sides.
-    val diameterOffset = stroke.width / 2
-    val arcDimen = size.width - 2 * diameterOffset
-    drawArc(
-        color = color,
-        startAngle = startAngle,
-        sweepAngle = sweep,
-        useCenter = false,
-        topLeft = Offset(diameterOffset, diameterOffset),
-        size = Size(arcDimen, arcDimen),
-        style = stroke
-    )
-}
-
-private fun DrawScope.drawCircularIndicator(
-    startAngle: Float,
-    sweep: Float,
-    gradientStart: Color,
-    gradientEnd: Color,
-    stroke: Stroke,
-) {
-    // To draw this circle we need a rect with edges that line up with the midpoint of the stroke.
-    // To do this we need to remove half the stroke width from the total diameter for both sides.
-    val diameterOffset = stroke.width / 2
-    val arcDimen = size.width - 2 * diameterOffset
-    rotate(degrees = -90f) {
-        drawArc(
-            brush = Brush.sweepGradient(
-                colorStops = listOf(
-                    0.0f to gradientStart,
-                    sweep / 360 to gradientEnd,
-                ).toTypedArray()
-            ),
-            startAngle = startAngle + 90,
-            sweepAngle = sweep,
-            useCenter = false,
-            topLeft = Offset(diameterOffset, diameterOffset),
-            size = Size(arcDimen, arcDimen),
-            style = stroke
-        )
-    }
 }
