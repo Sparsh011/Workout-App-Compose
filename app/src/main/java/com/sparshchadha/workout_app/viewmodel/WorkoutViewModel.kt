@@ -4,13 +4,15 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
+import com.sparshchadha.workout_app.data.local.entities.YogaEntity
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
-import com.sparshchadha.workout_app.ui.screens.workout.gym.CategoryType
+import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
 import com.sparshchadha.workout_app.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -28,13 +30,11 @@ class WorkoutViewModel @Inject constructor(
     private var _yogaPoses = mutableStateOf<YogaPosesDto?>(null)
     val yogaPoses = _yogaPoses
 
-    private var _exercises = mutableStateOf<GymWorkoutsDto?>(null)
+    private var _exercises = mutableStateOf<GymExercisesDto?>(null)
     val exercises = _exercises
 
     private var _selectedCategoryForGymExercise = mutableStateOf(CategoryType.WORKOUT_TYPE)
 
-    var showErrorToast = mutableStateOf(false)
-    var showErrorMessageInToast = mutableStateOf("")
 
     private val _uiEventState = MutableStateFlow<UIEvent?>(value = null)
     val uiEventStateFlow = _uiEventState.asStateFlow()
@@ -207,6 +207,33 @@ class WorkoutViewModel @Inject constructor(
     }
 
     fun getCurrentCategoryTypeForGymWorkout(): CategoryType = _selectedCategoryForGymExercise.value
+
+    fun saveYogaPose(yogaPose: YogaEntity) {
+        viewModelScope.launch {
+            workoutRepository.saveYogaPose(yogaPose = yogaPose)
+        }
+    }
+
+    fun getSavedYogaPoses(){
+        viewModelScope.launch (Dispatchers.IO) {
+            val poses = workoutRepository.getSavedYogaPoses()
+            poses.collect { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        Log.e(TAG, "getSavedYogaPoses poses : ${response.data}")
+                    }
+
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Error -> {
+                        Log.d(TAG, "getSavedYogaPoses poses : ${response.error?.message}")
+                    }
+                }
+            }
+        }
+    }
 
     sealed class UIEvent {
         data class ShowError(val errorMessage: String) : UIEvent()

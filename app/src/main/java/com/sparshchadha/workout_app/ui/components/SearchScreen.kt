@@ -2,7 +2,6 @@ package com.sparshchadha.workout_app.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,16 +40,15 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
+import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
+import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodCard
 import com.sparshchadha.workout_app.ui.screens.workout.gym.Exercise
 import com.sparshchadha.workout_app.util.ColorsUtil
@@ -66,7 +64,7 @@ fun SearchScreen(
     searchFor: String?,
     workoutViewModel: WorkoutViewModel,
     dishes: NutritionalValueDto?,
-    exercises: GymWorkoutsDto?,
+    exercises: GymExercisesDto?,
     workoutUIStateEvent: WorkoutViewModel.UIEvent?,
     foodUIStateEvent: WorkoutViewModel.UIEvent?,
 ) {
@@ -153,7 +151,7 @@ fun HandleFoodSearch(
     foodUIStateEvent?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation)) // change later
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.food_search_animation))
                 val progress by animateLottieCompositionAsState(composition)
                 ShowLoadingScreen(
                     composition = composition,
@@ -185,7 +183,7 @@ fun HandleExercisesSearch(
     workoutUIStateEvent: WorkoutViewModel.UIEvent?,
     paddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
-    exercises: GymWorkoutsDto?,
+    exercises: GymExercisesDto?,
 ) {
     workoutUIStateEvent?.let { event ->
         when (event) {
@@ -267,7 +265,7 @@ fun FoodSearchResults(paddingValues: PaddingValues, dishes: NutritionalValueDto?
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymWorkoutsDto?, localPaddingValues: PaddingValues) {
+fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymExercisesDto?, localPaddingValues: PaddingValues) {
     exercises?.let {
         if (it.size == 0) {
             NoResultsFoundOrErrorDuringSearch(

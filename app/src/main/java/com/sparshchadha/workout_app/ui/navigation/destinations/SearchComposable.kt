@@ -17,7 +17,7 @@ fun NavGraphBuilder.searchComposable(
     searchFoodViewModel: SearchFoodViewModel,
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
-    paddingValues: PaddingValues
+    globalPaddingValues: PaddingValues
 ) {
     composable(
         route = UtilityScreen.SearchScreen.route,
@@ -49,7 +49,7 @@ fun NavGraphBuilder.searchComposable(
 
         SearchScreen(
             searchFoodViewModel = searchFoodViewModel,
-            paddingValues = paddingValues,
+            paddingValues = globalPaddingValues,
             onCloseClicked = {
                 navController.popBackStack()
             },

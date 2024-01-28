@@ -3,6 +3,7 @@ package com.sparshchadha.workout_app.ui.screens.workout.gym
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,45 +37,68 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
-import com.sparshchadha.workout_app.ui.components.ErrorDuringFetch
-import com.sparshchadha.workout_app.ui.components.ShowLoadingScreen
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
+import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
+import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
 fun ExercisesScreen(
     navController: NavController,
     category: String?,
-    exercises: GymWorkoutsDto?,
+    exercises: GymExercisesDto?,
     uiEventState: WorkoutViewModel.UIEvent?,
+    globalPaddingValues: PaddingValues,
 ) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
-    val progress by animateLottieCompositionAsState(composition)
 
     uiEventState?.let { event ->
-        when (event) {
-            is WorkoutViewModel.UIEvent.ShowLoader -> {
-                ShowLoadingScreen(
-                    composition = composition,
-                    progress = progress
-                )
-            }
+        HandleUIEventsForExercises(
+            event = event,
+            category = category,
+            navController = navController,
+            exercises = exercises,
+            globalPaddingValues = globalPaddingValues
+        )
+    }
+}
 
-            is WorkoutViewModel.UIEvent.HideLoader -> {
-                ShowExercises(
-                    category = category,
-                    navController = navController,
-                    exercises = exercises,
-                    composition = composition,
-                    progress = progress
-                )
-            }
+@Composable
+fun HandleUIEventsForExercises(
+    event: WorkoutViewModel.UIEvent,
+    category: String?,
+    navController: NavController,
+    exercises: GymExercisesDto?,
+    globalPaddingValues: PaddingValues
+) {
+    when (event) {
+        is WorkoutViewModel.UIEvent.ShowLoader -> {
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
+            val progress by animateLottieCompositionAsState(composition)
+            ShowLoadingScreen(
+                composition = composition,
+                progress = progress
+            )
+        }
 
-            is WorkoutViewModel.UIEvent.ShowError -> {
-                ErrorDuringFetch(errorMessage = event.errorMessage)
-            }
+        is WorkoutViewModel.UIEvent.HideLoader -> {
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
+            val progress by animateLottieCompositionAsState(composition)
+            ShowExercises(
+                category = category,
+                navController = navController,
+                exercises = exercises,
+                composition = composition,
+                progress = progress,
+                globalPaddingValues = globalPaddingValues
+            )
+        }
+
+        is WorkoutViewModel.UIEvent.ShowError -> {
+            ErrorDuringFetch(errorMessage = event.errorMessage)
         }
     }
 }
@@ -85,22 +109,26 @@ fun ExercisesScreen(
 fun ShowExercises(
     category: String?,
     navController: NavController,
-    exercises: GymWorkoutsDto?,
+    exercises: GymExercisesDto?,
     composition: LottieComposition?,
     progress: Float,
+    globalPaddingValues: PaddingValues,
 ) {
     Scaffold(
         topBar = {
             val topBarDescription = category ?: "Exercises"
-            ScaffoldTopBar(topBarDescription = topBarDescription, onBackButtonPressed = {
-                navController.popBackStack(route = UtilityScreen.SelectExerciseCategory.route, inclusive = false)
-            })
+            ScaffoldTopBar(
+                topBarDescription = topBarDescription,
+                onBackButtonPressed = {
+                    navController.popBackStack(route = UtilityScreen.SelectExerciseCategory.route, inclusive = false)
+                }
+            )
         }
-    ) { paddingValues ->
+    ) { localPaddingValues ->
         LazyColumn(
             modifier = Modifier
                 .background(Color.White)
-                .padding(paddingValues)
+                .padding(top = localPaddingValues.calculateTopPadding(), bottom = globalPaddingValues.calculateBottomPadding())
                 .fillMaxSize()
         ) {
             if (exercises != null) {
@@ -156,15 +184,13 @@ fun Exercise(
             containerColor = Color.White,
             sheetState = sheetState
         ) {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                ExerciseSubTitlesAndDescription(subTitle = "Exercise Name", description = name)
-                ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = difficulty)
-                ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = muscle)
-                ExerciseSubTitlesAndDescription(subTitle = "Equipment Required", description = equipment)
-                ExerciseSubTitlesAndDescription(subTitle = "Instructions", description = instructions)
-            }
+            ExerciseDetailsModalBottomSheet(
+                name = name,
+                difficulty = difficulty,
+                muscle = muscle,
+                equipment = equipment,
+                instructions = instructions
+            )
         }
     }
 
@@ -186,9 +212,28 @@ fun Exercise(
 }
 
 @Composable
+fun ExerciseDetailsModalBottomSheet(
+    name: String,
+    difficulty: String,
+    muscle: String,
+    equipment: String,
+    instructions: String
+) {
+    Column(
+        modifier = Modifier.verticalScroll(rememberScrollState())
+    ) {
+        ExerciseSubTitlesAndDescription(subTitle = "Exercise Name", description = name)
+        ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = difficulty)
+        ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = muscle)
+        ExerciseSubTitlesAndDescription(subTitle = "Equipment Required", description = equipment)
+        ExerciseSubTitlesAndDescription(subTitle = "Instructions", description = instructions)
+    }
+}
+
+@Composable
 fun ExerciseSubTitlesAndDescription(subTitle: String, description: String) {
     Text(
-        text = subTitle,
+        text = subTitle, // already capitalized when passed as argument
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         color = Color.Black,
@@ -196,7 +241,7 @@ fun ExerciseSubTitlesAndDescription(subTitle: String, description: String) {
     )
 
     Text(
-        text = description,
+        text = description.capitalize(),
         modifier = Modifier.padding(10.dp),
         color = ColorsUtil.primaryDarkTextColor
     )

@@ -1,8 +1,8 @@
 package com.sparshchadha.workout_app.util
 
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
-import com.sparshchadha.workout_app.ui.screens.workout.gym.MuscleType
-import com.sparshchadha.workout_app.ui.screens.workout.gym.WorkoutType
+import com.sparshchadha.workout_app.ui.screens.workout.gym.util.MuscleType
+import com.sparshchadha.workout_app.ui.screens.workout.gym.util.WorkoutType
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 
 object HelperFunctions {

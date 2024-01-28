@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -11,8 +12,11 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,14 +28,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
-import com.sparshchadha.workout_app.ui.screens.workout.gym.CategoryType
+import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 
 @Composable
-fun WorkoutScreen(
+fun GymAndYogaWorkoutHomeScreen(
     difficultyLevels: List<DifficultyLevel>,
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
@@ -44,33 +48,23 @@ fun WorkoutScreen(
             .fillMaxSize()
             .padding(all = 20.dp)
     ) {
-        item(
-            span = { GridItemSpan(2) }
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
 
-                Text(
-                    text = "What Would You Like To Do Today?",
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 25.sp,
-                    modifier = Modifier
-                        .padding(all = 10.dp)
-                        .weight(0.9f)
-                )
-            }
+        header {
+            Text(
+                text = "What Would You Like To Do Today?",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 25.sp,
+                modifier = Modifier
+                    .padding(all = 10.dp)
+
+            )
         }
 
         // Gym workout
         header {
-            Text(
-                text = "Gym Workout",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                modifier = Modifier.padding(all = 10.dp)
+            HeaderText(
+                heading = "Gym Workout"
             )
         }
 
@@ -79,46 +73,23 @@ fun WorkoutScreen(
                 category = it,
                 modifier = Modifier.padding(20.dp),
                 onCategorySelection = { categorySelected ->
-                    when (categorySelected) {
-                        "Program" -> {
-                            workoutViewModel.updateCategoryTypeForGymWorkout(
-                                categoryType = CategoryType.WORKOUT_TYPE
-                            )
-                            navController.navigate(UtilityScreen.SelectExerciseCategory.route)
-                        }
-
-                        "Body Part" -> {
-                            workoutViewModel.updateCategoryTypeForGymWorkout(
-                                categoryType = CategoryType.MUSCLE_TYPE
-                            )
-                            navController.navigate(UtilityScreen.SelectExerciseCategory.route)
-                        }
-
-                        "Difficulty" -> {
-                            workoutViewModel.updateCategoryTypeForGymWorkout(
-                                categoryType = CategoryType.DIFFICULTY_LEVEL
-                            )
-                            navController.navigate(UtilityScreen.SelectExerciseCategory.route)
-                        }
-
-                        "Search Exercise" -> {
-                            workoutViewModel.updateCategoryTypeForGymWorkout(
-                                categoryType = CategoryType.SEARCH_EXERCISE
-                            )
-                            navController.navigate("SearchScreen/exercises")
-                        }
-                    }
-                })
+                    handleGymExercisesCategorySelection(
+                        categorySelected = categorySelected,
+                        updateGymWorkoutCategory = { categoryType ->
+                            workoutViewModel.updateCategoryTypeForGymWorkout(categoryType = categoryType)
+                        },
+                        navigateToScreen = { route ->
+                            navController.navigate(route)
+                        },
+                    )
+                }
+            )
         }
 
         // Yoga poses
         header {
-            Text(
-                text = "Yoga Poses",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                modifier = Modifier.padding(all = 10.dp)
+            HeaderText(
+                heading = "Yoga Poses"
             )
         }
 
@@ -135,15 +106,109 @@ fun WorkoutScreen(
         }
 
         header {
-            Text(
-                text = "Track Your Today's Workout",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                modifier = Modifier.padding(all = 10.dp)
+            HeaderText(
+                heading = "Track Today's Workout"
             )
         }
 
+        item(
+            span = { GridItemSpan(this.maxLineSpan) }
+        ) {
+            TodayWorkoutCard(
+                category = "Yoga",
+                onCategoryItemSelected = {
+                    // navigate
+                }
+            )
+        }
+
+        item(
+            span = { GridItemSpan(this.maxLineSpan) }
+        ) {
+            TodayWorkoutCard(
+                category = "Gym",
+                onCategoryItemSelected = {
+                    // navigate
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun TodayWorkoutCard(
+    category: String,
+    onCategoryItemSelected: () -> Unit,
+) {
+
+    Card (
+        colors = CardDefaults.cardColors(
+            containerColor = ColorsUtil.primaryGreenCardBackground
+        ),
+        modifier = Modifier.padding(10.dp)
+    ){
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable {
+                onCategoryItemSelected()
+            }
+        ) {
+            Text(
+                text = category,
+                fontSize = 20.sp,
+                color = ColorsUtil.primaryDarkTextColor,
+                modifier = Modifier
+                    .padding(20.dp)
+                    .weight(0.8f)
+                    .fillMaxWidth()
+            )
+
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowRight,
+                contentDescription = null,
+                tint = ColorsUtil.primaryDarkTextColor,
+                modifier = Modifier.padding(20.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun HeaderText(heading: String) {
+    Text(
+        text = heading,
+        color = Color.Black,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        modifier = Modifier.padding(all = 10.dp)
+    )
+}
+
+fun handleGymExercisesCategorySelection(
+    categorySelected: String,
+    updateGymWorkoutCategory: (CategoryType) -> Unit,
+    navigateToScreen: (String) -> Unit,
+) {
+    when (categorySelected) {
+        "Program" -> {
+            updateGymWorkoutCategory(CategoryType.WORKOUT_TYPE)
+            navigateToScreen(UtilityScreen.SelectExerciseCategory.route)
+        }
+
+        "Body Part" -> {
+            updateGymWorkoutCategory(CategoryType.MUSCLE_TYPE)
+            navigateToScreen(UtilityScreen.SelectExerciseCategory.route)
+        }
+
+        "Difficulty" -> {
+            updateGymWorkoutCategory(CategoryType.DIFFICULTY_LEVEL)
+            navigateToScreen(UtilityScreen.SelectExerciseCategory.route)
+        }
+
+        "Search Exercise" -> {
+            updateGymWorkoutCategory(CategoryType.SEARCH_EXERCISE)
+            navigateToScreen("SearchScreen/exercises")
+        }
     }
 }
 

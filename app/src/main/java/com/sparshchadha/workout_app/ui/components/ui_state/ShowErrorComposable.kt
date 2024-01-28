@@ -1,7 +1,7 @@
-package com.sparshchadha.workout_app.ui.components
+package com.sparshchadha.workout_app.ui.components.ui_state
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,11 +20,12 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 
 @Composable
-fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPaddingValues: PaddingValues, errorMessage: String = "") {
+fun ErrorDuringFetch(errorMessage: String) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+            .background(Color.White)
+            .padding(20.dp)
     ) {
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_results_found_animation))
         val progress by animateLottieCompositionAsState(composition)
@@ -35,26 +36,14 @@ fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPadding
             modifier = Modifier.padding(20.dp)
         )
 
-        if (errorMessage.isNotEmpty()) {
-            Text(
-                text = "Error $errorMessage",
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth(),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center
-            )
-        } else {
-            Text(
-                text = "No Results Found!",
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth(),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center
-            )
-        }
+        Text(
+            text = "Unable To Find Exercises!\n $errorMessage",
+            color = Color.Black,
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
+            fontSize = 30.sp,
+            textAlign = TextAlign.Center
+        )
     }
 }

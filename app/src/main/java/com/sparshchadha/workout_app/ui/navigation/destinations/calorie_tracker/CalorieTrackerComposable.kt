@@ -9,11 +9,11 @@ import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerScr
 
 fun NavGraphBuilder.calorieTrackerComposable(
     navController: NavHostController,
-    paddingValues: PaddingValues
+    globalPaddingValues: PaddingValues
 ) {
     composable(
         route = BottomBarScreen.CalorieTracker.route
     ) {
-        CalorieTrackerScreen(navController = navController, paddingValues = paddingValues)
+        CalorieTrackerScreen(navController = navController, paddingValues = globalPaddingValues)
     }
 }

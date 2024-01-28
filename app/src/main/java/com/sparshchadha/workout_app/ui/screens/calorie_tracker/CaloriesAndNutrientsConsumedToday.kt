@@ -121,35 +121,23 @@ fun CaloriesConsumedAndLeftToday(
     caloriesGoal: Float,
     showCaloriesGoalBottomSheet: () -> Unit,
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(20.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        Column(
+
+        CaloriesLeftOrEatenColumn(
+            calories = caloriesGoal,
+            description = "Eaten",
             modifier = Modifier
                 .weight(1f)
-                .padding(20.dp),
-            horizontalAlignment = CenterHorizontally
-        ) {
-            Text(
-                text = "Eaten",
-                modifier = Modifier.align(CenterHorizontally),
-                fontWeight = FontWeight.Bold,
-                fontSize = TextUnit(24f, TextUnitType.Unspecified),
-                color = Color.Black
-            )
-            Text(
-                text = "${caloriesGoal.toInt()} KCAL",
-                modifier = Modifier.align(CenterHorizontally),
-                fontSize = TextUnit(16f, TextUnitType.Unspecified),
-                color = ColorsUtil.primaryDarkTextColor
-            )
-        }
+                .padding(20.dp)
+        )
 
-        Box(
+        CenterCaloriesGoalBox(
+            calories = caloriesGoal,
             modifier = Modifier
                 .weight(1f)
                 .clip(CircleShape)
@@ -158,48 +146,62 @@ fun CaloriesConsumedAndLeftToday(
                 .size(100.dp)
                 .clickable {
                     showCaloriesGoalBottomSheet()
-                },
-            contentAlignment = Center
-        ) {
-            Text(
-                buildAnnotatedString {
-                    withStyle(
-                        style = SpanStyle(
-                            color = ColorsUtil.primaryDarkTextColor,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = TextUnit(24f, TextUnitType.Unspecified),
-                        )
-                    ) {
-                        append("${caloriesGoal.toInt()}\n")
-                    }
-                    append("KCAL")
-                },
-                fontSize = TextUnit(18f, TextUnitType.Unspecified),
-                color = ColorsUtil.primaryDarkTextColor,
-                textAlign = TextAlign.Center
-            )
-        }
+                }
+        )
 
-        Column(
+        CaloriesLeftOrEatenColumn(
+            calories = caloriesGoal, description = "Left",
             modifier = Modifier
                 .weight(1f)
-                .padding(20.dp),
-            horizontalAlignment = CenterHorizontally
+                .padding(20.dp)
+        )
+    }
+}
 
-        ) {
-            Text(
-                text = "Left",
-                modifier = Modifier.align(CenterHorizontally),
-                fontWeight = FontWeight.Bold,
-                fontSize = TextUnit(18f, TextUnitType.Unspecified),
-                color = Color.Black
-            )
-            Text(
-                text = "${caloriesGoal.toInt()} KCAL",
-                modifier = Modifier.align(CenterHorizontally),
-                fontSize = TextUnit(18f, TextUnitType.Unspecified),
-                color = ColorsUtil.primaryDarkTextColor
-            )
-        }
+@Composable
+fun CenterCaloriesGoalBox(modifier: Modifier, calories: Float) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Center
+    ) {
+        Text(
+            buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(
+                        color = ColorsUtil.primaryDarkTextColor,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = TextUnit(24f, TextUnitType.Unspecified),
+                    )
+                ) {
+                    append("${calories.toInt()}\n")
+                }
+                append("KCAL")
+            },
+            fontSize = TextUnit(18f, TextUnitType.Unspecified),
+            color = ColorsUtil.primaryDarkTextColor,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun CaloriesLeftOrEatenColumn(calories: Float, description: String, modifier: Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = CenterHorizontally
+    ) {
+        Text(
+            text = description,
+            modifier = Modifier.align(CenterHorizontally),
+            fontWeight = FontWeight.Bold,
+            fontSize = TextUnit(24f, TextUnitType.Unspecified),
+            color = Color.Black
+        )
+        Text(
+            text = "${calories.toInt()} KCAL",
+            modifier = Modifier.align(CenterHorizontally),
+            fontSize = TextUnit(16f, TextUnitType.Unspecified),
+            color = ColorsUtil.primaryDarkTextColor
+        )
     }
 }
