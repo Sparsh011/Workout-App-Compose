@@ -60,4 +60,9 @@ sealed class UtilityScreen(
         route = "ExercisesScreen/{category}",
         title = "Exercises"
     )
+
+    object YogaPosesPerformedToday: UtilityScreen(
+        route = "YogaPosesPerformedToday",
+        title = "Yoga Poses Performed Today"
+    )
 }

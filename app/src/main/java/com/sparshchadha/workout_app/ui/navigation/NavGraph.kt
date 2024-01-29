@@ -14,13 +14,14 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWor
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExercisesComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.workoutCategoryComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaPosesPerformedTodayComposable
 import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    paddingValues: PaddingValues,
+    globalPaddingValues: PaddingValues,
     searchFoodViewModel: SearchFoodViewModel,
     workoutViewModel: WorkoutViewModel,
     gymExercises: GymExercisesDto?,
@@ -36,7 +37,7 @@ fun NavGraph(
         // Calorie Tracker in Bottom Bar
        calorieTrackerComposable(
            navController = navController,
-           globalPaddingValues = paddingValues
+           globalPaddingValues = globalPaddingValues
        )
 
         // Search Screen
@@ -44,7 +45,7 @@ fun NavGraph(
             searchFoodViewModel = searchFoodViewModel,
             workoutViewModel = workoutViewModel,
             navController = navController,
-            globalPaddingValues = paddingValues
+            globalPaddingValues = globalPaddingValues
         )
 
         // Profile Screen
@@ -55,14 +56,14 @@ fun NavGraph(
             workoutViewModel = workoutViewModel,
             navController = navController,
             yogaPoses = yogaPoses,
-            globalPaddingValues = paddingValues
+            globalPaddingValues = globalPaddingValues
         )
 
         // Selecting Workout Type
        workoutCategoryComposable(
            workoutViewModel = workoutViewModel,
            navController = navController,
-           globalPaddingValues = paddingValues
+           globalPaddingValues = globalPaddingValues
        )
 
         // Exercises From Api
@@ -70,7 +71,14 @@ fun NavGraph(
             navController = navController,
             gymExercises = gymExercises,
             workoutViewModel = workoutViewModel,
-            globalPaddingValues = paddingValues
+            globalPaddingValues = globalPaddingValues
+        )
+
+        // Yoga poses performed today
+        yogaPosesPerformedTodayComposable(
+            workoutViewModel = workoutViewModel,
+            navController = navController,
+            globalPaddingValues = globalPaddingValues
         )
     }
 }

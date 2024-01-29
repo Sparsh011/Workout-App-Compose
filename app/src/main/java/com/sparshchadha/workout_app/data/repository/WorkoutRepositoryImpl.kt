@@ -11,6 +11,7 @@ import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
+import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -99,11 +100,11 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override suspend fun getSavedYogaPoses(): Flow<Resource<List<YogaEntity>>>  = flow {
+    override suspend fun getSavedYogaPoses(): Flow<Resource<List<YogaEntity>>> = flow {
         emit(Resource.Loading())
 
         try {
-            val poses = yogaDao.getYogaPoses()
+            val poses = yogaDao.getAllPerformedYogaPoses()
             emit(Resource.Success(poses))
         } catch (e: Exception) {
             emit(
@@ -114,5 +115,21 @@ class WorkoutRepositoryImpl (
 
     override suspend fun saveYogaPose(yogaPose: YogaEntity) {
         yogaDao.addYogaPose(yogaPose = yogaPose)
+    }
+
+    override suspend fun getYogaPosesPerformedToday(): Flow<Resource<List<YogaEntity>>> = flow {
+        emit(Resource.Loading())
+
+        try {
+            val poses = yogaDao.getYogaPosesPerformedToday(
+                currentDate = HelperFunctions.getCurrentDateAndMonth().first.toString(),
+                currentMonth = HelperFunctions.getCurrentDateAndMonth().second
+            )
+            emit(Resource.Success(poses))
+        } catch (e: Exception) {
+            emit(
+                Resource.Error(error = e)
+            )
+        }
     }
 }

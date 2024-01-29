@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
             WorkoutAppTheme {
                 val navHostController = rememberNavController()
                 val gymExercises = workoutViewModel.exercises.value
-                val yogaPoses = workoutViewModel.yogaPoses.value
+                val yogaPoses = workoutViewModel.yogaPosesFromApi.value
 
                 Scaffold (
                     bottomBar = {
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
                 ){
                     NavGraph(
                         navController = navHostController,
-                        paddingValues = it,
+                        globalPaddingValues = it,
                         searchFoodViewModel = searchFoodViewModel,
                         workoutViewModel = workoutViewModel,
                         gymExercises = gymExercises,

@@ -21,4 +21,6 @@ interface WorkoutRepository {
     suspend fun getSavedYogaPoses() : Flow<Resource<List<YogaEntity>>>
 
     suspend fun saveYogaPose(yogaPose: YogaEntity)
+
+    suspend fun getYogaPosesPerformedToday() : Flow<Resource<List<YogaEntity>>>
 }

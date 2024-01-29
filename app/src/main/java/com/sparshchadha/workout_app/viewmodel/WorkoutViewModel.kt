@@ -27,8 +27,8 @@ class WorkoutViewModel @Inject constructor(
 ) : ViewModel() {
     private var _difficultyForYoga = mutableStateOf(DifficultyLevel.BEGINNER)
 
-    private var _yogaPoses = mutableStateOf<YogaPosesDto?>(null)
-    val yogaPoses = _yogaPoses
+    private var _yogaPosesFromApi = mutableStateOf<YogaPosesDto?>(null)
+    val yogaPosesFromApi = _yogaPosesFromApi
 
     private var _exercises = mutableStateOf<GymExercisesDto?>(null)
     val exercises = _exercises
@@ -39,17 +39,20 @@ class WorkoutViewModel @Inject constructor(
     private val _uiEventState = MutableStateFlow<UIEvent?>(value = null)
     val uiEventStateFlow = _uiEventState.asStateFlow()
 
+    private var _yogaPosesPerformedToday = mutableStateOf<List<YogaEntity>?>(null)
+    val yogaPosesPerformedToday = _yogaPosesPerformedToday
 
-    fun getYogaPoses() {
+
+    fun getYogaPosesFromApi() {
         viewModelScope.launch {
             val poses = workoutRepository.getYogaPosesByDifficulty(difficulty = _difficultyForYoga.value)
 
             poses.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        _yogaPoses.value = response.data
+                        _yogaPosesFromApi.value = response.data
                         _uiEventState.emit(
-                            UIEvent.HideLoader
+                            UIEvent.HideLoaderAndShowResponse
                         )
                     }
 
@@ -81,7 +84,7 @@ class WorkoutViewModel @Inject constructor(
                     is Resource.Success -> {
                         _exercises.value = response.data
                         _uiEventState.emit(
-                            UIEvent.HideLoader
+                            UIEvent.HideLoaderAndShowResponse
                         )
                     }
 
@@ -112,7 +115,7 @@ class WorkoutViewModel @Inject constructor(
                     is Resource.Success -> {
                         _exercises.value = response.data
                         _uiEventState.emit(
-                            UIEvent.HideLoader
+                            UIEvent.HideLoaderAndShowResponse
                         )
                     }
 
@@ -143,7 +146,7 @@ class WorkoutViewModel @Inject constructor(
                     is Resource.Success -> {
                         _exercises.value = response.data
                         _uiEventState.emit(
-                            UIEvent.HideLoader
+                            UIEvent.HideLoaderAndShowResponse
                         )
                     }
 
@@ -174,7 +177,7 @@ class WorkoutViewModel @Inject constructor(
                     is Resource.Success -> {
                         _exercises.value = response.data
                         _uiEventState.emit(
-                            UIEvent.HideLoader
+                            UIEvent.HideLoaderAndShowResponse
                         )
                     }
 
@@ -214,21 +217,52 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun getSavedYogaPoses(){
+    fun getAllPerformedYogaPoses(){
         viewModelScope.launch (Dispatchers.IO) {
             val poses = workoutRepository.getSavedYogaPoses()
             poses.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        Log.e(TAG, "getSavedYogaPoses poses : ${response.data}")
+                        _yogaPosesPerformedToday.value = response.data
+                        _uiEventState.value = UIEvent.HideLoaderAndShowResponse
                     }
 
                     is Resource.Loading -> {
-
+                        _uiEventState.value = UIEvent.ShowLoader
                     }
 
                     is Resource.Error -> {
-                        Log.d(TAG, "getSavedYogaPoses poses : ${response.error?.message}")
+                        _uiEventState.value = response.error?.message?.let {
+                            UIEvent.ShowError(
+                                errorMessage = it
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun getYogaPosesPerformedToday() {
+        viewModelScope.launch (Dispatchers.IO) {
+            val poses = workoutRepository.getYogaPosesPerformedToday()
+            poses.collect { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        _yogaPosesPerformedToday.value = response.data
+                        _uiEventState.value = UIEvent.HideLoaderAndShowResponse
+                    }
+
+                    is Resource.Loading -> {
+                        _uiEventState.value = UIEvent.ShowLoader
+                    }
+
+                    is Resource.Error -> {
+                        _uiEventState.value = response.error?.message?.let {
+                            UIEvent.ShowError(
+                                errorMessage = it
+                            )
+                        }
                     }
                 }
             }
@@ -237,7 +271,7 @@ class WorkoutViewModel @Inject constructor(
 
     sealed class UIEvent {
         data class ShowError(val errorMessage: String) : UIEvent()
-        object HideLoader : UIEvent()
+        object HideLoaderAndShowResponse : UIEvent()
         object ShowLoader : UIEvent()
     }
 }

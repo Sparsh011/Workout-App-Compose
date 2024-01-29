@@ -100,7 +100,7 @@ fun GymAndYogaWorkoutHomeScreen(
             ) { difficultyLevel ->
                 workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
                 // navigate to yoga screen
-                workoutViewModel.getYogaPoses()
+                workoutViewModel.getYogaPosesFromApi()
                 navController.navigate(route = UtilityScreen.YogaPoses.route)
             }
         }
@@ -118,6 +118,7 @@ fun GymAndYogaWorkoutHomeScreen(
                 category = "Yoga",
                 onCategoryItemSelected = {
                     // navigate
+                    navController.navigate(UtilityScreen.YogaPosesPerformedToday.route)
                 }
             )
         }

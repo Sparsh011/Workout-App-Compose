@@ -159,7 +159,7 @@ fun HandleFoodSearch(
                 )
             }
 
-            is WorkoutViewModel.UIEvent.HideLoader -> {
+            is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
                 FoodSearchResults(
                     paddingValues = paddingValues,
                     dishes = dishes,
@@ -196,7 +196,7 @@ fun HandleExercisesSearch(
                 )
             }
 
-            is WorkoutViewModel.UIEvent.HideLoader -> {
+            is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
                 ExerciseSearchResults(
                     paddingValues = paddingValues,
                     exercises = exercises,

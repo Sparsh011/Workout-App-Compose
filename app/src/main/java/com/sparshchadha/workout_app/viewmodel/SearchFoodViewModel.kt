@@ -39,7 +39,7 @@ class SearchFoodViewModel @Inject constructor(
                         Log.e(TAG, "getFoodItems: response - ${result.data}")
                         _foodItems.value = result.data
                         _uiEventState.emit(
-                            WorkoutViewModel.UIEvent.HideLoader
+                            WorkoutViewModel.UIEvent.HideLoaderAndShowResponse
                         )
                     }
 
