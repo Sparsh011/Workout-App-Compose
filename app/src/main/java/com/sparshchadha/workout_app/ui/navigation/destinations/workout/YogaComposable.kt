@@ -44,14 +44,9 @@ fun NavGraphBuilder.yogaComposable(
             difficultyLevel = difficultyLevel,
             yogaPoses = yogaPoses,
             uiEventState = uiEventState,
-            saveYogaPose = {
+            saveYogaPose = { yogaEntity ->
                 workoutViewModel.saveYogaPose(
-                    YogaEntity(
-                        date = "",
-                        month = "",
-                        setsPerformed = 2,
-                        yogaPoseDetails = it
-                    )
+                    yogaEntity
                 )
             },
             globalPaddingValues = globalPaddingValues

@@ -4,6 +4,10 @@ import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.MuscleType
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.WorkoutType
 import com.sparshchadha.workout_app.util.Extensions.capitalize
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 object HelperFunctions {
     fun getDifficultyLevels() : List<String> {
@@ -44,5 +48,16 @@ object HelperFunctions {
             WorkoutType.STRETCHING.name.lowercase().capitalize(),
             WorkoutType.STRONGMAN.name.lowercase().capitalize(),
         )
+    }
+
+    fun getNumberOfSets() : List<String> {
+        return listOf("1", "2", "3", "4", "5")
+    }
+
+    fun getCurrentDateAndMonth(): Pair<Int, String> {
+        val currentDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+        val currentMonth = SimpleDateFormat("MMMM", Locale.getDefault()).format(Date())
+
+        return Pair(currentDate, currentMonth)
     }
 }
