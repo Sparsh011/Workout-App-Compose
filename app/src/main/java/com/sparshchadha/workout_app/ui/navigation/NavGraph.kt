@@ -15,19 +15,19 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExerci
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.workoutCategoryComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaPosesPerformedTodayComposable
-import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
-    searchFoodViewModel: SearchFoodViewModel,
+    foodItemsViewModel: FoodItemsViewModel,
     workoutViewModel: WorkoutViewModel,
     gymExercises: GymExercisesDto?,
     yogaPoses: YogaPosesDto?
 ) {
-    NavHost(navController = navController, startDestination = BottomBarScreen.CalorieTracker.route) {
+    NavHost(navController = navController, startDestination = BottomBarScreen.WorkoutScreen.route) {
         // Workout Tracker in Bottom Bar
         bottomWorkoutComposable(
             workoutViewModel = workoutViewModel,
@@ -37,12 +37,13 @@ fun NavGraph(
         // Calorie Tracker in Bottom Bar
        calorieTrackerComposable(
            navController = navController,
-           globalPaddingValues = globalPaddingValues
+           globalPaddingValues = globalPaddingValues,
+           foodItemsViewModel = foodItemsViewModel
        )
 
         // Search Screen
         searchComposable(
-            searchFoodViewModel = searchFoodViewModel,
+            foodItemsViewModel = foodItemsViewModel,
             workoutViewModel = workoutViewModel,
             navController = navController,
             globalPaddingValues = globalPaddingValues

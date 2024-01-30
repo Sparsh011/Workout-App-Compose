@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PickNumberOfSets(
+fun PickNumberOfSetsOrQuantity(
     items: List<String>,
     state: PickerState = rememberPickerState(),
     modifier: Modifier = Modifier,

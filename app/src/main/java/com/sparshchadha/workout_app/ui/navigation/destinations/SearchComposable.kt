@@ -10,14 +10,14 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.SearchScreen
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
-import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 fun NavGraphBuilder.searchComposable(
-    searchFoodViewModel: SearchFoodViewModel,
+    foodItemsViewModel: FoodItemsViewModel,
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
 ) {
     composable(
         route = UtilityScreen.SearchScreen.route,
@@ -32,14 +32,14 @@ fun NavGraphBuilder.searchComposable(
         }
     ) { backStackEntry ->
         val searchFor = backStackEntry.arguments?.getString("searchFor")
-        val dishes = searchFoodViewModel.foodItems.value
+        val dishes = foodItemsViewModel.foodItemsFromApi.value
         val exercises = workoutViewModel.exercises.value
         var workoutUIStateEvent : WorkoutViewModel.UIEvent? = null
         var foodUIStateEvent : WorkoutViewModel.UIEvent? = null
 
         when(searchFor) {
             "food" -> {
-                foodUIStateEvent = searchFoodViewModel.uiEventStateFlow.collectAsStateWithLifecycle().value
+                foodUIStateEvent = foodItemsViewModel.uiEventStateFlow.collectAsStateWithLifecycle().value
             }
 
             "exercises" -> {
@@ -48,7 +48,7 @@ fun NavGraphBuilder.searchComposable(
         }
 
         SearchScreen(
-            searchFoodViewModel = searchFoodViewModel,
+            searchFoodViewModel = foodItemsViewModel,
             paddingValues = globalPaddingValues,
             onCloseClicked = {
                 navController.popBackStack()
@@ -58,7 +58,10 @@ fun NavGraphBuilder.searchComposable(
             dishes = dishes,
             exercises = exercises,
             workoutUIStateEvent = workoutUIStateEvent,
-            foodUIStateEvent = foodUIStateEvent
+            foodUIStateEvent = foodUIStateEvent,
+            saveFoodItemWithQuantity = {
+                foodItemsViewModel.saveFoodItem(foodItemEntity = it)
+            }
         )
     }
 }

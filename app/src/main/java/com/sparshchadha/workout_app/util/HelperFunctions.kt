@@ -50,7 +50,7 @@ object HelperFunctions {
         )
     }
 
-    fun getNumberOfSets() : List<String> {
+    fun getNumberOfSetsOrQuantity() : List<String> {
         return listOf("1", "2", "3", "4", "5")
     }
 

@@ -11,7 +11,7 @@ interface YogaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addYogaPose(yogaPose: YogaEntity): Long
 
-    @Query("SELECT * FROM YogaEntity ORDER BY id ASC")
+    @Query("SELECT * FROM YogaEntity")
     fun getAllPerformedYogaPoses(): List<YogaEntity>
 
     @Query("SELECT * FROM YogaEntity WHERE date = :currentDate AND month = :currentMonth")

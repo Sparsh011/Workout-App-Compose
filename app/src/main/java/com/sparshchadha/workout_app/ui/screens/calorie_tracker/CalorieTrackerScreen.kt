@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
 import com.sparshchadha.workout_app.util.ColorsUtil
 import kotlinx.coroutines.launch
 
@@ -61,6 +62,7 @@ private const val TAG = "CalorieTrackerScreen"
 fun CalorieTrackerScreen(
     navController: NavHostController,
     paddingValues: PaddingValues,
+    foodItemsConsumedToday: List<FoodItemEntity>?,
 ) {
     var caloriesGoal by remember {
         mutableFloatStateOf(1000F)
@@ -125,46 +127,43 @@ fun CalorieTrackerScreen(
 
             // Today's consumed dishes -
             item {
-                Text(
-                    buildAnnotatedString {
-                        append("Dishes Consumed ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = ColorsUtil.primaryDarkTextColor,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = TextUnit(24f, TextUnitType.Unspecified),
-                            )
-                        ) {
-                            append("Today")
-                        }
-                    },
-                    fontSize = TextUnit(24f, TextUnitType.Unspecified),
-                    color = ColorsUtil.primaryDarkTextColor,
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier.padding(15.dp)
-                )
+                DishesConsumedTodayHeader()
             }
 
-            items(listOf("Cake", "Pasta", "Pizza", "Sandwich", "Burger", "Paneer")) {
-                FoodCard(
-                    foodItemName = it,
-                    calories = "100",
-                    sugar = "100",
-                    fiber = "100",
-                    sodium = "100",
-                    cholesterol = "100",
-                    protein = "100",
-                    carbohydrates = "100",
-                    servingSize = "100",
-                    totalFat = "100",
-                    saturatedFat = "100",
-                    expandCard = { /*TODO*/ },
-                    collapseCard = { /*TODO*/ },
-                    shouldExpandCard = false
-                )
+            foodItemsConsumedToday?.let {
+                items(it) { foodItem ->
+                    Column {
+                        foodItem.foodItemDetails?.name?.let { it1 -> Text(text = it1) }
+                        Text(text = foodItem.date)
+                        Text(text = foodItem.month)
+                    }
+                }
             }
+
         }
     }
+}
+
+@Composable
+fun DishesConsumedTodayHeader() {
+    Text(
+        buildAnnotatedString {
+            append("Dishes Consumed ")
+            withStyle(
+                style = SpanStyle(
+                    color = ColorsUtil.primaryDarkTextColor,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = TextUnit(24f, TextUnitType.Unspecified),
+                )
+            ) {
+                append("Today")
+            }
+        },
+        fontSize = TextUnit(24f, TextUnitType.Unspecified),
+        color = ColorsUtil.primaryDarkTextColor,
+        textAlign = TextAlign.Start,
+        modifier = Modifier.padding(15.dp)
+    )
 }
 
 @Composable

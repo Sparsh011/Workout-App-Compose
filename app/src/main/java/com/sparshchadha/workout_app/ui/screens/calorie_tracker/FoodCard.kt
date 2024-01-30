@@ -2,56 +2,65 @@ package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
+import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
+import com.sparshchadha.workout_app.ui.components.rememberPickerState
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions.TITLE_SIZE
+import com.sparshchadha.workout_app.util.Extensions.capitalize
+import com.sparshchadha.workout_app.util.HelperFunctions
 
 @Composable
 fun FoodCard(
-    foodItemName: String,
-    calories: String,
-    sugar: String,
-    fiber: String,
-    sodium: String,
-    cholesterol: String,
-    protein: String,
-    carbohydrates: String,
-    servingSize: String,
-    totalFat: String,
-    saturatedFat: String,
     expandCard: () -> Unit,
     collapseCard: () -> Unit,
-    shouldExpandCard: Boolean
+    shouldExpandCard: Boolean,
+    foodItem: FoodItem,
+    saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
 ) {
-
     FoodCardComposable(
-        foodItemName,
-        calories,
-        sugar,
-        fiber,
-        sodium,
-        cholesterol,
-        protein,
-        carbohydrates,
-        servingSize,
-        totalFat,
-        saturatedFat,
+        foodItemName = foodItem.name.capitalize(),
+        calories = foodItem.calories.toString(),
+        sugar = foodItem.sugar_g.toString(),
+        fiber = foodItem.fiber_g.toString(),
+        sodium = foodItem.sodium_mg.toString(),
+        cholesterol = foodItem.cholesterol_mg.toString(),
+        protein = foodItem.protein_g.toString(),
+        carbohydrates = foodItem.carbohydrates_total_g.toString(),
+        servingSize = foodItem.serving_size_g.toString(),
+        totalFat = foodItem.fat_total_g.toString(),
+        saturatedFat = foodItem.fat_saturated_g.toString(),
         collapseCard = {
             collapseCard()
         },
@@ -59,6 +68,8 @@ fun FoodCard(
         expandCard = {
             expandCard()
         },
+        saveFoodItemWithQuantity = saveFoodItemWithQuantity,
+        foodItem = foodItem
     )
 }
 
@@ -77,8 +88,14 @@ private fun FoodCardComposable(
     saturatedFat: String,
     collapseCard: () -> Unit,
     isExpanded: Boolean,
-    expandCard: () -> Unit
+    expandCard: () -> Unit,
+    saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
+    foodItem: FoodItem,
 ) {
+    var showBottomSheetToSelectFoodItemQuantity by remember {
+        mutableStateOf(false)
+    }
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = ColorsUtil.primaryGreenCardBackground
@@ -107,7 +124,14 @@ private fun FoodCardComposable(
                 fontSize = TITLE_SIZE,
                 color = Color.Black
             )
-            Icon(imageVector = Icons.Default.Add, contentDescription = null, tint = ColorsUtil.primaryDarkGray)
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null,
+                tint = ColorsUtil.primaryDarkGray,
+                modifier = Modifier.clickable {
+                    showBottomSheetToSelectFoodItemQuantity = true
+                }
+            )
         }
 
         NutritionalValueText(nutrient = "Calories", quantityOfNutrient = calories, unit = "kcal")
@@ -123,6 +147,89 @@ private fun FoodCardComposable(
             NutritionalValueText(nutrient = "Sodium", quantityOfNutrient = sodium, unit = "mg")
             NutritionalValueText(nutrient = "Cholesterol", quantityOfNutrient = cholesterol, unit = "mg")
         }
+
+        if (showBottomSheetToSelectFoodItemQuantity) {
+            ShowFoodQuantityPicker(
+                hideFoodQuantityPickerBottomSheet = {
+                    showBottomSheetToSelectFoodItemQuantity = false
+                },
+                saveFoodItemWithQuantity = { quantity ->
+                    saveFoodItemWithQuantity(
+                        FoodItemEntity(
+                            date = HelperFunctions.getCurrentDateAndMonth().first.toString(),
+                            month = HelperFunctions.getCurrentDateAndMonth().second,
+                            quantity = quantity,
+                            foodItemDetails = foodItem
+                        )
+                    )
+                }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ShowFoodQuantityPicker(
+    hideFoodQuantityPickerBottomSheet: () -> Unit,
+    saveFoodItemWithQuantity: (Int) -> Unit,
+) {
+    val pickerState = rememberPickerState()
+    ModalBottomSheet(
+        onDismissRequest = {
+            hideFoodQuantityPickerBottomSheet()
+        },
+        sheetState = rememberModalBottomSheetState(),
+        windowInsets = WindowInsets(0, 0, 0, 10),
+        containerColor = Color.White
+    ) {
+        Text(
+            buildAnnotatedString {
+                append("Select ")
+                withStyle(
+                    style = SpanStyle(
+                        color = ColorsUtil.primaryDarkTextColor,
+                        fontWeight = FontWeight.Bold
+                    )
+                ) {
+                    append("Food Quantity!")
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            textAlign = TextAlign.Start,
+            color = ColorsUtil.primaryDarkTextColor,
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+
+        PickNumberOfSetsOrQuantity(
+            items = HelperFunctions.getNumberOfSetsOrQuantity(),
+            state = pickerState,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            textModifier = Modifier.padding(15.dp)
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Button(
+            onClick = {
+                saveFoodItemWithQuantity(pickerState.selectedItem.toInt())
+                hideFoodQuantityPickerBottomSheet()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ColorsUtil.primaryDarkTextColor
+            ),
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(horizontal = 20.dp)
+                .fillMaxWidth()
+        ) {
+            Text(text = "Add ${pickerState.selectedItem} ", color = Color.White)
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
     }
 }
 

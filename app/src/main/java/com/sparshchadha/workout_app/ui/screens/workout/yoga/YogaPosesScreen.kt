@@ -27,11 +27,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -42,7 +47,7 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
-import com.sparshchadha.workout_app.ui.components.PickNumberOfSets
+import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.components.rememberPickerState
@@ -252,8 +257,28 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
     ) {
         val valuesPickerState = rememberPickerState()
 
-        PickNumberOfSets(
-            items = HelperFunctions.getNumberOfSets(),
+        Text(
+            buildAnnotatedString {
+                append("Select ")
+                withStyle(
+                    style = SpanStyle(
+                        color = ColorsUtil.primaryDarkTextColor,
+                        fontWeight = FontWeight.Bold
+                    )
+                ) {
+                    append(" Sets Performed!")
+                }
+            },
+            modifier = Modifier
+                .align(CenterHorizontally)
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            textAlign = TextAlign.Start,
+            color = ColorsUtil.primaryDarkTextColor,
+        )
+
+        PickNumberOfSetsOrQuantity(
+            items = HelperFunctions.getNumberOfSetsOrQuantity(),
             state = valuesPickerState,
             modifier = Modifier.align(CenterHorizontally),
             textModifier = Modifier.padding(15.dp)

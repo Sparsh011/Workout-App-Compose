@@ -45,6 +45,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
@@ -52,13 +53,12 @@ import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodCard
 import com.sparshchadha.workout_app.ui.screens.workout.gym.Exercise
 import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.Extensions.capitalize
-import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
 fun SearchScreen(
-    searchFoodViewModel: SearchFoodViewModel,
+    searchFoodViewModel: FoodItemsViewModel,
     paddingValues: PaddingValues,
     onCloseClicked: () -> Unit,
     searchFor: String?,
@@ -67,7 +67,8 @@ fun SearchScreen(
     exercises: GymExercisesDto?,
     workoutUIStateEvent: WorkoutViewModel.UIEvent?,
     foodUIStateEvent: WorkoutViewModel.UIEvent?,
-) {
+    saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
+    ) {
     var searchBarQuery by remember {
         mutableStateOf("")
     }
@@ -107,7 +108,8 @@ fun SearchScreen(
                     foodUIStateEvent = foodUIStateEvent,
                     paddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
-                    dishes = dishes
+                    dishes = dishes,
+                    saveFoodItemWithQuantity = saveFoodItemWithQuantity
                 )
             }
 
@@ -126,13 +128,13 @@ fun SearchScreen(
 fun handleSearchFor(
     searchFor: String?,
     searchBarQuery: String,
-    searchFoodViewModel: SearchFoodViewModel,
+    searchFoodViewModel: FoodItemsViewModel,
     workoutViewModel: WorkoutViewModel,
 ) {
     when (searchFor) {
         "food" -> {
             searchFoodViewModel.updateSearchQuery(searchQuery = searchBarQuery)
-            searchFoodViewModel.getFoodItems()
+            searchFoodViewModel.getFoodItemsFromApi()
         }
 
         "exercises" -> {
@@ -147,7 +149,8 @@ fun HandleFoodSearch(
     paddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
     dishes: NutritionalValueDto?,
-) {
+    saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
+    ) {
     foodUIStateEvent?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -163,7 +166,8 @@ fun HandleFoodSearch(
                 FoodSearchResults(
                     paddingValues = paddingValues,
                     dishes = dishes,
-                    localPaddingValues = localPaddingValues
+                    localPaddingValues = localPaddingValues,
+                    saveFoodItemWithQuantity = saveFoodItemWithQuantity
                 )
             }
 
@@ -216,7 +220,12 @@ fun HandleExercisesSearch(
 }
 
 @Composable
-fun FoodSearchResults(paddingValues: PaddingValues, dishes: NutritionalValueDto?, localPaddingValues: PaddingValues) {
+fun FoodSearchResults(
+    paddingValues: PaddingValues,
+    dishes: NutritionalValueDto?,
+    localPaddingValues: PaddingValues,
+    saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
+) {
     if (dishes?.items?.isEmpty() == true) {
         NoResultsFoundOrErrorDuringSearch(
             paddingValues = paddingValues,
@@ -238,24 +247,15 @@ fun FoodSearchResults(paddingValues: PaddingValues, dishes: NutritionalValueDto?
                     }
 
                     FoodCard(
-                        foodItemName = item.name.capitalize(),
-                        calories = item.calories.toString(),
-                        sugar = item.sugar_g.toString(),
-                        fiber = item.fiber_g.toString(),
-                        sodium = item.sodium_mg.toString(),
-                        cholesterol = item.cholesterol_mg.toString(),
-                        protein = item.protein_g.toString(),
-                        carbohydrates = item.carbohydrates_total_g.toString(),
-                        servingSize = item.serving_size_g.toString(),
-                        totalFat = item.fat_total_g.toString(),
-                        saturatedFat = item.fat_saturated_g.toString(),
+                        foodItem = item,
                         expandCard = {
                             shouldExpandCard = true
                         },
                         collapseCard = {
                             shouldExpandCard = false
                         },
-                        shouldExpandCard = shouldExpandCard
+                        shouldExpandCard = shouldExpandCard,
+                        saveFoodItemWithQuantity = saveFoodItemWithQuantity
                     )
                 }
             }
@@ -350,7 +350,7 @@ fun MySearchBar(
                         searchDish()
                         focusManager.clearFocus()
                     }
-                ){
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Search,
                         tint = Color.Gray,
