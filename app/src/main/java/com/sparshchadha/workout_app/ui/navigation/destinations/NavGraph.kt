@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.navigation
+package com.sparshchadha.workout_app.ui.navigation.destinations
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
@@ -9,9 +9,10 @@ import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.searchComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWorkoutComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExercisesComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExercisesPerformedTodayComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.workoutCategoryComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaPosesPerformedTodayComposable
@@ -77,6 +78,13 @@ fun NavGraph(
 
         // Yoga poses performed today
         yogaPosesPerformedTodayComposable(
+            workoutViewModel = workoutViewModel,
+            navController = navController,
+            globalPaddingValues = globalPaddingValues
+        )
+
+        // Gym Exercises performed today
+        gymExercisesPerformedTodayComposable(
             workoutViewModel = workoutViewModel,
             navController = navController,
             globalPaddingValues = globalPaddingValues

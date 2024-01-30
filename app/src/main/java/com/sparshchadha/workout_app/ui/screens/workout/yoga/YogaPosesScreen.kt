@@ -266,7 +266,7 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
                         fontWeight = FontWeight.Bold
                     )
                 ) {
-                    append(" Sets Performed!")
+                    append("Sets Performed!")
                 }
             },
             modifier = Modifier

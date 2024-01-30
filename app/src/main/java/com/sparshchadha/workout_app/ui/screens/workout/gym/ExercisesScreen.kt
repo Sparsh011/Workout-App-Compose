@@ -12,12 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -37,13 +39,17 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.data.local.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
+import com.sparshchadha.workout_app.ui.screens.calorie_tracker.ShowQuantityOrSetsPicker
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Extensions.capitalize
+import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
@@ -53,6 +59,7 @@ fun ExercisesScreen(
     exercises: GymExercisesDto?,
     uiEventState: WorkoutViewModel.UIEvent?,
     globalPaddingValues: PaddingValues,
+    saveExercise: (GymExercisesEntity) -> Unit
 ) {
 
     uiEventState?.let { event ->
@@ -61,7 +68,8 @@ fun ExercisesScreen(
             category = category,
             navController = navController,
             exercises = exercises,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            saveExercise = saveExercise
         )
     }
 }
@@ -72,7 +80,8 @@ fun HandleUIEventsForExercises(
     category: String?,
     navController: NavController,
     exercises: GymExercisesDto?,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
+    saveExercise: (GymExercisesEntity) -> Unit
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -93,7 +102,8 @@ fun HandleUIEventsForExercises(
                 exercises = exercises,
                 composition = composition,
                 progress = progress,
-                globalPaddingValues = globalPaddingValues
+                globalPaddingValues = globalPaddingValues,
+                saveExercise = saveExercise
             )
         }
 
@@ -103,8 +113,6 @@ fun HandleUIEventsForExercises(
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowExercises(
     category: String?,
@@ -113,6 +121,7 @@ fun ShowExercises(
     composition: LottieComposition?,
     progress: Float,
     globalPaddingValues: PaddingValues,
+    saveExercise: (GymExercisesEntity) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -132,17 +141,12 @@ fun ShowExercises(
                 .fillMaxSize()
         ) {
             if (exercises != null) {
-                items(exercises) {
+                items(exercises) { exercise ->
                     var shouldShowBottomSheet by remember {
                         mutableStateOf(false)
                     }
 
                     Exercise(
-                        name = it.name,
-                        difficulty = it.difficulty,
-                        equipment = it.equipment,
-                        muscle = it.muscle,
-                        instructions = it.instructions,
                         showBottomSheet = {
                             shouldShowBottomSheet = true
                         },
@@ -150,7 +154,8 @@ fun ShowExercises(
                             shouldShowBottomSheet = false
                         },
                         shouldShowBottomSheet = shouldShowBottomSheet,
-                        sheetState = rememberModalBottomSheetState()
+                        exercise = exercise,
+                        saveExercise = saveExercise
                     )
                 }
             } else {
@@ -162,36 +167,19 @@ fun ShowExercises(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Exercise(
-    name: String,
-    difficulty: String,
-    equipment: String,
-    muscle: String,
-    instructions: String,
     showBottomSheet: () -> Unit,
     hideBottomSheet: () -> Unit,
     shouldShowBottomSheet: Boolean,
-    sheetState: SheetState,
+    exercise: GymExercisesDtoItem,
+    saveExercise: (GymExercisesEntity) -> Unit,
 ) {
     if (shouldShowBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                hideBottomSheet()
-            },
-            windowInsets = WindowInsets(0, 0, 0, 10),
-            containerColor = Color.White,
-            sheetState = sheetState
-        ) {
-            ExerciseDetailsModalBottomSheet(
-                name = name,
-                difficulty = difficulty,
-                muscle = muscle,
-                equipment = equipment,
-                instructions = instructions
-            )
-        }
+        ExerciseDetailsModalBottomSheet(
+            exercise = exercise,
+            hideBottomSheet = hideBottomSheet
+        )
     }
 
     Card(
@@ -205,28 +193,78 @@ fun Exercise(
             containerColor = ColorsUtil.primaryLightGray
         )
     ) {
-        ExerciseSubTitlesAndDescription(subTitle = "Exercise Name", description = name)
-        ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = difficulty)
-        ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = muscle)
+        ExerciseSubTitlesAndDescription(subTitle = "Exercise Name", description = exercise.name)
+        ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = exercise.difficulty)
+        ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = exercise.muscle)
+
+        var shouldShowQuantityOrSetsPicker by remember {
+            mutableStateOf(false)
+        }
+
+        Button(
+            onClick = {
+                shouldShowQuantityOrSetsPicker = true
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ColorsUtil.primaryDarkTextColor
+            )
+        ) {
+            Text(
+                text = "Add To Today's Workout",
+                color = Color.White,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        if (shouldShowQuantityOrSetsPicker) {
+            ShowQuantityOrSetsPicker(
+                hideQuantityOrSetsPickerBottomSheet = {
+                    shouldShowQuantityOrSetsPicker = false
+                },
+                saveQuantityOrSets = { setsPerformed ->
+                    saveExercise(
+                        GymExercisesEntity(
+                            date = HelperFunctions.getCurrentDateAndMonth().first.toString(),
+                            month = HelperFunctions.getCurrentDateAndMonth().second,
+                            setsPerformed = setsPerformed,
+                            exerciseDetails = exercise
+                        )
+                    )
+
+                    hideBottomSheet()
+                },
+                title = "Sets"
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseDetailsModalBottomSheet(
-    name: String,
-    difficulty: String,
-    muscle: String,
-    equipment: String,
-    instructions: String
+    exercise: GymExercisesDtoItem,
+    hideBottomSheet: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
+    ModalBottomSheet(
+        onDismissRequest = {
+            hideBottomSheet()
+        },
+        windowInsets = WindowInsets(0, 0, 0, 10),
+        containerColor = Color.White,
+        sheetState = rememberModalBottomSheetState()
     ) {
-        ExerciseSubTitlesAndDescription(subTitle = "Exercise Name", description = name)
-        ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = difficulty)
-        ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = muscle)
-        ExerciseSubTitlesAndDescription(subTitle = "Equipment Required", description = equipment)
-        ExerciseSubTitlesAndDescription(subTitle = "Instructions", description = instructions)
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            ExerciseSubTitlesAndDescription(subTitle = "Exercise Name", description = exercise.name)
+            ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = exercise.difficulty)
+            ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = exercise.muscle)
+            ExerciseSubTitlesAndDescription(subTitle = "Equipment Required", description = exercise.equipment)
+            ExerciseSubTitlesAndDescription(subTitle = "Instructions", description = exercise.instructions)
+        }
     }
 }
 

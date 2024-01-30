@@ -9,7 +9,7 @@ import com.google.gson.Gson
 import com.sparshchadha.workout_app.data.local.Converters
 import com.sparshchadha.workout_app.data.local.WorkoutAppDatabase
 import com.sparshchadha.workout_app.data.local.dao.FoodItemsDao
-import com.sparshchadha.workout_app.data.local.dao.GymWorkoutsDao
+import com.sparshchadha.workout_app.data.local.dao.GymExercisesDao
 import com.sparshchadha.workout_app.data.local.dao.YogaDao
 import com.sparshchadha.workout_app.data.remote.api.FoodApi
 import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
@@ -160,8 +160,9 @@ object SharedModule {
         yogaApi: YogaApi,
         gymExercisesApi: GymExercisesApi,
         yogaDao: YogaDao,
+        gymExercisesDao: GymExercisesDao
     ): WorkoutRepository {
-        return WorkoutRepositoryImpl(yogaApi = yogaApi, gymExercisesApi = gymExercisesApi, yogaDao = yogaDao)
+        return WorkoutRepositoryImpl(yogaApi = yogaApi, gymExercisesApi = gymExercisesApi, yogaDao = yogaDao, gymExercisesDao = gymExercisesDao)
     }
 
     @Singleton
@@ -181,7 +182,7 @@ object SharedModule {
 
     @Singleton
     @Provides
-    fun provideGymWorkoutsDao(database: WorkoutAppDatabase): GymWorkoutsDao {
+    fun provideGymWorkoutsDao(database: WorkoutAppDatabase): GymExercisesDao {
         return database.gymWorkoutsDao()
     }
 

@@ -51,7 +51,12 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
+import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.util.ColorsUtil
 import kotlinx.coroutines.launch
 
@@ -130,8 +135,20 @@ fun CalorieTrackerScreen(
                 DishesConsumedTodayHeader()
             }
 
-            foodItemsConsumedToday?.let {
-                items(it) { foodItem ->
+            if (foodItemsConsumedToday.isNullOrEmpty()) {
+                item {
+                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_food_item_added_animation))
+                    val progress by animateLottieCompositionAsState(composition)
+
+                    NoWorkoutPerformedOrFoodConsumed(
+                        text = "No Dishes Consumed Yet!",
+                        composition = composition,
+                        progress = progress
+                    )
+                }
+
+            } else {
+                items(foodItemsConsumedToday) { foodItem ->
                     Column {
                         foodItem.foodItemDetails?.name?.let { it1 -> Text(text = it1) }
                         Text(text = foodItem.date)
@@ -139,7 +156,6 @@ fun CalorieTrackerScreen(
                     }
                 }
             }
-
         }
     }
 }

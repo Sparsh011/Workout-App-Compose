@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.compose.material3.Scaffold
 import androidx.navigation.compose.rememberNavController
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
-import com.sparshchadha.workout_app.ui.navigation.NavGraph
+import com.sparshchadha.workout_app.ui.navigation.destinations.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
             WorkoutAppTheme {
                 val navHostController = rememberNavController()
-                val gymExercises = workoutViewModel.exercises.value
+                val gymExercises = workoutViewModel.gymExercisesFromApi.value
                 val yogaPoses = workoutViewModel.yogaPosesFromApi.value
 
                 Scaffold (

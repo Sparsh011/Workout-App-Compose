@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.screens.workout.yoga
+package com.sparshchadha.workout_app.ui.screens.workout.gym
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,8 +15,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,60 +29,64 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.data.local.entities.YogaEntity
+import com.sparshchadha.workout_app.data.local.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
-
-private const val TAG = "YogaPosesPerformedToday"
-
 @Composable
-fun YogaPosesPerformedToday(
-    yogaPosesPerformedToday: List<YogaEntity>?,
-    uiEventState: WorkoutViewModel.UIEvent?,
+fun GymExercisesPerformedToday(
+    navController: NavHostController,
+    exercisesPerformed: List<GymExercisesEntity>?,
     globalPaddingValues: PaddingValues,
-    onBackButtonPressed: () -> Unit,
+    uiEventState: State<WorkoutViewModel.UIEvent?>,
 ) {
-    if (uiEventState != null) {
-        HandleUIEventState(
-            event = uiEventState,
-            yogaPosesPerformedToday = yogaPosesPerformedToday,
+    uiEventState.value?.let { event ->
+        HandleUIEventsForExercisesPerformedToday(
+            event = event,
+            exercisesPerformed = exercisesPerformed,
             globalPaddingValues = globalPaddingValues,
-            onBackButtonPressed = onBackButtonPressed
+            navController = navController
         )
     }
 }
 
 @Composable
-fun HandleUIEventState(
+fun HandleUIEventsForExercisesPerformedToday(
     event: WorkoutViewModel.UIEvent,
-    yogaPosesPerformedToday: List<YogaEntity>?,
     globalPaddingValues: PaddingValues,
-    onBackButtonPressed: () -> Unit,
+    exercisesPerformed: List<GymExercisesEntity>?,
+    navController: NavHostController,
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation))
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
             val progress by animateLottieCompositionAsState(composition)
-
             ShowLoadingScreen(
-                composition = composition, progress = progress
+                composition = composition,
+                progress = progress
             )
         }
 
         is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
-            PopulatePerformedYogaPoses(
-                yogaPosesPerformedToday = yogaPosesPerformedToday,
+            PopulatePerformedExercises(
                 globalPaddingValues = globalPaddingValues,
-                onBackButtonPressed = onBackButtonPressed
+                exercisesPerformed = exercisesPerformed,
+                onBackButtonPressed = {
+                    navController.popBackStack(
+                        route = BottomBarScreen.WorkoutScreen.route,
+                        inclusive = false
+                    )
+                }
             )
         }
 
@@ -93,28 +97,26 @@ fun HandleUIEventState(
 }
 
 @Composable
-fun PopulatePerformedYogaPoses(
-    yogaPosesPerformedToday: List<YogaEntity>?,
+fun PopulatePerformedExercises(
     globalPaddingValues: PaddingValues,
+    exercisesPerformed: List<GymExercisesEntity>?,
     onBackButtonPressed: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             ScaffoldTopBar(
-                topBarDescription = "Today's Yoga Session",
-                onBackButtonPressed = {
-                    onBackButtonPressed()
-                }
+                topBarDescription = "Exercises Performed Today",
+                onBackButtonPressed = onBackButtonPressed
             )
         },
         containerColor = Color.White
     ) { localPaddingValues ->
-        if (yogaPosesPerformedToday.isNullOrEmpty()) {
+        if (exercisesPerformed.isNullOrEmpty()) {
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_results_found_animation))
             val progress by animateLottieCompositionAsState(composition)
 
             NoWorkoutPerformedOrFoodConsumed(
-                text = "No Yoga Poses Performed Today!",
+                text = "No Exercise Performed Yet!",
                 composition = composition,
                 progress = progress,
                 localPaddingValues = localPaddingValues
@@ -123,23 +125,26 @@ fun PopulatePerformedYogaPoses(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = localPaddingValues.calculateTopPadding(), bottom = globalPaddingValues.calculateBottomPadding())
-
+                    .padding(
+                        top = localPaddingValues.calculateTopPadding(),
+                        bottom = globalPaddingValues.calculateBottomPadding()
+                    )
             ) {
-                items(yogaPosesPerformedToday) { yogaEntity ->
-                    YogaEntityItem(yogaEntity = yogaEntity)
+                items(exercisesPerformed) {
+                    ExerciseEntity(exerciseEntity = it)
                 }
             }
         }
 
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun YogaEntityItem(yogaEntity: YogaEntity) {
-    var shouldShowPoseDetailsBottomSheet by remember {
+fun ExerciseEntity(
+    exerciseEntity: GymExercisesEntity,
+) {
+    var shouldShowExerciseDetailsBottomSheet by remember {
         mutableStateOf(false)
     }
     Card(
@@ -147,7 +152,7 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
             .fillMaxWidth()
             .padding(10.dp),
         onClick = {
-            shouldShowPoseDetailsBottomSheet = true
+            shouldShowExerciseDetailsBottomSheet = true
         },
         colors = CardDefaults.cardColors(
             containerColor = ColorsUtil.primaryLightGray
@@ -159,22 +164,12 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
                 .padding(16.dp)
         ) {
             Spacer(modifier = Modifier.height(8.dp))
-            yogaEntity.yogaPoseDetails?.let { pose ->
+            exerciseEntity.exerciseDetails?.let { exercise ->
                 Text(
-                    buildAnnotatedString {
-                        append("${pose.english_name} ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = ColorsUtil.primaryDarkTextColor,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 26.sp
-                            )
-                        ) {
-                            append("(${pose.sanskrit_name})")
-                        }
-                    },
+                    text = exercise.name,
                     color = ColorsUtil.primaryDarkTextColor,
-                    fontSize = 26.sp
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -188,7 +183,7 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
                                 fontSize = 16.sp
                             )
                         ) {
-                            append(pose.difficulty_level)
+                            append(exercise.difficulty)
                         }
                     },
                     color = ColorsUtil.primaryDarkTextColor,
@@ -206,7 +201,7 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
                                 fontSize = 16.sp
                             )
                         ) {
-                            append("${yogaEntity.setsPerformed}")
+                            append(exerciseEntity.setsPerformed.toString())
                         }
                     },
                     color = ColorsUtil.primaryDarkTextColor,
@@ -217,14 +212,13 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
         }
     }
 
-    if (shouldShowPoseDetailsBottomSheet) {
-        yogaEntity.yogaPoseDetails?.let {
-            ShowYogaPoseDetailsInModalBottomSheet(
-                sheetState = rememberModalBottomSheetState(),
-                toggleBottomSheetWithDetails = { showOrHideBottomSheet ->
-                    shouldShowPoseDetailsBottomSheet = showOrHideBottomSheet
-                },
-                pose = it
+    if (shouldShowExerciseDetailsBottomSheet) {
+        exerciseEntity.exerciseDetails?.let {
+            ExerciseDetailsModalBottomSheet(
+                exercise = it,
+                hideBottomSheet = {
+                    shouldShowExerciseDetailsBottomSheet = false
+                }
             )
         }
     }

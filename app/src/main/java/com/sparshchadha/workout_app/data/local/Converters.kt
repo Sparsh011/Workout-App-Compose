@@ -5,7 +5,7 @@ import androidx.room.ProvidedTypeConverter
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDtoItem
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
 import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.util.JsonParser
@@ -66,18 +66,18 @@ class Converters(
 
 
     @TypeConverter
-    fun fromGymExerciseJson(json: String) : GymWorkoutsDtoItem? {
-        return jsonParser.fromJson<GymWorkoutsDtoItem>(
+    fun fromGymExerciseJson(json: String) : GymExercisesDtoItem? {
+        return jsonParser.fromJson<GymExercisesDtoItem>(
             json,
-            object : TypeToken<GymWorkoutsDtoItem>(){}.type
+            object : TypeToken<GymExercisesDtoItem>(){}.type
         )
     }
 
     @TypeConverter
-    fun toFoodItemJson(gymExercise: GymWorkoutsDtoItem) : String {
+    fun toFoodItemJson(gymExercise: GymExercisesDtoItem) : String {
         return jsonParser.toJson(
             gymExercise,
-            object : TypeToken<GymWorkoutsDtoItem>(){}.type
+            object : TypeToken<GymExercisesDtoItem>(){}.type
         ) ?: ""
     }
 }

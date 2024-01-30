@@ -117,7 +117,6 @@ fun GymAndYogaWorkoutHomeScreen(
             TodayWorkoutCard(
                 category = "Yoga",
                 onCategoryItemSelected = {
-                    // navigate
                     navController.navigate(UtilityScreen.YogaPosesPerformedToday.route)
                 }
             )
@@ -129,7 +128,7 @@ fun GymAndYogaWorkoutHomeScreen(
             TodayWorkoutCard(
                 category = "Gym",
                 onCategoryItemSelected = {
-                    // navigate
+                    navController.navigate(UtilityScreen.GymExercisesPerformedToday.route)
                 }
             )
         }

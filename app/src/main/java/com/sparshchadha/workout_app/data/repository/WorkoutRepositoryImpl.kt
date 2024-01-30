@@ -3,7 +3,9 @@ package com.sparshchadha.workout_app.data.repository
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.sparshchadha.workout_app.BuildConfig
+import com.sparshchadha.workout_app.data.local.dao.GymExercisesDao
 import com.sparshchadha.workout_app.data.local.dao.YogaDao
+import com.sparshchadha.workout_app.data.local.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.local.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
 import com.sparshchadha.workout_app.data.remote.api.YogaApi
@@ -20,7 +22,8 @@ import kotlinx.coroutines.flow.flow
 class WorkoutRepositoryImpl (
     val yogaApi: YogaApi,
     val gymExercisesApi: GymExercisesApi,
-    val yogaDao: YogaDao
+    val yogaDao: YogaDao,
+    val gymExercisesDao: GymExercisesDao
 ) : WorkoutRepository {
 
     override fun getYogaPosesByDifficulty(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>> = flow {
@@ -100,7 +103,7 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override suspend fun getSavedYogaPoses(): Flow<Resource<List<YogaEntity>>> = flow {
+    override suspend fun getAllYogaPosesPerformed(): Flow<Resource<List<YogaEntity>>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -126,6 +129,39 @@ class WorkoutRepositoryImpl (
                 currentMonth = HelperFunctions.getCurrentDateAndMonth().second
             )
             emit(Resource.Success(poses))
+        } catch (e: Exception) {
+            emit(
+                Resource.Error(error = e)
+            )
+        }
+    }
+
+    override suspend fun saveGymExercise(gymExercisesEntity: GymExercisesEntity) {
+        gymExercisesDao.addGymExercise(gymExercisesEntity = gymExercisesEntity)
+    }
+
+    override suspend fun getGymExercisesPerformedToday(): Flow<Resource<List<GymExercisesEntity>>> = flow {
+        emit(Resource.Loading())
+
+        try {
+            val exercises = gymExercisesDao.getExercisesPerformedToday(
+                currentDate = HelperFunctions.getCurrentDateAndMonth().first.toString(),
+                currentMonth = HelperFunctions.getCurrentDateAndMonth().second
+            )
+            emit(Resource.Success(exercises))
+        } catch (e: Exception) {
+            emit(
+                Resource.Error(error = e)
+            )
+        }
+    }
+
+    override suspend fun getAllGymExercisesPerformed(): Flow<Resource<List<GymExercisesEntity>>> = flow {
+        emit(Resource.Loading())
+
+        try {
+            val exercises = gymExercisesDao.getAllExercisesPerformed()
+            emit(Resource.Success(exercises))
         } catch (e: Exception) {
             emit(
                 Resource.Error(error = e)

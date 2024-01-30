@@ -46,6 +46,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.local.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
@@ -68,7 +69,8 @@ fun SearchScreen(
     workoutUIStateEvent: WorkoutViewModel.UIEvent?,
     foodUIStateEvent: WorkoutViewModel.UIEvent?,
     saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
-    ) {
+    saveExercise: (GymExercisesEntity) -> Unit,
+) {
     var searchBarQuery by remember {
         mutableStateOf("")
     }
@@ -118,7 +120,8 @@ fun SearchScreen(
                     workoutUIStateEvent = workoutUIStateEvent,
                     paddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
-                    exercises = exercises
+                    exercises = exercises,
+                    saveExercise = saveExercise
                 )
             }
         }
@@ -150,7 +153,7 @@ fun HandleFoodSearch(
     localPaddingValues: PaddingValues,
     dishes: NutritionalValueDto?,
     saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
-    ) {
+) {
     foodUIStateEvent?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -188,6 +191,7 @@ fun HandleExercisesSearch(
     paddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
     exercises: GymExercisesDto?,
+    saveExercise: (GymExercisesEntity) -> Unit,
 ) {
     workoutUIStateEvent?.let { event ->
         when (event) {
@@ -204,7 +208,8 @@ fun HandleExercisesSearch(
                 ExerciseSearchResults(
                     paddingValues = paddingValues,
                     exercises = exercises,
-                    localPaddingValues = localPaddingValues
+                    localPaddingValues = localPaddingValues,
+                    saveExercise = saveExercise
                 )
             }
 
@@ -263,9 +268,13 @@ fun FoodSearchResults(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymExercisesDto?, localPaddingValues: PaddingValues) {
+fun ExerciseSearchResults(
+    paddingValues: PaddingValues,
+    exercises: GymExercisesDto?,
+    localPaddingValues: PaddingValues,
+    saveExercise: (GymExercisesEntity) -> Unit,
+) {
     exercises?.let {
         if (it.size == 0) {
             NoResultsFoundOrErrorDuringSearch(
@@ -283,14 +292,8 @@ fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymExercisesD
                         mutableStateOf(false)
                     }
 
-                    val sheetState = rememberModalBottomSheetState()
-
                     Exercise(
-                        name = exercise.name,
-                        difficulty = exercise.difficulty,
-                        equipment = exercise.equipment,
-                        muscle = exercise.muscle,
-                        instructions = exercise.instructions,
+                        exercise = exercise,
                         showBottomSheet = {
                             shouldShowBottomSheet = true
                         },
@@ -298,7 +301,7 @@ fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymExercisesD
                             shouldShowBottomSheet = false
                         },
                         shouldShowBottomSheet = shouldShowBottomSheet,
-                        sheetState = sheetState
+                        saveExercise = saveExercise
                     )
                 }
             }

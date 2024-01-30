@@ -1,6 +1,6 @@
 package com.sparshchadha.workout_app.data.remote.dto.gym_workout
 
-data class GymWorkoutsDtoItem(
+data class GymExercisesDtoItem(
     val difficulty: String,
     val equipment: String,
     val instructions: String,

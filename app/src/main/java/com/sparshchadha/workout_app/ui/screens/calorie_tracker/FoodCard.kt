@@ -149,11 +149,11 @@ private fun FoodCardComposable(
         }
 
         if (showBottomSheetToSelectFoodItemQuantity) {
-            ShowFoodQuantityPicker(
-                hideFoodQuantityPickerBottomSheet = {
+            ShowQuantityOrSetsPicker(
+                hideQuantityOrSetsPickerBottomSheet = {
                     showBottomSheetToSelectFoodItemQuantity = false
                 },
-                saveFoodItemWithQuantity = { quantity ->
+                saveQuantityOrSets = { quantity ->
                     saveFoodItemWithQuantity(
                         FoodItemEntity(
                             date = HelperFunctions.getCurrentDateAndMonth().first.toString(),
@@ -162,7 +162,8 @@ private fun FoodCardComposable(
                             foodItemDetails = foodItem
                         )
                     )
-                }
+                },
+                title = "Food Quantity"
             )
         }
     }
@@ -170,14 +171,15 @@ private fun FoodCardComposable(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowFoodQuantityPicker(
-    hideFoodQuantityPickerBottomSheet: () -> Unit,
-    saveFoodItemWithQuantity: (Int) -> Unit,
+fun ShowQuantityOrSetsPicker(
+    hideQuantityOrSetsPickerBottomSheet: () -> Unit,
+    saveQuantityOrSets: (Int) -> Unit,
+    title: String,
 ) {
     val pickerState = rememberPickerState()
     ModalBottomSheet(
         onDismissRequest = {
-            hideFoodQuantityPickerBottomSheet()
+            hideQuantityOrSetsPickerBottomSheet()
         },
         sheetState = rememberModalBottomSheetState(),
         windowInsets = WindowInsets(0, 0, 0, 10),
@@ -192,7 +194,7 @@ fun ShowFoodQuantityPicker(
                         fontWeight = FontWeight.Bold
                     )
                 ) {
-                    append("Food Quantity!")
+                    append(title)
                 }
             },
             modifier = Modifier
@@ -215,8 +217,8 @@ fun ShowFoodQuantityPicker(
 
         Button(
             onClick = {
-                saveFoodItemWithQuantity(pickerState.selectedItem.toInt())
-                hideFoodQuantityPickerBottomSheet()
+                saveQuantityOrSets(pickerState.selectedItem.toInt())
+                hideQuantityOrSetsPickerBottomSheet()
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = ColorsUtil.primaryDarkTextColor

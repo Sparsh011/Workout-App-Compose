@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.navigation.destinations
+package com.sparshchadha.workout_app.ui.navigation.destinations.shared
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
@@ -33,7 +33,7 @@ fun NavGraphBuilder.searchComposable(
     ) { backStackEntry ->
         val searchFor = backStackEntry.arguments?.getString("searchFor")
         val dishes = foodItemsViewModel.foodItemsFromApi.value
-        val exercises = workoutViewModel.exercises.value
+        val exercises = workoutViewModel.gymExercisesFromApi.value
         var workoutUIStateEvent : WorkoutViewModel.UIEvent? = null
         var foodUIStateEvent : WorkoutViewModel.UIEvent? = null
 
@@ -61,6 +61,9 @@ fun NavGraphBuilder.searchComposable(
             foodUIStateEvent = foodUIStateEvent,
             saveFoodItemWithQuantity = {
                 foodItemsViewModel.saveFoodItem(foodItemEntity = it)
+            },
+            saveExercise = {
+                workoutViewModel.saveGymExercise(gymExercisesEntity = it)
             }
         )
     }
