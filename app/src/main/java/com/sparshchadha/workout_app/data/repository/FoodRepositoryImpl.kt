@@ -34,13 +34,13 @@ class FoodRepositoryImpl(
         foodItemsDao.addFoodItem(foodItem = foodItemEntity)
     }
 
-    override suspend fun getFoodItemsConsumedToday(): Flow<Resource<List<FoodItemEntity>>> = flow {
+    override suspend fun getFoodItemsConsumedOn(date: String, month: String): Flow<Resource<List<FoodItemEntity>>> = flow {
         emit(Resource.Loading())
 
         try {
-            val foodItems = foodItemsDao.getFoodItemsConsumedToday(
-                currentDate = HelperFunctions.getCurrentDateAndMonth().first.toString(),
-                currentMonth = HelperFunctions.getCurrentDateAndMonth().second,
+            val foodItems = foodItemsDao.getFoodItemsConsumedOn(
+                date = date,
+                month = month
             )
             emit(Resource.Success(foodItems))
 

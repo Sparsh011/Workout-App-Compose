@@ -1,5 +1,7 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,16 +60,19 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
 import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.HelperFunctions
 import kotlinx.coroutines.launch
 
 private const val TAG = "CalorieTrackerScreen"
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalorieTrackerScreen(
     navController: NavHostController,
     paddingValues: PaddingValues,
     foodItemsConsumedToday: List<FoodItemEntity>?,
+    getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit
 ) {
     var caloriesGoal by remember {
         mutableFloatStateOf(1000F)
@@ -127,13 +132,12 @@ fun CalorieTrackerScreen(
             }
 
             item {
-                SelectDay()
+                SelectDay(
+                    getDishesConsumedOnSelectedDayAndMonth = getDishesConsumedOnSelectedDayAndMonth
+                )
             }
 
             // Today's consumed dishes -
-            item {
-                DishesConsumedTodayHeader()
-            }
 
             if (foodItemsConsumedToday.isNullOrEmpty()) {
                 item {
@@ -143,11 +147,17 @@ fun CalorieTrackerScreen(
                     NoWorkoutPerformedOrFoodConsumed(
                         text = "No Dishes Consumed Yet!",
                         composition = composition,
-                        progress = progress
+                        progress = progress,
+                        animationModifier = Modifier.size(200.dp),
+                        textSize = 20.sp
                     )
                 }
 
             } else {
+                item {
+                    DishesConsumedTodayHeader()
+                }
+
                 items(foodItemsConsumedToday) { foodItem ->
                     Column {
                         foodItem.foodItemDetails?.name?.let { it1 -> Text(text = it1) }
@@ -182,122 +192,44 @@ fun DishesConsumedTodayHeader() {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SelectDay() {
-    val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
-    val list = listOf(
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20",
-    )
-    LaunchedEffect(key1 = Unit) {
-        coroutineScope.launch {
-            listState.scrollToItem(list.size / 2)
+fun SelectDay(
+    getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit
+) {
+    val last30Days = HelperFunctions.getLast30Days()
+    last30Days.reverse()
+
+    val next3Days = HelperFunctions.getNext3Days()
+
+    val (currentDay, currentMonth) = HelperFunctions.getCurrentDateAndMonth()
+
+    LazyRow {
+        items(last30Days) {
+            DayAndDate(date = it.first.toString(), month = it.second, modifier = Modifier.clickable {
+                getDishesConsumedOnSelectedDayAndMonth(Pair(it.first, it.second))
+            })
+        }
+
+        items(next3Days) {
+            DayAndDate(date = it.first.toString(), month = it.second )
         }
     }
 
-    var selectedItem by remember {
-        mutableIntStateOf(list.size / 2)
-    }
-
-    val visibleItems by remember {
-        derivedStateOf {
-            val layoutInfo = listState.layoutInfo
-            val visibleItemsInfo = layoutInfo.visibleItemsInfo
-            if (layoutInfo.totalItemsCount == 0) {
-                0
-            } else {
-                val firstVisibleItem = visibleItemsInfo.first()
-                val lastVisibleItem = visibleItemsInfo.last()
-                lastVisibleItem.index - firstVisibleItem.index
-            }
-        }
-    }
-
-    LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        state = listState,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        items(list.size) {
-            if (it == selectedItem) {
-                DayAndDate(
-                    date = it.toString(),
-                    day = "Mon",
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(ColorsUtil.primaryGreenCardBackground)
-                        .padding(10.dp)
-                        .fillParentMaxWidth(0.1f)
-                        .clickable {
-                            selectedItem = it
-                            coroutineScope.launch {
-                                if (it < 2 || it - (visibleItems / 2) < 0) {
-                                    listState.scrollToItem(it)
-                                } else {
-                                    listState.scrollToItem(it - (visibleItems / 2))
-                                }
-                            }
-                        },
-                )
-
-            } else {
-                DayAndDate(
-                    date = it.toString(),
-                    day = "Tues",
-                    modifier = Modifier
-                        .padding(horizontal = 10.dp)
-                        .padding(10.dp)
-                        .fillParentMaxWidth(0.1f)
-                        .clickable {
-                            selectedItem = it
-                            coroutineScope.launch {
-                                if (it - (visibleItems / 2) < 0) {
-                                    listState.scrollToItem(it)
-                                } else {
-                                    listState.scrollToItem(it - (visibleItems / 2))
-                                }
-                            }
-                        }
-                )
-            }
-        }
-    }
 }
 
 @Composable
 fun DayAndDate(
     date: String,
-    day: String,
-    modifier: Modifier,
+    month: String,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = day,
+            text = month,
             fontSize = TextUnit(20f, TextUnitType.Unspecified),
             fontWeight = FontWeight.Bold,
             color = Color.Black

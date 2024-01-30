@@ -14,6 +14,6 @@ interface FoodItemsDao {
     @Query("SELECT * FROM FoodItemEntity")
     fun getAllFoodItemsConsumed(): List<FoodItemEntity>
 
-    @Query("SELECT * FROM FoodItemEntity WHERE date = :currentDate AND month = :currentMonth")
-    fun getFoodItemsConsumedToday(currentDate: String, currentMonth: String): List<FoodItemEntity>
+    @Query("SELECT * FROM FoodItemEntity WHERE date = :date AND month = :month")
+    fun getFoodItemsConsumedOn(date: String, month: String): List<FoodItemEntity>
 }

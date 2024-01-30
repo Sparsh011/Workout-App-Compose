@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -110,14 +111,15 @@ fun PopulatePerformedYogaPoses(
         containerColor = Color.White
     ) { localPaddingValues ->
         if (yogaPosesPerformedToday.isNullOrEmpty()) {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_results_found_animation))
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_gym_or_yoga_performed))
             val progress by animateLottieCompositionAsState(composition)
 
             NoWorkoutPerformedOrFoodConsumed(
                 text = "No Yoga Poses Performed Today!",
                 composition = composition,
                 progress = progress,
-                localPaddingValues = localPaddingValues
+                localPaddingValues = localPaddingValues,
+                animationModifier = Modifier.size(250.dp)
             )
         } else {
             LazyColumn(

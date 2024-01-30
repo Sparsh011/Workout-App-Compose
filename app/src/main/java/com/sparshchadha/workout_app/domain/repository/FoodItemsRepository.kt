@@ -10,7 +10,7 @@ interface FoodItemsRepository {
 
     suspend fun saveFoodItem(foodItemEntity: FoodItemEntity)
 
-    suspend fun getFoodItemsConsumedToday() : Flow<Resource<List<FoodItemEntity>>>
+    suspend fun getFoodItemsConsumedOn(date: String, month: String) : Flow<Resource<List<FoodItemEntity>>>
 
     suspend fun getAllFoodItemsConsumed() : Flow<Resource<List<FoodItemEntity>>>
 

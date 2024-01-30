@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
+import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -74,9 +74,12 @@ class FoodItemsViewModel @Inject constructor(
         }
     }
 
-    fun getFoodItemsConsumedToday() {
+    fun getFoodItemsConsumedOn(
+        date: String = HelperFunctions.getCurrentDateAndMonth().first.toString(),
+        month: String = HelperFunctions.getCurrentDateAndMonth().second
+    ) {
         viewModelScope.launch (Dispatchers.IO) {
-            val foodItems = foodItemsRepository.getFoodItemsConsumedToday()
+            val foodItems = foodItemsRepository.getFoodItemsConsumedOn(date, month)
             foodItems.collect { response ->
                 when (response) {
                     is Resource.Success -> {

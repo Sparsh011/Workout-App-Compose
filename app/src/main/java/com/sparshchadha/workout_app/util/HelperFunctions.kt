@@ -1,16 +1,20 @@
 package com.sparshchadha.workout_app.util
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.MuscleType
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.WorkoutType
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.Year
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 object HelperFunctions {
-    fun getDifficultyLevels() : List<String> {
+    fun getDifficultyLevels(): List<String> {
         return listOf(
             DifficultyLevel.BEGINNER.name.lowercase().capitalize(),
             DifficultyLevel.INTERMEDIATE.name.lowercase().capitalize(),
@@ -18,7 +22,7 @@ object HelperFunctions {
         )
     }
 
-    fun getMuscleTypes() : List<String> {
+    fun getMuscleTypes(): List<String> {
         return listOf(
             MuscleType.ABDOMINALS.name.lowercase().capitalize(),
             MuscleType.ABDUCTORS.name.lowercase().capitalize(),
@@ -38,7 +42,7 @@ object HelperFunctions {
         )
     }
 
-    fun getWorkoutTypes() : List<String> {
+    fun getWorkoutTypes(): List<String> {
         return listOf(
             WorkoutType.CARDIO.name.lowercase().capitalize(),
             WorkoutType.OLYMPIC_WEIGHTLIFTING.name.lowercase().capitalize().replace('_', ' '),
@@ -50,7 +54,7 @@ object HelperFunctions {
         )
     }
 
-    fun getNumberOfSetsOrQuantity() : List<String> {
+    fun getNumberOfSetsOrQuantity(): List<String> {
         return listOf("1", "2", "3", "4", "5")
     }
 
@@ -59,5 +63,136 @@ object HelperFunctions {
         val currentMonth = SimpleDateFormat("MMMM", Locale.getDefault()).format(Date())
 
         return Pair(currentDate, currentMonth)
+    }
+
+    // returns Date, Month
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getLast30Days(): MutableList<Pair<Int, String>> {
+        val (currentDate, currentMonth) = getCurrentDateAndMonth()
+        val monthMap = getMonthMap()
+        val daysInMonthMap = daysInMonthMap()
+        val last30DaysList = mutableListOf<Pair<Int, String>>()
+
+        if (currentDate < 30) {
+            // Add current month's past days
+            for (day in currentDate downTo 1) {
+                last30DaysList.add(Pair(first = day, second = currentMonth))
+            }
+
+            val previousMonth = getPreviousMonth(monthMap[currentMonth])
+            val remainingDays = 30 - currentDate
+            val daysInPrevMonth = daysInMonthMap[previousMonth] ?: 0
+
+            // Add previous month's valid days
+            for (day in daysInPrevMonth downTo (daysInPrevMonth - remainingDays + 1)) {
+                last30DaysList.add(Pair(first = day, second = previousMonth))
+            }
+        } else {
+            for (day in currentDate downTo 1) {
+                last30DaysList.add(Pair(first = day, second = currentMonth))
+            }
+        }
+
+        return last30DaysList
+    }
+
+    private fun getMonthMap(): Map<String, Int> {
+        return mapOf(
+            "January" to 1,
+            "February" to 2,
+            "March" to 3,
+            "April" to 4,
+            "May" to 5,
+            "June" to 6,
+            "July" to 7,
+            "August" to 8,
+            "September" to 9,
+            "October" to 10,
+            "November" to 11,
+            "December" to 12
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun daysInMonthMap(): Map<String, Int> {
+        val currentYear = LocalDate.now().year
+
+        return mapOf(
+            "January" to 31,
+            "February" to if (Year.isLeap(currentYear.toLong())) 29 else 28,
+            "March" to 31,
+            "April" to 30,
+            "May" to 31,
+            "June" to 30,
+            "July" to 31,
+            "August" to 31,
+            "September" to 30,
+            "October" to 31,
+            "November" to 30,
+            "December" to 31
+        )
+    }
+
+
+    private fun getPreviousMonth(currentMonthIndex: Int?): String {
+        return when (currentMonthIndex) {
+            1 -> "December"
+            2 -> "January"
+            3 -> "February"
+            4 -> "March"
+            5 -> "April"
+            6 -> "May"
+            7 -> "June"
+            8 -> "July"
+            9 -> "August"
+            10 -> "September"
+            11 -> "October"
+            else -> "November"
+        }
+    }
+
+    private fun getNextMonth(currentMonthIndex: Int?): String {
+        return when (currentMonthIndex) {
+            1 -> "February"
+            2 -> "March"
+            3 -> "April"
+            4 -> "May"
+            5 -> "June"
+            6 -> "July"
+            7 -> "August"
+            8 -> "September"
+            9 -> "October"
+            10 -> "November"
+            11 -> "December"
+            else -> "January"
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getNext3Days(): MutableList<Pair<Int, String>> {
+        val (currentDate, currentMonth) = getCurrentDateAndMonth()
+        val monthMap = getMonthMap()
+        val daysInMonthMap = daysInMonthMap()
+        val next3DaysList = mutableListOf<Pair<Int, String>>()
+        val daysInCurrentMonth = daysInMonthMap[currentMonth] ?: 31
+
+        if (daysInCurrentMonth - currentDate >= 3) {
+            next3DaysList.add(currentDate + 1 to currentMonth)
+            next3DaysList.add(currentDate + 2 to currentMonth)
+            next3DaysList.add(currentDate + 3 to currentMonth)
+        } else {
+            val nextMonth = getNextMonth(monthMap[currentMonth])
+
+            val validDaysForNextMonth = 3 - (daysInCurrentMonth - currentDate)
+            for (day in currentDate + 1..daysInCurrentMonth) {
+                next3DaysList.add(day to currentMonth)
+            }
+
+            for (day in 1..validDaysForNextMonth) {
+                next3DaysList.add(day to nextMonth)
+            }
+        }
+
+        return next3DaysList
     }
 }
