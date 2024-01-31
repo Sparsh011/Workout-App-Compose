@@ -39,7 +39,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.data.local.entities.GymExercisesEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar

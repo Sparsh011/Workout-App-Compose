@@ -23,9 +23,11 @@ fun NavGraphBuilder.calorieTrackerComposable(
 
         LaunchedEffect(key1 = true) {
             foodItemsViewModel.getFoodItemsConsumedOn()
+            foodItemsViewModel.getCaloriesGoal()
         }
 
         val foodItemsConsumedToday = foodItemsViewModel.savedFoodItems.value
+        val caloriesGoal = foodItemsViewModel.caloriesGoal.value ?: "999"
 
         CalorieTrackerScreen(
             navController = navController,
@@ -33,7 +35,11 @@ fun NavGraphBuilder.calorieTrackerComposable(
             foodItemsConsumedToday = foodItemsConsumedToday,
             getDishesConsumedOnSelectedDayAndMonth = {
                 foodItemsViewModel.getFoodItemsConsumedOn(it.first.toString(), it.second)
-            }
+            },
+            updateCaloriesGoal = {
+                foodItemsViewModel.addOrUpdateCaloriesGoal(caloriesGoal = it)
+            },
+            caloriesGoal = caloriesGoal
         )
     }
 }

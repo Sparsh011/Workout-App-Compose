@@ -3,14 +3,18 @@ package com.sparshchadha.workout_app.di
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresExtension
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson
-import com.sparshchadha.workout_app.data.local.Converters
-import com.sparshchadha.workout_app.data.local.WorkoutAppDatabase
-import com.sparshchadha.workout_app.data.local.dao.FoodItemsDao
-import com.sparshchadha.workout_app.data.local.dao.GymExercisesDao
-import com.sparshchadha.workout_app.data.local.dao.YogaDao
+import com.sparshchadha.workout_app.data.local.datastore.WorkoutAppDatastorePreference
+import com.sparshchadha.workout_app.data.local.room_db.Converters
+import com.sparshchadha.workout_app.data.local.room_db.WorkoutAppDatabase
+import com.sparshchadha.workout_app.data.local.room_db.dao.FoodItemsDao
+import com.sparshchadha.workout_app.data.local.room_db.dao.GymExercisesDao
+import com.sparshchadha.workout_app.data.local.room_db.dao.YogaDao
 import com.sparshchadha.workout_app.data.remote.api.FoodApi
 import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
 import com.sparshchadha.workout_app.data.remote.api.PexelsApi
@@ -44,6 +48,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object SharedModule {
+    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
+    @Singleton
+    @Provides
+    fun provideDataStorePreference(@ApplicationContext context: Context): WorkoutAppDatastorePreference =
+        WorkoutAppDatastorePreference(context)
 
     @Provides
     @Singleton
@@ -71,11 +81,6 @@ object SharedModule {
             .proxy(Proxy.NO_PROXY)
             .addInterceptor(ChuckerInterceptor(context))
             .build()
-//        return OkHttpClient.Builder()
-//            .connectTimeout(30, TimeUnit.SECONDS)
-//            .readTimeout(30, TimeUnit.SECONDS)
-//            .addInterceptor(ChuckerInterceptor(context))
-//            .build()
     }
 
     @Provides
@@ -140,8 +145,9 @@ object SharedModule {
     fun provideFoodItemsRepository(
         api: FoodApi,
         foodItemsDao: FoodItemsDao,
+        datastorePreference: WorkoutAppDatastorePreference
     ): FoodItemsRepository {
-        return FoodRepositoryImpl(api = api, foodItemsDao = foodItemsDao)
+        return FoodRepositoryImpl(api = api, foodItemsDao = foodItemsDao, datastorePreference = datastorePreference)
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)

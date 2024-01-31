@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.data.local
+package com.sparshchadha.workout_app.data.local.room_db
 
 
 import androidx.room.ProvidedTypeConverter

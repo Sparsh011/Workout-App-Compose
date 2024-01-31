@@ -3,10 +3,10 @@ package com.sparshchadha.workout_app.data.repository
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.sparshchadha.workout_app.BuildConfig
-import com.sparshchadha.workout_app.data.local.dao.GymExercisesDao
-import com.sparshchadha.workout_app.data.local.dao.YogaDao
-import com.sparshchadha.workout_app.data.local.entities.GymExercisesEntity
-import com.sparshchadha.workout_app.data.local.entities.YogaEntity
+import com.sparshchadha.workout_app.data.local.room_db.dao.GymExercisesDao
+import com.sparshchadha.workout_app.data.local.room_db.dao.YogaDao
+import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
 import com.sparshchadha.workout_app.data.remote.api.YogaApi
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto

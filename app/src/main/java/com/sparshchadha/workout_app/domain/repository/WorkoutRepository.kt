@@ -1,7 +1,7 @@
 package com.sparshchadha.workout_app.domain.repository
 
-import com.sparshchadha.workout_app.data.local.entities.GymExercisesEntity
-import com.sparshchadha.workout_app.data.local.entities.YogaEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel

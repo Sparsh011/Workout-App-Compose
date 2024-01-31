@@ -4,8 +4,9 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sparshchadha.workout_app.data.local.entities.GymExercisesEntity
-import com.sparshchadha.workout_app.data.local.entities.YogaEntity
+import com.sparshchadha.workout_app.data.local.datastore.WorkoutAppDatastorePreference
+import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
@@ -24,6 +25,7 @@ private const val TAG = "WorkoutViewModel"
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
     private val workoutRepository: WorkoutRepository,
+    private val datastorePreference: WorkoutAppDatastorePreference
 ) : ViewModel() {
     private var _difficultyForYoga = mutableStateOf(DifficultyLevel.BEGINNER)
 

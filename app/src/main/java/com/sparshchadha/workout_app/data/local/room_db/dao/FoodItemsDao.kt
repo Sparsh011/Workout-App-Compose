@@ -1,10 +1,10 @@
-package com.sparshchadha.workout_app.data.local.dao
+package com.sparshchadha.workout_app.data.local.room_db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 
 @Dao
 interface FoodItemsDao {

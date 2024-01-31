@@ -33,11 +33,9 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -56,7 +54,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.HelperFunctions
@@ -71,10 +69,9 @@ fun CalorieTrackerScreen(
     paddingValues: PaddingValues,
     foodItemsConsumedToday: List<FoodItemEntity>?,
     getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit,
+    updateCaloriesGoal: (Int) -> Unit,
+    caloriesGoal: String
 ) {
-    var caloriesGoal by remember {
-        mutableFloatStateOf(1000F)
-    }
 
     var shouldShowCaloriesBottomSheet by remember {
         mutableStateOf(false)
@@ -112,12 +109,12 @@ fun CalorieTrackerScreen(
                 CaloriesAndNutrientsConsumedToday(
                     shouldShowCaloriesBottomSheet = shouldShowCaloriesBottomSheet,
                     sheetState = sheetState,
-                    caloriesGoal,
+                    caloriesGoal = caloriesGoal,
                     hideCaloriesBottomSheet = {
                         shouldShowCaloriesBottomSheet = false
                     },
                     updateCaloriesGoal = {
-                        caloriesGoal = it
+                        updateCaloriesGoal(it.toInt())
                     },
                     showCaloriesGoalBottomSheet = {
                         shouldShowCaloriesBottomSheet = true
@@ -314,61 +311,27 @@ fun DayAndDate(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun UpdateCaloriesBottomSheet(
-    sheetState: SheetState,
-    caloriesGoal: Float,
-    onSheetDismissed: () -> Unit,
-    onCaloriesChanged: (Float) -> Unit,
-) {
-    ModalBottomSheet(
-        sheetState = sheetState,
-        containerColor = Color.Black,
-        onDismissRequest = {
-            onSheetDismissed()
-        },
-        windowInsets = WindowInsets(0, 0, 0, 0)
-    ) {
-        BoxWithConstraints(
-            Modifier
-                .navigationBarsPadding()
-                .padding(bottom = 10.dp)
-        ) {
-            Column {
-                CaloriesConsumedAndSliderComposable(
-                    calorieDescription = "Calories Goal : ${caloriesGoal.toInt()}",
-                    shouldEnableSlider = true,
-                    calories = caloriesGoal,
-                    textModifier = Modifier.padding(10.dp),
-                    sliderModifier = Modifier.padding(10.dp)
-                ) {
-                    onCaloriesChanged(it)
-                }
-            }
-        }
-    }
-}
+
 
 @Composable
 fun CaloriesConsumedAndSliderComposable(
     calorieDescription: String,
     shouldEnableSlider: Boolean,
-    calories: Float,
+    calories: String,
     textModifier: Modifier,
     sliderModifier: Modifier,
     onCaloriesChanged: (Float) -> Unit = {},
 ) {
     Text(
         text = calorieDescription,
-        color = Color.White,
+        color = Color.Black,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         modifier = textModifier
     )
 
     Slider(
-        value = calories,
+        value = calories.toFloat(),
         onValueChange = {
             onCaloriesChanged(it)
         },

@@ -1,10 +1,11 @@
 package com.sparshchadha.workout_app.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
@@ -14,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,7 +24,7 @@ private const val TAG = "SearchFoodViewModellll"
 @HiltViewModel
 class FoodItemsViewModel @Inject constructor(
     private val foodItemsRepository: FoodItemsRepository,
-    private val pexelsRepository: PexelsRepository,
+    private val pexelsRepository: PexelsRepository
 ) : ViewModel() {
     private val _foodItemsFromApi = mutableStateOf<NutritionalValueDto?>(null)
     val foodItemsFromApi = _foodItemsFromApi
@@ -34,6 +36,9 @@ class FoodItemsViewModel @Inject constructor(
 
     private val _savedFoodItems = mutableStateOf<List<FoodItemEntity>?>(null)
     val savedFoodItems = _savedFoodItems
+
+    private val _caloriesGaol: MutableState<String?> = mutableStateOf("999")
+    val caloriesGoal = _caloriesGaol
 
     fun getFoodItemsFromApi() {
         viewModelScope.launch {
@@ -100,6 +105,25 @@ class FoodItemsViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    fun addOrUpdateCaloriesGoal(caloriesGoal: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            foodItemsRepository.saveOrUpdateCaloriesGoal(caloriesGoal = caloriesGoal.toString())
+        }
+    }
+
+    fun getCaloriesGoal() {
+        viewModelScope.launch(Dispatchers.IO) {
+            foodItemsRepository.getCaloriesGoal()
+                .catch { e ->
+                    Log.e(TAG, "Error getting calories goal: ${e.message}")
+                }
+                .collect { value ->
+                    _caloriesGaol.value = value
+                    Log.d(TAG, "Calories goal: $value")
+                }
         }
     }
 }

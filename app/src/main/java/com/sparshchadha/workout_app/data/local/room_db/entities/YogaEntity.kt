@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.data.local.entities
+package com.sparshchadha.workout_app.data.local.room_db.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

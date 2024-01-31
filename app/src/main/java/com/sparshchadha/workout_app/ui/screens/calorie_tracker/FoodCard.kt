@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.rememberPickerState

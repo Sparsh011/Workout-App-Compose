@@ -4,14 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -40,7 +43,7 @@ import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 fun CaloriesAndNutrientsConsumedToday(
     shouldShowCaloriesBottomSheet: Boolean,
     sheetState: SheetState,
-    caloriesGoal: Float,
+    caloriesGoal: String,
     hideCaloriesBottomSheet: () -> Unit,
     updateCaloriesGoal: (Float) -> Unit,
     showCaloriesGoalBottomSheet: () -> Unit,
@@ -84,10 +87,9 @@ fun CaloriesAndNutrientsConsumedToday(
             caloriesGoal = caloriesGoal,
             onSheetDismissed = {
                 hideCaloriesBottomSheet()
-            }
-        ) {
-            updateCaloriesGoal(it)
-        }
+            },
+            onCaloriesChanged = updateCaloriesGoal
+        )
     }
 }
 
@@ -117,7 +119,7 @@ fun CardHeading() {
 
 @Composable
 fun CaloriesConsumedAndLeftToday(
-    caloriesGoal: Float,
+    caloriesGoal: String,
     showCaloriesGoalBottomSheet: () -> Unit,
 ) {
     Row(
@@ -158,7 +160,7 @@ fun CaloriesConsumedAndLeftToday(
 }
 
 @Composable
-fun CenterCaloriesGoalBox(modifier: Modifier, calories: Float) {
+fun CenterCaloriesGoalBox(modifier: Modifier, calories: String) {
     Box(
         modifier = modifier,
         contentAlignment = Center
@@ -184,7 +186,7 @@ fun CenterCaloriesGoalBox(modifier: Modifier, calories: Float) {
 }
 
 @Composable
-fun CaloriesLeftOrEatenColumn(calories: Float, description: String, modifier: Modifier) {
+fun CaloriesLeftOrEatenColumn(calories: String, description: String, modifier: Modifier) {
     Column(
         modifier = modifier,
         horizontalAlignment = CenterHorizontally
@@ -197,10 +199,46 @@ fun CaloriesLeftOrEatenColumn(calories: Float, description: String, modifier: Mo
             color = Color.Black
         )
         Text(
-            text = "${calories.toInt()} KCAL",
+            text = "${calories} KCAL",
             modifier = Modifier.align(CenterHorizontally),
             fontSize = TextUnit(16f, TextUnitType.Unspecified),
             color = ColorsUtil.primaryDarkTextColor
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UpdateCaloriesBottomSheet(
+    sheetState: SheetState,
+    caloriesGoal: String,
+    onSheetDismissed: () -> Unit,
+    onCaloriesChanged: (Float) -> Unit,
+) {
+    ModalBottomSheet(
+        sheetState = sheetState,
+        containerColor = Color.White,
+        onDismissRequest = {
+            onSheetDismissed()
+        },
+        windowInsets = WindowInsets(0, 0, 0, 0)
+    ) {
+        BoxWithConstraints(
+            Modifier
+                .navigationBarsPadding()
+                .padding(bottom = 10.dp)
+        ) {
+            Column {
+                CaloriesConsumedAndSliderComposable(
+                    calorieDescription = "Calories Goal : ${caloriesGoal.toInt()}",
+                    shouldEnableSlider = true,
+                    calories = caloriesGoal,
+                    textModifier = Modifier.padding(10.dp),
+                    sliderModifier = Modifier.padding(10.dp)
+                ) {
+                    onCaloriesChanged(it)
+                }
+            }
+        }
     }
 }

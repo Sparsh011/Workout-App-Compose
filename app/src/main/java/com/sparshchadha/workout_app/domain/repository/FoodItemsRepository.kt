@@ -1,6 +1,6 @@
 package com.sparshchadha.workout_app.domain.repository
 
-import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -13,5 +13,9 @@ interface FoodItemsRepository {
     suspend fun getFoodItemsConsumedOn(date: String, month: String) : Flow<Resource<List<FoodItemEntity>>>
 
     suspend fun getAllFoodItemsConsumed() : Flow<Resource<List<FoodItemEntity>>>
+
+    suspend fun saveOrUpdateCaloriesGoal(caloriesGoal: String)
+
+    suspend fun getCaloriesGoal() : Flow<String?>
 
 }
