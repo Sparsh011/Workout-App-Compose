@@ -11,5 +11,6 @@ object ColorsUtil {
     val primaryGreenCardBackground: Color = Color(39, 255, 147, 255)
     val primaryBlack : Color =  Color(37, 43, 60)
     val unselectedBottomBarIconColor : Color = Color(139, 143, 156, 255)
+    val customDividerColor : Color = Color(224, 224, 228, 255)
 
 }

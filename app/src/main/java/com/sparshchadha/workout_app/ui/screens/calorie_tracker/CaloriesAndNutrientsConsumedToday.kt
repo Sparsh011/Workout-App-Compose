@@ -7,18 +7,28 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -30,10 +40,12 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
@@ -45,8 +57,9 @@ fun CaloriesAndNutrientsConsumedToday(
     sheetState: SheetState,
     caloriesGoal: String,
     hideCaloriesBottomSheet: () -> Unit,
-    updateCaloriesGoal: (Float) -> Unit,
+    saveNewCaloriesGoal: (Float) -> Unit,
     showCaloriesGoalBottomSheet: () -> Unit,
+    caloriesConsumed: String,
 ) {
     val configuration = LocalConfiguration.current;
     val screenWidth = configuration.screenWidthDp
@@ -62,22 +75,12 @@ fun CaloriesAndNutrientsConsumedToday(
         CardHeading()
 
         CaloriesConsumedAndLeftToday(
-            caloriesGoal = caloriesGoal,
-            showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet
+            caloriesConsumed = caloriesConsumed,
+            showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet,
+            caloriesGoal = caloriesGoal
         )
 
-        Text(
-            text = "Calories Goal",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp)
-                .clickable {
-                    showCaloriesGoalBottomSheet()
-                },
-            color = ColorsUtil.primaryDarkTextColor,
-            fontSize = 15.nonScaledSp,
-            textAlign = TextAlign.Center
-        )
+        CaloriesGoalText(showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet)
     }
 
     // Bottom sheet to update calories goal
@@ -88,9 +91,25 @@ fun CaloriesAndNutrientsConsumedToday(
             onSheetDismissed = {
                 hideCaloriesBottomSheet()
             },
-            onCaloriesChanged = updateCaloriesGoal
+            saveNewCaloriesGoal = saveNewCaloriesGoal
         )
     }
+}
+
+@Composable
+fun CaloriesGoalText(showCaloriesGoalBottomSheet: () -> Unit) {
+    Text(
+        text = "Calories Goal",
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp)
+            .clickable {
+                showCaloriesGoalBottomSheet()
+            },
+        color = ColorsUtil.primaryDarkTextColor,
+        fontSize = 15.nonScaledSp,
+        textAlign = TextAlign.Center
+    )
 }
 
 @Composable
@@ -119,8 +138,9 @@ fun CardHeading() {
 
 @Composable
 fun CaloriesConsumedAndLeftToday(
-    caloriesGoal: String,
+    caloriesConsumed: String,
     showCaloriesGoalBottomSheet: () -> Unit,
+    caloriesGoal: String,
 ) {
     Row(
         modifier = Modifier
@@ -130,7 +150,7 @@ fun CaloriesConsumedAndLeftToday(
     ) {
 
         CaloriesLeftOrEatenColumn(
-            calories = caloriesGoal,
+            calories = caloriesConsumed,
             description = "Eaten",
             modifier = Modifier
                 .weight(1f)
@@ -151,7 +171,8 @@ fun CaloriesConsumedAndLeftToday(
         )
 
         CaloriesLeftOrEatenColumn(
-            calories = caloriesGoal, description = "Left",
+            calories = (caloriesGoal.toInt() - caloriesConsumed.toInt()).toString(),
+            description = "Left",
             modifier = Modifier
                 .weight(1f)
                 .padding(20.dp)
@@ -198,12 +219,22 @@ fun CaloriesLeftOrEatenColumn(calories: String, description: String, modifier: M
             fontSize = TextUnit(24f, TextUnitType.Unspecified),
             color = Color.Black
         )
-        Text(
-            text = "${calories} KCAL",
-            modifier = Modifier.align(CenterHorizontally),
-            fontSize = TextUnit(16f, TextUnitType.Unspecified),
-            color = ColorsUtil.primaryDarkTextColor
-        )
+
+        if (calories.toInt() <= 0) {
+            Text(
+                text = "0 KCAL",
+                modifier = Modifier.align(CenterHorizontally),
+                fontSize = TextUnit(16f, TextUnitType.Unspecified),
+                color = ColorsUtil.primaryDarkTextColor
+            )
+        } else {
+            Text(
+                text = "$calories KCAL",
+                modifier = Modifier.align(CenterHorizontally),
+                fontSize = TextUnit(16f, TextUnitType.Unspecified),
+                color = ColorsUtil.primaryDarkTextColor
+            )
+        }
     }
 }
 
@@ -213,8 +244,12 @@ fun UpdateCaloriesBottomSheet(
     sheetState: SheetState,
     caloriesGoal: String,
     onSheetDismissed: () -> Unit,
-    onCaloriesChanged: (Float) -> Unit,
+    saveNewCaloriesGoal: (Float) -> Unit,
 ) {
+    var newCaloriesGoal by remember {
+        mutableFloatStateOf(caloriesGoal.toFloat())
+    }
+
     ModalBottomSheet(
         sheetState = sheetState,
         containerColor = Color.White,
@@ -229,16 +264,77 @@ fun UpdateCaloriesBottomSheet(
                 .padding(bottom = 10.dp)
         ) {
             Column {
-                CaloriesConsumedAndSliderComposable(
-                    calorieDescription = "Calories Goal : ${caloriesGoal.toInt()}",
-                    shouldEnableSlider = true,
-                    calories = caloriesGoal,
+                UpdateCaloriesGoalSlider(
+                    calorieDescription = "Current Goal : ${caloriesGoal.toInt()}",
                     textModifier = Modifier.padding(10.dp),
-                    sliderModifier = Modifier.padding(10.dp)
-                ) {
-                    onCaloriesChanged(it)
-                }
+                    sliderModifier = Modifier.padding(10.dp),
+                    newCaloriesGoal = newCaloriesGoal,
+                    updateNewCaloriesGoalInSlider = {
+                        newCaloriesGoal = it
+                    },
+                    saveNewCaloriesGoal = saveNewCaloriesGoal,
+                    hideUpdateCaloriesBottomSheet = onSheetDismissed
+                )
             }
         }
     }
+}
+
+@Composable
+fun UpdateCaloriesGoalSlider(
+    calorieDescription: String,
+    textModifier: Modifier,
+    sliderModifier: Modifier,
+    newCaloriesGoal: Float,
+    updateNewCaloriesGoalInSlider: (Float) -> Unit,
+    saveNewCaloriesGoal: (Float) -> Unit,
+    hideUpdateCaloriesBottomSheet: () -> Unit,
+) {
+    Text(
+        text = calorieDescription,
+        color = Color.Black,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        modifier = textModifier
+    )
+
+    Text(
+        text = "New Goal : ${newCaloriesGoal.toInt()}",
+        color = Color.Black,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        modifier = textModifier,
+        overflow = TextOverflow.Ellipsis
+    )
+
+    Slider(
+        value = newCaloriesGoal,
+        onValueChange = {
+            updateNewCaloriesGoalInSlider(it)
+        },
+        valueRange = 1000F..5000F,
+        modifier = sliderModifier,
+        colors = SliderDefaults.colors(
+            thumbColor = ColorsUtil.primaryDarkTextColor,
+            activeTrackColor = ColorsUtil.primaryDarkTextColor,
+            inactiveTrackColor = ColorsUtil.primaryLightGray
+        )
+    )
+
+    Button(
+        onClick = {
+            saveNewCaloriesGoal(newCaloriesGoal)
+            hideUpdateCaloriesBottomSheet()
+        },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = ColorsUtil.primaryDarkTextColor
+        ),
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxWidth()
+    ) {
+        Text(text = "Update Calories Goal", color = Color.White)
+    }
+
+    Spacer(modifier = Modifier.height(10.dp))
 }

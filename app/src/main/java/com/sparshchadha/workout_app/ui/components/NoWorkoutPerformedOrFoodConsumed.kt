@@ -24,7 +24,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil
 
 @Composable
 fun NoWorkoutPerformedOrFoodConsumed(
-    text: String,
+    text: String = "",
     composition: LottieComposition?,
     progress: Float,
     localPaddingValues: PaddingValues = PaddingValues(),

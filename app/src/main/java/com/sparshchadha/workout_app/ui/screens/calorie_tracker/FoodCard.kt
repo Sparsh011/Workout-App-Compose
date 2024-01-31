@@ -158,12 +158,12 @@ private fun FoodCardComposable(
                         FoodItemEntity(
                             date = HelperFunctions.getCurrentDateAndMonth().first.toString(),
                             month = HelperFunctions.getCurrentDateAndMonth().second,
-                            quantity = quantity,
+                            servings = quantity,
                             foodItemDetails = foodItem
                         )
                     )
                 },
-                title = "Food Quantity"
+                title = "Servings"
             )
         }
     }
@@ -204,6 +204,7 @@ fun ShowQuantityOrSetsPicker(
             textAlign = TextAlign.Start,
             color = ColorsUtil.primaryDarkTextColor,
         )
+
         Spacer(modifier = Modifier.height(10.dp))
 
         PickNumberOfSetsOrQuantity(
@@ -228,7 +229,7 @@ fun ShowQuantityOrSetsPicker(
                 .padding(horizontal = 20.dp)
                 .fillMaxWidth()
         ) {
-            Text(text = "Add ${pickerState.selectedItem} ", color = Color.White)
+            Text(text = "Add ${pickerState.selectedItem} $title", color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(20.dp))

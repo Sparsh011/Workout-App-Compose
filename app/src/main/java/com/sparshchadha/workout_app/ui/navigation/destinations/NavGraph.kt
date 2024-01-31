@@ -32,7 +32,8 @@ fun NavGraph(
         // Workout Tracker in Bottom Bar
         bottomWorkoutComposable(
             workoutViewModel = workoutViewModel,
-            navController = navController
+            navController = navController,
+            globalPaddingValues = globalPaddingValues
         )
 
         // Calorie Tracker in Bottom Bar

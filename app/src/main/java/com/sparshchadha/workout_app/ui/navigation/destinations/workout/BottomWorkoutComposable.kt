@@ -3,6 +3,7 @@ package com.sparshchadha.workout_app.ui.navigation.destinations.workout
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -13,7 +14,8 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 fun NavGraphBuilder.bottomWorkoutComposable(
     workoutViewModel: WorkoutViewModel,
-    navController: NavController
+    navController: NavController,
+    globalPaddingValues: PaddingValues
 ) {
     composable(
         route = BottomBarScreen.WorkoutScreen.route,
@@ -49,7 +51,8 @@ fun NavGraphBuilder.bottomWorkoutComposable(
                 "Body Part",
                 "Difficulty",
                 "Search Exercise"
-            )
+            ),
+            globalPaddingValues = globalPaddingValues
         )
     }
 }

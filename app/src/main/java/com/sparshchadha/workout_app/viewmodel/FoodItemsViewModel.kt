@@ -37,8 +37,11 @@ class FoodItemsViewModel @Inject constructor(
     private val _savedFoodItems = mutableStateOf<List<FoodItemEntity>?>(null)
     val savedFoodItems = _savedFoodItems
 
-    private val _caloriesGaol: MutableState<String?> = mutableStateOf("999")
-    val caloriesGoal = _caloriesGaol
+    private val _caloriesGoal: MutableState<String?> = mutableStateOf(null)
+    val caloriesGoal = _caloriesGoal
+
+    private val _caloriesConsumed: MutableState<String?> = mutableStateOf(null)
+    val caloriesConsumed = _caloriesConsumed
 
     fun getFoodItemsFromApi() {
         viewModelScope.launch {
@@ -89,6 +92,7 @@ class FoodItemsViewModel @Inject constructor(
                 when (response) {
                     is Resource.Success -> {
                         _savedFoodItems.value = response.data
+                        calculateTotalCaloriesConsumed(foodItemsConsumed = response.data)
                         _uiEventState.value = WorkoutViewModel.UIEvent.HideLoaderAndShowResponse
                     }
 
@@ -108,6 +112,19 @@ class FoodItemsViewModel @Inject constructor(
         }
     }
 
+    private fun calculateTotalCaloriesConsumed(foodItemsConsumed: List<FoodItemEntity>?) {
+        var totalCaloriesConsumed = 0
+        if (foodItemsConsumed != null) {
+            for (item in foodItemsConsumed) {
+                totalCaloriesConsumed += item.servings * (item.foodItemDetails?.calories?.toInt() ?: 0)
+            }
+
+            _caloriesConsumed.value = totalCaloriesConsumed.toString()
+        } else {
+            _caloriesConsumed.value = "0"
+        }
+    }
+
     fun addOrUpdateCaloriesGoal(caloriesGoal: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             foodItemsRepository.saveOrUpdateCaloriesGoal(caloriesGoal = caloriesGoal.toString())
@@ -121,8 +138,7 @@ class FoodItemsViewModel @Inject constructor(
                     Log.e(TAG, "Error getting calories goal: ${e.message}")
                 }
                 .collect { value ->
-                    _caloriesGaol.value = value
-                    Log.d(TAG, "Calories goal: $value")
+                    _caloriesGoal.value = value
                 }
         }
     }

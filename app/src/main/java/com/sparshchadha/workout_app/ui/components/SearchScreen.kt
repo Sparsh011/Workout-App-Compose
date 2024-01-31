@@ -242,9 +242,7 @@ fun FoodSearchResults(
                 .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
         ) {
             dishes?.items?.let { items ->
-                items(
-                    items
-                ) { item ->
+                items(items) { item ->
                     var shouldExpandCard by remember {
                         mutableStateOf(false)
                     }

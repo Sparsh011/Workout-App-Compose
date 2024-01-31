@@ -8,7 +8,7 @@ import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 data class FoodItemEntity(
     val date: String,
     val month: String,
-    val quantity: Int,
+    val servings: Int,
     val foodItemDetails: FoodItem?,
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null
