@@ -4,17 +4,16 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -29,16 +28,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -61,7 +60,6 @@ import com.sparshchadha.workout_app.data.local.entities.FoodItemEntity
 import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.HelperFunctions
-import kotlinx.coroutines.launch
 
 private const val TAG = "CalorieTrackerScreen"
 
@@ -72,14 +70,10 @@ fun CalorieTrackerScreen(
     navController: NavHostController,
     paddingValues: PaddingValues,
     foodItemsConsumedToday: List<FoodItemEntity>?,
-    getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit
+    getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit,
 ) {
     var caloriesGoal by remember {
         mutableFloatStateOf(1000F)
-    }
-
-    var caloriesConsumedToday by remember {
-        mutableFloatStateOf(0F)
     }
 
     var shouldShowCaloriesBottomSheet by remember {
@@ -145,7 +139,7 @@ fun CalorieTrackerScreen(
                     val progress by animateLottieCompositionAsState(composition)
 
                     NoWorkoutPerformedOrFoodConsumed(
-                        text = "No Dishes Consumed Yet!",
+                        text = "No Dishes Consumed!",
                         composition = composition,
                         progress = progress,
                         animationModifier = Modifier.size(200.dp),
@@ -195,26 +189,73 @@ fun DishesConsumedTodayHeader() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SelectDay(
-    getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit
+    getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit,
 ) {
     val last30Days = HelperFunctions.getLast30Days()
     last30Days.reverse()
 
-    val next3Days = HelperFunctions.getNext3Days()
+    val lazyRowState = rememberLazyListState()
+    LaunchedEffect(key1 = true, block = {
+        lazyRowState.scrollToItem(last30Days.size - 3)
+    })
+
+    val getNext2Days = HelperFunctions.getNext2Days()
 
     val (currentDay, currentMonth) = HelperFunctions.getCurrentDateAndMonth()
+    var selectedDay by remember {
+        mutableIntStateOf(currentDay)
+    }
+    var selectedMonth by remember {
+        mutableStateOf(currentMonth)
+    }
 
-    LazyRow {
-        items(last30Days) {
-            DayAndDate(date = it.first.toString(), month = it.second, modifier = Modifier.clickable {
-                getDishesConsumedOnSelectedDayAndMonth(Pair(it.first, it.second))
-            })
-        }
+    BoxWithConstraints {
+        val width = maxWidth / 5
 
-        items(next3Days) {
-            DayAndDate(date = it.first.toString(), month = it.second )
+        LazyRow (
+            state = lazyRowState
+        ){
+            items(last30Days) {
+                if (selectedDay == it.first && selectedMonth == it.second) {
+                    DayAndDate(
+                        date = it.first.toString(),
+                        month = it.second.substring(0..2),
+                        modifier = Modifier
+                            .clickable {
+
+                                getDishesConsumedOnSelectedDayAndMonth(Pair(it.first, it.second))
+                            }
+                            .width(width),
+                        isSelected = true
+                    )
+                } else {
+                    DayAndDate(
+                        date = it.first.toString(),
+                        month = it.second.substring(0..2),
+                        modifier = Modifier
+                            .clickable {
+                                selectedDay = it.first
+                                selectedMonth = it.second
+                                getDishesConsumedOnSelectedDayAndMonth(Pair(it.first, it.second))
+                            }
+                            .width(width)
+                    )
+                }
+            }
+
+            items(getNext2Days) {
+                DayAndDate(
+                    date = it.first.toString(),
+                    month = it.second.substring(0..2),
+                    modifier = Modifier
+                        .width(width),
+                    monthColor = ColorsUtil.unselectedBottomBarIconColor,
+                    dateColor = ColorsUtil.unselectedBottomBarIconColor
+                )
+            }
         }
     }
+
 
 }
 
@@ -223,23 +264,53 @@ fun DayAndDate(
     date: String,
     month: String,
     modifier: Modifier = Modifier,
+    monthColor: Color = Color.Black,
+    dateColor: Color = ColorsUtil.primaryDarkTextColor,
+    isSelected: Boolean = false
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = month,
-            fontSize = TextUnit(20f, TextUnitType.Unspecified),
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        Spacer(modifier = Modifier.size(10.dp))
-        Text(
-            text = date,
-            fontSize = TextUnit(18f, TextUnitType.Unspecified),
-            color = ColorsUtil.primaryDarkTextColor
-        )
+    if (isSelected) {
+        Column(
+            modifier = modifier
+                .padding(horizontal = 10.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(ColorsUtil.primaryDarkTextColor)
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = month,
+                fontSize = TextUnit(20f, TextUnitType.Unspecified),
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Spacer(modifier = Modifier.size(10.dp))
+            Text(
+                text = date,
+                fontSize = TextUnit(18f, TextUnitType.Unspecified),
+                color = Color.White
+            )
+        }
+    } else {
+        Column(
+            modifier = modifier
+                .background(Color.White)
+                .padding(10.dp)
+            ,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = month,
+                fontSize = TextUnit(20f, TextUnitType.Unspecified),
+                fontWeight = FontWeight.Bold,
+                color = monthColor
+            )
+            Spacer(modifier = Modifier.size(10.dp))
+            Text(
+                text = date,
+                fontSize = TextUnit(18f, TextUnitType.Unspecified),
+                color = dateColor
+            )
+        }
     }
 }
 

@@ -4,10 +4,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -25,15 +21,8 @@ fun NavGraphBuilder.calorieTrackerComposable(
         route = BottomBarScreen.CalorieTracker.route
     ) {
 
-        var fetchedDishesConsumedToday by rememberSaveable {
-            mutableStateOf(false)
-        }
-
-        LaunchedEffect(key1 = fetchedDishesConsumedToday) {
-            if (!fetchedDishesConsumedToday) {
-                fetchedDishesConsumedToday = true
-                foodItemsViewModel.getFoodItemsConsumedOn()
-            }
+        LaunchedEffect(key1 = true) {
+            foodItemsViewModel.getFoodItemsConsumedOn()
         }
 
         val foodItemsConsumedToday = foodItemsViewModel.savedFoodItems.value

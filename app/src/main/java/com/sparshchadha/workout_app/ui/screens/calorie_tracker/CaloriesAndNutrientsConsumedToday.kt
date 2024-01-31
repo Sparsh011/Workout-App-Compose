@@ -45,10 +45,9 @@ fun CaloriesAndNutrientsConsumedToday(
     updateCaloriesGoal: (Float) -> Unit,
     showCaloriesGoalBottomSheet: () -> Unit,
 ) {
-    val density = LocalDensity.current;
     val configuration = LocalConfiguration.current;
     val screenWidth = configuration.screenWidthDp
-    val screenHeight = configuration.screenHeightDp
+
     Column(
         modifier = Modifier
             .fillMaxWidth(screenWidth.toFloat())
@@ -141,7 +140,7 @@ fun CaloriesConsumedAndLeftToday(
             modifier = Modifier
                 .weight(1f)
                 .clip(CircleShape)
-                .background(ColorsUtil.primaryGreenCardBackground)
+                .background(ColorsUtil.primaryDarkTextColor)
                 .align(CenterVertically)
                 .size(100.dp)
                 .clickable {
@@ -168,7 +167,7 @@ fun CenterCaloriesGoalBox(modifier: Modifier, calories: Float) {
             buildAnnotatedString {
                 withStyle(
                     style = SpanStyle(
-                        color = ColorsUtil.primaryDarkTextColor,
+                        color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = TextUnit(24f, TextUnitType.Unspecified),
                     )
@@ -178,7 +177,7 @@ fun CenterCaloriesGoalBox(modifier: Modifier, calories: Float) {
                 append("KCAL")
             },
             fontSize = TextUnit(18f, TextUnitType.Unspecified),
-            color = ColorsUtil.primaryDarkTextColor,
+            color = Color.White,
             textAlign = TextAlign.Center
         )
     }

@@ -169,21 +169,20 @@ object HelperFunctions {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun getNext3Days(): MutableList<Pair<Int, String>> {
+    fun getNext2Days(): MutableList<Pair<Int, String>> {
         val (currentDate, currentMonth) = getCurrentDateAndMonth()
         val monthMap = getMonthMap()
         val daysInMonthMap = daysInMonthMap()
         val next3DaysList = mutableListOf<Pair<Int, String>>()
         val daysInCurrentMonth = daysInMonthMap[currentMonth] ?: 31
 
-        if (daysInCurrentMonth - currentDate >= 3) {
+        if (daysInCurrentMonth - currentDate >= 2) {
             next3DaysList.add(currentDate + 1 to currentMonth)
             next3DaysList.add(currentDate + 2 to currentMonth)
-            next3DaysList.add(currentDate + 3 to currentMonth)
         } else {
             val nextMonth = getNextMonth(monthMap[currentMonth])
 
-            val validDaysForNextMonth = 3 - (daysInCurrentMonth - currentDate)
+            val validDaysForNextMonth = 2 - (daysInCurrentMonth - currentDate)
             for (day in currentDate + 1..daysInCurrentMonth) {
                 next3DaysList.add(day to currentMonth)
             }

@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
 
             WorkoutAppTheme {
                 Log.e(TAG, "Last 30 days: ${HelperFunctions.getLast30Days()} \n ${HelperFunctions.getLast30Days().size}" )
-                Log.e(TAG, "Next 3 days: ${HelperFunctions.getNext3Days()} \n ${HelperFunctions.getLast30Days().size}" )
+                Log.e(TAG, "Next 3 days: ${HelperFunctions.getNext2Days()} \n ${HelperFunctions.getLast30Days().size}" )
                 val navHostController = rememberNavController()
                 val gymExercises = workoutViewModel.gymExercisesFromApi.value
                 val yogaPoses = workoutViewModel.yogaPosesFromApi.value
