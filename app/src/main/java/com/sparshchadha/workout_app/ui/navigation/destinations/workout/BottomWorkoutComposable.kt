@@ -10,6 +10,8 @@ import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.GymAndYogaWorkoutHomeScreen
+import com.sparshchadha.workout_app.ui.screens.workout.gym.util.GymWorkoutCategories
+import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 fun NavGraphBuilder.bottomWorkoutComposable(
@@ -47,10 +49,10 @@ fun NavGraphBuilder.bottomWorkoutComposable(
             workoutViewModel = workoutViewModel,
             navController = navController,
             gymWorkoutCategories = listOf(
-                "Program",
-                "Body Part",
-                "Difficulty",
-                "Search Exercise"
+                GymWorkoutCategories.MUSCLE.name.lowercase().capitalize(),
+                GymWorkoutCategories.DIFFICULTY.name.lowercase().capitalize(),
+                GymWorkoutCategories.PROGRAM.name.lowercase().capitalize(),
+                GymWorkoutCategories.SEARCH.name.lowercase().capitalize()
             ),
             globalPaddingValues = globalPaddingValues
         )

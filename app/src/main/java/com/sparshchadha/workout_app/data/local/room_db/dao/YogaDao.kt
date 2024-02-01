@@ -14,6 +14,6 @@ interface YogaDao {
     @Query("SELECT * FROM YogaEntity")
     fun getAllPerformedYogaPoses(): List<YogaEntity>
 
-    @Query("SELECT * FROM YogaEntity WHERE date = :currentDate AND month = :currentMonth")
-    fun getYogaPosesPerformedToday(currentDate: String, currentMonth: String): List<YogaEntity>
+    @Query("SELECT * FROM YogaEntity WHERE date = :date AND month = :month")
+    fun getYogaPosesPerformedOn(date: String, month: String): List<YogaEntity>
 }

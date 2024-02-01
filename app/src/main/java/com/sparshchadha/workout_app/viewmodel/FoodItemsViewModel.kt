@@ -34,7 +34,7 @@ class FoodItemsViewModel @Inject constructor(
     private val _uiEventState = MutableStateFlow<WorkoutViewModel.UIEvent?>(value = null)
     val uiEventStateFlow = _uiEventState.asStateFlow()
 
-    private val _savedFoodItems = mutableStateOf<List<FoodItemEntity>?>(null)
+    private val _savedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
     val savedFoodItems = _savedFoodItems
 
     private val _caloriesGoal: MutableState<String?> = mutableStateOf(null)
@@ -42,6 +42,9 @@ class FoodItemsViewModel @Inject constructor(
 
     private val _caloriesConsumed: MutableState<String?> = mutableStateOf(null)
     val caloriesConsumed = _caloriesConsumed
+
+    private val _selectedDateAndMonthForFoodItems = MutableStateFlow<Pair<Int, String>?>(null)
+    val selectedDateAndMonthForFoodItems = _selectedDateAndMonthForFoodItems.asStateFlow()
 
     fun getFoodItemsFromApi() {
         viewModelScope.launch {
@@ -94,6 +97,7 @@ class FoodItemsViewModel @Inject constructor(
                         _savedFoodItems.value = response.data
                         calculateTotalCaloriesConsumed(foodItemsConsumed = response.data)
                         _uiEventState.value = WorkoutViewModel.UIEvent.HideLoaderAndShowResponse
+                        _selectedDateAndMonthForFoodItems.value = Pair(date.toInt(), month)
                     }
 
                     is Resource.Loading -> {
@@ -140,6 +144,12 @@ class FoodItemsViewModel @Inject constructor(
                 .collect { value ->
                     _caloriesGoal.value = value
                 }
+        }
+    }
+
+    fun removeFoodItem(foodItem: FoodItemEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            foodItemsRepository.removeFoodItem(foodItem = foodItem)
         }
     }
 }

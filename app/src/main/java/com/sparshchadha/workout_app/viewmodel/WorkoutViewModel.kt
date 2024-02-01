@@ -12,6 +12,7 @@ import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
+import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,7 @@ private const val TAG = "WorkoutViewModel"
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
     private val workoutRepository: WorkoutRepository,
-    private val datastorePreference: WorkoutAppDatastorePreference
+    private val datastorePreference: WorkoutAppDatastorePreference,
 ) : ViewModel() {
     private var _difficultyForYoga = mutableStateOf(DifficultyLevel.BEGINNER)
 
@@ -41,12 +42,23 @@ class WorkoutViewModel @Inject constructor(
     private val _uiEventState = MutableStateFlow<UIEvent?>(value = null)
     val uiEventStateFlow = _uiEventState.asStateFlow()
 
-    private var _yogaPosesPerformedToday = mutableStateOf<List<YogaEntity>?>(null)
-    val yogaPosesPerformedToday = _yogaPosesPerformedToday
+    private var _yogaPosesPerformed = mutableStateOf<List<YogaEntity>?>(null)
+    val yogaPosesPerformed = _yogaPosesPerformed
 
-    private var _gymExercisesPerformedToday = mutableStateOf<List<GymExercisesEntity>?>(null)
-    val gymExercisesPerformedToday = _gymExercisesPerformedToday
+    private var _gymExercisesPerformed = mutableStateOf<List<GymExercisesEntity>?>(null)
+    val gymExercisesPerformed = _gymExercisesPerformed
 
+    private val _yogaPosesPerformedOnUIEventState = MutableStateFlow<UIEvent?>(UIEvent.ShowLoader)
+    val yogaPosesPerformedOnUIEventState = _yogaPosesPerformedOnUIEventState.asStateFlow()
+
+    private val _selectedDateAndMonthForYogaPoses = MutableStateFlow<Pair<Int, String>?>(null)
+    val selectedDateAndMonthForYogaPoses = _selectedDateAndMonthForYogaPoses.asStateFlow()
+
+    private val _gymExercisesPerformedOnUIEventState = MutableStateFlow<UIEvent?>(UIEvent.ShowLoader)
+    val gymExercisesPerformedOnUIEventState = _gymExercisesPerformedOnUIEventState.asStateFlow()
+
+    private val _selectedDateAndMonthForGymExercises = MutableStateFlow<Pair<Int, String>?>(null)
+    val selectedDateAndMonthForGymExercises = _selectedDateAndMonthForGymExercises.asStateFlow()
 
     fun getYogaPosesFromApi() {
         viewModelScope.launch {
@@ -222,13 +234,13 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun getAllPerformedYogaPoses(){
-        viewModelScope.launch (Dispatchers.IO) {
+    fun getAllPerformedYogaPoses() {
+        viewModelScope.launch(Dispatchers.IO) {
             val poses = workoutRepository.getAllYogaPosesPerformed()
             poses.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        _yogaPosesPerformedToday.value = response.data
+                        _yogaPosesPerformed.value = response.data
                         _uiEventState.value = UIEvent.HideLoaderAndShowResponse
                     }
 
@@ -248,22 +260,26 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun getYogaPosesPerformedToday() {
-        viewModelScope.launch (Dispatchers.IO) {
-            val poses = workoutRepository.getYogaPosesPerformedToday()
+    fun getYogaPosesPerformedOn(
+        date: String = HelperFunctions.getCurrentDateAndMonth().first.toString(),
+        month: String = HelperFunctions.getCurrentDateAndMonth().second,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val poses = workoutRepository.getYogaPosesPerformedOn(date, month)
             poses.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        _yogaPosesPerformedToday.value = response.data
-                        _uiEventState.value = UIEvent.HideLoaderAndShowResponse
+                        _yogaPosesPerformed.value = response.data
+                        _yogaPosesPerformedOnUIEventState.value = UIEvent.HideLoaderAndShowResponse
+                        _selectedDateAndMonthForYogaPoses.value = Pair(date.toInt(), month)
                     }
 
                     is Resource.Loading -> {
-                        _uiEventState.value = UIEvent.ShowLoader
+                        _yogaPosesPerformedOnUIEventState.value = UIEvent.ShowLoader
                     }
 
                     is Resource.Error -> {
-                        _uiEventState.value = response.error?.message?.let {
+                        _yogaPosesPerformedOnUIEventState.value = response.error?.message?.let {
                             UIEvent.ShowError(
                                 errorMessage = it
                             )
@@ -274,22 +290,26 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun getGymExercisesPerformedToday() {
-        viewModelScope.launch (Dispatchers.IO) {
-            val exercises = workoutRepository.getGymExercisesPerformedToday()
+    fun getGymExercisesPerformed(
+        date: String = HelperFunctions.getCurrentDateAndMonth().first.toString(),
+        month: String = HelperFunctions.getCurrentDateAndMonth().second,
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val exercises = workoutRepository.getGymExercisesPerformedOn(date, month)
             exercises.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        _gymExercisesPerformedToday.value = response.data
-                        _uiEventState.value = UIEvent.HideLoaderAndShowResponse
+                        _gymExercisesPerformed.value = response.data
+                        _selectedDateAndMonthForGymExercises.value = Pair(date.toInt(), month)
+                        _gymExercisesPerformedOnUIEventState.value = UIEvent.HideLoaderAndShowResponse
                     }
 
                     is Resource.Loading -> {
-                        _uiEventState.value = UIEvent.ShowLoader
+                        _gymExercisesPerformedOnUIEventState.value = UIEvent.ShowLoader
                     }
 
                     is Resource.Error -> {
-                        _uiEventState.value = response.error?.message?.let {
+                        _gymExercisesPerformedOnUIEventState.value = response.error?.message?.let {
                             UIEvent.ShowError(
                                 errorMessage = it
                             )
@@ -301,7 +321,7 @@ class WorkoutViewModel @Inject constructor(
     }
 
     fun saveGymExercise(gymExercisesEntity: GymExercisesEntity) {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             workoutRepository.saveGymExercise(gymExercisesEntity = gymExercisesEntity)
         }
     }

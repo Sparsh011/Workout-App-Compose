@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.ui.screens.workout
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -9,24 +10,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
-import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,12 +35,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.components.CustomDivider
+import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
+import com.sparshchadha.workout_app.ui.screens.workout.gym.util.GymWorkoutCategories
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Extensions.capitalize
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
-
 
 @Composable
 fun GymAndYogaWorkoutHomeScreen(
@@ -49,178 +53,168 @@ fun GymAndYogaWorkoutHomeScreen(
     gymWorkoutCategories: List<String>,
     globalPaddingValues: PaddingValues,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier
-            .background(Color.White)
-            .fillMaxSize()
-            .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = globalPaddingValues.calculateBottomPadding())
-    ) {
-
-        header {
-            Text(
-                text = "What Would You Like To Do Today?",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 25.sp,
-                modifier = Modifier
-                    .padding(all = 10.dp)
-
-            )
+    Scaffold(
+        topBar = {
+            ScaffoldTopBar(topBarDescription = "What Would You Like To Do Today?", showBackIcon = false)
         }
+    ) { localPaddingValues ->
 
-        // Gym workout
-        header {
-            HeaderText(
-                heading = "Gym Workout"
-            )
-        }
-
-        item (
-            span = { GridItemSpan(this.maxLineSpan) }
-        ) {
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(ColorsUtil.primaryLightGray)
-            ){
-                AsyncImage(
-                    model = R.drawable.dumbebell_svg,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(CenterHorizontally)
-                        .size(100.dp)
-                        .padding(10.dp)
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(2),
+            modifier = Modifier
+                .background(Color.White)
+                .fillMaxSize()
+                .padding(
+                    top = localPaddingValues.calculateTopPadding(),
+                    start = 20.dp,
+                    end = 20.dp,
+                    bottom = globalPaddingValues.calculateBottomPadding()
                 )
+        ) {
 
-                for (category in gymWorkoutCategories) {
-                    PopulateWorkoutCategories(
-                        category = category,
-                        modifier = Modifier.padding(20.dp),
-                        onCategorySelection = { categorySelected ->
-                            handleGymExercisesCategorySelection(
-                                categorySelected = categorySelected,
-                                updateGymWorkoutCategory = { categoryType ->
-                                    workoutViewModel.updateCategoryTypeForGymWorkout(categoryType = categoryType)
-                                },
-                                navigateToScreen = { route ->
-                                    navController.navigate(route)
-                                },
-                            )
-                        }
-                    )
-                }
+            // Gym workout
+            header {
+                HeaderText(
+                    heading = "Gym Workout"
+                )
             }
-        }
 
-        // Yoga poses
-        header {
-            HeaderText(
-                heading = "Yoga Poses"
-            )
-        }
-
-        item (
-            span = { GridItemSpan(this.maxLineSpan) }
-        ) {
-            Column (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(ColorsUtil.primaryLightGray)
-            ){
+            header {
                 AsyncImage(
-                    model = R.drawable.yoga_svg_com,
+                    model = R.drawable.dumbbell_svg,
                     contentDescription = null,
                     modifier = Modifier
-                        .align(CenterHorizontally)
-                        .size(100.dp)
-                        .padding(10.dp)
+                        .size(90.dp)
+                        .padding(10.dp),
+                    colorFilter = ColorFilter.tint(Color.Black)
                 )
+            }
 
-                for (it in difficultyLevels) {
-                    PopulateYogaDifficulty(
-                        yogaDifficulty = it,
-                        modifier = Modifier.padding(all = 20.dp)
-                    ) { difficultyLevel ->
-                        workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
-                        // navigate to yoga screen
-                        workoutViewModel.getYogaPosesFromApi()
-                        navController.navigate(route = UtilityScreen.YogaPoses.route)
+            items(gymWorkoutCategories) {
+                PopulateWorkoutCategories(
+                    category = it,
+                    modifier = Modifier.padding(20.dp),
+                    onCategorySelection = { categorySelected ->
+                        handleGymExercisesCategorySelection(
+                            categorySelected = categorySelected,
+                            updateGymWorkoutCategory = { categoryType ->
+                                workoutViewModel.updateCategoryTypeForGymWorkout(categoryType = categoryType)
+                            },
+                            navigateToScreen = { route ->
+                                navController.navigate(route)
+                            },
+                        )
                     }
+                )
+            }
+
+            // Yoga poses
+            header {
+                HeaderText(
+                    heading = "Yoga Poses"
+                )
+            }
+
+            header {
+                AsyncImage(
+                    model = R.drawable.yoga_svg,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(90.dp)
+                        .padding(10.dp)
+                )
+            }
+
+            items(difficultyLevels) {
+                PopulateYogaDifficulty(
+                    yogaDifficulty = it,
+                    modifier = Modifier.padding(all = 20.dp)
+                ) { difficultyLevel ->
+                    workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
+                    // navigate to yoga screen
+                    workoutViewModel.getYogaPosesFromApi()
+                    navController.navigate(route = UtilityScreen.YogaPoses.route)
                 }
             }
-        }
 
+            header {
+                HeaderText(
+                    heading = "Track Workouts"
+                )
+            }
 
-        header {
-            HeaderText(
-                heading = "Track Today's Workout"
-            )
-        }
+            header {
+                TodayWorkoutCard(
+                    category = "Yoga",
+                    onCategoryItemSelected = {
+                        navController.navigate(UtilityScreen.YogaPosesPerformed.route)
+                    },
+                    icon = R.drawable.yoga_svg
+                )
+            }
 
-        item(
-            span = { GridItemSpan(this.maxLineSpan) }
-        ) {
-            TodayWorkoutCard(
-                category = "Yoga",
-                onCategoryItemSelected = {
-                    navController.navigate(UtilityScreen.YogaPosesPerformedToday.route)
-                }
-            )
-        }
-
-        item(
-            span = { GridItemSpan(this.maxLineSpan) }
-        ) {
-            TodayWorkoutCard(
-                category = "Gym",
-                onCategoryItemSelected = {
-                    navController.navigate(UtilityScreen.GymExercisesPerformedToday.route)
-                }
-            )
+            header {
+                TodayWorkoutCard(
+                    category = "Gym",
+                    onCategoryItemSelected = {
+                        navController.navigate(UtilityScreen.GymExercisesPerformed.route)
+                    },
+                    icon = R.drawable.dumbbell_svg,
+                    showDivider = false
+                )
+            }
         }
     }
+
 }
 
 @Composable
 fun TodayWorkoutCard(
     category: String,
     onCategoryItemSelected: () -> Unit,
+    icon: Int,
+    showDivider: Boolean = true,
 ) {
-
-    Card (
-        colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryGreenCardBackground
-        ),
-        modifier = Modifier.padding(10.dp)
-    ){
+    Column {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable {
-                onCategoryItemSelected()
-            }
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp)
+                .clickable {
+                    onCategoryItemSelected()
+                },
         ) {
+            AsyncImage(
+                model = icon,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .size(30.dp),
+                colorFilter = ColorFilter.tint(Color.Black)
+            )
+
             Text(
                 text = category,
                 fontSize = 20.sp,
                 color = ColorsUtil.primaryDarkTextColor,
                 modifier = Modifier
-                    .padding(20.dp)
+                    .padding(10.dp)
                     .weight(0.8f)
                     .fillMaxWidth()
             )
 
-            Icon(
+            Image(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = null,
-                tint = ColorsUtil.primaryDarkTextColor,
+                colorFilter = ColorFilter.tint(
+                    ColorsUtil.primaryDarkTextColor
+                ),
                 modifier = Modifier.padding(20.dp)
             )
         }
+
+        if (showDivider) CustomDivider(dividerColor = ColorsUtil.primaryLightGray)
     }
 }
 
@@ -241,22 +235,22 @@ fun handleGymExercisesCategorySelection(
     navigateToScreen: (String) -> Unit,
 ) {
     when (categorySelected) {
-        "Program" -> {
+        GymWorkoutCategories.PROGRAM.name.lowercase().capitalize() -> {
             updateGymWorkoutCategory(CategoryType.WORKOUT_TYPE)
             navigateToScreen(UtilityScreen.SelectExerciseCategory.route)
         }
 
-        "Body Part" -> {
+        GymWorkoutCategories.MUSCLE.name.lowercase().capitalize() -> {
             updateGymWorkoutCategory(CategoryType.MUSCLE_TYPE)
             navigateToScreen(UtilityScreen.SelectExerciseCategory.route)
         }
 
-        "Difficulty" -> {
+        GymWorkoutCategories.DIFFICULTY.name.lowercase().capitalize() -> {
             updateGymWorkoutCategory(CategoryType.DIFFICULTY_LEVEL)
             navigateToScreen(UtilityScreen.SelectExerciseCategory.route)
         }
 
-        "Search Exercise" -> {
+        GymWorkoutCategories.SEARCH.name.lowercase().capitalize() -> {
             updateGymWorkoutCategory(CategoryType.SEARCH_EXERCISE)
             navigateToScreen("SearchScreen/exercises")
         }
@@ -277,14 +271,15 @@ fun PopulateWorkoutCategories(
                 onCategorySelection(category)
             },
         colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryGreenCardBackground
+            containerColor = ColorsUtil.primaryLightGray
         )
     ) {
         Text(
             text = category,
             color = ColorsUtil.primaryDarkTextColor,
-            modifier = modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center
+            modifier = modifier.align(CenterHorizontally),
+            textAlign = TextAlign.Center,
+            fontSize = 15.nonScaledSp
         )
     }
 }
@@ -303,20 +298,21 @@ fun PopulateYogaDifficulty(
                 onYogaDifficultySelection(yogaDifficulty)
             },
         colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryGreenCardBackground
+            containerColor = ColorsUtil.primaryLightGray
         )
     ) {
         Text(
             text = yogaDifficulty.name.lowercase().capitalize(),
             color = ColorsUtil.primaryDarkTextColor,
-            modifier = modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center
+            modifier = modifier.align(CenterHorizontally),
+            textAlign = TextAlign.Center,
+            fontSize = 15.nonScaledSp
         )
     }
 }
 
-fun LazyGridScope.header(
-    content: @Composable LazyGridItemScope.() -> Unit,
+fun LazyStaggeredGridScope.header(
+    content: @Composable LazyStaggeredGridItemScope.() -> Unit,
 ) {
-    item(span = { GridItemSpan(this.maxLineSpan) }, content = content)
+    item(content = content, span = StaggeredGridItemSpan.FullLine)
 }

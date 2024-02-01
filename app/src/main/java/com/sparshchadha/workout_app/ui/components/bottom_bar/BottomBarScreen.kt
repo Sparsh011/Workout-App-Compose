@@ -61,13 +61,13 @@ sealed class UtilityScreen(
         title = "Exercises"
     )
 
-    object YogaPosesPerformedToday: UtilityScreen(
-        route = "YogaPosesPerformedToday",
+    object YogaPosesPerformed: UtilityScreen(
+        route = "YogaPosesPerformed",
         title = "Yoga Poses Performed Today"
     )
 
-    object GymExercisesPerformedToday: UtilityScreen(
-        route = "GymExercisesPerformedToday",
+    object GymExercisesPerformed: UtilityScreen(
+        route = "GymExercisesPerformed",
         title = "Gym Exercises Performed Today"
     )
 }

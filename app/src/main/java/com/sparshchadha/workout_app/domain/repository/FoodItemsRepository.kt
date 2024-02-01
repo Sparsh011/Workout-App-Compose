@@ -18,4 +18,6 @@ interface FoodItemsRepository {
 
     suspend fun getCaloriesGoal() : Flow<String?>
 
+    suspend fun removeFoodItem(foodItem: FoodItemEntity)
+
 }

@@ -120,13 +120,11 @@ class WorkoutRepositoryImpl (
         yogaDao.addYogaPose(yogaPose = yogaPose)
     }
 
-    override suspend fun getYogaPosesPerformedToday(): Flow<Resource<List<YogaEntity>>> = flow {
-        emit(Resource.Loading())
-
+    override suspend fun getYogaPosesPerformedOn(date: String, month: String): Flow<Resource<List<YogaEntity>>> = flow {
         try {
-            val poses = yogaDao.getYogaPosesPerformedToday(
-                currentDate = HelperFunctions.getCurrentDateAndMonth().first.toString(),
-                currentMonth = HelperFunctions.getCurrentDateAndMonth().second
+            val poses = yogaDao.getYogaPosesPerformedOn(
+                date = date,
+                month = month
             )
             emit(Resource.Success(poses))
         } catch (e: Exception) {
@@ -140,13 +138,11 @@ class WorkoutRepositoryImpl (
         gymExercisesDao.addGymExercise(gymExercisesEntity = gymExercisesEntity)
     }
 
-    override suspend fun getGymExercisesPerformedToday(): Flow<Resource<List<GymExercisesEntity>>> = flow {
-        emit(Resource.Loading())
-
+    override suspend fun getGymExercisesPerformedOn(date: String, month: String): Flow<Resource<List<GymExercisesEntity>>> = flow {
         try {
-            val exercises = gymExercisesDao.getExercisesPerformedToday(
-                currentDate = HelperFunctions.getCurrentDateAndMonth().first.toString(),
-                currentMonth = HelperFunctions.getCurrentDateAndMonth().second
+            val exercises = gymExercisesDao.getExercisesPerformedOn(
+                date = date,
+                month = month
             )
             emit(Resource.Success(exercises))
         } catch (e: Exception) {

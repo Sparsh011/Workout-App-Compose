@@ -4,6 +4,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -26,14 +28,13 @@ fun NavGraphBuilder.calorieTrackerComposable(
             foodItemsViewModel.getCaloriesGoal()
         }
 
-        val foodItemsConsumed = foodItemsViewModel.savedFoodItems.value
         val caloriesGoal = foodItemsViewModel.caloriesGoal.value ?: "0"
         val caloriesConsumed = foodItemsViewModel.caloriesConsumed.value ?: "0"
+        val selectedDateAndMonth = foodItemsViewModel.selectedDateAndMonthForFoodItems.collectAsStateWithLifecycle().value
 
         CalorieTrackerScreen(
             navController = navController,
             paddingValues = globalPaddingValues,
-            foodItemsConsumed = foodItemsConsumed,
             getDishesConsumedOnSelectedDayAndMonth = {
                 foodItemsViewModel.getFoodItemsConsumedOn(it.first.toString(), it.second)
             },
@@ -41,7 +42,12 @@ fun NavGraphBuilder.calorieTrackerComposable(
                 foodItemsViewModel.addOrUpdateCaloriesGoal(caloriesGoal = it.toInt())
             },
             caloriesGoal = caloriesGoal,
-            caloriesConsumed = caloriesConsumed
+            caloriesConsumed = caloriesConsumed,
+            selectedDateAndMonth = selectedDateAndMonth,
+            removeFoodItem = {
+                foodItemsViewModel.removeFoodItem(foodItem = it)
+            },
+            foodItemsViewModel = foodItemsViewModel
         )
     }
 }

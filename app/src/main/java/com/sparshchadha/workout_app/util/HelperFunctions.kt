@@ -2,6 +2,7 @@ package com.sparshchadha.workout_app.util
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.graphics.Color
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.MuscleType
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.WorkoutType
@@ -193,5 +194,15 @@ object HelperFunctions {
         }
 
         return next3DaysList
+    }
+
+    fun getAchievementColor(achieved: Int, target: Int) : Color {
+        return if (achieved <= 0) {
+            ColorsUtil.noAchievementColor
+        } else if (achieved < target) {
+            ColorsUtil.partialTargetAchievedColor
+        } else {
+            ColorsUtil.targetAchievedColor
+        }
     }
 }

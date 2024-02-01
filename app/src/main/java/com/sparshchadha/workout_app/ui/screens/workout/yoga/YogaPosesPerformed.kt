@@ -1,5 +1,8 @@
 package com.sparshchadha.workout_app.ui.screens.workout.yoga
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +40,7 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.CalendarRow
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
@@ -45,29 +49,40 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 private const val TAG = "YogaPosesPerformedToday"
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun YogaPosesPerformedToday(
+fun GetYogaPosesPerformedOnParticularDay(
     yogaPosesPerformedToday: List<YogaEntity>?,
     uiEventState: WorkoutViewModel.UIEvent?,
     globalPaddingValues: PaddingValues,
     onBackButtonPressed: () -> Unit,
+    getYogaPosesPerformedOn: (Pair<Int, String>) -> Unit,
+    selectedDay: Int,
+    selectedMonth: String,
 ) {
     if (uiEventState != null) {
         HandleUIEventState(
             event = uiEventState,
             yogaPosesPerformedToday = yogaPosesPerformedToday,
             globalPaddingValues = globalPaddingValues,
-            onBackButtonPressed = onBackButtonPressed
+            onBackButtonPressed = onBackButtonPressed,
+            getYogaPosesPerformedOn = getYogaPosesPerformedOn,
+            selectedDay = selectedDay,
+            selectedMonth = selectedMonth
         )
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HandleUIEventState(
     event: WorkoutViewModel.UIEvent,
     yogaPosesPerformedToday: List<YogaEntity>?,
     globalPaddingValues: PaddingValues,
     onBackButtonPressed: () -> Unit,
+    getYogaPosesPerformedOn: (Pair<Int, String>) -> Unit,
+    selectedMonth: String,
+    selectedDay: Int,
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -83,7 +98,10 @@ fun HandleUIEventState(
             PopulatePerformedYogaPoses(
                 yogaPosesPerformedToday = yogaPosesPerformedToday,
                 globalPaddingValues = globalPaddingValues,
-                onBackButtonPressed = onBackButtonPressed
+                onBackButtonPressed = onBackButtonPressed,
+                getYogaPosesPerformedOn = getYogaPosesPerformedOn,
+                selectedDay = selectedDay,
+                selectedMonth = selectedMonth
             )
         }
 
@@ -93,11 +111,16 @@ fun HandleUIEventState(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PopulatePerformedYogaPoses(
     yogaPosesPerformedToday: List<YogaEntity>?,
     globalPaddingValues: PaddingValues,
     onBackButtonPressed: () -> Unit,
+    getYogaPosesPerformedOn: (Pair<Int, String>) -> Unit,
+    selectedDay: Int,
+    selectedMonth: String,
 ) {
     Scaffold(
         topBar = {
@@ -110,33 +133,46 @@ fun PopulatePerformedYogaPoses(
         },
         containerColor = Color.White
     ) { localPaddingValues ->
-        if (yogaPosesPerformedToday.isNullOrEmpty()) {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_gym_or_yoga_performed))
-            val progress by animateLottieCompositionAsState(composition)
 
-            NoWorkoutPerformedOrFoodConsumed(
-                text = "No Yoga Poses Performed Today!",
-                composition = composition,
-                progress = progress,
-                localPaddingValues = localPaddingValues,
-                animationModifier = Modifier.size(250.dp)
-            )
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = localPaddingValues.calculateTopPadding(), bottom = globalPaddingValues.calculateBottomPadding())
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    top = localPaddingValues.calculateTopPadding(),
+                    bottom = globalPaddingValues.calculateBottomPadding()
+                )
+        ) {
+            stickyHeader {
+                CalendarRow(
+                    getResultsForDateAndMonth = getYogaPosesPerformedOn,
+                    selectedMonth = selectedMonth,
+                    selectedDay = selectedDay,
+//                    indicatorColor = HelperFunctions.getAchievementColor(achieved = caloriesConsumed.toInt(), target = caloriesGoal.toInt())
+                )
+            }
 
-            ) {
+            if (yogaPosesPerformedToday.isNullOrEmpty()) {
+                item {
+                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_gym_or_yoga_performed))
+                    val progress by animateLottieCompositionAsState(composition)
+
+                    NoWorkoutPerformedOrFoodConsumed(
+                        text = "No Yoga Poses Performed",
+                        composition = composition,
+                        progress = progress,
+                        localPaddingValues = localPaddingValues,
+                        animationModifier = Modifier.size(250.dp)
+                    )
+                }
+            } else {
                 items(yogaPosesPerformedToday) { yogaEntity ->
                     YogaEntityItem(yogaEntity = yogaEntity)
                 }
             }
         }
-
     }
-
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -14,6 +14,6 @@ interface GymExercisesDao {
     @Query("SELECT * FROM GymExercisesEntity")
     fun getAllExercisesPerformed(): List<GymExercisesEntity>
 
-    @Query("SELECT * FROM GymExercisesEntity WHERE date = :currentDate AND month = :currentMonth")
-    fun getExercisesPerformedToday(currentDate: String, currentMonth: String): List<GymExercisesEntity>
+    @Query("SELECT * FROM GymExercisesEntity WHERE date = :date AND month = :month")
+    fun getExercisesPerformedOn(date: String, month: String): List<GymExercisesEntity>
 }

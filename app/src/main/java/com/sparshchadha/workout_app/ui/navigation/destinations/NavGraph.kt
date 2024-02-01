@@ -12,7 +12,7 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileCo
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWorkoutComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExercisesComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExercisesPerformedTodayComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExercisesPerformedComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.workoutCategoryComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaPosesPerformedTodayComposable
@@ -85,7 +85,7 @@ fun NavGraph(
         )
 
         // Gym Exercises performed today
-        gymExercisesPerformedTodayComposable(
+        gymExercisesPerformedComposable(
             workoutViewModel = workoutViewModel,
             navController = navController,
             globalPaddingValues = globalPaddingValues

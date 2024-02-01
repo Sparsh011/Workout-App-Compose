@@ -41,11 +41,12 @@ class FoodRepositoryImpl(
         emit(Resource.Loading())
 
         try {
-            val foodItems = foodItemsDao.getFoodItemsConsumedOn(
+             foodItemsDao.getFoodItemsConsumedOn(
                 date = date,
                 month = month
-            )
-            emit(Resource.Success(foodItems))
+            ).collect {
+                 emit(Resource.Success(it))
+             }
 
         } catch (e: Exception) {
             emit(
@@ -58,8 +59,9 @@ class FoodRepositoryImpl(
         emit(Resource.Loading())
 
         try {
-            val foodItems = foodItemsDao.getAllFoodItemsConsumed()
-            emit(Resource.Success(foodItems))
+            foodItemsDao.getAllFoodItemsConsumed().collect {
+                emit(Resource.Success(it))
+            }
 
         } catch (e: Exception) {
             emit(
@@ -80,5 +82,9 @@ class FoodRepositoryImpl(
         } catch (e: Exception) {
             throw e
         }
+    }
+
+    override suspend fun removeFoodItem(foodItem: FoodItemEntity) {
+        foodItemsDao.removeFoodItem(foodItem = foodItem)
     }
 }
