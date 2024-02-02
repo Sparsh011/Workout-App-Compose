@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -42,17 +43,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CaloriesAndNutrientsConsumedToday(
+fun CaloriesConsumedCard(
     shouldShowCaloriesBottomSheet: Boolean,
     sheetState: SheetState,
     caloriesGoal: String,
@@ -62,19 +66,21 @@ fun CaloriesAndNutrientsConsumedToday(
     caloriesConsumed: String,
 ) {
     val configuration = LocalConfiguration.current;
-    val screenWidth = configuration.screenWidthDp
+    val caloriesConsumedCardWidth = configuration.screenWidthDp.dp
+    val caloriesConsumedCardHeight = configuration.screenHeightDp.dp / 3
 
     Column(
         modifier = Modifier
-            .fillMaxWidth(screenWidth.toFloat())
-            .padding(20.dp)
+            .width(caloriesConsumedCardWidth)
+            .height(caloriesConsumedCardHeight)
+            .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(ColorsUtil.primaryLightGray)
+            .background(primaryLightGray)
     ) {
 
-        CardHeading()
+        CardHeading(heading = "Daily Calories", headingSize = 0.1 * caloriesConsumedCardHeight)
 
-        CaloriesConsumedAndLeftToday(
+        CaloriesConsumedAndLeft(
             caloriesConsumed = caloriesConsumed,
             showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet,
             caloriesGoal = caloriesGoal
@@ -113,7 +119,10 @@ fun CaloriesGoalText(showCaloriesGoalBottomSheet: () -> Unit) {
 }
 
 @Composable
-fun CardHeading() {
+fun CardHeading(
+    heading: String,
+    headingSize: Dp,
+) {
     Text(
         buildAnnotatedString {
             append("Count Your ")
@@ -121,23 +130,25 @@ fun CardHeading() {
                 style = SpanStyle(
                     color = ColorsUtil.primaryDarkTextColor,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.nonScaledSp
+                    fontSize = 22.nonScaledSp
                 )
             ) {
-                append("Daily Calories")
+                append(heading)
             }
         },
-        fontSize = 24.nonScaledSp,
+        fontSize = 22.nonScaledSp,
         color = ColorsUtil.primaryDarkTextColor,
         textAlign = TextAlign.Start,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(10.dp)
+            .size(headingSize),
+        overflow = TextOverflow.Ellipsis
     )
 }
 
 @Composable
-fun CaloriesConsumedAndLeftToday(
+fun CaloriesConsumedAndLeft(
     caloriesConsumed: String,
     showCaloriesGoalBottomSheet: () -> Unit,
     caloriesGoal: String,
@@ -317,7 +328,7 @@ fun UpdateCaloriesGoalSlider(
         colors = SliderDefaults.colors(
             thumbColor = ColorsUtil.primaryDarkTextColor,
             activeTrackColor = ColorsUtil.primaryDarkTextColor,
-            inactiveTrackColor = ColorsUtil.primaryLightGray
+            inactiveTrackColor = primaryLightGray
         )
     )
 

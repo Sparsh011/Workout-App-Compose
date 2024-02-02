@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
@@ -48,7 +49,8 @@ fun ScaffoldTopBar(topBarDescription: String, onBackButtonPressed: () -> Unit = 
                 .padding(20.dp)
                 .fillMaxWidth()
                 .align(Alignment.CenterVertically),
-            textAlign = TextAlign.Start
+            textAlign = TextAlign.Start,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

@@ -23,11 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -130,15 +132,17 @@ private fun DayAndDate(
         ) {
             Text(
                 text = month,
-                fontSize = TextUnit(20f, TextUnitType.Unspecified),
+                fontSize = 15.nonScaledSp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = Color.White,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.size(10.dp))
             Text(
                 text = date,
-                fontSize = TextUnit(18f, TextUnitType.Unspecified),
-                color = Color.White
+                fontSize = 14.nonScaledSp,
+                color = Color.White,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.size(10.dp))
@@ -159,15 +163,17 @@ private fun DayAndDate(
         ) {
             Text(
                 text = month,
-                fontSize = TextUnit(20f, TextUnitType.Unspecified),
+                fontSize = 16.nonScaledSp,
                 fontWeight = FontWeight.Bold,
-                color = monthColor
+                color = monthColor,
+                overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.size(10.dp))
             Text(
                 text = date,
-                fontSize = TextUnit(18f, TextUnitType.Unspecified),
-                color = dateColor
+                fontSize = 14.nonScaledSp,
+                color = dateColor,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.size(10.dp))

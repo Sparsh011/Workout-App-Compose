@@ -2,6 +2,7 @@ package com.sparshchadha.workout_app.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
+import com.sparshchadha.workout_app.util.Constants
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +26,7 @@ private const val TAG = "SearchFoodViewModellll"
 @HiltViewModel
 class FoodItemsViewModel @Inject constructor(
     private val foodItemsRepository: FoodItemsRepository,
-    private val pexelsRepository: PexelsRepository
+    private val pexelsRepository: PexelsRepository,
 ) : ViewModel() {
     private val _foodItemsFromApi = mutableStateOf<NutritionalValueDto?>(null)
     val foodItemsFromApi = _foodItemsFromApi
@@ -42,6 +44,9 @@ class FoodItemsViewModel @Inject constructor(
 
     private val _caloriesConsumed: MutableState<String?> = mutableStateOf(null)
     val caloriesConsumed = _caloriesConsumed
+
+    private val _nutrientsConsumed: MutableMap<String, Double> = mutableStateMapOf()
+    val nutrientsConsumed = _nutrientsConsumed
 
     private val _selectedDateAndMonthForFoodItems = MutableStateFlow<Pair<Int, String>?>(null)
     val selectedDateAndMonthForFoodItems = _selectedDateAndMonthForFoodItems.asStateFlow()
@@ -64,6 +69,7 @@ class FoodItemsViewModel @Inject constructor(
                             WorkoutViewModel.UIEvent.ShowLoader
                         )
                     }
+
                     is Resource.Error -> {
                         _uiEventState.emit(
                             WorkoutViewModel.UIEvent.ShowError(errorMessage = result.error?.message.toString())
@@ -87,15 +93,16 @@ class FoodItemsViewModel @Inject constructor(
 
     fun getFoodItemsConsumedOn(
         date: String = HelperFunctions.getCurrentDateAndMonth().first.toString(),
-        month: String = HelperFunctions.getCurrentDateAndMonth().second
+        month: String = HelperFunctions.getCurrentDateAndMonth().second,
     ) {
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             val foodItems = foodItemsRepository.getFoodItemsConsumedOn(date, month)
             foodItems.collect { response ->
                 when (response) {
                     is Resource.Success -> {
                         _savedFoodItems.value = response.data
-                        calculateTotalCaloriesConsumed(foodItemsConsumed = response.data)
+                        getTotalCaloriesConsumed(foodItemsConsumed = response.data)
+                        getNutrientsConsumed(foodItemsConsumed = response.data)
                         _uiEventState.value = WorkoutViewModel.UIEvent.HideLoaderAndShowResponse
                         _selectedDateAndMonthForFoodItems.value = Pair(date.toInt(), month)
                     }
@@ -116,7 +123,42 @@ class FoodItemsViewModel @Inject constructor(
         }
     }
 
-    private fun calculateTotalCaloriesConsumed(foodItemsConsumed: List<FoodItemEntity>?) {
+    private fun getNutrientsConsumed(foodItemsConsumed: List<FoodItemEntity>?) {
+        _nutrientsConsumed.clear()
+
+        if (foodItemsConsumed != null) {
+            for (foodItemEntity in foodItemsConsumed) {
+                val foodItemDetails = foodItemEntity.foodItemDetails
+
+                if (foodItemDetails != null) {
+                    _nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G] =
+                        (_nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G]
+                            ?: 0.0) + (foodItemDetails.carbohydrates_total_g * foodItemEntity.servings)
+
+                    _nutrientsConsumed[Constants.FAT_TOTAL_G] =
+                        (_nutrientsConsumed[Constants.FAT_TOTAL_G]
+                            ?: 0.0) + (foodItemDetails.fat_total_g * foodItemEntity.servings)
+
+                    _nutrientsConsumed[Constants.PROTEIN_G] =
+                        (_nutrientsConsumed[Constants.PROTEIN_G] ?: 0.0) + (foodItemDetails.protein_g * foodItemEntity.servings)
+                }
+            }
+
+            _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] =
+                _nutrientsConsumed[Constants.PROTEIN_G]
+                    ?.safeAdd(_nutrientsConsumed[Constants.FAT_TOTAL_G])
+                    ?.safeAdd(_nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G]) ?: 0.0
+        }
+
+        if (_nutrientsConsumed.isEmpty()) {
+            _nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G] = 0.0
+            _nutrientsConsumed[Constants.FAT_TOTAL_G] = 0.0
+            _nutrientsConsumed[Constants.PROTEIN_G] = 0.0
+        }
+    }
+
+
+    private fun getTotalCaloriesConsumed(foodItemsConsumed: List<FoodItemEntity>?) {
         var totalCaloriesConsumed = 0
         if (foodItemsConsumed != null) {
             for (item in foodItemsConsumed) {
@@ -151,5 +193,9 @@ class FoodItemsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             foodItemsRepository.removeFoodItem(foodItem = foodItem)
         }
+    }
+
+    private fun Double?.safeAdd(other: Double?): Double {
+        return (this ?: 0.0) + (other ?: 0.0)
     }
 }

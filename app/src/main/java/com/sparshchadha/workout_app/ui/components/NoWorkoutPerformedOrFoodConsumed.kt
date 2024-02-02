@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,7 +55,8 @@ fun NoWorkoutPerformedOrFoodConsumed(
                 .align(CenterHorizontally)
                 .padding(20.dp),
             fontSize = textSize,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

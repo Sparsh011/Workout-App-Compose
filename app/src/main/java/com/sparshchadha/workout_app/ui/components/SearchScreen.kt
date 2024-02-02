@@ -38,6 +38,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -339,7 +340,8 @@ fun MySearchBar(
             placeholder = {
                 Text(
                     color = ColorsUtil.primaryDarkGray,
-                    text = "Search Here..."
+                    text = "Search Here...",
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             singleLine = true,

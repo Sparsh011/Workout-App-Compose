@@ -2,8 +2,11 @@ package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,12 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -31,15 +34,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,11 +55,15 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
-import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
+import com.sparshchadha.workout_app.ui.components.CalendarRow
 import com.sparshchadha.workout_app.ui.components.CustomDivider
 import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
-import com.sparshchadha.workout_app.ui.components.CalendarRow
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.unselectedBottomBarIconColor
+import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
@@ -62,22 +72,22 @@ import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 private const val TAG = "CalorieTrackerScreen"
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CalorieTrackerScreen(
     navController: NavHostController,
     paddingValues: PaddingValues,
-//    foodItemsConsumed: List<FoodItemEntity>?,
     getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit,
     saveNewCaloriesGoal: (Float) -> Unit,
     caloriesGoal: String,
     caloriesConsumed: String,
     selectedDateAndMonth: Pair<Int, String>?,
     removeFoodItem: (FoodItemEntity) -> Unit,
-    foodItemsViewModel: FoodItemsViewModel
+    foodItemsViewModel: FoodItemsViewModel,
 ) {
 
     val foodItemsConsumed = foodItemsViewModel.savedFoodItems.collectAsState().value
+    val nutrientsConsumed = foodItemsViewModel.nutrientsConsumed
 
     var shouldShowCaloriesBottomSheet by remember {
         mutableStateOf(false)
@@ -112,19 +122,42 @@ fun CalorieTrackerScreen(
         ) {
             // Show Today's calories and nutrients -
             item {
-                CaloriesAndNutrientsConsumedToday(
-                    shouldShowCaloriesBottomSheet = shouldShowCaloriesBottomSheet,
-                    sheetState = updateCaloriesBottomSheetState,
-                    caloriesGoal = caloriesGoal,
-                    hideCaloriesBottomSheet = {
-                        shouldShowCaloriesBottomSheet = false
-                    },
-                    saveNewCaloriesGoal = saveNewCaloriesGoal,
-                    showCaloriesGoalBottomSheet = {
-                        shouldShowCaloriesBottomSheet = true
-                    },
-                    caloriesConsumed = caloriesConsumed
+                val pagerState = rememberPagerState(
+                    pageCount = {
+                        2
+                    }
                 )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    HorizontalPager(state = pagerState) { page ->
+                        when (page) {
+                            0 -> {
+                                CaloriesConsumedCard(
+                                    shouldShowCaloriesBottomSheet = shouldShowCaloriesBottomSheet,
+                                    sheetState = updateCaloriesBottomSheetState,
+                                    caloriesGoal = caloriesGoal,
+                                    hideCaloriesBottomSheet = {
+                                        shouldShowCaloriesBottomSheet = false
+                                    },
+                                    saveNewCaloriesGoal = saveNewCaloriesGoal,
+                                    showCaloriesGoalBottomSheet = {
+                                        shouldShowCaloriesBottomSheet = true
+                                    },
+                                    caloriesConsumed = caloriesConsumed
+                                )
+                            }
+
+                            1 -> {
+                                MacroNutrientsConsumed(
+                                    nutrientsConsumed = nutrientsConsumed
+                                )
+                            }
+                        }
+                    }
+
+                    CurrentlySelectedCard(currentPage = pagerState.currentPage)
+                }
             }
 
             // Select day to show that day's calories and dishes consumed
@@ -162,7 +195,7 @@ fun CalorieTrackerScreen(
             } else {
                 items(foodItemsConsumed, key = { foodItem ->
                     foodItem.id.toString()
-                }){ foodItem ->
+                }) { foodItem ->
                     var shouldShowFoodItemDetails by remember {
                         mutableStateOf(false)
                     }
@@ -185,6 +218,60 @@ fun CalorieTrackerScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CurrentlySelectedCard(currentPage: Int) {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+            .padding(bottom = 5.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+
+        if (currentPage == 0) {
+            Row {
+                Canvas(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
+
+                ) {
+                    drawCircle(color = Red)
+                }
+
+                Canvas(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
+
+                ) {
+                    drawCircle(color = customDividerColor)
+                }
+            }
+
+        } else {
+            Row {
+                Canvas(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
+
+                ) {
+                    drawCircle(color = customDividerColor)
+                }
+
+                Canvas(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
+
+                ) {
+                    drawCircle(color = Red)
+                }
+            }
+
         }
     }
 }
@@ -331,7 +418,8 @@ fun FoodItemText(
             textAlign = TextAlign.Center,
             fontSize = 24.nonScaledSp,
             fontWeight = FontWeight.Bold,
-            color = ColorsUtil.primaryDarkTextColor
+            color = primaryDarkTextColor,
+            overflow = TextOverflow.Ellipsis
         )
     } else {
         Row(
@@ -345,7 +433,8 @@ fun FoodItemText(
                     .weight(2f)
                     .padding(10.dp),
                 fontWeight = FontWeight.Bold,
-                color = ColorsUtil.primaryDarkTextColor
+                color = primaryDarkTextColor,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
@@ -356,7 +445,8 @@ fun FoodItemText(
                     .padding(10.dp),
                 fontSize = 16.nonScaledSp,
                 fontWeight = FontWeight.Normal,
-                color = ColorsUtil.primaryDarkTextColor
+                color = primaryDarkTextColor,
+                overflow = TextOverflow.Ellipsis
             )
         }
 
@@ -389,21 +479,23 @@ fun PopulateConsumedFoodItem(
                 consumedFoodItem.foodItemDetails?.name?.let { itemName ->
                     Text(
                         text = itemName.capitalize(),
-                        color = ColorsUtil.primaryDarkTextColor,
+                        color = primaryDarkTextColor,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .padding(5.dp),
                         fontSize = 18.nonScaledSp,
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
                 Text(
                     text = "${(consumedFoodItem.servings * (consumedFoodItem.foodItemDetails?.calories ?: 0).toInt())} KCAL",
-                    color = ColorsUtil.primaryDarkTextColor,
+                    color = primaryDarkTextColor,
                     modifier = Modifier
                         .padding(5.dp),
                     fontSize = 14.nonScaledSp,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -432,7 +524,7 @@ fun DishesConsumedOnAParticularDayHeader() {
             append("Dishes ")
             withStyle(
                 style = SpanStyle(
-                    color = ColorsUtil.primaryDarkTextColor,
+                    color = primaryDarkTextColor,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.nonScaledSp,
                 )
@@ -441,9 +533,10 @@ fun DishesConsumedOnAParticularDayHeader() {
             }
         },
         fontSize = 20.nonScaledSp,
-        color = ColorsUtil.primaryDarkTextColor,
+        color = primaryDarkTextColor,
         textAlign = TextAlign.Start,
-        modifier = Modifier.padding(15.dp)
+        modifier = Modifier.padding(15.dp),
+        overflow = TextOverflow.Ellipsis
     )
 }
 

@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -43,7 +44,8 @@ fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPadding
                     .padding(20.dp)
                     .fillMaxWidth(),
                 fontSize = 30.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
             )
         } else {
             Text(
@@ -53,7 +55,8 @@ fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPadding
                     .padding(20.dp)
                     .fillMaxWidth(),
                 fontSize = 30.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
