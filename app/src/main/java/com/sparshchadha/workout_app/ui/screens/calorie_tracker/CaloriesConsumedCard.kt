@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
@@ -35,22 +37,36 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
+import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 
@@ -73,12 +89,17 @@ fun CaloriesConsumedCard(
         modifier = Modifier
             .width(caloriesConsumedCardWidth)
             .height(caloriesConsumedCardHeight)
-            .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
+            .padding(
+                top = dimensionResource(id = R.dimen.large_padding),
+                start = dimensionResource(id = R.dimen.large_padding),
+                end = dimensionResource(id = R.dimen.large_padding),
+                bottom = dimensionResource(id = R.dimen.medium_padding)
+            )
             .clip(RoundedCornerShape(10.dp))
             .background(primaryLightGray)
     ) {
 
-        CardHeading(heading = "Daily Calories", headingSize = 0.1 * caloriesConsumedCardHeight)
+        CardHeading(heading = "Daily Calories", headingSize = HEADING_SIZE)
 
         CaloriesConsumedAndLeft(
             caloriesConsumed = caloriesConsumed,
@@ -108,11 +129,11 @@ fun CaloriesGoalText(showCaloriesGoalBottomSheet: () -> Unit) {
         text = "Calories Goal",
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp)
+            .padding(MEDIUM_PADDING)
             .clickable {
                 showCaloriesGoalBottomSheet()
             },
-        color = ColorsUtil.primaryDarkTextColor,
+        color = primaryDarkTextColor,
         fontSize = 15.nonScaledSp,
         textAlign = TextAlign.Center
     )
@@ -128,7 +149,7 @@ fun CardHeading(
             append("Count Your ")
             withStyle(
                 style = SpanStyle(
-                    color = ColorsUtil.primaryDarkTextColor,
+                    color = primaryDarkTextColor,
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.nonScaledSp
                 )
@@ -137,11 +158,11 @@ fun CardHeading(
             }
         },
         fontSize = 22.nonScaledSp,
-        color = ColorsUtil.primaryDarkTextColor,
+        color = primaryDarkTextColor,
         textAlign = TextAlign.Start,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(MEDIUM_PADDING)
             .size(headingSize),
         overflow = TextOverflow.Ellipsis
     )
@@ -156,7 +177,7 @@ fun CaloriesConsumedAndLeft(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp),
+            .padding(MEDIUM_PADDING),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
 
@@ -165,20 +186,20 @@ fun CaloriesConsumedAndLeft(
             description = "Eaten",
             modifier = Modifier
                 .weight(1f)
-                .padding(20.dp)
+                .padding(LARGE_PADDING),
         )
 
         CenterCaloriesGoalBox(
-            calories = caloriesGoal,
+            caloriesGoal = caloriesGoal,
             modifier = Modifier
                 .weight(1f)
                 .clip(CircleShape)
-                .background(ColorsUtil.primaryDarkTextColor)
                 .align(CenterVertically)
-                .size(100.dp)
+                .size(Dimensions.PIE_CHART_SIZE)
                 .clickable {
                     showCaloriesGoalBottomSheet()
-                }
+                },
+            caloriesConsumed = caloriesConsumed
         )
 
         CaloriesLeftOrEatenColumn(
@@ -186,36 +207,49 @@ fun CaloriesConsumedAndLeft(
             description = "Left",
             modifier = Modifier
                 .weight(1f)
-                .padding(20.dp)
+                .padding(dimensionResource(id = R.dimen.large_padding))
         )
     }
 }
 
 @Composable
-fun CenterCaloriesGoalBox(modifier: Modifier, calories: String) {
+fun CenterCaloriesGoalBox(modifier: Modifier, caloriesGoal: String, caloriesConsumed: String) {
     Box(
         modifier = modifier,
         contentAlignment = Center
     ) {
+
         Text(
             buildAnnotatedString {
                 withStyle(
                     style = SpanStyle(
-                        color = Color.White,
+                        color = primaryDarkTextColor,
                         fontWeight = FontWeight.Bold,
-                        fontSize = TextUnit(24f, TextUnitType.Unspecified),
+                        fontSize = 16.nonScaledSp,
                     )
                 ) {
-                    append("${calories.toInt()}\n")
+                    append(caloriesGoal)
                 }
-                append("KCAL")
+                append("\nkcal")
             },
-            fontSize = TextUnit(18f, TextUnitType.Unspecified),
-            color = Color.White,
+            fontSize = 13.nonScaledSp,
+            color = primaryDarkTextColor,
             textAlign = TextAlign.Center
+        )
+
+        val progress = caloriesConsumed.toFloat() / caloriesGoal.toFloat()
+
+        CircularProgressIndicator(
+            progress = progress,
+            modifier = Modifier.size(PIE_CHART_SIZE),
+            strokeWidth = MEDIUM_PADDING,
+            trackColor = ColorsUtil.customDividerColor,
+            color = ColorsUtil.targetAchievedColor,
+            strokeCap  = StrokeCap.Round,
         )
     }
 }
+
 
 @Composable
 fun CaloriesLeftOrEatenColumn(calories: String, description: String, modifier: Modifier) {
@@ -227,23 +261,27 @@ fun CaloriesLeftOrEatenColumn(calories: String, description: String, modifier: M
             text = description,
             modifier = Modifier.align(CenterHorizontally),
             fontWeight = FontWeight.Bold,
-            fontSize = TextUnit(24f, TextUnitType.Unspecified),
+            fontSize = 20.nonScaledSp,
             color = Color.Black
         )
 
         if (calories.toInt() <= 0) {
             Text(
-                text = "0 KCAL",
+                text = "0 kcal",
                 modifier = Modifier.align(CenterHorizontally),
-                fontSize = TextUnit(16f, TextUnitType.Unspecified),
-                color = ColorsUtil.primaryDarkTextColor
+                fontSize = 16.nonScaledSp,
+                color = primaryDarkTextColor,
+                textAlign = TextAlign.Center
             )
         } else {
             Text(
-                text = "$calories KCAL",
+                text = "$calories kcal",
                 modifier = Modifier.align(CenterHorizontally),
-                fontSize = TextUnit(16f, TextUnitType.Unspecified),
-                color = ColorsUtil.primaryDarkTextColor
+                fontSize = 16.nonScaledSp,
+                color = primaryDarkTextColor,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
@@ -326,8 +364,8 @@ fun UpdateCaloriesGoalSlider(
         valueRange = 1000F..5000F,
         modifier = sliderModifier,
         colors = SliderDefaults.colors(
-            thumbColor = ColorsUtil.primaryDarkTextColor,
-            activeTrackColor = ColorsUtil.primaryDarkTextColor,
+            thumbColor = primaryDarkTextColor,
+            activeTrackColor = primaryDarkTextColor,
             inactiveTrackColor = primaryLightGray
         )
     )
@@ -338,7 +376,7 @@ fun UpdateCaloriesGoalSlider(
             hideUpdateCaloriesBottomSheet()
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = ColorsUtil.primaryDarkTextColor
+            containerColor = primaryDarkTextColor
         ),
         modifier = Modifier
             .padding(20.dp)

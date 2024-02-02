@@ -36,7 +36,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -189,13 +188,16 @@ fun YogaPose(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(horizontal = Dimensions.LARGE_PADDING)
             .clickable {
                 toggleBottomSheetWithDetails(true)
             }
     ) {
         AsyncImage(
-            model = pose.url_png, contentDescription = null, modifier = Modifier.padding(10.dp)
+            model = pose.url_png,
+            contentDescription = null,
+            modifier = Modifier
+                .padding(horizontal = Dimensions.MEDIUM_PADDING)
         )
 
         Column {
@@ -207,10 +209,13 @@ fun YogaPose(
             )
 
             Text(
-                text = pose.pose_benefits, color = ColorsUtil.primaryDarkTextColor, maxLines = 3, overflow = TextOverflow.Ellipsis
+                text = pose.pose_benefits,
+                color = ColorsUtil.primaryDarkTextColor,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
 
             var showPickSetsBottomSheet by remember {
                 mutableStateOf(false)
@@ -271,7 +276,7 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
             modifier = Modifier
                 .align(CenterHorizontally)
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = Dimensions.LARGE_PADDING),
             textAlign = TextAlign.Start,
             color = ColorsUtil.primaryDarkTextColor,
         )
@@ -280,10 +285,10 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
             items = HelperFunctions.getNumberOfSetsOrQuantity(),
             state = valuesPickerState,
             modifier = Modifier.align(CenterHorizontally),
-            textModifier = Modifier.padding(15.dp)
+            textModifier = Modifier.padding(Dimensions.LARGE_PADDING)
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Dimensions.LARGE_PADDING))
 
         Button(
             onClick = {
@@ -303,17 +308,17 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
             ),
             modifier = Modifier
                 .align(CenterHorizontally)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = Dimensions.LARGE_PADDING)
                 .fillMaxWidth()
         ) {
-            if (valuesPickerState.selectedItem == "1" ) {
+            if (valuesPickerState.selectedItem == "1") {
                 Text(text = "Add ${valuesPickerState.selectedItem} Set", color = Color.White)
             } else {
                 Text(text = "Add ${valuesPickerState.selectedItem} Sets", color = Color.White)
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(Dimensions.LARGE_PADDING))
     }
 }
 
@@ -335,7 +340,7 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
         ) {
             AsyncImage(
                 model = pose.url_png, contentDescription = null, modifier = Modifier
-                    .padding(10.dp)
+                    .padding(Dimensions.MEDIUM_PADDING)
                     .align(CenterHorizontally)
             )
 
@@ -346,13 +351,13 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
                 color = ColorsUtil.primaryDarkTextColor,
                 modifier = Modifier
                     .align(CenterHorizontally)
-                    .padding(20.dp)
+                    .padding(Dimensions.LARGE_PADDING)
             )
 
             Text(
                 text = "Benefits ",
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                modifier = Modifier.padding(horizontal = Dimensions.LARGE_PADDING, vertical = Dimensions.MEDIUM_PADDING),
                 color = Color.Black,
                 fontSize = Dimensions.TITLE_SIZE
             )
@@ -361,13 +366,13 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
                 text = pose.pose_benefits,
                 color = ColorsUtil.primaryDarkTextColor,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+                modifier = Modifier.padding(horizontal = Dimensions.LARGE_PADDING, vertical = Dimensions.MEDIUM_PADDING),
             )
 
             Text(
                 text = "Description ",
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                modifier = Modifier.padding(horizontal = Dimensions.LARGE_PADDING, vertical = Dimensions.MEDIUM_PADDING),
                 fontSize = Dimensions.TITLE_SIZE,
                 color = Color.Black
             )
@@ -376,7 +381,7 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
                 text = pose.pose_description,
                 color = ColorsUtil.primaryDarkTextColor,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+                modifier = Modifier.padding(horizontal = Dimensions.LARGE_PADDING, vertical = Dimensions.MEDIUM_PADDING),
             )
         }
     }

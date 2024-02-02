@@ -1,7 +1,9 @@
 package com.sparshchadha.workout_app.ui.navigation.destinations.workout
 
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.getValue
@@ -23,15 +25,21 @@ fun NavGraphBuilder.yogaComposable(
     composable(
         route = UtilityScreen.YogaPoses.route,
         enterTransition = {
-            slideInVertically(
-                animationSpec = tween(durationMillis = 1000),
-                initialOffsetY = { -it / 2 }
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> fullWidth },
+                animationSpec = tween(
+                    durationMillis = 300
+                )
             )
         },
         exitTransition = {
-            slideOutVertically(
-                animationSpec = tween(durationMillis = 1000),
-                targetOffsetY = { -it / 2 }
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth ->
+                    -fullWidth
+                },
+                animationSpec = tween(
+                    durationMillis = 300
+                )
             )
         }
     ) {

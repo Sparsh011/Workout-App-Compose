@@ -1,10 +1,7 @@
 package com.sparshchadha.workout_app.util
 
-import androidx.compose.ui.graphics.Color
-
 object Constants {
     const val DATABASE_NAME = "workout_database"
-    const val CALORIES = "calories"
     const val CARBOHYDRATES_TOTAL_G = "Carbohydrates"
     const val FAT_TOTAL_G = "Fats"
     const val PROTEIN_G = "Protein"

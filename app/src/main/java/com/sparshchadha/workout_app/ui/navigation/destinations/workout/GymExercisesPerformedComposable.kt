@@ -22,7 +22,7 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
         route = UtilityScreen.GymExercisesPerformed.route,
         enterTransition = {
             slideInHorizontally(
-                initialOffsetX = { fullWidth -> -fullWidth },
+                initialOffsetX = { fullWidth -> fullWidth },
                 animationSpec = tween(
                     durationMillis = 300
                 )

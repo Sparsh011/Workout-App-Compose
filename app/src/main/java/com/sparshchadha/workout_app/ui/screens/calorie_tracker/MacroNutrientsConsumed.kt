@@ -5,7 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,44 +18,37 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawStyle
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+
 import androidx.compose.ui.unit.times
+import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.unselectedBottomBarIconColor
 import com.sparshchadha.workout_app.util.Constants
 import com.sparshchadha.workout_app.util.Constants.CARBOHYDRATES_TOTAL_G
 import com.sparshchadha.workout_app.util.Constants.FAT_TOTAL_G
 import com.sparshchadha.workout_app.util.Constants.PROTEIN_G
 import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
+import com.sparshchadha.workout_app.util.Dimensions.MACRONUTRIENT_TEXT_HEIGHT
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 private const val TAG = "MacroNutrientsConsumed"
 
 @Composable
-fun PieChartIndicator(color: Color) {
-    Canvas(
-        modifier = Modifier
-            .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
-    ) {
-        drawCircle(color = color)
-    }
-}
-
-@Composable
 fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>) {
-    val configuration = LocalConfiguration.current;
+    val configuration = LocalConfiguration.current
     val macroNutrientsCardWidth = configuration.screenWidthDp.dp
     val macroNutrientsCardHeight = configuration.screenHeightDp.dp / 3
 
@@ -63,29 +56,40 @@ fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>) {
         modifier = Modifier
             .width(macroNutrientsCardWidth)
             .height(macroNutrientsCardHeight)
-            .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
+            .padding(
+                top = dimensionResource(id = R.dimen.large_padding),
+                start = dimensionResource(id = R.dimen.large_padding),
+                end = dimensionResource(id = R.dimen.large_padding),
+                bottom = dimensionResource(id = R.dimen.medium_padding)
+            )
             .clip(RoundedCornerShape(10.dp))
             .background(primaryLightGray)
     ) {
 
-        CardHeading("Daily Nutrients", 0.1 * macroNutrientsCardHeight)
+        CardHeading("Daily Nutrients", headingSize = HEADING_SIZE)
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
         ) {
             MacroNutrientNameAndConsumedQuantity(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(start = 10.dp, top = 10.dp, bottom = 10.dp),
-                macroNutrientsCardHeight = macroNutrientsCardHeight,
+                    .padding(
+                        top = dimensionResource(id = R.dimen.medium_padding),
+                        start = dimensionResource(id = R.dimen.medium_padding),
+                        bottom = dimensionResource(id = R.dimen.medium_padding)
+                    ),
                 nutrientsConsumed = nutrientsConsumed
             )
 
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(top = 10.dp, bottom = 10.dp),
+                    .padding(
+                        top = dimensionResource(id = R.dimen.medium_padding),
+                        bottom = dimensionResource(id = R.dimen.medium_padding)
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G]?.let { total ->
@@ -103,10 +107,6 @@ fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>) {
                         }
                     }
 
-//                    pieCharEntries.add(
-//                        PieChartEntry(primaryDarkTextColor, 0.007f)
-//                    )
-
                     nutrientsConsumed[CARBOHYDRATES_TOTAL_G]?.let { carbs ->
                         Constants.COLOR_TO_NUTRIENT_MAP[CARBOHYDRATES_TOTAL_G]?.let {
                             PieChartEntry(
@@ -120,10 +120,6 @@ fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>) {
                         }
                     }
 
-//                    pieCharEntries.add(
-//                        PieChartEntry(primaryDarkTextColor, 0.007f)
-//                    )
-
                     nutrientsConsumed[FAT_TOTAL_G]?.let { fats ->
                         Constants.COLOR_TO_NUTRIENT_MAP[FAT_TOTAL_G]?.let {
                             PieChartEntry(
@@ -136,14 +132,14 @@ fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>) {
                             )
                         }
                     }
-
-//                    pieCharEntries.add(
-//                        PieChartEntry(primaryDarkTextColor, 0.007f)
-//                    )
-
+                    if (pieCharEntries.size == 0) {
+                        pieCharEntries.add(
+                            PieChartEntry(color = unselectedBottomBarIconColor, 1f)
+                        )
+                    }
                     PieChart(
                         entries = pieCharEntries,
-                        size = 100.dp
+                        size = dimensionResource(id = R.dimen.pie_chart_size)
                     )
                 }
             }
@@ -154,7 +150,6 @@ fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>) {
 @Composable
 fun MacroNutrientNameAndConsumedQuantity(
     modifier: Modifier,
-    macroNutrientsCardHeight: Dp,
     nutrientsConsumed: Map<String, Double>,
 ) {
     Column(
@@ -163,23 +158,23 @@ fun MacroNutrientNameAndConsumedQuantity(
 
         MacroNutrient(
             macroNutrientName = "Carbohydrates",
-            nutrientsConsumed[CARBOHYDRATES_TOTAL_G].toString(),
+            macroNutrientQuantity = nutrientsConsumed[CARBOHYDRATES_TOTAL_G],
             indicatorColor = Constants.COLOR_TO_NUTRIENT_MAP[CARBOHYDRATES_TOTAL_G]
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
 
         MacroNutrient(
             macroNutrientName = "Protein",
-            nutrientsConsumed[PROTEIN_G].toString(),
+            nutrientsConsumed[PROTEIN_G],
             indicatorColor = Constants.COLOR_TO_NUTRIENT_MAP[PROTEIN_G]
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
 
         MacroNutrient(
             macroNutrientName = "Fats",
-            nutrientsConsumed[FAT_TOTAL_G].toString(),
+            nutrientsConsumed[FAT_TOTAL_G],
             indicatorColor = Constants.COLOR_TO_NUTRIENT_MAP[FAT_TOTAL_G]
         )
     }
@@ -188,7 +183,7 @@ fun MacroNutrientNameAndConsumedQuantity(
 @Composable
 fun MacroNutrient(
     macroNutrientName: String,
-    macroNutrientQuantity: String,
+    macroNutrientQuantity: Double?,
     indicatorColor: Color?,
 ) {
     Row(
@@ -201,13 +196,14 @@ fun MacroNutrient(
             )
         }
 
-        Spacer(modifier = Modifier.width(5.dp))
+        Spacer(modifier = Modifier.width(Dimensions.SMALL_PADDING))
 
         MacroNutrientAnnotatedString(
             macroNutrientName = macroNutrientName,
-            macroNutrientQuantity = macroNutrientQuantity,
+            macroNutrientQuantity = (macroNutrientQuantity ?: 0.0).toString() ,
             modifier = Modifier
                 .align(CenterVertically)
+                .height(MACRONUTRIENT_TEXT_HEIGHT)
         )
     }
 }
@@ -261,6 +257,17 @@ fun MacroNutrientAnnotatedString(
         color = primaryDarkTextColor,
         modifier = modifier,
         fontSize = 14.nonScaledSp,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
+        overflow = TextOverflow.Ellipsis
     )
+}
+
+@Composable
+fun PieChartIndicator(color: Color) {
+    Canvas(
+        modifier = Modifier
+            .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
+    ) {
+        drawCircle(color = color)
+    }
 }

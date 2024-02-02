@@ -129,4 +129,8 @@ dependencies {
     // region Preference Datastore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     // endregion
+
+    // region intuit sdp
+    implementation("com.intuit.sdp:sdp-android:1.1.0")
+    // endregion
 }

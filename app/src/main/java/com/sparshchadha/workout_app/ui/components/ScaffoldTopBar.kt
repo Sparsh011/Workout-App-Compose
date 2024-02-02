@@ -15,8 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 @Composable
@@ -24,7 +23,7 @@ fun ScaffoldTopBar(topBarDescription: String, onBackButtonPressed: () -> Unit = 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding()
+            .padding(Dimensions.MEDIUM_PADDING)
     ) {
         if (showBackIcon) {
             Icon(
@@ -33,7 +32,7 @@ fun ScaffoldTopBar(topBarDescription: String, onBackButtonPressed: () -> Unit = 
                 tint = Color.Black,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .padding(horizontal = 10.dp)
+                    .padding(horizontal = Dimensions.MEDIUM_PADDING)
                     .clickable {
                         onBackButtonPressed()
                     }
@@ -46,7 +45,7 @@ fun ScaffoldTopBar(topBarDescription: String, onBackButtonPressed: () -> Unit = 
             fontSize = 22.nonScaledSp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(20.dp)
+                .padding(horizontal = Dimensions.LARGE_PADDING)
                 .fillMaxWidth()
                 .align(Alignment.CenterVertically),
             textAlign = TextAlign.Start,

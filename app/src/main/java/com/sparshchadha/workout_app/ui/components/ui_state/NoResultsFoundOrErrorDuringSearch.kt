@@ -12,13 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 @Composable
 fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPaddingValues: PaddingValues, errorMessage: String = "") {
@@ -33,7 +33,7 @@ fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPadding
         LottieAnimation(
             composition = composition,
             progress = { progress },
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(Dimensions.LARGE_PADDING)
         )
 
         if (errorMessage.isNotEmpty()) {
@@ -41,9 +41,9 @@ fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPadding
                 text = "Error $errorMessage",
                 color = Color.Black,
                 modifier = Modifier
-                    .padding(20.dp)
+                    .padding(Dimensions.LARGE_PADDING)
                     .fillMaxWidth(),
-                fontSize = 30.sp,
+                fontSize = 30.nonScaledSp,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis
             )
@@ -52,9 +52,9 @@ fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPadding
                 text = "No Results Found!",
                 color = Color.Black,
                 modifier = Modifier
-                    .padding(20.dp)
+                    .padding(Dimensions.LARGE_PADDING)
                     .fillMaxWidth(),
-                fontSize = 30.sp,
+                fontSize = 30.nonScaledSp,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis
             )

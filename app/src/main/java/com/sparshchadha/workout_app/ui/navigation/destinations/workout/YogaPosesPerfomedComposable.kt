@@ -26,7 +26,7 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
         route = UtilityScreen.YogaPosesPerformed.route,
         enterTransition = {
             slideInHorizontally(
-                initialOffsetX = { fullWidth -> -fullWidth },
+                initialOffsetX = { fullWidth -> fullWidth },
                 animationSpec = tween(
                     durationMillis = 300
                 )

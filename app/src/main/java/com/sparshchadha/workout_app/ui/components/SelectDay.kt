@@ -22,12 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
@@ -58,7 +59,9 @@ fun CalendarRow(
 
         LazyRow(
             state = lazyRowState,
-            modifier = Modifier.background(Color.White)
+            modifier = Modifier
+                .background(Color.White)
+                .padding(horizontal = Dimensions.SMALL_PADDING)
         ) {
             items(last30Days) {
                 if (
@@ -87,7 +90,9 @@ fun CalendarRow(
                             }
                             .width(width),
                         date = it.first.toString(),
-                        month = it.second.substring(0..2)
+                        month = it.second.substring(0..2),
+                        monthColor = ColorsUtil.unselectedBottomBarIconColor,
+                        dateColor = ColorsUtil.unselectedBottomBarIconColor,
                     )
                 }
             }
@@ -124,28 +129,28 @@ private fun DayAndDate(
     if (isSelected) {
         Column(
             modifier = modifier
-                .padding(horizontal = 10.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(ColorsUtil.primaryDarkTextColor)
-                .padding(10.dp),
+                .background(Color.White)
+                .padding(Dimensions.MEDIUM_PADDING),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = month,
-                fontSize = 15.nonScaledSp,
+                fontSize = 16.nonScaledSp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.size(10.dp))
-            Text(
-                text = date,
-                fontSize = 14.nonScaledSp,
-                color = Color.White,
+                color = Color.Black,
                 overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.size(10.dp))
+            Spacer(modifier = Modifier.size(Dimensions.MEDIUM_PADDING))
+
+            Text(
+                text = date,
+                fontSize = 14.nonScaledSp,
+                color = Color.Black,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Spacer(modifier = Modifier.size(Dimensions.MEDIUM_PADDING))
 
             Canvas(
                 modifier = Modifier
@@ -158,7 +163,7 @@ private fun DayAndDate(
         Column(
             modifier = modifier
                 .background(Color.White)
-                .padding(10.dp),
+                .padding(Dimensions.MEDIUM_PADDING),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
@@ -168,7 +173,9 @@ private fun DayAndDate(
                 color = monthColor,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.size(10.dp))
+
+            Spacer(modifier = Modifier.size(Dimensions.MEDIUM_PADDING))
+
             Text(
                 text = date,
                 fontSize = 14.nonScaledSp,
@@ -176,7 +183,7 @@ private fun DayAndDate(
                 overflow = TextOverflow.Ellipsis
             )
 
-            Spacer(modifier = Modifier.size(10.dp))
+            Spacer(modifier = Modifier.size(Dimensions.MEDIUM_PADDING))
         }
     }
 }

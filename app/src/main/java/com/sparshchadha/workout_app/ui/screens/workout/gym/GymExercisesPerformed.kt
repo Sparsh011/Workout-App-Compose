@@ -46,6 +46,8 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -130,6 +132,7 @@ fun PopulatePerformedExercises(
         },
         containerColor = Color.White
     ) { localPaddingValues ->
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -157,7 +160,7 @@ fun PopulatePerformedExercises(
                         composition = composition,
                         progress = progress,
                         localPaddingValues = localPaddingValues,
-                        animationModifier = Modifier.size(250.dp)
+                        animationModifier = Modifier.size(Dimensions.LOTTIE_ANIMATION_SIZE_LARGE)
                     )
                 }
             } else {
@@ -180,7 +183,7 @@ fun ExerciseEntity(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(Dimensions.MEDIUM_PADDING),
         onClick = {
             shouldShowExerciseDetailsBottomSheet = true
         },
@@ -191,18 +194,21 @@ fun ExerciseEntity(
         Column(
             modifier = Modifier
                 .background(ColorsUtil.primaryLightGray)
-                .padding(16.dp)
+                .padding(Dimensions.LARGE_PADDING)
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
+
+            Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
+
             exerciseEntity.exerciseDetails?.let { exercise ->
                 Text(
                     text = exercise.name,
                     color = ColorsUtil.primaryDarkTextColor,
-                    fontSize = 26.sp,
+                    fontSize = 26.nonScaledSp,
                     fontWeight = FontWeight.Bold
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
+
                 Text(
                     buildAnnotatedString {
                         append("Difficulty Level : ")
@@ -210,16 +216,16 @@ fun ExerciseEntity(
                             style = SpanStyle(
                                 color = ColorsUtil.primaryDarkTextColor,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
                             )
                         ) {
                             append(exercise.difficulty)
                         }
                     },
                     color = ColorsUtil.primaryDarkTextColor,
-                    fontSize = 16.sp
+                    fontSize = 16.nonScaledSp
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+
+                Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
 
                 Text(
                     buildAnnotatedString {
@@ -228,16 +234,16 @@ fun ExerciseEntity(
                             style = SpanStyle(
                                 color = ColorsUtil.primaryDarkTextColor,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
                             )
                         ) {
                             append(exerciseEntity.setsPerformed.toString())
                         }
                     },
                     color = ColorsUtil.primaryDarkTextColor,
-                    fontSize = 16.sp
+                    fontSize = 16.nonScaledSp
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+
+                Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
             }
         }
     }
