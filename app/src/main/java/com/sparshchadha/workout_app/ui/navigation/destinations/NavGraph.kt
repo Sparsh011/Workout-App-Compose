@@ -1,5 +1,7 @@
 package com.sparshchadha.workout_app.ui.navigation.destinations
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -8,6 +10,7 @@ import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.foodItemDetailsComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWorkoutComposable
@@ -19,6 +22,7 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaPoses
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -89,6 +93,13 @@ fun NavGraph(
             workoutViewModel = workoutViewModel,
             navController = navController,
             globalPaddingValues = globalPaddingValues
+        )
+
+        // Food Item Details
+        foodItemDetailsComposable(
+            navController = navController,
+            globalPaddingValues = globalPaddingValues,
+            foodItemsViewModel = foodItemsViewModel
         )
     }
 }

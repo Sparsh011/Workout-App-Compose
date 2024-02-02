@@ -6,7 +6,7 @@ import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface FoodItemsRepository {
-    fun getFoodItems(foodSearchQuery: String) : Flow<Resource<NutritionalValueDto>>
+    fun getFoodItemsFromApi(foodSearchQuery: String) : Flow<Resource<NutritionalValueDto>>
 
     suspend fun saveFoodItem(foodItemEntity: FoodItemEntity)
 
@@ -19,5 +19,7 @@ interface FoodItemsRepository {
     suspend fun getCaloriesGoal() : Flow<String?>
 
     suspend fun removeFoodItem(foodItem: FoodItemEntity)
+
+    suspend fun getFoodItemById(id: Int) : Flow<Resource<FoodItemEntity>>
 
 }

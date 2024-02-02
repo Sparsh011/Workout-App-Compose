@@ -51,9 +51,12 @@ class FoodItemsViewModel @Inject constructor(
     private val _selectedDateAndMonthForFoodItems = MutableStateFlow<Pair<Int, String>?>(null)
     val selectedDateAndMonthForFoodItems = _selectedDateAndMonthForFoodItems.asStateFlow()
 
+    private val _foodItemEntity = MutableStateFlow<FoodItemEntity?>(null)
+    val foodItemEntity = _foodItemEntity
+
     fun getFoodItemsFromApi() {
         viewModelScope.launch {
-            val nutritionalValues = foodItemsRepository.getFoodItems(foodSearchQuery = _searchQuery.value)
+            val nutritionalValues = foodItemsRepository.getFoodItemsFromApi(foodSearchQuery = _searchQuery.value)
             nutritionalValues.collect { result ->
                 when (result) {
                     is Resource.Success -> {
@@ -192,6 +195,26 @@ class FoodItemsViewModel @Inject constructor(
     fun removeFoodItem(foodItem: FoodItemEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             foodItemsRepository.removeFoodItem(foodItem = foodItem)
+        }
+    }
+
+    fun getFoodItemById(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            foodItemsRepository.getFoodItemById(id = id).collect { response ->
+                when (response) {
+                    is Resource.Success -> {
+                        foodItemEntity.value = response.data
+                    }
+
+                    is Resource.Loading -> {
+
+                    }
+
+                    is Resource.Error -> {
+                        Log.e(TAG, "getFoodItemById: Error -${response.error?.message}")
+                    }
+                }
+            }
         }
     }
 

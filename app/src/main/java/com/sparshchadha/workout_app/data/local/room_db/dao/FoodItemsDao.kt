@@ -21,4 +21,7 @@ interface FoodItemsDao {
 
     @Delete
     fun removeFoodItem(foodItem: FoodItemEntity)
+
+    @Query("SELECT id, date, month, servings, foodItemDetails FROM FoodItemEntity WHERE id = :itemId")
+    fun getFoodItemById(itemId: Int): Flow<FoodItemEntity?>
 }

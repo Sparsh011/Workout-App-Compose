@@ -188,9 +188,11 @@ fun CalorieTrackerScreen(
                 }
 
             } else {
-                items(foodItemsConsumed, key = { foodItem ->
-                    foodItem.id.toString()
-                }) { foodItem ->
+                items(
+                    foodItemsConsumed, key = { foodItem ->
+                        foodItem.id.toString()
+                    }
+                ) { foodItem ->
                     var shouldShowFoodItemDetails by remember {
                         mutableStateOf(false)
                     }
@@ -198,7 +200,8 @@ fun CalorieTrackerScreen(
                     PopulateConsumedFoodItem(
                         consumedFoodItem = foodItem,
                         showFoodItemDetails = {
-                            shouldShowFoodItemDetails = true
+//                            shouldShowFoodItemDetails = true
+                                              navController.navigate(route = "FoodItemDetails/${foodItem.id}")
                         },
                         removeFoodItem = removeFoodItem
                     )
@@ -405,9 +408,9 @@ fun FoodItemDialogBox(
 @Composable
 fun FoodItemText(
     modifier: Modifier = Modifier,
-    title: String = "",
+    title: String = "Pasta",
     macroNutrient: String = "",
-    quantityOfMacroNutrient: String = "",
+    quantityOfMacroNutrient: String = "25",
 ) {
     if (macroNutrient.isBlank()) {
         Text(

@@ -70,4 +70,9 @@ sealed class UtilityScreen(
         route = "GymExercisesPerformed",
         title = "Gym Exercises Performed Today"
     )
+
+    object FoodItemDetailsScreen: UtilityScreen(
+        route = "FoodItemDetails/{foodItemId}",
+        title = "Food Item Details"
+    )
 }
