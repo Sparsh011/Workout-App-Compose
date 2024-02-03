@@ -12,6 +12,7 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.destinations.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,6 +21,8 @@ private const val TAG = "MainActivityTaggg"
 class MainActivity : ComponentActivity() {
     private val foodItemsViewModel : FoodItemsViewModel by viewModels()
     private val workoutViewModel : WorkoutViewModel by viewModels()
+    private val remindersViewModel : RemindersViewModel by viewModels()
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +45,8 @@ class MainActivity : ComponentActivity() {
                         foodItemsViewModel = foodItemsViewModel,
                         workoutViewModel = workoutViewModel,
                         gymExercises = gymExercises,
-                        yogaPoses = yogaPoses
+                        yogaPoses = yogaPoses,
+                        remindersViewModel = remindersViewModel
                     )
                 }
             }

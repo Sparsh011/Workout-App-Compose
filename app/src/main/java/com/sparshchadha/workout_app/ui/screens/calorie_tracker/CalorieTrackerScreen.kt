@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -38,9 +40,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Red
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -57,10 +59,13 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.ui.components.CalendarRow
 import com.sparshchadha.workout_app.ui.components.CustomDivider
 import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
@@ -168,7 +173,27 @@ fun CalorieTrackerScreen(
 
             // Dishes consumed on header
             item {
-                DishesConsumedOnAParticularDayHeader()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = CenterVertically
+                ) {
+                    DishesConsumedOnAParticularDayHeader(
+                        modifier = Modifier.padding(MEDIUM_PADDING)
+                    )
+
+                    Spacer(modifier = Modifier.width(MEDIUM_PADDING))
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.reminders_svg),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(LARGE_PADDING)
+                            .clickable {
+                                navController.navigate(UtilityScreen.RemindersScreen.route)
+                            },
+                        tint = Black
+                    )
+                }
             }
 
             // Dishes consumed on a particular day -
@@ -186,10 +211,10 @@ fun CalorieTrackerScreen(
                         textSize = 20.nonScaledSp
                     )
                 }
-
             } else {
                 items(
-                    foodItemsConsumed, key = { foodItem ->
+                    items = foodItemsConsumed,
+                    key = { foodItem ->
                         foodItem.id.toString()
                     }
                 ) { foodItem ->
@@ -200,8 +225,7 @@ fun CalorieTrackerScreen(
                     PopulateConsumedFoodItem(
                         consumedFoodItem = foodItem,
                         showFoodItemDetails = {
-//                            shouldShowFoodItemDetails = true
-                                              navController.navigate(route = "FoodItemDetails/${foodItem.id}")
+                            navController.navigate(route = "FoodItemDetails/${foodItem.id}")
                         },
                         removeFoodItem = removeFoodItem
                     )
@@ -519,7 +543,7 @@ fun PopulateConsumedFoodItem(
 
 
 @Composable
-fun DishesConsumedOnAParticularDayHeader() {
+fun DishesConsumedOnAParticularDayHeader(modifier: Modifier) {
     Text(
         buildAnnotatedString {
             append("Dishes ")
@@ -536,7 +560,7 @@ fun DishesConsumedOnAParticularDayHeader() {
         fontSize = 20.nonScaledSp,
         color = primaryDarkTextColor,
         textAlign = TextAlign.Start,
-        modifier = Modifier.padding(15.dp),
+        modifier = modifier,
         overflow = TextOverflow.Ellipsis
     )
 }

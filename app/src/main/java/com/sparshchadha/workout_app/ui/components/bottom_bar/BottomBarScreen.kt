@@ -75,4 +75,9 @@ sealed class UtilityScreen(
         route = "FoodItemDetails/{foodItemId}",
         title = "Food Item Details"
     )
+
+    object RemindersScreen: UtilityScreen(
+        route = "RemindersScreen",
+        title = "Reminders Screen"
+    )
 }

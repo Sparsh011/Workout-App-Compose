@@ -12,6 +12,7 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.foodItemDetailsComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.shared.remindersComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWorkoutComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExercisesComposable
@@ -20,6 +21,7 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.workout.workoutCa
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaPosesPerformedTodayComposable
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -30,7 +32,8 @@ fun NavGraph(
     foodItemsViewModel: FoodItemsViewModel,
     workoutViewModel: WorkoutViewModel,
     gymExercises: GymExercisesDto?,
-    yogaPoses: YogaPosesDto?
+    yogaPoses: YogaPosesDto?,
+    remindersViewModel: RemindersViewModel
 ) {
     NavHost(navController = navController, startDestination = BottomBarScreen.CalorieTracker.route) {
         // Workout Tracker in Bottom Bar
@@ -100,6 +103,13 @@ fun NavGraph(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
             foodItemsViewModel = foodItemsViewModel
+        )
+
+        // Reminders Screen
+        remindersComposable(
+            navController = navController,
+            globalPaddingValues = globalPaddingValues,
+            remindersViewModel = remindersViewModel
         )
     }
 }

@@ -175,9 +175,9 @@ fun HandleFoodSearch(
 
             is WorkoutViewModel.UIEvent.ShowError -> {
                 NoResultsFoundOrErrorDuringSearch(
-                    paddingValues = paddingValues,
+                    globalPaddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
-                    errorMessage = event.errorMessage
+                    message = event.errorMessage
                 )
             }
         }
@@ -214,9 +214,9 @@ fun HandleExercisesSearch(
 
             is WorkoutViewModel.UIEvent.ShowError -> {
                 NoResultsFoundOrErrorDuringSearch(
-                    paddingValues = paddingValues,
+                    globalPaddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
-                    errorMessage = event.errorMessage
+                    message = event.errorMessage
                 )
             }
         }
@@ -232,7 +232,7 @@ fun FoodSearchResults(
 ) {
     if (dishes?.items?.isEmpty() == true) {
         NoResultsFoundOrErrorDuringSearch(
-            paddingValues = paddingValues,
+            globalPaddingValues = paddingValues,
             localPaddingValues = localPaddingValues
         )
     } else {
@@ -275,7 +275,7 @@ fun ExerciseSearchResults(
     exercises?.let {
         if (it.size == 0) {
             NoResultsFoundOrErrorDuringSearch(
-                paddingValues = paddingValues,
+                globalPaddingValues = paddingValues,
                 localPaddingValues = localPaddingValues
             )
         } else {

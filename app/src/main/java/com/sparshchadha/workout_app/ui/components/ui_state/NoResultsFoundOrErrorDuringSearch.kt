@@ -21,11 +21,11 @@ import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 @Composable
-fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPaddingValues: PaddingValues, errorMessage: String = "") {
+fun NoResultsFoundOrErrorDuringSearch(globalPaddingValues: PaddingValues, localPaddingValues: PaddingValues, message: String = "") {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+            .padding(bottom = globalPaddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
     ) {
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_results_found_animation))
         val progress by animateLottieCompositionAsState(composition)
@@ -36,9 +36,9 @@ fun NoResultsFoundOrErrorDuringSearch(paddingValues: PaddingValues, localPadding
             modifier = Modifier.padding(Dimensions.LARGE_PADDING)
         )
 
-        if (errorMessage.isNotEmpty()) {
+        if (message.isNotEmpty()) {
             Text(
-                text = "Error $errorMessage",
+                text = message,
                 color = Color.Black,
                 modifier = Modifier
                     .padding(Dimensions.LARGE_PADDING)
