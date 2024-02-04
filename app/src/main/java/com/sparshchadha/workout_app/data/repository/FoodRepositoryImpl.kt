@@ -1,6 +1,9 @@
 package com.sparshchadha.workout_app.data.repository
 
 import com.sparshchadha.workout_app.BuildConfig
+import com.sparshchadha.workout_app.data.local.datastore.WorkoutAppDatastorePreference
+import com.sparshchadha.workout_app.data.local.room_db.dao.FoodItemsDao
+import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.api.FoodApi
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
@@ -9,15 +12,83 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class FoodRepositoryImpl(
-    val api: FoodApi
+    private val api: FoodApi,
+    private val foodItemsDao: FoodItemsDao,
+    private val datastorePreference: WorkoutAppDatastorePreference,
 ) : FoodItemsRepository {
 
-    override fun getFoodItems(foodSearchQuery: String): Flow<Resource<NutritionalValueDto>> = flow {
+    override fun getFoodItemsFromApi(foodSearchQuery: String): Flow<Resource<NutritionalValueDto>> = flow {
         emit(Resource.Loading())
 
         try {
             val remoteDishes = api.getNutritionalValue(query = foodSearchQuery, apiKey = BuildConfig.FOOD_API_KEY)
             emit(Resource.Success(remoteDishes))
+
+        } catch (e: Exception) {
+            emit(
+                Resource.Error(error = e)
+            )
+        }
+    }
+
+    override suspend fun saveFoodItem(foodItemEntity: FoodItemEntity) {
+        foodItemsDao.addFoodItem(foodItem = foodItemEntity)
+    }
+
+    override suspend fun getFoodItemsConsumedOn(date: String, month: String): Flow<Resource<List<FoodItemEntity>>> = flow {
+
+        try {
+             foodItemsDao.getFoodItemsConsumedOn(
+                date = date,
+                month = month
+            ).collect {
+                 emit(Resource.Success(it))
+             }
+
+        } catch (e: Exception) {
+            emit(
+                Resource.Error(error = e)
+            )
+        }
+    }
+
+    override suspend fun getAllFoodItemsConsumed(): Flow<Resource<List<FoodItemEntity>>> = flow {
+
+        try {
+            foodItemsDao.getAllFoodItemsConsumed().collect {
+                emit(Resource.Success(it))
+            }
+
+        } catch (e: Exception) {
+            emit(
+                Resource.Error(error = e)
+            )
+        }
+    }
+
+    override suspend fun saveOrUpdateCaloriesGoal(caloriesGoal: String) {
+        datastorePreference.saveCaloriesGoal(caloriesGoal)
+    }
+
+    override suspend fun getCaloriesGoal(): Flow<String?> = flow {
+        try {
+            datastorePreference.readCaloriesGoal.collect {
+                emit(it)
+            }
+        } catch (e: Exception) {
+            throw e
+        }
+    }
+
+    override suspend fun removeFoodItem(foodItem: FoodItemEntity) {
+        foodItemsDao.removeFoodItem(foodItem = foodItem)
+    }
+
+    override suspend fun getFoodItemById(id: Int) : Flow<Resource<FoodItemEntity>> = flow {
+        try {
+            foodItemsDao.getFoodItemById(id).collect {
+                emit(Resource.Success(it))
+            }
 
         } catch (e: Exception) {
             emit(

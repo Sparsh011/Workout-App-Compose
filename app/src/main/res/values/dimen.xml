@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="medium_padding">@dimen/_8sdp</dimen>
+    <dimen name="indicator_color_size">@dimen/_4sdp</dimen>
+    <dimen name="large_padding">@dimen/_16sdp</dimen>
+    <dimen name="small_padding">@dimen/_4sdp</dimen>
+    <dimen name="pie_chart_size">@dimen/_80sdp</dimen>
+    <dimen name="lottie_animation_size_large">@dimen/_160sdp</dimen>
+    <dimen name="heading_size">@dimen/_30sdp</dimen>
+    <dimen name="macronutrient_text_height">@dimen/_20sdp</dimen>
+</resources>

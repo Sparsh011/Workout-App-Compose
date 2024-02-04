@@ -1,231 +1,301 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
-import android.widget.Toast
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.progressSemantics
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.Slider
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
+import com.sparshchadha.workout_app.ui.components.CalendarRow
+import com.sparshchadha.workout_app.ui.components.CustomDivider
+import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreen
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
+import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Extensions.capitalize
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
+import com.sparshchadha.workout_app.util.HelperFunctions
+import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 
+private const val TAG = "CalorieTrackerScreen"
 
-@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun CalorieTrackerScreen(navController: NavHostController) {
-    var caloriesGoal by remember {
-        mutableFloatStateOf(1000F)
-    }
+fun CalorieTrackerScreen(
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit,
+    saveNewCaloriesGoal: (Float) -> Unit,
+    caloriesGoal: String,
+    caloriesConsumed: String,
+    selectedDateAndMonth: Pair<Int, String>?,
+    removeFoodItem: (FoodItemEntity) -> Unit,
+    foodItemsViewModel: FoodItemsViewModel,
+) {
 
-    var caloriesConsumedToday by remember {
-        mutableFloatStateOf(0F)
-    }
+    val foodItemsConsumed = foodItemsViewModel.savedFoodItems.collectAsState().value
+    val nutrientsConsumed = foodItemsViewModel.nutrientsConsumed
 
-    var showCaloriesGoalBottomSheet by remember {
+    var shouldShowCaloriesBottomSheet by remember {
         mutableStateOf(false)
     }
-    val sheetState = rememberModalBottomSheetState()
+    val updateCaloriesBottomSheetState = rememberModalBottomSheetState()
 
     var searchBarQuery by remember {
         mutableStateOf("")
     }
 
-    val context = LocalContext.current
-    val focusManager = LocalFocusManager.current
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize(1f)
-            .background(Color.White)
-    ) {
-
-        // Search dishes to add calories
-        item {
-            SearchBar(
-                query = searchBarQuery,
-                onQueryChange = {
+    Scaffold(
+        topBar = {
+            SearchBarToLaunchSearchScreen(
+                searchBarQuery = searchBarQuery,
+                updateSearchBarQuery = {
                     searchBarQuery = it
                 },
-                onSearch = {
-                    Toast.makeText(context, "Searching for $it", Toast.LENGTH_SHORT).show()
-                },
-                active = false,
-                onActiveChange = {
-                    navController.navigate("SearchScreen/food")
-                },
-                placeholder = {
-                    Text(text = "Search Your Dish...", color = primaryDarkGray)
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = primaryDarkGray
-                    )
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = null,
-                        modifier = Modifier.clickable {
-                            searchBarQuery = ""
-                            focusManager.clearFocus()
-                        },
-                        tint = primaryDarkGray
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                colors = SearchBarDefaults.colors(
-                    containerColor = primaryDarkTextColor,
-                    inputFieldColors = TextFieldDefaults.textFieldColors(
-                        focusedTextColor = primaryGreenCardBackground
-                    )
-                ),
-                shape = RoundedCornerShape(size = 10.dp)
-            ) {
-
-            }
+                navController = navController
+            )
         }
+    ) { localPaddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+        ) {
 
-        item {
-            // Calories consumed today
-            var progress: Float by remember { mutableFloatStateOf(0.8F) }
-            val indicatorSize = 50.dp
-            val trackWidth: Dp = (indicatorSize * .15f)
+            // Show Today's calories and nutrients -
+            item {
+                val pagerState = rememberPagerState(
+                    pageCount = {
+                        2
+                    }
+                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    HorizontalPager(state = pagerState) { page ->
+                        when (page) {
+                            0 -> {
+                                CaloriesConsumedCard(
+                                    shouldShowCaloriesBottomSheet = shouldShowCaloriesBottomSheet,
+                                    sheetState = updateCaloriesBottomSheetState,
+                                    caloriesGoal = caloriesGoal,
+                                    hideCaloriesBottomSheet = {
+                                        shouldShowCaloriesBottomSheet = false
+                                    },
+                                    saveNewCaloriesGoal = saveNewCaloriesGoal,
+                                    showCaloriesGoalBottomSheet = {
+                                        shouldShowCaloriesBottomSheet = true
+                                    },
+                                    caloriesConsumed = caloriesConsumed
+                                )
+                            }
 
-            Box(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                GradientProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .size(indicatorSize)
-                        .align(Center),
-                    strokeWidth = trackWidth,
-                    gradientStart = primaryBlue,
-                    gradientEnd = primaryGreen,
-                    trackColor = Color.LightGray,
+                            1 -> {
+                                MacroNutrientsConsumed(
+                                    nutrientsConsumed = nutrientsConsumed
+                                )
+                            }
+                        }
+                    }
+
+                    CurrentlySelectedCard(currentPage = pagerState.currentPage)
+                }
+            }
+
+            // Select day to show that day's calories and dishes consumed
+            item {
+                CalendarRow(
+                    getResultsForDateAndMonth = getDishesConsumedOnSelectedDayAndMonth,
+                    selectedMonth = selectedDateAndMonth?.second ?: "January",
+                    selectedDay = selectedDateAndMonth?.first ?: 1,
+                    indicatorColor = HelperFunctions.getAchievementColor(
+                        achieved = caloriesConsumed.toInt(),
+                        target = caloriesGoal.toInt()
+                    )
                 )
             }
 
-            // Bottom sheet to update calories goal
-            if (showCaloriesGoalBottomSheet) {
-                ShowModalBottomSheet(
-                    sheetState = sheetState,
-                    caloriesGoal = caloriesGoal,
-                    onSheetDismissed = {
-                        showCaloriesGoalBottomSheet = false
-                    }
+            // Dishes consumed on header
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = CenterVertically
                 ) {
-                    caloriesGoal = it
-                    progress = caloriesGoal / 5000
+                    DishesConsumedOnAParticularDayHeader(
+                        modifier = Modifier.padding(MEDIUM_PADDING)
+                    )
+
+                    Spacer(modifier = Modifier.width(MEDIUM_PADDING))
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.reminders_svg),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(LARGE_PADDING)
+                            .clickable {
+                                navController.navigate(UtilityScreen.RemindersScreen.route)
+                            },
+                        tint = Black
+                    )
                 }
             }
-        }
 
-        // Update calories button
-        item {
-            Text(
-                text = "Change Calories Goal",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-                    .clickable {
-                        showCaloriesGoalBottomSheet = true
-                    },
-                color = primaryGreenCardBackground,
-                fontSize = 15.sp,
-                textAlign = TextAlign.Center
-            )
-        }
+            // Dishes consumed on a particular day -
+            if (foodItemsConsumed.isNullOrEmpty()) {
+                item {
+                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_food_item_added_animation))
+                    val progress by animateLottieCompositionAsState(composition)
 
+                    NoWorkoutPerformedOrFoodConsumed(
+                        composition = composition,
+                        progress = progress,
+                        animationModifier = Modifier.size(
+                            Dimensions.LOTTIE_ANIMATION_SIZE_LARGE
+                        ),
+                        textSize = 20.nonScaledSp
+                    )
+                }
+            } else {
+                items(
+                    items = foodItemsConsumed,
+                    key = { foodItem ->
+                        foodItem.id.toString()
+                    }
+                ) { foodItem ->
+                    var shouldShowFoodItemDetails by remember {
+                        mutableStateOf(false)
+                    }
 
-        // Today's consumed dishes -
-        items(listOf("Cake", "Pasta")) {
-            DishesConsumedToday(dish = it)
+                    PopulateConsumedFoodItem(
+                        consumedFoodItem = foodItem,
+                        showFoodItemDetails = {
+                            navController.navigate(route = "FoodItemDetails/${foodItem.id}")
+                        },
+                        removeFoodItem = removeFoodItem
+                    )
+
+                    if (shouldShowFoodItemDetails) {
+                        FoodItemDialogBox(
+                            foodItem,
+                            hideFoodItemDialogBox = {
+                                shouldShowFoodItemDetails = false
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-fun DishesConsumedToday(dish: String) {
-    Card(
+fun CurrentlySelectedCard(currentPage: Int) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(
+                bottom = Dimensions.SMALL_PADDING
+            ),
+        horizontalArrangement = Arrangement.Center
     ) {
-        Row(
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth()
-        ) {
-            Text(text = dish, modifier = Modifier.weight(0.7f))
-            Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.align(CenterVertically))
-            Text(
-                text = "5", modifier = Modifier
-                    .padding(5.dp)
-                    .align(CenterVertically)
-            )
-            Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.align(CenterVertically))
+
+        if (currentPage == 0) {
+            Row {
+                Canvas(
+                    modifier = Modifier
+                        .padding(Dimensions.SMALL_PADDING)
+                        .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
+
+                ) {
+                    drawCircle(color = Red)
+                }
+
+                Canvas(
+                    modifier = Modifier
+                        .padding(Dimensions.SMALL_PADDING)
+                        .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
+
+                ) {
+                    drawCircle(color = customDividerColor)
+                }
+            }
+
+        } else {
+            Row {
+                Canvas(
+                    modifier = Modifier
+                        .padding(Dimensions.SMALL_PADDING)
+                        .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
+
+                ) {
+                    drawCircle(color = customDividerColor)
+                }
+
+                Canvas(
+                    modifier = Modifier
+                        .padding(Dimensions.SMALL_PADDING)
+                        .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
+
+                ) {
+                    drawCircle(color = Red)
+                }
+            }
 
         }
     }
@@ -233,153 +303,265 @@ fun DishesConsumedToday(dish: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowModalBottomSheet(
-    sheetState: SheetState,
-    caloriesGoal: Float,
-    onSheetDismissed: () -> Unit,
-    onCaloriesChanged: (Float) -> Unit,
+fun FoodItemDialogBox(
+    foodItem: FoodItemEntity,
+    hideFoodItemDialogBox: () -> Unit,
 ) {
+    val sheetState = rememberModalBottomSheetState()
     ModalBottomSheet(
         sheetState = sheetState,
-        containerColor = Color.Black,
+        containerColor = Color.White,
         onDismissRequest = {
-            onSheetDismissed()
+            hideFoodItemDialogBox()
         },
-        windowInsets = WindowInsets(0, 0, 0, 0)
-    ) {
-        BoxWithConstraints(
-            Modifier
-                .navigationBarsPadding()
-                .padding(bottom = 10.dp)
-        ) {
-            Column {
-                CaloriesConsumedAndSliderComposable(
-                    calorieDescription = "Calories Goal : ${caloriesGoal.toInt()}",
-                    shouldEnableSlider = true,
-                    calories = caloriesGoal,
-                    textModifier = Modifier.padding(10.dp),
-                    sliderModifier = Modifier.padding(10.dp)
-                ) {
-                    onCaloriesChanged(it)
-                }
+        content = {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(Dimensions.MEDIUM_PADDING)
+                    .fillMaxWidth()
+            ) {
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    title = foodItem.foodItemDetails?.name?.capitalize() ?: "Sorry, Unable To Get Name!"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Servings:",
+                    quantityOfMacroNutrient = foodItem.servings.toString()
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Calories Per Serving: ",
+                    quantityOfMacroNutrient = foodItem.foodItemDetails?.calories.toString() + " KCAL"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Total Calories: ",
+                    quantityOfMacroNutrient = (foodItem.servings * (foodItem.foodItemDetails?.calories?.toInt()
+                        ?: 0)).toString() + " KCAL"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Carbohydrates:",
+                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.carbohydrates_total_g} g"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Protein:",
+                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.protein_g} g"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Total Fat:",
+                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.fat_total_g} g"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Saturated Fat:",
+                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.fat_saturated_g} g"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Sugar:",
+                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.sugar_g} g"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Cholesterol:",
+                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.cholesterol_mg} mg"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Sodium:",
+                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.sodium_mg} mg"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Fiber:",
+                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.fiber_g} g"
+                )
+
+                FoodItemText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Dimensions.MEDIUM_PADDING),
+                    macroNutrient = "Potassium:",
+                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.potassium_mg} mg"
+                )
             }
         }
-
-    }
-}
-
-@Composable
-fun CaloriesConsumedAndSliderComposable(
-    calorieDescription: String,
-    shouldEnableSlider: Boolean,
-    calories: Float,
-    textModifier: Modifier,
-    sliderModifier: Modifier,
-    onCaloriesChanged: (Float) -> Unit = {},
-) {
-    Text(
-        text = calorieDescription,
-        color = Color.White,
-        fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
-        modifier = textModifier
-    )
-
-    Slider(
-        value = calories,
-        onValueChange = {
-            onCaloriesChanged(it)
-        },
-        valueRange = 1000F..5000F,
-        enabled = shouldEnableSlider,
-        modifier = sliderModifier
     )
 }
 
-
 @Composable
-fun GradientProgressIndicator(
-    progress: Float,
+fun FoodItemText(
     modifier: Modifier = Modifier,
-    gradientStart: Color,
-    gradientEnd: Color,
-    trackColor: Color,
-    strokeWidth: Dp,
+    title: String = "Pasta",
+    macroNutrient: String = "",
+    quantityOfMacroNutrient: String = "25",
 ) {
-    val stroke = with(LocalDensity.current) {
-        Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Butt)
-    }
-    Canvas(
-        modifier
-            .progressSemantics(progress)
-    ) {
-        // Start at 12 o'clock
-        val startAngle = 270f
-        val sweep = progress * 360f
-        drawDeterminateCircularIndicator(startAngle, 360f, trackColor, stroke)
-        drawCircularIndicator(
-            startAngle = startAngle,
-            sweep = sweep,
-            gradientStart = gradientStart,
-            gradientEnd = gradientEnd,
-            stroke = stroke
+    if (macroNutrient.isBlank()) {
+        Text(
+            text = title,
+            modifier = modifier,
+            textAlign = TextAlign.Center,
+            fontSize = 24.nonScaledSp,
+            fontWeight = FontWeight.Bold,
+            color = primaryDarkTextColor,
+            overflow = TextOverflow.Ellipsis
         )
+    } else {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = macroNutrient,
+                textAlign = TextAlign.Start,
+                fontSize = 18.nonScaledSp,
+                modifier = Modifier
+                    .weight(2f)
+                    .padding(Dimensions.MEDIUM_PADDING),
+                fontWeight = FontWeight.Bold,
+                color = primaryDarkTextColor,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = quantityOfMacroNutrient,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(Dimensions.MEDIUM_PADDING),
+                fontSize = 16.nonScaledSp,
+                fontWeight = FontWeight.Normal,
+                color = primaryDarkTextColor,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        CustomDivider()
     }
 }
 
-private fun DrawScope.drawDeterminateCircularIndicator(
-    startAngle: Float,
-    sweep: Float,
-    color: Color,
-    stroke: Stroke,
-) = drawCircularIndicator(startAngle, sweep, color, stroke)
-
-private fun DrawScope.drawCircularIndicator(
-    startAngle: Float,
-    sweep: Float,
-    color: Color,
-    stroke: Stroke,
+@Composable
+fun PopulateConsumedFoodItem(
+    consumedFoodItem: FoodItemEntity,
+    showFoodItemDetails: () -> Unit,
+    removeFoodItem: (FoodItemEntity) -> Unit,
 ) {
-    // To draw this circle we need a rect with edges that line up with the midpoint of the stroke.
-    // To do this we need to remove half the stroke width from the total diameter for both sides.
-    val diameterOffset = stroke.width / 2
-    val arcDimen = size.width - 2 * diameterOffset
-    drawArc(
-        color = color,
-        startAngle = startAngle,
-        sweepAngle = sweep,
-        useCenter = false,
-        topLeft = Offset(diameterOffset, diameterOffset),
-        size = Size(arcDimen, arcDimen),
-        style = stroke
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(Dimensions.MEDIUM_PADDING)
+            .clickable {
+                showFoodItemDetails()
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimensions.SMALL_PADDING)
+        ) {
+            Column(
+                modifier = Modifier.weight(4f)
+            ) {
+                consumedFoodItem.foodItemDetails?.name?.let { itemName ->
+                    Text(
+                        text = itemName.capitalize(),
+                        color = primaryDarkTextColor,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(5.dp),
+                        fontSize = 18.nonScaledSp,
+                        textAlign = TextAlign.Start,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Text(
+                    text = "${(consumedFoodItem.servings * (consumedFoodItem.foodItemDetails?.calories ?: 0).toInt())} KCAL",
+                    color = primaryDarkTextColor,
+                    modifier = Modifier
+                        .padding(5.dp),
+                    fontSize = 14.nonScaledSp,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = null,
+                modifier = Modifier
+                    .weight(1f)
+                    .align(CenterVertically)
+                    .clickable {
+                        removeFoodItem(consumedFoodItem)
+                    },
+                tint = ColorsUtil.noAchievementColor // red
+            )
+        }
+
+        CustomDivider()
+    }
+}
+
+
+@Composable
+fun DishesConsumedOnAParticularDayHeader(modifier: Modifier) {
+    Text(
+        buildAnnotatedString {
+            append("Dishes ")
+            withStyle(
+                style = SpanStyle(
+                    color = primaryDarkTextColor,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.nonScaledSp,
+                )
+            ) {
+                append("Consumed")
+            }
+        },
+        fontSize = 20.nonScaledSp,
+        color = primaryDarkTextColor,
+        textAlign = TextAlign.Start,
+        modifier = modifier,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
-private fun DrawScope.drawCircularIndicator(
-    startAngle: Float,
-    sweep: Float,
-    gradientStart: Color,
-    gradientEnd: Color,
-    stroke: Stroke,
-) {
-    // To draw this circle we need a rect with edges that line up with the midpoint of the stroke.
-    // To do this we need to remove half the stroke width from the total diameter for both sides.
-    val diameterOffset = stroke.width / 2
-    val arcDimen = size.width - 2 * diameterOffset
-    rotate(degrees = -90f) {
-        drawArc(
-            brush = Brush.sweepGradient(
-                colorStops = listOf(
-                    0.0f to gradientStart,
-                    sweep / 360 to gradientEnd,
-                ).toTypedArray()
-            ),
-            startAngle = startAngle + 90,
-            sweepAngle = sweep,
-            useCenter = false,
-            topLeft = Offset(diameterOffset, diameterOffset),
-            size = Size(arcDimen, arcDimen),
-            style = stroke
-        )
-    }
-}

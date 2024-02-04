@@ -1,6 +1,7 @@
-package com.sparshchadha.workout_app.ui.components
+package com.sparshchadha.workout_app.ui.components.ui_state
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ fun ShowLoadingScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LottieAnimation(composition = composition, progress = { progress })

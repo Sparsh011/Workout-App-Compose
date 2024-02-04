@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.components
+package com.sparshchadha.workout_app.ui.components.ui_state
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

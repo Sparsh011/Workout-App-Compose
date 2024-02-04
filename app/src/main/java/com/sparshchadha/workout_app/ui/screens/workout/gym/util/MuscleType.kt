@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.screens.workout.gym
+package com.sparshchadha.workout_app.ui.screens.workout.gym.util
 
 enum class MuscleType {
     ABDOMINALS,
