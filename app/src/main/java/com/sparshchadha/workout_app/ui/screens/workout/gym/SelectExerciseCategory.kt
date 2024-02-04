@@ -43,7 +43,7 @@ fun SelectExerciseCategory(
                 topBarDescription = "Select Difficulty Level",
                 globalPaddingValues = globalPaddingValues,
                 onCategoryItemSelected = {
-                    workoutViewModel.getExercisesByDifficulty(difficultyLevel = it.replace(' ', '_'))
+                    workoutViewModel.getExercisesByDifficultyFromApi(difficultyLevel = it.replace(' ', '_'))
                     navController.navigate("ExercisesScreen/$it")
                 },
                 onBackButtonPressed = {
@@ -58,7 +58,7 @@ fun SelectExerciseCategory(
                 topBarDescription = "Select A Program",
                 globalPaddingValues = globalPaddingValues,
                 onCategoryItemSelected = {
-                    workoutViewModel.getExercisesByWorkoutType(workoutType = it.replace(' ', '_'))
+                    workoutViewModel.getExercisesByWorkoutTypeFromApi(workoutType = it.replace(' ', '_'))
                     navController.navigate("ExercisesScreen/$it")
                 },
                 onBackButtonPressed = {
@@ -73,7 +73,7 @@ fun SelectExerciseCategory(
                 topBarDescription = "Select Body Part To Train",
                 globalPaddingValues = globalPaddingValues,
                 onCategoryItemSelected = {
-                    workoutViewModel.getExercisesByMuscle(muscleType = it.replace(' ', '_'))
+                    workoutViewModel.getExercisesByMuscleFromApi(muscleType = it.replace(' ', '_'))
                     navController.navigate("ExercisesScreen/$it")
                 },
                 onBackButtonPressed = {

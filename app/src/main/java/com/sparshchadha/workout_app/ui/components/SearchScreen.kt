@@ -140,7 +140,7 @@ fun handleSearchFor(
         }
 
         "exercises" -> {
-            workoutViewModel.getExercisesByName(searchQuery = searchBarQuery)
+            workoutViewModel.getExercisesByNameFromApi(searchQuery = searchBarQuery)
         }
     }
 }

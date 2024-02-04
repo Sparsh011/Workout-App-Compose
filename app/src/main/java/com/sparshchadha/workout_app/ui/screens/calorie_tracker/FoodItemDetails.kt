@@ -32,7 +32,7 @@ fun FoodItemDetails(
         LaunchedEffect(key1 = true) {
             foodItemsViewModel.getFoodItemById(id = foodItemId)
         }
-        val foodItem = foodItemsViewModel.foodItemEntity.collectAsStateWithLifecycle().value
+        val foodItem = foodItemsViewModel.foodItemEntity.value
 
         Scaffold(
             topBar = {
