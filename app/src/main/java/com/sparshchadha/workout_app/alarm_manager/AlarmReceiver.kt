@@ -26,14 +26,13 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
 
         val message = intent?.getStringExtra(REMINDER_DESCRIPTION_KEY) ?: return
-        println("Alarm triggered with $message")
 
         context?.let {
             createNotificationChannel(it)
             createNotification(
                 context = it,
-                notificationMessage = message,
-                notificationTitle = "Reminder!"
+                notificationMessage = message.substringAfter(';'),
+                notificationTitle = "${message.substringBefore(';')} REMINDER!"
             )
         }
     }

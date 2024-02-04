@@ -45,7 +45,7 @@ class RemindersViewModel @Inject constructor(
                         )
                         alarmScheduler.schedule(
                             AlarmItem(
-                                description = reminderEntity.reminderType + " " + reminderEntity.reminderDescription,
+                                description = reminderEntity.reminderType + ";" + reminderEntity.reminderDescription,
                                 time = LocalDateTime.of(
                                     reminderEntity.year.toInt(),
                                     reminderEntity.month.toInt(),

@@ -59,9 +59,12 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -70,6 +73,7 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.ReminderEntity
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
@@ -788,7 +792,7 @@ fun Reminder(
         ) {
             Text(
                 text = reminder.reminderDescription,
-                fontSize = 18.nonScaledSp,
+                fontSize = 20.nonScaledSp,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
@@ -797,37 +801,53 @@ fun Reminder(
                 modifier = Modifier.padding(MEDIUM_PADDING)
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val month by remember {
-                    mutableStateOf(
-                        if (reminder.month.isNotBlank()) reminder.month.toInt().toString() else ""
-                    )
-                }
-
-                Text(
-                    text = "${reminder.date} / $month / ${reminder.year}",
-                    fontSize = 16.nonScaledSp,
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 2,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(MEDIUM_PADDING),
-                    color = primaryDarkTextColor
-                )
-
-                Text(
-                    text = "${reminder.hours}: ${reminder.minutes}",
-                    fontSize = 18.nonScaledSp,
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 2,
-                    color = primaryDarkTextColor,
-                    modifier = Modifier.padding(MEDIUM_PADDING)
+            val month by remember {
+                mutableStateOf(
+                    if (reminder.month.isNotBlank()) reminder.month.toInt().toString() else ""
                 )
             }
+
+            Text(
+                buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = primaryDarkTextColor,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.nonScaledSp,
+                        )
+                    ) {
+                        append("Scheduled for ${reminder.date} / $month / ${reminder.year}, ")
+                    }
+                    append("${reminder.hours}: ${reminder.minutes}")
+                },
+                fontSize = 16.nonScaledSp,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
+                modifier = Modifier.padding(MEDIUM_PADDING),
+                color = primaryDarkTextColor
+            )
+
+            Text(
+                buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = primaryDarkTextColor,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.nonScaledSp,
+                        )
+                    ) {
+                        append("Reminder type: ")
+                    }
+                    append(reminder.reminderType.lowercase().capitalize())
+                },
+                fontSize = 16.nonScaledSp,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                color = primaryDarkTextColor,
+                modifier = Modifier.padding(MEDIUM_PADDING)
+            )
         }
 
         Icon(
