@@ -20,4 +20,8 @@ class RemindersRepositoryImpl(
     override suspend fun getRemindersByReminderType(reminderType: String): Flow<List<ReminderEntity>> {
         return remindersDao.getRemindersByReminderType(reminderType = reminderType)
     }
+
+    override suspend fun deleteReminder(reminderEntity: ReminderEntity) {
+        remindersDao.deleteReminder(reminderEntity = reminderEntity)
+    }
 }

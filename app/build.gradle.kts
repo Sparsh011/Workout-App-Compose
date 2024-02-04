@@ -133,4 +133,8 @@ dependencies {
     // region intuit sdp
     implementation("com.intuit.sdp:sdp-android:1.1.0")
     // endregion
+
+    // region date and time picker
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
+    // endregion
 }

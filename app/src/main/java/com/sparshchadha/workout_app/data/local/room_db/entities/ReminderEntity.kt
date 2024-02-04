@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class ReminderEntity (
     val date: String,
     val month: String,
+    val year: String,
     val hours: Int,
     val minutes: Int,
     val reminderType: String,

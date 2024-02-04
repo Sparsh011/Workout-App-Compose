@@ -1,6 +1,7 @@
 package com.sparshchadha.workout_app.data.local.room_db.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -18,4 +19,7 @@ interface RemindersDao {
 
     @Update
     suspend fun updateReminder(reminderEntity: ReminderEntity) : Int
+
+    @Delete
+    fun deleteReminder(reminderEntity: ReminderEntity)
 }

@@ -2,11 +2,17 @@ package com.sparshchadha.workout_app
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.rememberNavController
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.destinations.NavGraph
@@ -17,6 +23,7 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "MainActivityTaggg"
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val foodItemsViewModel : FoodItemsViewModel by viewModels()
@@ -33,6 +40,19 @@ class MainActivity : ComponentActivity() {
                 val navHostController = rememberNavController()
                 val gymExercises = workoutViewModel.gymExercisesFromApi.value
                 val yogaPoses = workoutViewModel.yogaPosesFromApi.value
+
+                val permissionLauncher =
+                    rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { permissionGranted_ ->
+                        // this is called when the user selects allow or deny
+                        Toast.makeText(
+                            this@MainActivity,
+                            "permissionGranted_ $permissionGranted_",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.e(TAG, "onCreate: $permissionGranted_")
+                    }
+
+
 
                 Scaffold (
                     bottomBar = {

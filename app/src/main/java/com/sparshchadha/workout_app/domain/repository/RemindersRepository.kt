@@ -9,4 +9,6 @@ interface RemindersRepository {
     suspend fun updateReminder(reminderEntity: ReminderEntity) : Int
 
     suspend fun getRemindersByReminderType(reminderType: String) : Flow<List<ReminderEntity>>
+
+    suspend fun deleteReminder(reminderEntity: ReminderEntity)
 }

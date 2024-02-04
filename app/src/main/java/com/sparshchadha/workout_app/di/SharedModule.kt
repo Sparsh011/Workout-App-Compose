@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.di
 
+import android.app.AlarmManager
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresExtension
@@ -9,6 +10,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson
+import com.sparshchadha.workout_app.alarm_manager.AndroidAlarmScheduler
 import com.sparshchadha.workout_app.data.local.datastore.WorkoutAppDatastorePreference
 import com.sparshchadha.workout_app.data.local.room_db.Converters
 import com.sparshchadha.workout_app.data.local.room_db.WorkoutAppDatabase
@@ -216,5 +218,13 @@ object SharedModule {
     @Provides
     fun provideRemindersRepository(remindersDao: RemindersDao): RemindersRepository {
         return RemindersRepositoryImpl(remindersDao = remindersDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAlarmManager(
+        @ApplicationContext context: Context,
+    ) : AndroidAlarmScheduler {
+        return AndroidAlarmScheduler(context)
     }
 }

@@ -12,4 +12,6 @@ object Constants {
         CARBOHYDRATES_TOTAL_G to ColorsUtil.partialTargetAchievedColor,
         FAT_TOTAL_G to ColorsUtil.targetAchievedColor
     )
+
+    const val REMINDER_DESCRIPTION_KEY = "REMINDER_DESCRIPTION"
 }

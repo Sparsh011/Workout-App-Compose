@@ -200,7 +200,7 @@ fun MacroNutrient(
 
         MacroNutrientAnnotatedString(
             macroNutrientName = macroNutrientName,
-            macroNutrientQuantity = (macroNutrientQuantity ?: 0.0).toString() ,
+            macroNutrientQuantity = String.format("%.1f", (macroNutrientQuantity ?: 0.0)) ,
             modifier = Modifier
                 .align(CenterVertically)
                 .height(MACRONUTRIENT_TEXT_HEIGHT)
