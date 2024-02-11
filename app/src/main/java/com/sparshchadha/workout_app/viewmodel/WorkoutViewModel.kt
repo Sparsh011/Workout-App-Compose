@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
@@ -57,6 +58,9 @@ class WorkoutViewModel @Inject constructor(
 
     private val _selectedDateAndMonthForGymExercises = MutableStateFlow<Pair<Int, String>?>(null)
     val selectedDateAndMonthForGymExercises = _selectedDateAndMonthForGymExercises.asStateFlow()
+
+    private val _exerciseDetails = mutableStateOf<GymExercisesDtoItem?>(null)
+    val exerciseDetails = _exerciseDetails
 
     fun getYogaPosesFromApi() {
         viewModelScope.launch {
@@ -279,6 +283,10 @@ class WorkoutViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             workoutRepository.saveGymExercise(gymExercisesEntity = gymExercisesEntity)
         }
+    }
+
+    fun updateExerciseDetails(exercisesDtoItem: GymExercisesDtoItem) {
+        _exerciseDetails.value = exercisesDtoItem
     }
 
     sealed class UIEvent {

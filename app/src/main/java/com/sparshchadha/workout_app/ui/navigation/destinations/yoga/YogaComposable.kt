@@ -1,25 +1,29 @@
-package com.sparshchadha.workout_app.ui.navigation.destinations.workout
+package com.sparshchadha.workout_app.ui.navigation.destinations.yoga
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
-import com.sparshchadha.workout_app.ui.screens.workout.gym.GymExercisesPerformed
+import com.sparshchadha.workout_app.ui.screens.workout.yoga.YogaPosesScreen
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
-fun NavGraphBuilder.gymExercisesPerformedComposable(
+fun NavGraphBuilder.yogaComposable(
     workoutViewModel: WorkoutViewModel,
-    navController: NavHostController,
+    navController: NavController,
+    yogaPoses: YogaPosesDto?,
     globalPaddingValues: PaddingValues
 ) {
     composable(
-        route = UtilityScreen.GymExercisesPerformed.route,
+        route = UtilityScreen.YogaPoses.route,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
@@ -39,23 +43,20 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
             )
         }
     ) {
-        LaunchedEffect(key1 = true) {
-            workoutViewModel.getGymExercisesPerformed()
-        }
+        val uiEventState by workoutViewModel.uiEventStateFlow.collectAsStateWithLifecycle()
+        val difficultyLevel = workoutViewModel.getCurrentYogaDifficultyLevel()
 
-        val exercisesPerformed = workoutViewModel.gymExercisesPerformed.value
-        val uiEventState = workoutViewModel.gymExercisesPerformedOnUIEventState.collectAsStateWithLifecycle()
-        val selectedDateAndMonth = workoutViewModel.selectedDateAndMonthForGymExercises.collectAsStateWithLifecycle().value
-
-        GymExercisesPerformed(
+        YogaPosesScreen(
             navController = navController,
-            exercisesPerformed = exercisesPerformed,
-            globalPaddingValues = globalPaddingValues,
+            difficultyLevel = difficultyLevel,
+            yogaPoses = yogaPoses,
             uiEventState = uiEventState,
-            selectedDateAndMonth = selectedDateAndMonth,
-            getExercisesPerformedOn = {
-                workoutViewModel.getGymExercisesPerformed(date = it.first.toString(), month = it.second)
-            }
+            saveYogaPose = { yogaEntity ->
+                workoutViewModel.saveYogaPose(
+                    yogaEntity
+                )
+            },
+            globalPaddingValues = globalPaddingValues
         )
     }
 }

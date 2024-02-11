@@ -154,7 +154,13 @@ fun CalorieTrackerScreen(
                         }
                     }
 
-                    CurrentlySelectedCard(currentPage = pagerState.currentPage)
+                    CurrentlySelectedCard(
+                        currentPage = pagerState.currentPage,
+                        indicatorColor = HelperFunctions.getAchievementColor(
+                            achieved = caloriesConsumed.toInt(),
+                            target = caloriesGoal.toInt()
+                        )
+                    )
                 }
             }
 
@@ -245,7 +251,7 @@ fun CalorieTrackerScreen(
 }
 
 @Composable
-fun CurrentlySelectedCard(currentPage: Int) {
+fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -263,7 +269,7 @@ fun CurrentlySelectedCard(currentPage: Int) {
                         .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
 
                 ) {
-                    drawCircle(color = Red)
+                    drawCircle(color = indicatorColor)
                 }
 
                 Canvas(
@@ -293,7 +299,7 @@ fun CurrentlySelectedCard(currentPage: Int) {
                         .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
 
                 ) {
-                    drawCircle(color = Red)
+                    drawCircle(color = indicatorColor)
                 }
             }
 
@@ -318,20 +324,20 @@ fun FoodItemDialogBox(
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .padding(Dimensions.MEDIUM_PADDING)
+                    .padding(MEDIUM_PADDING)
                     .fillMaxWidth()
             ) {
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     title = foodItem.foodItemDetails?.name?.capitalize() ?: "Sorry, Unable To Get Name!"
                 )
 
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Servings:",
                     quantityOfMacroNutrient = foodItem.servings.toString()
                 )
@@ -339,7 +345,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Calories Per Serving: ",
                     quantityOfMacroNutrient = foodItem.foodItemDetails?.calories.toString() + " KCAL"
                 )
@@ -347,7 +353,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Total Calories: ",
                     quantityOfMacroNutrient = (foodItem.servings * (foodItem.foodItemDetails?.calories?.toInt()
                         ?: 0)).toString() + " KCAL"
@@ -356,7 +362,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Carbohydrates:",
                     quantityOfMacroNutrient = "${foodItem.foodItemDetails?.carbohydrates_total_g} g"
                 )
@@ -364,7 +370,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Protein:",
                     quantityOfMacroNutrient = "${foodItem.foodItemDetails?.protein_g} g"
                 )
@@ -372,7 +378,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Total Fat:",
                     quantityOfMacroNutrient = "${foodItem.foodItemDetails?.fat_total_g} g"
                 )
@@ -380,7 +386,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Saturated Fat:",
                     quantityOfMacroNutrient = "${foodItem.foodItemDetails?.fat_saturated_g} g"
                 )
@@ -388,7 +394,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Sugar:",
                     quantityOfMacroNutrient = "${foodItem.foodItemDetails?.sugar_g} g"
                 )
@@ -396,7 +402,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Cholesterol:",
                     quantityOfMacroNutrient = "${foodItem.foodItemDetails?.cholesterol_mg} mg"
                 )
@@ -404,7 +410,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Sodium:",
                     quantityOfMacroNutrient = "${foodItem.foodItemDetails?.sodium_mg} mg"
                 )
@@ -412,7 +418,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Fiber:",
                     quantityOfMacroNutrient = "${foodItem.foodItemDetails?.fiber_g} g"
                 )
@@ -420,7 +426,7 @@ fun FoodItemDialogBox(
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimensions.MEDIUM_PADDING),
+                        .padding(MEDIUM_PADDING),
                     macroNutrient = "Potassium:",
                     quantityOfMacroNutrient = "${foodItem.foodItemDetails?.potassium_mg} mg"
                 )
@@ -456,7 +462,7 @@ fun FoodItemText(
                 fontSize = 18.nonScaledSp,
                 modifier = Modifier
                     .weight(2f)
-                    .padding(Dimensions.MEDIUM_PADDING),
+                    .padding(MEDIUM_PADDING),
                 fontWeight = FontWeight.Bold,
                 color = primaryDarkTextColor,
                 overflow = TextOverflow.Ellipsis
@@ -467,7 +473,7 @@ fun FoodItemText(
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(Dimensions.MEDIUM_PADDING),
+                    .padding(MEDIUM_PADDING),
                 fontSize = 16.nonScaledSp,
                 fontWeight = FontWeight.Normal,
                 color = primaryDarkTextColor,
@@ -488,7 +494,7 @@ fun PopulateConsumedFoodItem(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(Dimensions.MEDIUM_PADDING)
+            .padding(MEDIUM_PADDING)
             .clickable {
                 showFoodItemDetails()
             }

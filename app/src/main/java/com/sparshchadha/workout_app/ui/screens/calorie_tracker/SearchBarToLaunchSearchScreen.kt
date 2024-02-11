@@ -54,7 +54,7 @@ fun SearchBarToLaunchSearchScreen(
         trailingIcon = { },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimensions.MEDIUM_PADDING),
+            .padding(horizontal = Dimensions.LARGE_PADDING),
         colors = SearchBarDefaults.colors(
             containerColor = primaryLightGray,
             inputFieldColors = TextFieldDefaults.textFieldColors(

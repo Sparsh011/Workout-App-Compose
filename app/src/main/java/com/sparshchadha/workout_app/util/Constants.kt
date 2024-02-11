@@ -9,7 +9,7 @@ object Constants {
 
     val COLOR_TO_NUTRIENT_MAP = hashMapOf(
         PROTEIN_G to ColorsUtil.noAchievementColor,
-        CARBOHYDRATES_TOTAL_G to ColorsUtil.partialTargetAchievedColor,
+        CARBOHYDRATES_TOTAL_G to ColorsUtil.carbohydratesColor,
         FAT_TOTAL_G to ColorsUtil.targetAchievedColor
     )
 

@@ -80,4 +80,9 @@ sealed class UtilityScreen(
         route = "RemindersScreen",
         title = "Reminders Screen"
     )
+
+    object ExerciseDetailScreen: UtilityScreen(
+        route = "ExerciseDetailScreen",
+        title = "Exercise Details"
+    )
 }

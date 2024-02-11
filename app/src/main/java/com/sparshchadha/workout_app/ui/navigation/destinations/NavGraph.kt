@@ -14,12 +14,13 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.f
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.remindersComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.workout.bottomWorkoutComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExercisesComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.workout.gymExercisesPerformedComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.workout.workoutCategoryComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.workout.yogaPosesPerformedTodayComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.gym.bottomWorkoutComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.gym.exerciseDetailsComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesPerformedComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.gym.workoutCategoryComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaPosesPerformedTodayComposable
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -110,6 +111,13 @@ fun NavGraph(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
             remindersViewModel = remindersViewModel
+        )
+
+        // Exercise Details screen
+        exerciseDetailsComposable(
+            navController = navController,
+            workoutViewModel = workoutViewModel,
+            globalPaddingValues = globalPaddingValues
         )
     }
 }

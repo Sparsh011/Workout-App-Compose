@@ -59,7 +59,8 @@ fun ExercisesScreen(
     exercises: GymExercisesDto?,
     uiEventState: WorkoutViewModel.UIEvent?,
     globalPaddingValues: PaddingValues,
-    saveExercise: (GymExercisesEntity) -> Unit
+    saveExercise: (GymExercisesEntity) -> Unit,
+    workoutViewModel: WorkoutViewModel
 ) {
 
     uiEventState?.let { event ->
@@ -69,7 +70,8 @@ fun ExercisesScreen(
             navController = navController,
             exercises = exercises,
             globalPaddingValues = globalPaddingValues,
-            saveExercise = saveExercise
+            saveExercise = saveExercise,
+            workoutViewModel = workoutViewModel
         )
     }
 }
@@ -81,7 +83,8 @@ fun HandleUIEventsForExercises(
     navController: NavController,
     exercises: GymExercisesDto?,
     globalPaddingValues: PaddingValues,
-    saveExercise: (GymExercisesEntity) -> Unit
+    saveExercise: (GymExercisesEntity) -> Unit,
+    workoutViewModel: WorkoutViewModel,
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -103,7 +106,8 @@ fun HandleUIEventsForExercises(
                 composition = composition,
                 progress = progress,
                 globalPaddingValues = globalPaddingValues,
-                saveExercise = saveExercise
+                saveExercise = saveExercise,
+                workoutViewModel = workoutViewModel
             )
         }
 
@@ -122,6 +126,7 @@ fun ShowExercises(
     progress: Float,
     globalPaddingValues: PaddingValues,
     saveExercise: (GymExercisesEntity) -> Unit,
+    workoutViewModel: WorkoutViewModel
 ) {
     Scaffold(
         topBar = {
@@ -155,7 +160,11 @@ fun ShowExercises(
                         },
                         shouldShowBottomSheet = shouldShowBottomSheet,
                         exercise = exercise,
-                        saveExercise = saveExercise
+                        saveExercise = saveExercise,
+                        navigateToExerciseDetailsScreen = {
+                            workoutViewModel.updateExerciseDetails(it)
+                            navController.navigate(UtilityScreen.ExerciseDetailScreen.route)
+                        }
                     )
                 }
             } else {
@@ -174,6 +183,7 @@ fun Exercise(
     shouldShowBottomSheet: Boolean,
     exercise: GymExercisesDtoItem,
     saveExercise: (GymExercisesEntity) -> Unit,
+    navigateToExerciseDetailsScreen: (GymExercisesDtoItem) -> Unit,
 ) {
     if (shouldShowBottomSheet) {
         ExerciseDetailsModalBottomSheet(
@@ -187,7 +197,8 @@ fun Exercise(
             .fillMaxWidth()
             .padding(20.dp)
             .clickable {
-                showBottomSheet()
+//                showBottomSheet()
+                navigateToExerciseDetailsScreen(exercise)
             },
         colors = CardDefaults.cardColors(
             containerColor = ColorsUtil.primaryLightGray

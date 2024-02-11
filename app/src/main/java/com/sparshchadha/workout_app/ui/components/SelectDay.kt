@@ -61,7 +61,6 @@ fun CalendarRow(
             state = lazyRowState,
             modifier = Modifier
                 .background(Color.White)
-                .padding(horizontal = Dimensions.SMALL_PADDING)
         ) {
             items(last30Days) {
                 if (

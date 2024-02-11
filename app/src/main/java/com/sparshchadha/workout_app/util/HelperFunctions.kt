@@ -196,7 +196,7 @@ object HelperFunctions {
         return next3DaysList
     }
 
-    fun getAchievementColor(achieved: Int, target: Int) : Color {
+    fun getAchievementColor(achieved: Int, target: Int): Color {
         return if (achieved <= 0) {
             ColorsUtil.noAchievementColor
         } else if (achieved < target) {
@@ -223,6 +223,24 @@ object HelperFunctions {
             else -> {
                 "Invalid Month"
             }
+        }
+    }
+
+    fun getMonthIndexFromName(name: String?): Int {
+        return when (name) {
+            "January" -> 1
+            "February" -> 2
+            "March" -> 3
+            "April" -> 4
+            "May" -> 5
+            "June" -> 6
+            "July" -> 7
+            "August" -> 8
+            "September" -> 9
+            "October" -> 10
+            "November" -> 11
+            "December" -> 12
+            else -> -1
         }
     }
 }

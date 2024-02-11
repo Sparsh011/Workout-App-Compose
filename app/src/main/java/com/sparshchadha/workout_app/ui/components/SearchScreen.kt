@@ -40,6 +40,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.navArgument
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
@@ -69,6 +71,7 @@ fun SearchScreen(
     foodUIStateEvent: WorkoutViewModel.UIEvent?,
     saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
     saveExercise: (GymExercisesEntity) -> Unit,
+    navController: NavController
 ) {
     var searchBarQuery by remember {
         mutableStateOf("")
@@ -120,7 +123,9 @@ fun SearchScreen(
                     paddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
                     exercises = exercises,
-                    saveExercise = saveExercise
+                    saveExercise = saveExercise,
+                    workoutViewModel = workoutViewModel,
+                    navController = navController
                 )
             }
         }
@@ -191,6 +196,8 @@ fun HandleExercisesSearch(
     localPaddingValues: PaddingValues,
     exercises: GymExercisesDto?,
     saveExercise: (GymExercisesEntity) -> Unit,
+    workoutViewModel: WorkoutViewModel,
+    navController: NavController
 ) {
     workoutUIStateEvent?.let { event ->
         when (event) {
@@ -208,7 +215,9 @@ fun HandleExercisesSearch(
                     paddingValues = paddingValues,
                     exercises = exercises,
                     localPaddingValues = localPaddingValues,
-                    saveExercise = saveExercise
+                    saveExercise = saveExercise,
+                    workoutViewModel = workoutViewModel,
+                    navController = navController
                 )
             }
 
@@ -271,6 +280,8 @@ fun ExerciseSearchResults(
     exercises: GymExercisesDto?,
     localPaddingValues: PaddingValues,
     saveExercise: (GymExercisesEntity) -> Unit,
+    workoutViewModel: WorkoutViewModel,
+    navController: NavController
 ) {
     exercises?.let {
         if (it.size == 0) {
@@ -298,7 +309,11 @@ fun ExerciseSearchResults(
                             shouldShowBottomSheet = false
                         },
                         shouldShowBottomSheet = shouldShowBottomSheet,
-                        saveExercise = saveExercise
+                        saveExercise = saveExercise,
+                        navigateToExerciseDetailsScreen = { exerciseToUpdate ->
+                            workoutViewModel.updateExerciseDetails(exerciseToUpdate)
+
+                        }
                     )
                 }
             }
