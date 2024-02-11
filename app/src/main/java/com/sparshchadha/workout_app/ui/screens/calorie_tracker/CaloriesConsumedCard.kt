@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,13 +36,8 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.SpanStyle
@@ -52,17 +46,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
-import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -80,6 +71,7 @@ fun CaloriesConsumedCard(
     saveNewCaloriesGoal: (Float) -> Unit,
     showCaloriesGoalBottomSheet: () -> Unit,
     caloriesConsumed: String,
+    progressIndicatorColor: Color
 ) {
     val configuration = LocalConfiguration.current;
     val caloriesConsumedCardWidth = configuration.screenWidthDp.dp
@@ -104,7 +96,8 @@ fun CaloriesConsumedCard(
         CaloriesConsumedAndLeft(
             caloriesConsumed = caloriesConsumed,
             showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet,
-            caloriesGoal = caloriesGoal
+            caloriesGoal = caloriesGoal,
+            progressIndicatorColor = targetAchievedColor
         )
 
         CaloriesGoalText(showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet)
@@ -173,6 +166,7 @@ fun CaloriesConsumedAndLeft(
     caloriesConsumed: String,
     showCaloriesGoalBottomSheet: () -> Unit,
     caloriesGoal: String,
+    progressIndicatorColor: Color
 ) {
     Row(
         modifier = Modifier
@@ -195,11 +189,12 @@ fun CaloriesConsumedAndLeft(
                 .weight(1f)
                 .clip(CircleShape)
                 .align(CenterVertically)
-                .size(Dimensions.PIE_CHART_SIZE)
+                .size(PIE_CHART_SIZE)
                 .clickable {
                     showCaloriesGoalBottomSheet()
                 },
-            caloriesConsumed = caloriesConsumed
+            caloriesConsumed = caloriesConsumed,
+            progressIndicatorColor = progressIndicatorColor
         )
 
         CaloriesLeftOrEatenColumn(
@@ -213,7 +208,12 @@ fun CaloriesConsumedAndLeft(
 }
 
 @Composable
-fun CenterCaloriesGoalBox(modifier: Modifier, caloriesGoal: String, caloriesConsumed: String) {
+fun CenterCaloriesGoalBox(
+    modifier: Modifier,
+    caloriesGoal: String,
+    caloriesConsumed: String,
+    progressIndicatorColor: Color,
+) {
     Box(
         modifier = modifier,
         contentAlignment = Center
@@ -244,7 +244,7 @@ fun CenterCaloriesGoalBox(modifier: Modifier, caloriesGoal: String, caloriesCons
             modifier = Modifier.size(PIE_CHART_SIZE),
             strokeWidth = MEDIUM_PADDING,
             trackColor = ColorsUtil.customDividerColor,
-            color = ColorsUtil.targetAchievedColor,
+            color = progressIndicatorColor,
             strokeCap  = StrokeCap.Round,
         )
     }

@@ -41,7 +41,6 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -142,13 +141,18 @@ fun CalorieTrackerScreen(
                                     showCaloriesGoalBottomSheet = {
                                         shouldShowCaloriesBottomSheet = true
                                     },
-                                    caloriesConsumed = caloriesConsumed
+                                    caloriesConsumed = caloriesConsumed,
+                                    progressIndicatorColor =  HelperFunctions.getAchievementColor(
+                                        achieved = caloriesConsumed.toInt(),
+                                        target = caloriesGoal.toInt()
+                                    )
                                 )
                             }
 
                             1 -> {
                                 MacroNutrientsConsumed(
-                                    nutrientsConsumed = nutrientsConsumed
+                                    nutrientsConsumed = nutrientsConsumed,
+                                    caloriesGoal = caloriesGoal
                                 )
                             }
                         }
