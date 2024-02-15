@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.screens.reminders.RemindersScreen
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.screens.reminders.RemindersScreen
 import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 
 fun NavGraphBuilder.remindersComposable(

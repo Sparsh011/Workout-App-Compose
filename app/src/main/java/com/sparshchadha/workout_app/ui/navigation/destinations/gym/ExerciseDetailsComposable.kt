@@ -6,10 +6,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.ui.screens.workout.gym.ExerciseDetailsScreen
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel

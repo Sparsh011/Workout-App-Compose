@@ -11,14 +11,14 @@ import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.foodItemDetailsComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.shared.remindersComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.bottomWorkoutComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.exerciseDetailsComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesPerformedComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.workoutCategoryComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.shared.remindersComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaPosesPerformedTodayComposable
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel

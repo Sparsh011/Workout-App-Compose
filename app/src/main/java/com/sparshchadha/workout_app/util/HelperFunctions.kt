@@ -243,4 +243,45 @@ object HelperFunctions {
             else -> -1
         }
     }
+
+    fun getBack(): List<String> {
+        return listOf(
+            MuscleType.LATS.name.lowercase().capitalize(),
+            MuscleType.MIDDLE_BACK.name.lowercase().capitalize().replace('_', ' '),
+            MuscleType.LOWER_BACK.name.lowercase().capitalize().replace('_', ' ')
+        )
+    }
+
+    fun getChestShouldersAndNeck(): List<String> {
+        return listOf(
+            MuscleType.CHEST.name.lowercase().capitalize(),
+            MuscleType.TRAPS.name.lowercase().capitalize(),
+            MuscleType.NECK.name.lowercase().capitalize()
+        )
+    }
+
+    fun getArms(): List<String> {
+        return listOf(
+            MuscleType.BICEPS.name.lowercase().capitalize(),
+            MuscleType.TRICEPS.name.lowercase().capitalize(),
+            MuscleType.FOREARMS.name.lowercase().capitalize(),
+        )
+    }
+
+    fun getLegs(): List<String> {
+        return listOf(
+            MuscleType.GLUTES.name.lowercase().capitalize(),
+            MuscleType.CALVES.name.lowercase().capitalize(),
+            MuscleType.HAMSTRINGS.name.lowercase().capitalize(),
+            MuscleType.QUADRICEPS.name.lowercase().capitalize()
+        )
+    }
+
+    fun getAbs(): List<String> {
+        return listOf(
+            MuscleType.ABDUCTORS.name.lowercase().capitalize(),
+            MuscleType.ADDUCTORS.name.lowercase().capitalize(),
+            MuscleType.ABDOMINALS.name.lowercase().capitalize()
+        )
+    }
 }

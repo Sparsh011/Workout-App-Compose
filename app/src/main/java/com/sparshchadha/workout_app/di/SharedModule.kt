@@ -1,12 +1,8 @@
 package com.sparshchadha.workout_app.di
 
-import android.app.AlarmManager
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresExtension
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson

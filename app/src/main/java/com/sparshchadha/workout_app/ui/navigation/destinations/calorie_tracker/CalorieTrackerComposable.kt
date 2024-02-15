@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -39,7 +38,7 @@ fun NavGraphBuilder.calorieTrackerComposable(
                 foodItemsViewModel.getFoodItemsConsumedOn(it.first.toString(), it.second)
             },
             saveNewCaloriesGoal = {
-                foodItemsViewModel.addOrUpdateCaloriesGoal(caloriesGoal = it.toInt())
+                foodItemsViewModel.addOrUpdateCaloriesGoal(caloriesGoal = it)
             },
             caloriesGoal = caloriesGoal,
             caloriesConsumed = caloriesConsumed,

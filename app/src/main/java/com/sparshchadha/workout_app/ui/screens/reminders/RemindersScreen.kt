@@ -920,7 +920,7 @@ fun Reminder(
 
             Text(
                 buildAnnotatedString {
-                    append("Reminder type: ")
+                    append("Reminder For ")
                     withStyle(
                         style = SpanStyle(
                             color = primaryDarkTextColor,

@@ -79,7 +79,7 @@ fun CalorieTrackerScreen(
     navController: NavHostController,
     paddingValues: PaddingValues,
     getDishesConsumedOnSelectedDayAndMonth: (Pair<Int, String>) -> Unit,
-    saveNewCaloriesGoal: (Float) -> Unit,
+    saveNewCaloriesGoal: (Int) -> Unit,
     caloriesGoal: String,
     caloriesConsumed: String,
     selectedDateAndMonth: Pair<Int, String>?,
