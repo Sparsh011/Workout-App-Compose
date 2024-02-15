@@ -3,9 +3,13 @@ package com.sparshchadha.workout_app.data.repository
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.sparshchadha.workout_app.BuildConfig
+import com.sparshchadha.workout_app.data.local.room_db.dao.GymExercisesDao
+import com.sparshchadha.workout_app.data.local.room_db.dao.YogaDao
+import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
 import com.sparshchadha.workout_app.data.remote.api.YogaApi
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
@@ -16,10 +20,12 @@ import kotlinx.coroutines.flow.flow
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class WorkoutRepositoryImpl (
     val yogaApi: YogaApi,
-    val gymExercisesApi: GymExercisesApi
+    val gymExercisesApi: GymExercisesApi,
+    val yogaDao: YogaDao,
+    val gymExercisesDao: GymExercisesDao
 ) : WorkoutRepository {
 
-    override fun getYogaPosesByDifficulty(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>> = flow {
+    override fun getYogaPosesByDifficultyFromApi(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -32,7 +38,7 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override fun getExercisesByDifficultyLevel(difficulty: String): Flow<Resource<GymWorkoutsDto>> = flow {
+    override fun getExercisesByDifficultyLevelFromApi(difficulty: String): Flow<Resource<GymExercisesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -48,7 +54,7 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override fun getExercisesByMuscle(muscleType: String): Flow<Resource<GymWorkoutsDto>> = flow {
+    override fun getExercisesByMuscleFromApi(muscleType: String): Flow<Resource<GymExercisesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -64,7 +70,7 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override fun getExercisesByWorkoutType(workoutType: String): Flow<Resource<GymWorkoutsDto>> = flow {
+    override fun getExercisesByWorkoutTypeFromApi(workoutType: String): Flow<Resource<GymExercisesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -80,7 +86,7 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override fun getExerciseByName(name: String): Flow<Resource<GymWorkoutsDto>> = flow {
+    override fun getExerciseByNameFromApi(name: String): Flow<Resource<GymExercisesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -94,5 +100,35 @@ class WorkoutRepositoryImpl (
                 Resource.Error(error = e)
             )
         }
+    }
+
+    override suspend fun getAllYogaPosesPerformed(): Flow<List<YogaEntity>> {
+        return yogaDao.getAllPerformedYogaPoses()
+    }
+
+    override suspend fun saveYogaPose(yogaPose: YogaEntity) {
+        yogaDao.addYogaPose(yogaPose = yogaPose)
+    }
+
+    override suspend fun getYogaPosesPerformedOn(date: String, month: String): Flow<List<YogaEntity>> {
+        return yogaDao.getYogaPosesPerformedOn(
+            date = date,
+            month = month
+        )
+    }
+
+    override suspend fun saveGymExercise(gymExercisesEntity: GymExercisesEntity) {
+        gymExercisesDao.addGymExercise(gymExercisesEntity = gymExercisesEntity)
+    }
+
+    override suspend fun getGymExercisesPerformedOn(date: String, month: String): Flow<List<GymExercisesEntity>> {
+        return gymExercisesDao.getExercisesPerformedOn(
+            date = date,
+            month = month
+        )
+    }
+
+    override suspend fun getAllGymExercisesPerformed(): Flow<List<GymExercisesEntity>> {
+        return gymExercisesDao.getAllExercisesPerformed()
     }
 }

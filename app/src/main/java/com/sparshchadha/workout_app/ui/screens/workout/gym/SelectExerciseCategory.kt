@@ -1,30 +1,36 @@
 package com.sparshchadha.workout_app.ui.screens.workout.gym
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.components.CustomDivider
+import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -32,15 +38,18 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 fun SelectExerciseCategory(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
+    globalPaddingValues: PaddingValues,
 ) {
-
+    // TODO - clean this code after navigation is cleaned when passing args
     when (workoutViewModel.getCurrentCategoryTypeForGymWorkout()) {
+
         CategoryType.DIFFICULTY_LEVEL -> {
             ExerciseCategoryItems(
                 categoryItems = HelperFunctions.getDifficultyLevels(),
-                topBarDescription = "Select Difficulty Level",
+                topBarDescription = stringResource(id = R.string.select_difficulty_level_heading),
+                globalPaddingValues = globalPaddingValues,
                 onCategoryItemSelected = {
-                    workoutViewModel.getExercisesByDifficulty(difficultyLevel = it.replace(' ', '_'))
+                    workoutViewModel.getExercisesByDifficultyFromApi(difficultyLevel = it.replace(' ', '_'))
                     navController.navigate("ExercisesScreen/$it")
                 },
                 onBackButtonPressed = {
@@ -52,9 +61,10 @@ fun SelectExerciseCategory(
         CategoryType.WORKOUT_TYPE -> {
             ExerciseCategoryItems(
                 categoryItems = HelperFunctions.getWorkoutTypes(),
-                topBarDescription = "Select A Program",
+                topBarDescription = stringResource(id = R.string.select_program_heading),
+                globalPaddingValues = globalPaddingValues,
                 onCategoryItemSelected = {
-                    workoutViewModel.getExercisesByWorkoutType(workoutType = it.replace(' ', '_'))
+                    workoutViewModel.getExercisesByWorkoutTypeFromApi(workoutType = it.replace(' ', '_'))
                     navController.navigate("ExercisesScreen/$it")
                 },
                 onBackButtonPressed = {
@@ -66,9 +76,10 @@ fun SelectExerciseCategory(
         CategoryType.MUSCLE_TYPE -> {
             ExerciseCategoryItems(
                 categoryItems = HelperFunctions.getMuscleTypes(),
-                topBarDescription = "Select Body Part To Train",
+                topBarDescription = stringResource(id = R.string.select_body_part_heading),
+                globalPaddingValues = globalPaddingValues,
                 onCategoryItemSelected = {
-                    workoutViewModel.getExercisesByMuscle(muscleType = it.replace(' ', '_'))
+                    workoutViewModel.getExercisesByMuscleFromApi(muscleType = it.replace(' ', '_'))
                     navController.navigate("ExercisesScreen/$it")
                 },
                 onBackButtonPressed = {
@@ -83,37 +94,146 @@ fun SelectExerciseCategory(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExerciseCategoryItems(
-    categoryItems: List<String>,
+    categoryItems: List<String> = listOf(),
     topBarDescription: String,
+    globalPaddingValues: PaddingValues,
     onCategoryItemSelected: (String) -> Unit,
     onBackButtonPressed: () -> Unit,
 ) {
     Scaffold(
         topBar = {
-           ScaffoldTopBar(topBarDescription = topBarDescription, onBackButtonPressed = onBackButtonPressed)
+            ScaffoldTopBar(
+                topBarDescription = topBarDescription,
+                onBackButtonPressed = onBackButtonPressed
+            )
         },
         containerColor = Color.White
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .background(Color.White)
-                .padding(paddingValues = it)
-        ) {
+    ) { localPaddingValues ->
+        if (topBarDescription == stringResource(id = R.string.select_body_part_heading)) {
+            LazyColumn(
+                modifier = Modifier
+                    .background(Color.White)
+                    .padding(
+                        top = localPaddingValues.calculateTopPadding(),
+                        bottom = globalPaddingValues.calculateBottomPadding()
+                    )
+            ) {
 
-            items(categoryItems) { categoryItem ->
-                CategoryItemComposable(
-                    categoryItem = categoryItem,
-                    onCategoryItemSelected = onCategoryItemSelected
-                )
+                stickyHeader {
+                    BodyPartStickyHeader(
+                        modifier = Modifier.fillParentMaxWidth(),
+                        bodyPart = "Chest, Neck & Shoulders"
+                    )
+                }
+
+                items(HelperFunctions.getChestShouldersAndNeck().size) { categoryItem ->
+                    CategoryItem(
+                        categoryItem = HelperFunctions.getChestShouldersAndNeck()[categoryItem],
+                        onCategoryItemSelected = onCategoryItemSelected,
+                        categoryItemFontSize = 16,
+                        showDivider = categoryItem != HelperFunctions.getChestShouldersAndNeck().size - 1
+                    )
+                }
+
+                stickyHeader {
+                    BodyPartStickyHeader(
+                        modifier = Modifier.fillParentMaxWidth(),
+                        bodyPart = "Back"
+                    )
+                }
+
+                items(HelperFunctions.getBack().size) { categoryItem ->
+                    CategoryItem(
+                        categoryItem = HelperFunctions.getBack()[categoryItem],
+                        onCategoryItemSelected = onCategoryItemSelected,
+                        categoryItemFontSize = 16,
+                        showDivider = categoryItem != HelperFunctions.getBack().size - 1
+                    )
+                }
+
+                stickyHeader {
+                    BodyPartStickyHeader(
+                        modifier = Modifier.fillParentMaxWidth(),
+                        bodyPart = "Arms"
+                    )
+                }
+
+                items(HelperFunctions.getArms().size) { categoryItem ->
+                    CategoryItem(
+                        categoryItem = HelperFunctions.getArms()[categoryItem],
+                        onCategoryItemSelected = onCategoryItemSelected,
+                        categoryItemFontSize = 16,
+                        showDivider = categoryItem != HelperFunctions.getArms().size - 1
+                    )
+                }
+
+                stickyHeader {
+                    BodyPartStickyHeader(
+                        modifier = Modifier.fillParentMaxWidth(),
+                        bodyPart = "Legs"
+                    )
+                }
+
+                items(HelperFunctions.getLegs().size) { categoryItem ->
+                    CategoryItem(
+                        categoryItem = HelperFunctions.getLegs()[categoryItem],
+                        onCategoryItemSelected = onCategoryItemSelected,
+                        categoryItemFontSize = 16,
+                        showDivider = categoryItem != HelperFunctions.getLegs().size - 1
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .background(Color.White)
+                    .padding(
+                        top = localPaddingValues.calculateTopPadding(),
+                        bottom = globalPaddingValues.calculateBottomPadding()
+                    )
+            ) {
+
+                items(categoryItems.size) { categoryItem ->
+                    CategoryItem(
+                        categoryItem = categoryItems[categoryItem],
+                        onCategoryItemSelected = onCategoryItemSelected,
+                        showDivider = categoryItem != categoryItems.size - 1
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun CategoryItemComposable(categoryItem: String, onCategoryItemSelected: (String) -> Unit) {
+fun BodyPartStickyHeader(
+    modifier: Modifier,
+    bodyPart: String,
+) {
+    Surface(
+        modifier = modifier,
+        color = Color.White
+    ) {
+        Text(
+            text = bodyPart,
+            fontSize = 20.nonScaledSp,
+            color = ColorsUtil.primaryDarkTextColor,
+            modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun CategoryItem(
+    categoryItem: String,
+    onCategoryItemSelected: (String) -> Unit,
+    categoryItemFontSize: Int = 16,
+    showDivider: Boolean,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.clickable {
@@ -122,10 +242,10 @@ fun CategoryItemComposable(categoryItem: String, onCategoryItemSelected: (String
     ) {
         Text(
             text = categoryItem,
-            fontSize = 20.sp,
+            fontSize = categoryItemFontSize.nonScaledSp,
             color = ColorsUtil.primaryDarkTextColor,
             modifier = Modifier
-                .padding(20.dp)
+                .padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING)
                 .weight(0.8f)
                 .fillMaxWidth()
         )
@@ -134,46 +254,13 @@ fun CategoryItemComposable(categoryItem: String, onCategoryItemSelected: (String
             imageVector = Icons.Default.KeyboardArrowRight,
             contentDescription = null,
             tint = ColorsUtil.primaryDarkTextColor,
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(LARGE_PADDING)
         )
     }
 
-    Divider(
-        color = ColorsUtil.primaryLightGray,
-        thickness = 1.dp,
-        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-    )
-}
-
-@Composable
-fun ScaffoldTopBar(topBarDescription: String, onBackButtonPressed: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding()
-    ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = null,
-            tint = Color.Black,
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(horizontal = 10.dp)
-                .clickable {
-                    onBackButtonPressed()
-                }
-        )
-
-        Text(
-            text = topBarDescription,
-            color = Color.Black,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(20.dp)
-                .fillMaxWidth(0.8f)
-                .align(Alignment.CenterVertically),
-            textAlign = TextAlign.Start
+    if (showDivider) {
+        CustomDivider(
+            dividerColor = primaryLightGray
         )
     }
 }

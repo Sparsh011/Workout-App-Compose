@@ -2,7 +2,6 @@ package com.sparshchadha.workout_app.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,12 +11,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -25,7 +24,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,39 +31,46 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.airbnb.lottie.compose.LottieAnimation
+import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymWorkoutsDto
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
+import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
+import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodCard
 import com.sparshchadha.workout_app.ui.screens.workout.gym.Exercise
-import com.sparshchadha.workout_app.util.Extensions.capitalize
-import com.sparshchadha.workout_app.viewmodel.SearchFoodViewModel
+import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
 fun SearchScreen(
-    searchFoodViewModel: SearchFoodViewModel,
+    searchFoodViewModel: FoodItemsViewModel,
     paddingValues: PaddingValues,
     onCloseClicked: () -> Unit,
     searchFor: String?,
     workoutViewModel: WorkoutViewModel,
     dishes: NutritionalValueDto?,
-    exercises: GymWorkoutsDto?,
+    exercises: GymExercisesDto?,
     workoutUIStateEvent: WorkoutViewModel.UIEvent?,
-    foodUIStateEvent: WorkoutViewModel.UIEvent?
+    foodUIStateEvent: WorkoutViewModel.UIEvent?,
+    saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
+    saveExercise: (GymExercisesEntity) -> Unit,
+    navController: NavController
 ) {
     var searchBarQuery by remember {
         mutableStateOf("")
@@ -106,7 +111,8 @@ fun SearchScreen(
                     foodUIStateEvent = foodUIStateEvent,
                     paddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
-                    dishes = dishes
+                    dishes = dishes,
+                    saveFoodItemWithQuantity = saveFoodItemWithQuantity
                 )
             }
 
@@ -115,7 +121,10 @@ fun SearchScreen(
                     workoutUIStateEvent = workoutUIStateEvent,
                     paddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
-                    exercises = exercises
+                    exercises = exercises,
+                    saveExercise = saveExercise,
+                    workoutViewModel = workoutViewModel,
+                    navController = navController
                 )
             }
         }
@@ -125,17 +134,17 @@ fun SearchScreen(
 fun handleSearchFor(
     searchFor: String?,
     searchBarQuery: String,
-    searchFoodViewModel: SearchFoodViewModel,
-    workoutViewModel: WorkoutViewModel
+    searchFoodViewModel: FoodItemsViewModel,
+    workoutViewModel: WorkoutViewModel,
 ) {
     when (searchFor) {
         "food" -> {
             searchFoodViewModel.updateSearchQuery(searchQuery = searchBarQuery)
-            searchFoodViewModel.getFoodItems()
+            searchFoodViewModel.getFoodItemsFromApi()
         }
 
         "exercises" -> {
-            workoutViewModel.getExercisesByName(searchQuery = searchBarQuery)
+            workoutViewModel.getExercisesByNameFromApi(searchQuery = searchBarQuery)
         }
     }
 }
@@ -145,12 +154,13 @@ fun HandleFoodSearch(
     foodUIStateEvent: WorkoutViewModel.UIEvent?,
     paddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
-    dishes: NutritionalValueDto?
+    dishes: NutritionalValueDto?,
+    saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
 ) {
     foodUIStateEvent?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation)) // change later
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.food_search_animation))
                 val progress by animateLottieCompositionAsState(composition)
                 ShowLoadingScreen(
                     composition = composition,
@@ -158,19 +168,20 @@ fun HandleFoodSearch(
                 )
             }
 
-            is WorkoutViewModel.UIEvent.HideLoader -> {
+            is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
                 FoodSearchResults(
                     paddingValues = paddingValues,
                     dishes = dishes,
-                    localPaddingValues = localPaddingValues
+                    localPaddingValues = localPaddingValues,
+                    saveFoodItemWithQuantity = saveFoodItemWithQuantity
                 )
             }
 
             is WorkoutViewModel.UIEvent.ShowError -> {
                 NoResultsFoundOrErrorDuringSearch(
-                    paddingValues = paddingValues,
+                    globalPaddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
-                    errorMessage = event.errorMessage
+                    message = event.errorMessage
                 )
             }
         }
@@ -182,7 +193,10 @@ fun HandleExercisesSearch(
     workoutUIStateEvent: WorkoutViewModel.UIEvent?,
     paddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
-    exercises: GymWorkoutsDto?,
+    exercises: GymExercisesDto?,
+    saveExercise: (GymExercisesEntity) -> Unit,
+    workoutViewModel: WorkoutViewModel,
+    navController: NavController
 ) {
     workoutUIStateEvent?.let { event ->
         when (event) {
@@ -195,19 +209,22 @@ fun HandleExercisesSearch(
                 )
             }
 
-            is WorkoutViewModel.UIEvent.HideLoader -> {
+            is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
                 ExerciseSearchResults(
                     paddingValues = paddingValues,
                     exercises = exercises,
-                    localPaddingValues = localPaddingValues
+                    localPaddingValues = localPaddingValues,
+                    saveExercise = saveExercise,
+                    workoutViewModel = workoutViewModel,
+                    navController = navController
                 )
             }
 
             is WorkoutViewModel.UIEvent.ShowError -> {
                 NoResultsFoundOrErrorDuringSearch(
-                    paddingValues = paddingValues,
+                    globalPaddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
-                    errorMessage = event.errorMessage
+                    message = event.errorMessage
                 )
             }
         }
@@ -215,10 +232,15 @@ fun HandleExercisesSearch(
 }
 
 @Composable
-fun FoodSearchResults(paddingValues: PaddingValues, dishes: NutritionalValueDto?, localPaddingValues: PaddingValues) {
+fun FoodSearchResults(
+    paddingValues: PaddingValues,
+    dishes: NutritionalValueDto?,
+    localPaddingValues: PaddingValues,
+    saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
+) {
     if (dishes?.items?.isEmpty() == true) {
         NoResultsFoundOrErrorDuringSearch(
-            paddingValues = paddingValues,
+            globalPaddingValues = paddingValues,
             localPaddingValues = localPaddingValues
         )
     } else {
@@ -229,32 +251,21 @@ fun FoodSearchResults(paddingValues: PaddingValues, dishes: NutritionalValueDto?
                 .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
         ) {
             dishes?.items?.let { items ->
-                items(
-                    items
-                ) { item ->
+                items(items) { item ->
                     var shouldExpandCard by remember {
                         mutableStateOf(false)
                     }
 
                     FoodCard(
-                        foodItemName = item.name.capitalize(),
-                        calories = item.calories.toString(),
-                        sugar = item.sugar_g.toString(),
-                        fiber = item.fiber_g.toString(),
-                        sodium = item.sodium_mg.toString(),
-                        cholesterol = item.cholesterol_mg.toString(),
-                        protein = item.protein_g.toString(),
-                        carbohydrates = item.carbohydrates_total_g.toString(),
-                        servingSize = item.serving_size_g.toString(),
-                        totalFat = item.fat_total_g.toString(),
-                        saturatedFat = item.fat_saturated_g.toString(),
+                        foodItem = item,
                         expandCard = {
                             shouldExpandCard = true
                         },
                         collapseCard = {
                             shouldExpandCard = false
                         },
-                        shouldExpandCard = shouldExpandCard
+                        shouldExpandCard = shouldExpandCard,
+                        saveFoodItemWithQuantity = saveFoodItemWithQuantity
                     )
                 }
             }
@@ -262,13 +273,19 @@ fun FoodSearchResults(paddingValues: PaddingValues, dishes: NutritionalValueDto?
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymWorkoutsDto?, localPaddingValues: PaddingValues) {
+fun ExerciseSearchResults(
+    paddingValues: PaddingValues,
+    exercises: GymExercisesDto?,
+    localPaddingValues: PaddingValues,
+    saveExercise: (GymExercisesEntity) -> Unit,
+    workoutViewModel: WorkoutViewModel,
+    navController: NavController
+) {
     exercises?.let {
         if (it.size == 0) {
             NoResultsFoundOrErrorDuringSearch(
-                paddingValues = paddingValues,
+                globalPaddingValues = paddingValues,
                 localPaddingValues = localPaddingValues
             )
         } else {
@@ -282,14 +299,8 @@ fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymWorkoutsDt
                         mutableStateOf(false)
                     }
 
-                    val sheetState = rememberModalBottomSheetState()
-
                     Exercise(
-                        name = exercise.name,
-                        difficulty = exercise.difficulty,
-                        equipment = exercise.equipment,
-                        muscle = exercise.muscle,
-                        instructions = exercise.instructions,
+                        exercise = exercise,
                         showBottomSheet = {
                             shouldShowBottomSheet = true
                         },
@@ -297,7 +308,11 @@ fun ExerciseSearchResults(paddingValues: PaddingValues, exercises: GymWorkoutsDt
                             shouldShowBottomSheet = false
                         },
                         shouldShowBottomSheet = shouldShowBottomSheet,
-                        sheetState = sheetState
+                        saveExercise = saveExercise,
+                        navigateToExerciseDetailsScreen = { exerciseToUpdate ->
+                            workoutViewModel.updateExerciseDetails(exerciseToUpdate)
+
+                        }
                     )
                 }
             }
@@ -315,18 +330,21 @@ fun MySearchBar(
     onCloseClicked: () -> Unit,
 ) {
     Surface(
-        border = BorderStroke(2.dp, Color.White)
+        border = BorderStroke(2.dp, Color.White),
+        color = Color.White
     ) {
         TextField(
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.Black,
                 unfocusedTextColor = Color.Black,
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                disabledContainerColor = Color.White,
+                focusedContainerColor = ColorsUtil.primaryLightGray,
+                unfocusedContainerColor = ColorsUtil.primaryLightGray,
+                disabledContainerColor = ColorsUtil.primaryLightGray,
             ),
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(10.dp)
+                .clip(RoundedCornerShape(5.dp))
                 .focusable(enabled = true)
                 .focusRequester(focusRequester = focusRequester),
             value = searchBarQuery,
@@ -335,16 +353,19 @@ fun MySearchBar(
             },
             placeholder = {
                 Text(
-                    color = Color.Black,
-                    text = "Search..."
+                    color = ColorsUtil.primaryDarkGray,
+                    text = "Search Here...",
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             singleLine = true,
             leadingIcon = {
-                IconButton(onClick = {
-                    searchDish()
-                    focusManager.clearFocus()
-                }) {
+                IconButton(
+                    onClick = {
+                        searchDish()
+                        focusManager.clearFocus()
+                    }
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Search,
                         tint = Color.Gray,
@@ -353,18 +374,19 @@ fun MySearchBar(
                 }
             },
             trailingIcon = {
-                IconButton(onClick = {
-                    if (searchBarQuery.isNotEmpty()) {
-                        updateSearchQuery("")
-                    } else {
-                        onCloseClicked()
+                IconButton(
+                    onClick = {
+                        if (searchBarQuery.isNotEmpty()) {
+                            updateSearchQuery("")
+                        } else {
+                            onCloseClicked()
+                        }
                     }
-                })
-                {
+                ) {
                     Icon(
                         imageVector = Icons.Filled.Clear,
                         contentDescription = null,
-                        tint = Color.Black
+                        tint = Color.Gray
                     )
                 }
             },

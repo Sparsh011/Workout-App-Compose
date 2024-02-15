@@ -60,4 +60,29 @@ sealed class UtilityScreen(
         route = "ExercisesScreen/{category}",
         title = "Exercises"
     )
+
+    object YogaPosesPerformed: UtilityScreen(
+        route = "YogaPosesPerformed",
+        title = "Yoga Poses Performed Today"
+    )
+
+    object GymExercisesPerformed: UtilityScreen(
+        route = "GymExercisesPerformed",
+        title = "Gym Exercises Performed Today"
+    )
+
+    object FoodItemDetailsScreen: UtilityScreen(
+        route = "FoodItemDetails/{foodItemId}",
+        title = "Food Item Details"
+    )
+
+    object RemindersScreen: UtilityScreen(
+        route = "RemindersScreen",
+        title = "Reminders Screen"
+    )
+
+    object ExerciseDetailScreen: UtilityScreen(
+        route = "ExerciseDetailScreen",
+        title = "Exercise Details"
+    )
 }
