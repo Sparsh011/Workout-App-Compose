@@ -12,8 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
@@ -32,7 +30,7 @@ fun FoodItemDetails(
         LaunchedEffect(key1 = true) {
             foodItemsViewModel.getFoodItemById(id = foodItemId)
         }
-        val foodItem = foodItemsViewModel.foodItemEntity.collectAsStateWithLifecycle().value
+        val foodItem = foodItemsViewModel.foodItemEntity.value
 
         Scaffold(
             topBar = {
@@ -60,7 +58,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Servings:",
+                    macroNutrient = "Servings",
                     quantityOfMacroNutrient = foodItem?.servings.toString()
                 )
 
@@ -68,7 +66,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Calories Per Serving: ",
+                    macroNutrient = "Calories Per Serving ",
                     quantityOfMacroNutrient = foodItem?.foodItemDetails?.calories.toString() + " KCAL"
                 )
 
@@ -76,7 +74,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Total Calories: ",
+                    macroNutrient = "Total Calories ",
                     quantityOfMacroNutrient = (foodItem?.servings?.times(
                         (foodItem.foodItemDetails?.calories?.toInt()
                             ?: 0)
@@ -87,7 +85,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Carbohydrates:",
+                    macroNutrient = "Carbohydrates",
                 quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.carbohydrates_total_g} g"
                 )
 
@@ -95,7 +93,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Protein:",
+                    macroNutrient = "Protein",
                 quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.protein_g} g"
                 )
 
@@ -103,7 +101,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Total Fat:",
+                    macroNutrient = "Total Fat",
                 quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.fat_total_g} g"
                 )
 
@@ -111,7 +109,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Saturated Fat:",
+                    macroNutrient = "Saturated Fat",
                 quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.fat_saturated_g} g"
                 )
 
@@ -119,7 +117,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Sugar:",
+                    macroNutrient = "Sugar",
                 quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.sugar_g} g"
                 )
 
@@ -127,7 +125,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Cholesterol:",
+                    macroNutrient = "Cholesterol",
                 quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.cholesterol_mg} mg"
                 )
 
@@ -135,7 +133,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Sodium:",
+                    macroNutrient = "Sodium",
                 quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.sodium_mg} mg"
                 )
 
@@ -143,7 +141,7 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Fiber:",
+                    macroNutrient = "Fiber",
                 quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.fiber_g} g"
                 )
 
@@ -151,12 +149,12 @@ fun FoodItemDetails(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
-                    macroNutrient = "Potassium:",
+                    macroNutrient = "Potassium",
                 quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.potassium_mg} mg"
                 )
             }
         }
     } else {
-
+        // TODO
     }
 }

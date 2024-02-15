@@ -10,9 +10,9 @@ interface FoodItemsRepository {
 
     suspend fun saveFoodItem(foodItemEntity: FoodItemEntity)
 
-    suspend fun getFoodItemsConsumedOn(date: String, month: String) : Flow<Resource<List<FoodItemEntity>>>
+    suspend fun getFoodItemsConsumedOn(date: String, month: String) : Flow<List<FoodItemEntity>>
 
-    suspend fun getAllFoodItemsConsumed() : Flow<Resource<List<FoodItemEntity>>>
+    suspend fun getAllFoodItemsConsumed() : Flow<List<FoodItemEntity>>
 
     suspend fun saveOrUpdateCaloriesGoal(caloriesGoal: String)
 
@@ -20,6 +20,6 @@ interface FoodItemsRepository {
 
     suspend fun removeFoodItem(foodItem: FoodItemEntity)
 
-    suspend fun getFoodItemById(id: Int) : Flow<Resource<FoodItemEntity>>
+    suspend fun getFoodItemById(id: Int) : Flow<FoodItemEntity?>
 
 }

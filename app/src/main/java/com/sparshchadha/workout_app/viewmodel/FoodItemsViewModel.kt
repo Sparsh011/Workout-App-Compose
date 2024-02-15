@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 private const val TAG = "SearchFoodViewModellll"
@@ -51,7 +52,7 @@ class FoodItemsViewModel @Inject constructor(
     private val _selectedDateAndMonthForFoodItems = MutableStateFlow<Pair<Int, String>?>(null)
     val selectedDateAndMonthForFoodItems = _selectedDateAndMonthForFoodItems.asStateFlow()
 
-    private val _foodItemEntity = MutableStateFlow<FoodItemEntity?>(null)
+    private val _foodItemEntity = mutableStateOf<FoodItemEntity?>(null)
     val foodItemEntity = _foodItemEntity
 
     fun getFoodItemsFromApi() {
@@ -74,9 +75,9 @@ class FoodItemsViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        _uiEventState.emit(
-                            WorkoutViewModel.UIEvent.ShowError(errorMessage = result.error?.message.toString())
-                        )
+//                        _uiEventState.emit(
+//                            WorkoutViewModel.UIEvent.ShowError(errorMessage = result.error?.message.toString())
+//                        )
 
                     }
                 }
@@ -101,27 +102,13 @@ class FoodItemsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val foodItems = foodItemsRepository.getFoodItemsConsumedOn(date, month)
             foodItems.collect { response ->
-                when (response) {
-                    is Resource.Success -> {
-                        _savedFoodItems.value = response.data
-                        getTotalCaloriesConsumed(foodItemsConsumed = response.data)
-                        getNutrientsConsumed(foodItemsConsumed = response.data)
-                        _uiEventState.value = WorkoutViewModel.UIEvent.HideLoaderAndShowResponse
-                        _selectedDateAndMonthForFoodItems.value = Pair(date.toInt(), month)
-                    }
-
-                    is Resource.Loading -> {
-                        _uiEventState.value = WorkoutViewModel.UIEvent.ShowLoader
-                    }
-
-                    is Resource.Error -> {
-                        _uiEventState.value = response.error?.message?.let {
-                            WorkoutViewModel.UIEvent.ShowError(
-                                errorMessage = it
-                            )
-                        }
-                    }
+                _savedFoodItems.emit(response)
+                withContext(Dispatchers.Main) {
+                    getTotalCaloriesConsumed(foodItemsConsumed = response)
+                    getNutrientsConsumed(foodItemsConsumed = response)
                 }
+                _uiEventState.emit(WorkoutViewModel.UIEvent.HideLoaderAndShowResponse)
+                _selectedDateAndMonthForFoodItems.emit(Pair(date.toInt(), month))
             }
         }
     }
@@ -134,23 +121,37 @@ class FoodItemsViewModel @Inject constructor(
                 val foodItemDetails = foodItemEntity.foodItemDetails
 
                 if (foodItemDetails != null) {
-                    _nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G] =
-                        (_nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G]
-                            ?: 0.0) + (foodItemDetails.carbohydrates_total_g * foodItemEntity.servings)
+                    _nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G] = (_nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G]
+                        ?: 0.0) + (foodItemDetails.carbohydrates_total_g * foodItemEntity.servings)
 
-                    _nutrientsConsumed[Constants.FAT_TOTAL_G] =
-                        (_nutrientsConsumed[Constants.FAT_TOTAL_G]
-                            ?: 0.0) + (foodItemDetails.fat_total_g * foodItemEntity.servings)
+                    _nutrientsConsumed[Constants.FAT_TOTAL_G] = (_nutrientsConsumed[Constants.FAT_TOTAL_G]
+                        ?: 0.0) + (foodItemDetails.fat_total_g * foodItemEntity.servings)
 
                     _nutrientsConsumed[Constants.PROTEIN_G] =
                         (_nutrientsConsumed[Constants.PROTEIN_G] ?: 0.0) + (foodItemDetails.protein_g * foodItemEntity.servings)
+
                 }
             }
 
-            _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] =
-                _nutrientsConsumed[Constants.PROTEIN_G]
-                    ?.safeAdd(_nutrientsConsumed[Constants.FAT_TOTAL_G])
-                    ?.safeAdd(_nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G]) ?: 0.0
+            _nutrientsConsumed[Constants.PROTEIN_G]?.let { protein ->
+                _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] = protein
+            }
+
+            _nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G]?.let { carbs ->
+                if (_nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] != null) {
+                    _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] = _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G]!! + carbs
+                } else {
+                    _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] = carbs
+                }
+            }
+
+            _nutrientsConsumed[Constants.FAT_TOTAL_G]?.let { fats ->
+                if (_nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] != null) {
+                    _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] = _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G]!! + fats
+                } else {
+                    _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] = fats
+                }
+            }
         }
 
         if (_nutrientsConsumed.isEmpty()) {
@@ -182,13 +183,13 @@ class FoodItemsViewModel @Inject constructor(
 
     fun getCaloriesGoal() {
         viewModelScope.launch(Dispatchers.IO) {
-            foodItemsRepository.getCaloriesGoal()
-                .catch { e ->
-                    Log.e(TAG, "Error getting calories goal: ${e.message}")
-                }
-                .collect { value ->
+            foodItemsRepository.getCaloriesGoal().catch { e ->
+                Log.e(TAG, "Error getting calories goal: ${e.message}")
+            }.collect { value ->
+                withContext(Dispatchers.Main) {
                     _caloriesGoal.value = value
                 }
+            }
         }
     }
 
@@ -201,24 +202,10 @@ class FoodItemsViewModel @Inject constructor(
     fun getFoodItemById(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             foodItemsRepository.getFoodItemById(id = id).collect { response ->
-                when (response) {
-                    is Resource.Success -> {
-                        foodItemEntity.value = response.data
-                    }
-
-                    is Resource.Loading -> {
-
-                    }
-
-                    is Resource.Error -> {
-                        Log.e(TAG, "getFoodItemById: Error -${response.error?.message}")
-                    }
+                withContext(Dispatchers.Main) {
+                    _foodItemEntity.value = response
                 }
             }
         }
-    }
-
-    private fun Double?.safeAdd(other: Double?): Double {
-        return (this ?: 0.0) + (other ?: 0.0)
     }
 }

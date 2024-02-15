@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,18 +17,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.Center
@@ -37,32 +37,25 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
-import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -77,9 +70,10 @@ fun CaloriesConsumedCard(
     sheetState: SheetState,
     caloriesGoal: String,
     hideCaloriesBottomSheet: () -> Unit,
-    saveNewCaloriesGoal: (Float) -> Unit,
+    saveNewCaloriesGoal: (Int) -> Unit,
     showCaloriesGoalBottomSheet: () -> Unit,
     caloriesConsumed: String,
+    progressIndicatorColor: Color,
 ) {
     val configuration = LocalConfiguration.current;
     val caloriesConsumedCardWidth = configuration.screenWidthDp.dp
@@ -104,7 +98,8 @@ fun CaloriesConsumedCard(
         CaloriesConsumedAndLeft(
             caloriesConsumed = caloriesConsumed,
             showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet,
-            caloriesGoal = caloriesGoal
+            caloriesGoal = caloriesGoal,
+            progressIndicatorColor = targetAchievedColor
         )
 
         CaloriesGoalText(showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet)
@@ -173,6 +168,7 @@ fun CaloriesConsumedAndLeft(
     caloriesConsumed: String,
     showCaloriesGoalBottomSheet: () -> Unit,
     caloriesGoal: String,
+    progressIndicatorColor: Color,
 ) {
     Row(
         modifier = Modifier
@@ -195,11 +191,12 @@ fun CaloriesConsumedAndLeft(
                 .weight(1f)
                 .clip(CircleShape)
                 .align(CenterVertically)
-                .size(Dimensions.PIE_CHART_SIZE)
+                .size(PIE_CHART_SIZE)
                 .clickable {
                     showCaloriesGoalBottomSheet()
                 },
-            caloriesConsumed = caloriesConsumed
+            caloriesConsumed = caloriesConsumed,
+            progressIndicatorColor = progressIndicatorColor
         )
 
         CaloriesLeftOrEatenColumn(
@@ -213,7 +210,12 @@ fun CaloriesConsumedAndLeft(
 }
 
 @Composable
-fun CenterCaloriesGoalBox(modifier: Modifier, caloriesGoal: String, caloriesConsumed: String) {
+fun CenterCaloriesGoalBox(
+    modifier: Modifier,
+    caloriesGoal: String,
+    caloriesConsumed: String,
+    progressIndicatorColor: Color,
+) {
     Box(
         modifier = modifier,
         contentAlignment = Center
@@ -244,8 +246,8 @@ fun CenterCaloriesGoalBox(modifier: Modifier, caloriesGoal: String, caloriesCons
             modifier = Modifier.size(PIE_CHART_SIZE),
             strokeWidth = MEDIUM_PADDING,
             trackColor = ColorsUtil.customDividerColor,
-            color = ColorsUtil.targetAchievedColor,
-            strokeCap  = StrokeCap.Round,
+            color = progressIndicatorColor,
+            strokeCap = StrokeCap.Round,
         )
     }
 }
@@ -293,11 +295,8 @@ fun UpdateCaloriesBottomSheet(
     sheetState: SheetState,
     caloriesGoal: String,
     onSheetDismissed: () -> Unit,
-    saveNewCaloriesGoal: (Float) -> Unit,
+    saveNewCaloriesGoal: (Int) -> Unit,
 ) {
-    var newCaloriesGoal by remember {
-        mutableFloatStateOf(caloriesGoal.toFloat())
-    }
 
     ModalBottomSheet(
         sheetState = sheetState,
@@ -316,11 +315,7 @@ fun UpdateCaloriesBottomSheet(
                 UpdateCaloriesGoalSlider(
                     calorieDescription = "Current Goal : ${caloriesGoal.toInt()}",
                     textModifier = Modifier.padding(10.dp),
-                    sliderModifier = Modifier.padding(10.dp),
-                    newCaloriesGoal = newCaloriesGoal,
-                    updateNewCaloriesGoalInSlider = {
-                        newCaloriesGoal = it
-                    },
+                    newCaloriesGoal = caloriesGoal,
                     saveNewCaloriesGoal = saveNewCaloriesGoal,
                     hideUpdateCaloriesBottomSheet = onSheetDismissed
                 )
@@ -333,12 +328,14 @@ fun UpdateCaloriesBottomSheet(
 fun UpdateCaloriesGoalSlider(
     calorieDescription: String,
     textModifier: Modifier,
-    sliderModifier: Modifier,
-    newCaloriesGoal: Float,
-    updateNewCaloriesGoalInSlider: (Float) -> Unit,
-    saveNewCaloriesGoal: (Float) -> Unit,
+    newCaloriesGoal: String,
+    saveNewCaloriesGoal: (Int) -> Unit,
     hideUpdateCaloriesBottomSheet: () -> Unit,
 ) {
+    var caloriesInput by remember {
+        mutableStateOf(newCaloriesGoal)
+    }
+
     Text(
         text = calorieDescription,
         color = Color.Black,
@@ -347,43 +344,40 @@ fun UpdateCaloriesGoalSlider(
         modifier = textModifier
     )
 
-    Text(
-        text = "New Goal : ${newCaloriesGoal.toInt()}",
-        color = Color.Black,
-        fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
-        modifier = textModifier,
-        overflow = TextOverflow.Ellipsis
-    )
-
-    Slider(
-        value = newCaloriesGoal,
+    OutlinedTextField(
+        value = caloriesInput,
         onValueChange = {
-            updateNewCaloriesGoalInSlider(it)
+            caloriesInput = it
         },
-        valueRange = 1000F..5000F,
-        modifier = sliderModifier,
-        colors = SliderDefaults.colors(
-            thumbColor = primaryDarkTextColor,
-            activeTrackColor = primaryDarkTextColor,
-            inactiveTrackColor = primaryLightGray
-        )
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(LARGE_PADDING),
+        label = {
+            Text(text = "Set Calories Goal", color = ColorsUtil.primaryDarkGray)
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Color.Black,
+            unfocusedTextColor = ColorsUtil.primaryDarkGray,
+            disabledTextColor = primaryDarkTextColor,
+            disabledBorderColor = primaryDarkTextColor
+        ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 
     Button(
         onClick = {
-            saveNewCaloriesGoal(newCaloriesGoal)
+            saveNewCaloriesGoal(caloriesInput.toInt())
             hideUpdateCaloriesBottomSheet()
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = primaryDarkTextColor
         ),
         modifier = Modifier
-            .padding(20.dp)
+            .padding(LARGE_PADDING)
             .fillMaxWidth()
     ) {
-        Text(text = "Update Calories Goal", color = Color.White)
+        Text(text = "Set Calories Goal", color = Color.White)
     }
 
-    Spacer(modifier = Modifier.height(10.dp))
+    Spacer(modifier = Modifier.height(MEDIUM_PADDING))
 }

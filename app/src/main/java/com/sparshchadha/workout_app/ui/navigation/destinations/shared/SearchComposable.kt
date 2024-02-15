@@ -64,7 +64,8 @@ fun NavGraphBuilder.searchComposable(
             },
             saveExercise = {
                 workoutViewModel.saveGymExercise(gymExercisesEntity = it)
-            }
+            },
+            navController = navController
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.navigation.destinations.workout
+package com.sparshchadha.workout_app.ui.navigation.destinations.gym
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally

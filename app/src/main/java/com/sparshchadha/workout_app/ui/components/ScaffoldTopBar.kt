@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,15 +16,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 @Composable
-fun ScaffoldTopBar(topBarDescription: String, onBackButtonPressed: () -> Unit = {}, showBackIcon: Boolean = true) {
+fun ScaffoldTopBar(
+    topBarDescription: String,
+    onBackButtonPressed: () -> Unit = {},
+    showBackIcon: Boolean = true,
+    topBarHorizontalPadding: Dp = MEDIUM_PADDING,
+    topBarVerticalPadding: Dp = MEDIUM_PADDING
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(Dimensions.MEDIUM_PADDING)
+            .padding(
+                horizontal = topBarHorizontalPadding,
+                vertical = topBarVerticalPadding
+            )
+            .background(Color.White)
     ) {
         if (showBackIcon) {
             Icon(

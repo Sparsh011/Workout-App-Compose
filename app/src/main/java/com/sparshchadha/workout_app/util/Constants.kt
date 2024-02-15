@@ -9,8 +9,8 @@ object Constants {
 
     val COLOR_TO_NUTRIENT_MAP = hashMapOf(
         PROTEIN_G to ColorsUtil.noAchievementColor,
-        CARBOHYDRATES_TOTAL_G to ColorsUtil.partialTargetAchievedColor,
-        FAT_TOTAL_G to ColorsUtil.targetAchievedColor
+        CARBOHYDRATES_TOTAL_G to ColorsUtil.carbohydratesColor,
+        FAT_TOTAL_G to ColorsUtil.partialTargetAchievedColor
     )
 
     const val REMINDER_DESCRIPTION_KEY = "REMINDER_DESCRIPTION"

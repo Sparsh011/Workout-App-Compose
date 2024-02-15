@@ -25,9 +25,7 @@ class FoodRepositoryImpl(
             emit(Resource.Success(remoteDishes))
 
         } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
+            throw e
         }
     }
 
@@ -35,65 +33,27 @@ class FoodRepositoryImpl(
         foodItemsDao.addFoodItem(foodItem = foodItemEntity)
     }
 
-    override suspend fun getFoodItemsConsumedOn(date: String, month: String): Flow<Resource<List<FoodItemEntity>>> = flow {
-
-        try {
-             foodItemsDao.getFoodItemsConsumedOn(
-                date = date,
-                month = month
-            ).collect {
-                 emit(Resource.Success(it))
-             }
-
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
-        }
+    override suspend fun getFoodItemsConsumedOn(date: String, month: String): Flow<List<FoodItemEntity>> {
+        return foodItemsDao.getFoodItemsConsumedOn(date = date, month = month)
     }
 
-    override suspend fun getAllFoodItemsConsumed(): Flow<Resource<List<FoodItemEntity>>> = flow {
-
-        try {
-            foodItemsDao.getAllFoodItemsConsumed().collect {
-                emit(Resource.Success(it))
-            }
-
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
-        }
+    override suspend fun getAllFoodItemsConsumed(): Flow<List<FoodItemEntity>> {
+        return foodItemsDao.getAllFoodItemsConsumed()
     }
 
     override suspend fun saveOrUpdateCaloriesGoal(caloriesGoal: String) {
         datastorePreference.saveCaloriesGoal(caloriesGoal)
     }
 
-    override suspend fun getCaloriesGoal(): Flow<String?> = flow {
-        try {
-            datastorePreference.readCaloriesGoal.collect {
-                emit(it)
-            }
-        } catch (e: Exception) {
-            throw e
-        }
+    override suspend fun getCaloriesGoal(): Flow<String?> {
+        return datastorePreference.readCaloriesGoal
     }
 
     override suspend fun removeFoodItem(foodItem: FoodItemEntity) {
         foodItemsDao.removeFoodItem(foodItem = foodItem)
     }
 
-    override suspend fun getFoodItemById(id: Int) : Flow<Resource<FoodItemEntity>> = flow {
-        try {
-            foodItemsDao.getFoodItemById(id).collect {
-                emit(Resource.Success(it))
-            }
-
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
-        }
+    override suspend fun getFoodItemById(id: Int) : Flow<FoodItemEntity?> {
+        return foodItemsDao.getFoodItemById(id)
     }
 }

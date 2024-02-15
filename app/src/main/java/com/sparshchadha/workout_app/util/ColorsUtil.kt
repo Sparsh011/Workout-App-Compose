@@ -16,4 +16,5 @@ object ColorsUtil {
     val targetAchievedColor: Color = Color(0xFF00C980)
     val partialTargetAchievedColor: Color = Color(0xFFFDD835)
     val noAchievementColor : Color = Color(0xFFFF4646)
+    val carbohydratesColor: Color = Color(191, 160, 255, 255)
 }

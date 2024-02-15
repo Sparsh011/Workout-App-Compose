@@ -10,9 +10,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.destinations.NavGraph
@@ -57,7 +56,8 @@ class MainActivity : ComponentActivity() {
                 Scaffold (
                     bottomBar = {
                         BottomBar(navHostController = navHostController)
-                    }
+                    },
+                    containerColor = Color.White
                 ){
                     NavGraph(
                         navController = navHostController,

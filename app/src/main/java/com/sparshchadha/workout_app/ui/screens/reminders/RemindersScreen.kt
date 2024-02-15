@@ -54,14 +54,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -74,11 +78,15 @@ import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
+import com.sparshchadha.workout_app.util.ColorsUtil.unselectedBottomBarIconColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
+import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
@@ -86,7 +94,9 @@ import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.Month
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -131,7 +141,7 @@ fun RemindersScreen(
     Scaffold(
         topBar = {
             ScaffoldTopBar(
-                topBarDescription = "Upcoming Reminders",
+                topBarDescription = "Reminders",
                 onBackButtonPressed = {
                     navController.popBackStack(
                         route = BottomBarScreen.CalorieTracker.route,
@@ -205,7 +215,7 @@ fun FoodAndExerciseReminderPager(
     HorizontalPager(state = pagerState) { page ->
         when (page) {
             0 -> {
-                UpcomingReminders(
+                Reminders(
                     reminders = foodReminders,
                     localPaddingValues = localPaddingValues,
                     globalPaddingValues = globalPaddingValues,
@@ -214,7 +224,7 @@ fun FoodAndExerciseReminderPager(
             }
 
             1 -> {
-                UpcomingReminders(
+                Reminders(
                     reminders = workoutReminders,
                     localPaddingValues = localPaddingValues,
                     globalPaddingValues = globalPaddingValues,
@@ -621,7 +631,7 @@ fun ReminderDetailsTextField(
             .fillMaxWidth()
             .padding(LARGE_PADDING),
         placeholder = {
-            Text(text = "Add Reminder Description", color = primaryDarkGray)
+
         },
         label = {
             Text(text = "Reminder Description", color = primaryDarkGray)
@@ -692,52 +702,132 @@ fun SelectedPagerHeading(
     dividerWidth: Dp,
 ) {
     Column {
-        Text(
-            text = text,
-            modifier = modifier,
-            textAlign = TextAlign.Center,
-            color = primaryDarkTextColor,
-            fontSize = 20.nonScaledSp,
-            fontWeight = FontWeight.Bold
-        )
-
         if (isSelected) {
+            Text(
+                text = text,
+                modifier = modifier,
+                textAlign = TextAlign.Center,
+                color = primaryDarkTextColor,
+                fontSize = 20.nonScaledSp,
+                fontWeight = FontWeight.Bold
+            )
+
             Divider(
                 modifier = Modifier
                     .width(dividerWidth)
                     .padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING)
             )
+        } else {
+            Text(
+                text = text,
+                modifier = modifier,
+                textAlign = TextAlign.Center,
+                color = unselectedBottomBarIconColor,
+                fontSize = 20.nonScaledSp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun UpcomingReminders(
+fun Reminders(
     reminders: List<ReminderEntity>?,
     globalPaddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
     deleteReminder: (ReminderEntity) -> Unit,
 ) {
+
     if (reminders != null) {
+        val currentDateTime = LocalDateTime.now()
         val verticalArrangement = if (reminders.isEmpty()) Arrangement.Center else Arrangement.Top
+
+
+        val (pastReminders, upcomingReminders) = reminders.partition { reminder ->
+            val reminderDateTime = LocalDateTime.of(
+                reminder.year.toInt(),
+                Month.valueOf(HelperFunctions.getMonthFromIndex(reminder.month.toInt()).uppercase()).value,
+                reminder.date.toInt(),
+                reminder.hours,
+                reminder.minutes
+            )
+            reminderDateTime < currentDateTime
+        }
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = verticalArrangement
         ) {
-            if (reminders.isNotEmpty()) {
+
+            if (pastReminders.isNotEmpty()) {
+                stickyHeader {
+                    Text(
+                        buildAnnotatedString {
+                            append("Past")
+                            withStyle(
+                                style = SpanStyle(
+                                    color = primaryDarkTextColor,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.nonScaledSp,
+                                )
+                            ) {
+                                append(" Reminders")
+                            }
+                        },
+                        fontSize = 20.nonScaledSp,
+                        color = primaryDarkTextColor,
+                        modifier = Modifier.padding(MEDIUM_PADDING)
+                    )
+                }
+
                 items(
-                    items = reminders,
-                    key = {
-                        it.id.toString()
-                    }
+                    items = pastReminders,
+                    key = { it.id.toString() }
                 ) { reminder ->
                     Reminder(
                         reminder = reminder,
-                        deleteReminder = deleteReminder
+                        deleteReminder = deleteReminder,
+                        deleteIconColor = targetAchievedColor
                     )
                 }
-            } else {
+            }
+
+            if (upcomingReminders.isNotEmpty()) {
+                stickyHeader {
+                    Text(
+                        buildAnnotatedString {
+                            append("Upcoming")
+                            withStyle(
+                                style = SpanStyle(
+                                    color = primaryDarkTextColor,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.nonScaledSp,
+                                )
+                            ) {
+                                append(" Reminders")
+                            }
+                        },
+                        fontSize = 20.nonScaledSp,
+                        color = primaryDarkTextColor,
+                        modifier = Modifier.padding(MEDIUM_PADDING)
+                    )
+                }
+
+                items(
+                    items = upcomingReminders,
+                    key = { it.id.toString() }
+                ) { reminder ->
+                    Reminder(
+                        reminder = reminder,
+                        deleteReminder = deleteReminder,
+                        deleteIconColor = noAchievementColor
+                    )
+                }
+            }
+
+            if (upcomingReminders.isEmpty() && pastReminders.isEmpty()) {
                 item {
                     Column(
                         modifier = Modifier
@@ -756,7 +846,7 @@ fun UpcomingReminders(
                         Spacer(modifier = Modifier.height(MEDIUM_PADDING))
 
                         Text(
-                            text = "No Reminders Added",
+                            text = "No Reminders",
                             fontSize = 18.nonScaledSp,
                             color = primaryDarkTextColor,
                             fontWeight = FontWeight.Bold
@@ -768,10 +858,12 @@ fun UpcomingReminders(
     }
 }
 
+
 @Composable
 fun Reminder(
     reminder: ReminderEntity,
     deleteReminder: (ReminderEntity) -> Unit,
+    deleteIconColor: Color
 ) {
     Row(
         modifier = Modifier
@@ -787,8 +879,8 @@ fun Reminder(
                 .weight(4f)
         ) {
             Text(
-                text = reminder.reminderDescription,
-                fontSize = 18.nonScaledSp,
+                text = reminder.reminderDescription.capitalize(),
+                fontSize = 20.nonScaledSp,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
@@ -797,37 +889,55 @@ fun Reminder(
                 modifier = Modifier.padding(MEDIUM_PADDING)
             )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val month by remember {
-                    mutableStateOf(
-                        if (reminder.month.isNotBlank()) reminder.month.toInt().toString() else ""
-                    )
-                }
-
-                Text(
-                    text = "${reminder.date} / $month / ${reminder.year}",
-                    fontSize = 16.nonScaledSp,
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 2,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(MEDIUM_PADDING),
-                    color = primaryDarkTextColor
-                )
-
-                Text(
-                    text = "${reminder.hours}: ${reminder.minutes}",
-                    fontSize = 18.nonScaledSp,
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 2,
-                    color = primaryDarkTextColor,
-                    modifier = Modifier.padding(MEDIUM_PADDING)
+            val month by remember {
+                mutableStateOf(
+                    if (reminder.month.isNotBlank()) reminder.month.toInt().toString() else ""
                 )
             }
+
+            Text(
+                buildAnnotatedString {
+                    append("${reminder.date} ${HelperFunctions.getMonthFromIndex(month.toInt()).substring(0..2)} ${reminder.year}, ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = primaryDarkTextColor,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.nonScaledSp,
+                        )
+                    ) {
+                        val hours = convertTo12HourFormat(reminder.hours)
+                        val minutes = if (reminder.minutes < 10) "0${reminder.minutes}" else reminder.minutes.toString()
+                        append("${hours.first}: $minutes ${hours.second}")
+                    }
+                },
+                fontSize = 14.nonScaledSp,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
+                modifier = Modifier.padding(vertical = SMALL_PADDING, horizontal = MEDIUM_PADDING),
+                color = primaryDarkTextColor
+            )
+
+            Text(
+                buildAnnotatedString {
+                    append("Reminder For ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = primaryDarkTextColor,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.nonScaledSp,
+                        )
+                    ) {
+                        append(reminder.reminderType.lowercase().capitalize())
+                    }
+                },
+                fontSize = 14.nonScaledSp,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                color = primaryDarkTextColor,
+                modifier = Modifier.padding(top = SMALL_PADDING, bottom = MEDIUM_PADDING, end = MEDIUM_PADDING, start = MEDIUM_PADDING),
+            )
         }
 
         Icon(
@@ -838,7 +948,15 @@ fun Reminder(
                 .clickable {
                     deleteReminder(reminder)
                 },
-            tint = noAchievementColor
+            tint = deleteIconColor
         )
     }
+}
+
+fun convertTo12HourFormat(hours24: Int): Pair<Int, String> {
+    var hours12 = hours24 % 12
+    if (hours12 == 0)
+        hours12 = 12
+    val period = if (hours24 < 12) "AM" else "PM"
+    return Pair(hours12, period)
 }

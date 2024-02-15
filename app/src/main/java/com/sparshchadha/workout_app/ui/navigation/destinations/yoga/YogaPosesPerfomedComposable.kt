@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.navigation.destinations.workout
+package com.sparshchadha.workout_app.ui.navigation.destinations.yoga
 
 import android.os.Build
 import androidx.annotation.RequiresApi

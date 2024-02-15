@@ -13,7 +13,6 @@ import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
-import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -26,7 +25,7 @@ class WorkoutRepositoryImpl (
     val gymExercisesDao: GymExercisesDao
 ) : WorkoutRepository {
 
-    override fun getYogaPosesByDifficulty(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>> = flow {
+    override fun getYogaPosesByDifficultyFromApi(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -39,7 +38,7 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override fun getExercisesByDifficultyLevel(difficulty: String): Flow<Resource<GymExercisesDto>> = flow {
+    override fun getExercisesByDifficultyLevelFromApi(difficulty: String): Flow<Resource<GymExercisesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -55,7 +54,7 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override fun getExercisesByMuscle(muscleType: String): Flow<Resource<GymExercisesDto>> = flow {
+    override fun getExercisesByMuscleFromApi(muscleType: String): Flow<Resource<GymExercisesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -71,7 +70,7 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override fun getExercisesByWorkoutType(workoutType: String): Flow<Resource<GymExercisesDto>> = flow {
+    override fun getExercisesByWorkoutTypeFromApi(workoutType: String): Flow<Resource<GymExercisesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -87,7 +86,7 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override fun getExerciseByName(name: String): Flow<Resource<GymExercisesDto>> = flow {
+    override fun getExerciseByNameFromApi(name: String): Flow<Resource<GymExercisesDto>> = flow {
         emit(Resource.Loading())
 
         try {
@@ -103,65 +102,33 @@ class WorkoutRepositoryImpl (
         }
     }
 
-    override suspend fun getAllYogaPosesPerformed(): Flow<Resource<List<YogaEntity>>> = flow {
-        emit(Resource.Loading())
-
-        try {
-            val poses = yogaDao.getAllPerformedYogaPoses()
-            emit(Resource.Success(poses))
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
-        }
+    override suspend fun getAllYogaPosesPerformed(): Flow<List<YogaEntity>> {
+        return yogaDao.getAllPerformedYogaPoses()
     }
 
     override suspend fun saveYogaPose(yogaPose: YogaEntity) {
         yogaDao.addYogaPose(yogaPose = yogaPose)
     }
 
-    override suspend fun getYogaPosesPerformedOn(date: String, month: String): Flow<Resource<List<YogaEntity>>> = flow {
-        try {
-            val poses = yogaDao.getYogaPosesPerformedOn(
-                date = date,
-                month = month
-            )
-            emit(Resource.Success(poses))
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
-        }
+    override suspend fun getYogaPosesPerformedOn(date: String, month: String): Flow<List<YogaEntity>> {
+        return yogaDao.getYogaPosesPerformedOn(
+            date = date,
+            month = month
+        )
     }
 
     override suspend fun saveGymExercise(gymExercisesEntity: GymExercisesEntity) {
         gymExercisesDao.addGymExercise(gymExercisesEntity = gymExercisesEntity)
     }
 
-    override suspend fun getGymExercisesPerformedOn(date: String, month: String): Flow<Resource<List<GymExercisesEntity>>> = flow {
-        try {
-            val exercises = gymExercisesDao.getExercisesPerformedOn(
-                date = date,
-                month = month
-            )
-            emit(Resource.Success(exercises))
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
-        }
+    override suspend fun getGymExercisesPerformedOn(date: String, month: String): Flow<List<GymExercisesEntity>> {
+        return gymExercisesDao.getExercisesPerformedOn(
+            date = date,
+            month = month
+        )
     }
 
-    override suspend fun getAllGymExercisesPerformed(): Flow<Resource<List<GymExercisesEntity>>> = flow {
-        emit(Resource.Loading())
-
-        try {
-            val exercises = gymExercisesDao.getAllExercisesPerformed()
-            emit(Resource.Success(exercises))
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
-        }
+    override suspend fun getAllGymExercisesPerformed(): Flow<List<GymExercisesEntity>> {
+        return gymExercisesDao.getAllExercisesPerformed()
     }
 }
