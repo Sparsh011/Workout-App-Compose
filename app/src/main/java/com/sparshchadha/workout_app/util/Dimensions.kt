@@ -46,4 +46,8 @@ object Dimensions {
     val CIRCLE_STRIPE_WIDTH: Dp
         @Composable
         get() = dimensionResource(id = R.dimen.macronutrient_text_height)
+
+    val YOGA_AND_DUMBBELL_SVG_SIZE: Dp
+    @Composable
+    get() = dimensionResource(id = R.dimen.yoga_and_dumbbell_svg_size)
 }

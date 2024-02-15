@@ -35,7 +35,7 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
         exitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { fullWidth ->
-                    -fullWidth
+                    fullWidth
                 },
                 animationSpec = tween(
                     durationMillis = 300

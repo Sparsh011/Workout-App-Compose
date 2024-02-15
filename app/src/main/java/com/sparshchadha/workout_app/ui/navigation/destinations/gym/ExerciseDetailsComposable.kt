@@ -29,7 +29,7 @@ fun NavGraphBuilder.exerciseDetailsComposable(
         exitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { fullWidth ->
-                    -fullWidth
+                    fullWidth
                 },
                 animationSpec = tween(
                     durationMillis = 300

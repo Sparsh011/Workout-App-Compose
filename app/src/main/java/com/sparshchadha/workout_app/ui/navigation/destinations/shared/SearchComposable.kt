@@ -28,7 +28,9 @@ fun NavGraphBuilder.searchComposable(
             )
         },
         exitTransition = {
-            slideOutVertically()
+            slideOutVertically(
+                targetOffsetY = { 0 }
+            )
         }
     ) { backStackEntry ->
         val searchFor = backStackEntry.arguments?.getString("searchFor")
