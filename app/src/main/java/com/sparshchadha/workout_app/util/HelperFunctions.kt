@@ -2,6 +2,11 @@ package com.sparshchadha.workout_app.util
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.MuscleType
@@ -283,5 +288,12 @@ object HelperFunctions {
             MuscleType.ADDUCTORS.name.lowercase().capitalize(),
             MuscleType.ABDOMINALS.name.lowercase().capitalize()
         )
+    }
+
+    fun Modifier.noRippleClickable(onClick: () -> Unit): Modifier = composed {
+        clickable(indication = null,
+            interactionSource = remember { MutableInteractionSource() }) {
+            onClick()
+        }
     }
 }

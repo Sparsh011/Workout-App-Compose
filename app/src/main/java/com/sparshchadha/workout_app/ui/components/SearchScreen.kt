@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,9 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,6 +25,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.internal.isLiveLiteralsEnabled
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +46,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
+import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
@@ -54,9 +54,12 @@ import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodCard
 import com.sparshchadha.workout_app.ui.screens.workout.gym.Exercise
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
+private const val TAG = "SearchScreenTagg"
 @Composable
 fun SearchScreen(
     searchFoodViewModel: FoodItemsViewModel,
@@ -70,7 +73,7 @@ fun SearchScreen(
     foodUIStateEvent: WorkoutViewModel.UIEvent?,
     saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
     saveExercise: (GymExercisesEntity) -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
     var searchBarQuery by remember {
         mutableStateOf("")
@@ -196,7 +199,7 @@ fun HandleExercisesSearch(
     exercises: GymExercisesDto?,
     saveExercise: (GymExercisesEntity) -> Unit,
     workoutViewModel: WorkoutViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
     workoutUIStateEvent?.let { event ->
         when (event) {
@@ -238,37 +241,57 @@ fun FoodSearchResults(
     localPaddingValues: PaddingValues,
     saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
 ) {
+
     if (dishes?.items?.isEmpty() == true) {
         NoResultsFoundOrErrorDuringSearch(
             globalPaddingValues = paddingValues,
             localPaddingValues = localPaddingValues
         )
     } else {
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
-        ) {
-            dishes?.items?.let { items ->
-                items(items) { item ->
-                    var shouldExpandCard by remember {
-                        mutableStateOf(false)
+        dishes?.items?.let {
+            var items by remember {
+                mutableStateOf(
+                    it.map { item ->
+                        mutableStateOf(ExpandDishItem(
+                            item = item,
+                            isExpanded = false
+                        ))
                     }
+                )
+            }
 
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+            ) {
+                items(items.size) { index ->
                     FoodCard(
-                        foodItem = item,
+                        foodItem = items[index].value.item,
                         expandCard = {
-                            shouldExpandCard = true
+                            items = items.mapIndexed { i, item ->
+                                if (i == index) {
+                                    mutableStateOf(item.value.copy(isExpanded = true))
+                                } else {
+                                    item
+                                }
+                            }
                         },
                         collapseCard = {
-                            shouldExpandCard = false
+                            items = items.mapIndexed { i, item ->
+                                if (i == index) {
+                                    mutableStateOf(item.value.copy(isExpanded = false))
+                                } else {
+                                    item
+                                }
+                            }
                         },
-                        shouldExpandCard = shouldExpandCard,
+                        shouldExpandCard = items[index].value.isExpanded,
                         saveFoodItemWithQuantity = saveFoodItemWithQuantity
                     )
                 }
             }
+
         }
     }
 }
@@ -280,7 +303,7 @@ fun ExerciseSearchResults(
     localPaddingValues: PaddingValues,
     saveExercise: (GymExercisesEntity) -> Unit,
     workoutViewModel: WorkoutViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
     exercises?.let {
         if (it.size == 0) {
@@ -343,8 +366,8 @@ fun MySearchBar(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
-                .clip(RoundedCornerShape(5.dp))
+                .padding(MEDIUM_PADDING)
+                .clip(RoundedCornerShape(SMALL_PADDING))
                 .focusable(enabled = true)
                 .focusRequester(focusRequester = focusRequester),
             value = searchBarQuery,
@@ -402,3 +425,8 @@ fun MySearchBar(
         )
     }
 }
+
+data class ExpandDishItem(
+    val item: FoodItem,
+    val isExpanded: Boolean,
+)
