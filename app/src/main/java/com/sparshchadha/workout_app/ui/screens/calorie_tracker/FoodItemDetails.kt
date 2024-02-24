@@ -86,7 +86,7 @@ fun FoodItemDetails(
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Carbohydrates",
-                quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.carbohydrates_total_g} g"
+                    quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.carbohydrates_total_g} g"
                 )
 
                 FoodItemText(
@@ -94,7 +94,7 @@ fun FoodItemDetails(
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Protein",
-                quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.protein_g} g"
+                    quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.protein_g} g"
                 )
 
                 FoodItemText(
@@ -102,7 +102,7 @@ fun FoodItemDetails(
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Total Fat",
-                quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.fat_total_g} g"
+                    quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.fat_total_g} g"
                 )
 
                 FoodItemText(
@@ -110,7 +110,7 @@ fun FoodItemDetails(
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Saturated Fat",
-                quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.fat_saturated_g} g"
+                    quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.fat_saturated_g} g"
                 )
 
                 FoodItemText(
@@ -118,7 +118,7 @@ fun FoodItemDetails(
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Sugar",
-                quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.sugar_g} g"
+                    quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.sugar_g} g"
                 )
 
                 FoodItemText(
@@ -126,7 +126,7 @@ fun FoodItemDetails(
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Cholesterol",
-                quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.cholesterol_mg} mg"
+                    quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.cholesterol_mg} mg"
                 )
 
                 FoodItemText(
@@ -134,7 +134,7 @@ fun FoodItemDetails(
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Sodium",
-                quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.sodium_mg} mg"
+                    quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.sodium_mg} mg"
                 )
 
                 FoodItemText(
@@ -142,7 +142,7 @@ fun FoodItemDetails(
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Fiber",
-                quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.fiber_g} g"
+                    quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.fiber_g} g"
                 )
 
                 FoodItemText(
@@ -150,7 +150,7 @@ fun FoodItemDetails(
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Potassium",
-                quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.potassium_mg} mg"
+                    quantityOfMacroNutrient = "${foodItem?.foodItemDetails?.potassium_mg} mg"
                 )
             }
         }

@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class ReminderEntity (
+data class ReminderEntity(
     val date: String,
     val month: String,
     val year: String,
@@ -13,5 +13,5 @@ data class ReminderEntity (
     val reminderType: String,
     val reminderDescription: String,
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null
+    val id: Int? = null,
 )

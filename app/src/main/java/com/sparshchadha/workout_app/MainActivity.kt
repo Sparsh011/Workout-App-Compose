@@ -25,9 +25,9 @@ private const val TAG = "MainActivityTaggg"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val foodItemsViewModel : FoodItemsViewModel by viewModels()
-    private val workoutViewModel : WorkoutViewModel by viewModels()
-    private val remindersViewModel : RemindersViewModel by viewModels()
+    private val foodItemsViewModel: FoodItemsViewModel by viewModels()
+    private val workoutViewModel: WorkoutViewModel by viewModels()
+    private val remindersViewModel: RemindersViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,12 +53,12 @@ class MainActivity : ComponentActivity() {
 
 
 
-                Scaffold (
+                Scaffold(
                     bottomBar = {
                         BottomBar(navHostController = navHostController)
                     },
                     containerColor = Color.White
-                ){
+                ) {
                     NavGraph(
                         navController = navHostController,
                         globalPaddingValues = it,

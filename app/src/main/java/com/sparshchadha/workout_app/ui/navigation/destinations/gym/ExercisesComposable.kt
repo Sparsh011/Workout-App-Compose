@@ -20,7 +20,7 @@ fun NavGraphBuilder.gymExercisesComposable(
     navController: NavController,
     gymExercises: GymExercisesDto?,
     workoutViewModel: WorkoutViewModel,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
 ) {
     composable(
         arguments = listOf(navArgument("category") { type = NavType.StringType }),

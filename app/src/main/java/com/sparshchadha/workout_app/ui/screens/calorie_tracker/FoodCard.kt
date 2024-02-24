@@ -37,8 +37,6 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.rememberPickerState
-import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
@@ -50,6 +48,7 @@ import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.HelperFunctions.noRippleClickable
 
 private const val TAG = "FoodCardTaggg"
+
 @Composable
 fun FoodCard(
     expandCard: () -> Unit,

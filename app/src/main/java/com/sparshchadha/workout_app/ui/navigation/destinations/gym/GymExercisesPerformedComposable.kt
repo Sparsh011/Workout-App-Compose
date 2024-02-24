@@ -16,7 +16,7 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 fun NavGraphBuilder.gymExercisesPerformedComposable(
     workoutViewModel: WorkoutViewModel,
     navController: NavHostController,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
 ) {
     composable(
         route = UtilityScreen.GymExercisesPerformed.route,

@@ -11,8 +11,8 @@ import com.sparshchadha.workout_app.util.Constants.REMINDER_DESCRIPTION_KEY
 import java.time.ZoneId
 
 class AndroidAlarmScheduler(
-    private val context: Context
-): AlarmScheduler {
+    private val context: Context,
+) : AlarmScheduler {
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 

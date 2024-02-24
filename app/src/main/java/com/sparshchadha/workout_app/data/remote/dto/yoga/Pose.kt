@@ -11,5 +11,5 @@ data class Pose(
     val translation_name: String,
     val url_png: String,
     val url_svg: String,
-    val url_svg_alt: String
+    val url_svg_alt: String,
 )

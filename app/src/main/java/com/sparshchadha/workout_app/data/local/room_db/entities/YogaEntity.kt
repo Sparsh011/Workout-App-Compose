@@ -11,5 +11,5 @@ data class YogaEntity(
     val setsPerformed: Int,
     val yogaPoseDetails: Pose?,
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null
+    val id: Int? = null,
 )

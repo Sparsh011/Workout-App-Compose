@@ -145,7 +145,7 @@ object SharedModule {
     fun provideFoodItemsRepository(
         api: FoodApi,
         foodItemsDao: FoodItemsDao,
-        datastorePreference: WorkoutAppDatastorePreference
+        datastorePreference: WorkoutAppDatastorePreference,
     ): FoodItemsRepository {
         return FoodRepositoryImpl(api = api, foodItemsDao = foodItemsDao, datastorePreference = datastorePreference)
     }
@@ -166,9 +166,14 @@ object SharedModule {
         yogaApi: YogaApi,
         gymExercisesApi: GymExercisesApi,
         yogaDao: YogaDao,
-        gymExercisesDao: GymExercisesDao
+        gymExercisesDao: GymExercisesDao,
     ): WorkoutRepository {
-        return WorkoutRepositoryImpl(yogaApi = yogaApi, gymExercisesApi = gymExercisesApi, yogaDao = yogaDao, gymExercisesDao = gymExercisesDao)
+        return WorkoutRepositoryImpl(
+            yogaApi = yogaApi,
+            gymExercisesApi = gymExercisesApi,
+            yogaDao = yogaDao,
+            gymExercisesDao = gymExercisesDao
+        )
     }
 
     @Singleton
@@ -220,7 +225,7 @@ object SharedModule {
     @Provides
     fun provideAlarmManager(
         @ApplicationContext context: Context,
-    ) : AndroidAlarmScheduler {
+    ): AndroidAlarmScheduler {
         return AndroidAlarmScheduler(context)
     }
 }

@@ -6,5 +6,5 @@ data class GymExercisesDtoItem(
     val instructions: String,
     val muscle: String,
     val name: String,
-    val type: String
+    val type: String,
 )

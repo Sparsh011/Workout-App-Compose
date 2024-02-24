@@ -18,7 +18,7 @@ fun NavGraphBuilder.yogaComposable(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
     yogaPoses: YogaPosesDto?,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
 ) {
     composable(
         route = UtilityScreen.YogaPoses.route,

@@ -36,10 +36,10 @@ fun NavGraphBuilder.searchComposable(
         val searchFor = backStackEntry.arguments?.getString("searchFor")
         val dishes = foodItemsViewModel.foodItemsFromApi.value
         val exercises = workoutViewModel.gymExercisesFromApi.value
-        var workoutUIStateEvent : WorkoutViewModel.UIEvent? = null
-        var foodUIStateEvent : WorkoutViewModel.UIEvent? = null
+        var workoutUIStateEvent: WorkoutViewModel.UIEvent? = null
+        var foodUIStateEvent: WorkoutViewModel.UIEvent? = null
 
-        when(searchFor) {
+        when (searchFor) {
             "food" -> {
                 foodUIStateEvent = foodItemsViewModel.uiEventStateFlow.collectAsStateWithLifecycle().value
             }

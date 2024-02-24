@@ -8,8 +8,12 @@ import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 object Dimensions {
     val TITLE_SIZE
-    @Composable
-    get() = 22.nonScaledSp
+        @Composable
+        get() = 22.nonScaledSp
+
+    val DESCRIPTION_SIZE
+        @Composable
+        get() = 16.nonScaledSp
 
     val ACHIEVEMENT_INDICATOR_COLOR_SIZE: Dp
         @Composable
@@ -48,6 +52,6 @@ object Dimensions {
         get() = dimensionResource(id = R.dimen.macronutrient_text_height)
 
     val YOGA_AND_DUMBBELL_SVG_SIZE: Dp
-    @Composable
-    get() = dimensionResource(id = R.dimen.yoga_and_dumbbell_svg_size)
+        @Composable
+        get() = dimensionResource(id = R.dimen.yoga_and_dumbbell_svg_size)
 }

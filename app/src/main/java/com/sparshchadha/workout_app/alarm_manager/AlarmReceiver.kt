@@ -40,7 +40,7 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun createNotification(
         context: Context,
         notificationMessage: String,
-        notificationTitle: String
+        notificationTitle: String,
     ) {
         val myIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -72,13 +72,13 @@ class AlarmReceiver : BroadcastReceiver() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Reminders"
             val descriptionText = "This channel is used to send reminder notifications."
-            
+
             val importance = IMPORTANCE_HIGH
-            
+
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
-            
+
             val notificationManager: NotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)

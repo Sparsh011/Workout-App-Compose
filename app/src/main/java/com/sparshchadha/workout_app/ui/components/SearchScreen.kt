@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,7 +24,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.internal.isLiveLiteralsEnabled
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,6 +58,7 @@ import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 private const val TAG = "SearchScreenTagg"
+
 @Composable
 fun SearchScreen(
     searchFoodViewModel: FoodItemsViewModel,
@@ -252,10 +251,12 @@ fun FoodSearchResults(
             var items by remember {
                 mutableStateOf(
                     it.map { item ->
-                        mutableStateOf(ExpandDishItem(
-                            item = item,
-                            isExpanded = false
-                        ))
+                        mutableStateOf(
+                            ExpandDishItem(
+                                item = item,
+                                isExpanded = false
+                            )
+                        )
                     }
                 )
             }
@@ -323,20 +324,16 @@ fun ExerciseSearchResults(
                     }
 
                     Exercise(
-                        exercise = exercise,
-                        showBottomSheet = {
-                            shouldShowBottomSheet = true
-                        },
                         hideBottomSheet = {
                             shouldShowBottomSheet = false
                         },
                         shouldShowBottomSheet = shouldShowBottomSheet,
-                        saveExercise = saveExercise,
-                        navigateToExerciseDetailsScreen = { exerciseToUpdate ->
-                            workoutViewModel.updateExerciseDetails(exerciseToUpdate)
+                        exercise = exercise,
+                        saveExercise = saveExercise
+                    ) { exerciseToUpdate ->
+                        workoutViewModel.updateExerciseDetails(exerciseToUpdate)
 
-                        }
-                    )
+                    }
                 }
             }
         }

@@ -14,7 +14,7 @@ import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 fun NavGraphBuilder.remindersComposable(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
-    remindersViewModel: RemindersViewModel
+    remindersViewModel: RemindersViewModel,
 ) {
     composable(
         route = UtilityScreen.RemindersScreen.route,

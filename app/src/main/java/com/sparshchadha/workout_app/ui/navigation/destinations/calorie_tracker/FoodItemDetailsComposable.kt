@@ -1,5 +1,8 @@
 package com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -17,7 +20,25 @@ fun NavGraphBuilder.foodItemDetailsComposable(
 ) {
     composable(
         route = UtilityScreen.FoodItemDetailsScreen.route,
-        arguments = listOf(navArgument("foodItemId") { type = NavType.IntType })
+        arguments = listOf(navArgument("foodItemId") { type = NavType.IntType }),
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> fullWidth },
+                animationSpec = tween(
+                    durationMillis = 300
+                )
+            )
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth ->
+                    fullWidth
+                },
+                animationSpec = tween(
+                    durationMillis = 300
+                )
+            )
+        }
     ) { navBackStackEntry ->
         FoodItemDetails(
             navController = navController,

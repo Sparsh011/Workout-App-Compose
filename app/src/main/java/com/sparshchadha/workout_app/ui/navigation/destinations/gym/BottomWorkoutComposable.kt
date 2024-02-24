@@ -16,7 +16,7 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 fun NavGraphBuilder.bottomWorkoutComposable(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
 ) {
     composable(
         route = BottomBarScreen.WorkoutScreen.route,

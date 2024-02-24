@@ -34,7 +34,7 @@ fun NavGraph(
     workoutViewModel: WorkoutViewModel,
     gymExercises: GymExercisesDto?,
     yogaPoses: YogaPosesDto?,
-    remindersViewModel: RemindersViewModel
+    remindersViewModel: RemindersViewModel,
 ) {
     NavHost(navController = navController, startDestination = BottomBarScreen.CalorieTracker.route) {
         // Workout Tracker in Bottom Bar
@@ -45,11 +45,11 @@ fun NavGraph(
         )
 
         // Calorie Tracker in Bottom Bar
-       calorieTrackerComposable(
-           navController = navController,
-           globalPaddingValues = globalPaddingValues,
-           foodItemsViewModel = foodItemsViewModel
-       )
+        calorieTrackerComposable(
+            navController = navController,
+            globalPaddingValues = globalPaddingValues,
+            foodItemsViewModel = foodItemsViewModel
+        )
 
         // Search Screen
         searchComposable(
@@ -71,11 +71,11 @@ fun NavGraph(
         )
 
         // Selecting Workout Type
-       workoutCategoryComposable(
-           workoutViewModel = workoutViewModel,
-           navController = navController,
-           globalPaddingValues = globalPaddingValues
-       )
+        workoutCategoryComposable(
+            workoutViewModel = workoutViewModel,
+            navController = navController,
+            globalPaddingValues = globalPaddingValues
+        )
 
         // Exercises From Api
         gymExercisesComposable(

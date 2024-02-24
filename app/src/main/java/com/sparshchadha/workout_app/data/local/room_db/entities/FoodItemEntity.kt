@@ -11,5 +11,5 @@ data class FoodItemEntity(
     val servings: Int,
     val foodItemDetails: FoodItem?,
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null
+    val id: Int? = null,
 )
