@@ -1,8 +1,7 @@
 package com.sparshchadha.workout_app.ui.navigation.destinations.gym
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -17,27 +16,15 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 fun NavGraphBuilder.bottomWorkoutComposable(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
 ) {
     composable(
         route = BottomBarScreen.WorkoutScreen.route,
         enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(
-                    durationMillis = 300
-                )
-            )
+            EnterTransition.None
         },
         exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth ->
-                    -fullWidth
-                },
-                animationSpec = tween(
-                    durationMillis = 300
-                )
-            )
+            ExitTransition.None
         }
     ) {
         GymAndYogaWorkoutHomeScreen(

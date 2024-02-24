@@ -60,19 +60,32 @@ fun ExercisesScreen(
     uiEventState: WorkoutViewModel.UIEvent?,
     globalPaddingValues: PaddingValues,
     saveExercise: (GymExercisesEntity) -> Unit,
-    workoutViewModel: WorkoutViewModel
+    workoutViewModel: WorkoutViewModel,
 ) {
 
     uiEventState?.let { event ->
-        HandleUIEventsForExercises(
-            event = event,
-            category = category,
-            navController = navController,
-            exercises = exercises,
-            globalPaddingValues = globalPaddingValues,
-            saveExercise = saveExercise,
-            workoutViewModel = workoutViewModel
-        )
+        Scaffold(
+            topBar = {
+                val topBarDescription = category ?: "Exercises"
+                ScaffoldTopBar(
+                    topBarDescription = topBarDescription,
+                    onBackButtonPressed = {
+                        navController.popBackStack(route = UtilityScreen.SelectExerciseCategory.route, inclusive = false)
+                    }
+                )
+            }
+        ) { localPaddingValues ->
+            HandleUIEventsForExercises(
+                event = event,
+                category = category,
+                navController = navController,
+                exercises = exercises,
+                globalPaddingValues = globalPaddingValues,
+                saveExercise = saveExercise,
+                workoutViewModel = workoutViewModel,
+                localPaddingValues = localPaddingValues
+            )
+        }
     }
 }
 
@@ -85,6 +98,7 @@ fun HandleUIEventsForExercises(
     globalPaddingValues: PaddingValues,
     saveExercise: (GymExercisesEntity) -> Unit,
     workoutViewModel: WorkoutViewModel,
+    localPaddingValues: PaddingValues,
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -107,7 +121,8 @@ fun HandleUIEventsForExercises(
                 progress = progress,
                 globalPaddingValues = globalPaddingValues,
                 saveExercise = saveExercise,
-                workoutViewModel = workoutViewModel
+                workoutViewModel = workoutViewModel,
+                localPaddingValues
             )
         }
 
@@ -126,51 +141,37 @@ fun ShowExercises(
     progress: Float,
     globalPaddingValues: PaddingValues,
     saveExercise: (GymExercisesEntity) -> Unit,
-    workoutViewModel: WorkoutViewModel
+    workoutViewModel: WorkoutViewModel,
+    localPaddingValues: PaddingValues,
 ) {
-    Scaffold(
-        topBar = {
-            val topBarDescription = category ?: "Exercises"
-            ScaffoldTopBar(
-                topBarDescription = topBarDescription,
-                onBackButtonPressed = {
-                    navController.popBackStack(route = UtilityScreen.SelectExerciseCategory.route, inclusive = false)
-                }
-            )
-        }
-    ) { localPaddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .background(Color.White)
-                .padding(top = localPaddingValues.calculateTopPadding(), bottom = globalPaddingValues.calculateBottomPadding())
-                .fillMaxSize()
-        ) {
-            if (exercises != null) {
-                items(exercises) { exercise ->
-                    var shouldShowBottomSheet by remember {
-                        mutableStateOf(false)
-                    }
 
-                    Exercise(
-                        showBottomSheet = {
-                            shouldShowBottomSheet = true
-                        },
-                        hideBottomSheet = {
-                            shouldShowBottomSheet = false
-                        },
-                        shouldShowBottomSheet = shouldShowBottomSheet,
-                        exercise = exercise,
-                        saveExercise = saveExercise,
-                        navigateToExerciseDetailsScreen = {
-                            workoutViewModel.updateExerciseDetails(it)
-                            navController.navigate(UtilityScreen.ExerciseDetailScreen.route)
-                        }
-                    )
+    LazyColumn(
+        modifier = Modifier
+            .background(Color.White)
+            .padding(top = localPaddingValues.calculateTopPadding(), bottom = globalPaddingValues.calculateBottomPadding())
+            .fillMaxSize()
+    ) {
+        if (exercises != null) {
+            items(exercises) { exercise ->
+                var shouldShowBottomSheet by remember {
+                    mutableStateOf(false)
                 }
-            } else {
-                item {
-                    LottieAnimation(composition = composition, progress = { progress })
+
+                Exercise(
+                    hideBottomSheet = {
+                        shouldShowBottomSheet = false
+                    },
+                    shouldShowBottomSheet = shouldShowBottomSheet,
+                    exercise = exercise,
+                    saveExercise = saveExercise
+                ) {
+                    workoutViewModel.updateExerciseDetails(it)
+                    navController.navigate(UtilityScreen.ExerciseDetailScreen.route)
                 }
+            }
+        } else {
+            item {
+                LottieAnimation(composition = composition, progress = { progress })
             }
         }
     }
@@ -178,7 +179,6 @@ fun ShowExercises(
 
 @Composable
 fun Exercise(
-    showBottomSheet: () -> Unit,
     hideBottomSheet: () -> Unit,
     shouldShowBottomSheet: Boolean,
     exercise: GymExercisesDtoItem,

@@ -1,8 +1,7 @@
 package com.sparshchadha.workout_app.ui.navigation.destinations.profile
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
@@ -14,22 +13,10 @@ fun NavGraphBuilder.profileComposable(
     composable(
         route = BottomBarScreen.ProfileScreen.route,
         enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { fullWidth -> -fullWidth },
-                animationSpec = tween(
-                    durationMillis = 300
-                )
-            )
+            EnterTransition.None
         },
         exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth ->
-                    -fullWidth
-                },
-                animationSpec = tween(
-                    durationMillis = 300
-                )
-            )
+            ExitTransition.None
         }
     ) {
         ProfileScreenComposable()

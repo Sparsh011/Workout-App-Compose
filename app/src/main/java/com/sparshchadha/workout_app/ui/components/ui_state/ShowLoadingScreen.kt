@@ -19,9 +19,9 @@ import com.airbnb.lottie.compose.LottieAnimation
 @Composable
 fun ShowLoadingScreen(
     composition: LottieComposition?,
-    progress: Float
+    progress: Float,
 ) {
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),

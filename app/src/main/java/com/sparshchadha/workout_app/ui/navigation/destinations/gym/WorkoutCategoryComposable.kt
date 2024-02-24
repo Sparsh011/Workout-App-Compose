@@ -14,7 +14,7 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 fun NavGraphBuilder.workoutCategoryComposable(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
 ) {
     composable(
         route = UtilityScreen.SelectExerciseCategory.route,
@@ -29,7 +29,7 @@ fun NavGraphBuilder.workoutCategoryComposable(
         exitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { fullWidth ->
-                    -fullWidth
+                    fullWidth
                 },
                 animationSpec = tween(
                     durationMillis = 300

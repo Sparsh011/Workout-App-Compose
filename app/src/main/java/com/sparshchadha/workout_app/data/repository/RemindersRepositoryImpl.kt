@@ -6,14 +6,14 @@ import com.sparshchadha.workout_app.domain.repository.RemindersRepository
 import kotlinx.coroutines.flow.Flow
 
 class RemindersRepositoryImpl(
-    private val remindersDao: RemindersDao
+    private val remindersDao: RemindersDao,
 ) : RemindersRepository {
 
-    override suspend fun addReminder(reminderEntity: ReminderEntity) : Long {
+    override suspend fun addReminder(reminderEntity: ReminderEntity): Long {
         return remindersDao.addReminder(reminderEntity = reminderEntity)
     }
 
-    override suspend fun updateReminder(reminderEntity: ReminderEntity) : Int {
+    override suspend fun updateReminder(reminderEntity: ReminderEntity): Int {
         return remindersDao.updateReminder(reminderEntity = reminderEntity)
     }
 

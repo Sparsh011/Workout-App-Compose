@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,10 +37,17 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.rememberPickerState
-import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.TITLE_SIZE
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.HelperFunctions
+import com.sparshchadha.workout_app.util.HelperFunctions.noRippleClickable
+
+private const val TAG = "FoodCardTaggg"
 
 @Composable
 fun FoodCard(
@@ -49,7 +57,8 @@ fun FoodCard(
     foodItem: FoodItem,
     saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
 ) {
-    FoodCardComposable(
+    Log.e(TAG, "FoodCard: here with $shouldExpandCard")
+    FoodItemDetailsCard(
         foodItemName = foodItem.name.capitalize(),
         calories = foodItem.calories.toString(),
         sugar = foodItem.sugar_g.toString(),
@@ -74,7 +83,7 @@ fun FoodCard(
 }
 
 @Composable
-private fun FoodCardComposable(
+private fun FoodItemDetailsCard(
     foodItemName: String,
     calories: String,
     sugar: String,
@@ -98,12 +107,12 @@ private fun FoodCardComposable(
 
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryGreenCardBackground
+            containerColor = primaryLightGray
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
-            .clickable {
+            .padding(MEDIUM_PADDING)
+            .noRippleClickable {
                 toggleCardExpansion(
                     isExpanded = isExpanded,
                     collapseCard = collapseCard,
@@ -113,7 +122,7 @@ private fun FoodCardComposable(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 20.dp, vertical = 10.dp)
+                .padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -122,12 +131,12 @@ private fun FoodCardComposable(
                 modifier = Modifier.weight(0.7f),
                 fontWeight = FontWeight.Bold,
                 fontSize = TITLE_SIZE,
-                color = Color.Black
+                color = primaryDarkTextColor
             )
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                tint = ColorsUtil.primaryDarkGray,
+                tint = primaryDarkTextColor,
                 modifier = Modifier.clickable {
                     showBottomSheetToSelectFoodItemQuantity = true
                 }
@@ -166,6 +175,8 @@ private fun FoodCardComposable(
                 title = "Servings"
             )
         }
+
+        Spacer(modifier = Modifier.height(SMALL_PADDING))
     }
 }
 
@@ -190,7 +201,7 @@ fun ShowQuantityOrSetsPicker(
                 append("Select ")
                 withStyle(
                     style = SpanStyle(
-                        color = ColorsUtil.primaryDarkTextColor,
+                        color = primaryDarkTextColor,
                         fontWeight = FontWeight.Bold
                     )
                 ) {
@@ -202,7 +213,7 @@ fun ShowQuantityOrSetsPicker(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
             textAlign = TextAlign.Start,
-            color = ColorsUtil.primaryDarkTextColor,
+            color = primaryDarkTextColor,
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -222,7 +233,7 @@ fun ShowQuantityOrSetsPicker(
                 hideQuantityOrSetsPickerBottomSheet()
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = ColorsUtil.primaryDarkTextColor
+                containerColor = primaryDarkTextColor
             ),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -248,13 +259,13 @@ private fun toggleCardExpansion(isExpanded: Boolean, collapseCard: () -> Unit, e
 fun NutritionalValueText(nutrient: String, quantityOfNutrient: String, unit: String = "grams") {
     Text(
         buildAnnotatedString {
-            withStyle(style = SpanStyle(color = ColorsUtil.primaryDarkTextColor, fontWeight = FontWeight.Bold)) {
+            withStyle(style = SpanStyle(color = primaryDarkTextColor, fontWeight = FontWeight.Bold)) {
                 append("$nutrient : ")
             }
             append("$quantityOfNutrient $unit")
         },
         modifier = Modifier
-            .padding(horizontal = 20.dp, vertical = 5.dp),
-        color = ColorsUtil.primaryDarkTextColor
+            .padding(horizontal = LARGE_PADDING, vertical = SMALL_PADDING),
+        color = primaryDarkTextColor
     )
 }

@@ -18,11 +18,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-class WorkoutRepositoryImpl (
+class WorkoutRepositoryImpl(
     val yogaApi: YogaApi,
     val gymExercisesApi: GymExercisesApi,
     val yogaDao: YogaDao,
-    val gymExercisesDao: GymExercisesDao
+    val gymExercisesDao: GymExercisesDao,
 ) : WorkoutRepository {
 
     override fun getYogaPosesByDifficultyFromApi(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>> = flow {

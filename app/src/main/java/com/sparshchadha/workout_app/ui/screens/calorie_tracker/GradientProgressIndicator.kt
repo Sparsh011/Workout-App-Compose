@@ -1,4 +1,5 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.progressSemantics
 import androidx.compose.runtime.Composable

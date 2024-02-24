@@ -40,6 +40,10 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -49,7 +53,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,6 +77,7 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.ReminderEntity
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
@@ -92,7 +96,6 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -122,11 +125,15 @@ fun RemindersScreen(
         2
     }
 
-    val coroutineScope = rememberCoroutineScope()
-
     var showBottomSheetToAddReminder by remember {
         mutableStateOf(false)
     }
+
+    var selectedTabIndex by remember {
+        mutableIntStateOf(0)
+    }
+
+    val tabBarHeadings = listOf("Exercise", "Food")
 
     if (showBottomSheetToAddReminder) {
         BottomSheetToAddReminder(
@@ -179,14 +186,51 @@ fun RemindersScreen(
                 )
         ) {
 
-            PagerHeadings(
-                pagerState = pagerState,
-                updatePagerState = {
-                    coroutineScope.launch {
-                        pagerState.scrollToPage(it)
-                    }
+            LaunchedEffect(key1 = selectedTabIndex) {
+                pagerState.animateScrollToPage(selectedTabIndex)
+            }
+
+            LaunchedEffect(key1 = pagerState.currentPage, key2 = pagerState.isScrollInProgress) {
+                if (!pagerState.isScrollInProgress) {
+                    selectedTabIndex = pagerState.currentPage
                 }
-            )
+            }
+
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                containerColor = White,
+                modifier = Modifier
+                    .fillMaxWidth(),
+                divider = {
+                    Divider(
+                        thickness = 1.dp,
+                        color = customDividerColor,
+                        modifier = Modifier
+                            .padding(horizontal = MEDIUM_PADDING)
+                    )
+                },
+                indicator = {
+                    TabRowDefaults.Indicator(
+                        Modifier
+                            .tabIndicatorOffset(it[selectedTabIndex])
+                            .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
+                            .padding(horizontal = MEDIUM_PADDING)
+                    )
+                }
+            ) {
+                tabBarHeadings.forEachIndexed { index, s ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = {
+                            selectedTabIndex = index
+                        },
+                        text = {
+                            Text(text = s, color = primaryDarkTextColor, fontSize = 20.nonScaledSp)
+                        },
+                        modifier = Modifier.fillMaxWidth(1f)
+                    )
+                }
+            }
 
             FoodAndExerciseReminderPager(
                 pagerState = pagerState,
@@ -216,7 +260,7 @@ fun FoodAndExerciseReminderPager(
         when (page) {
             0 -> {
                 Reminders(
-                    reminders = foodReminders,
+                    reminders = workoutReminders,
                     localPaddingValues = localPaddingValues,
                     globalPaddingValues = globalPaddingValues,
                     deleteReminder = deleteReminder
@@ -225,7 +269,7 @@ fun FoodAndExerciseReminderPager(
 
             1 -> {
                 Reminders(
-                    reminders = workoutReminders,
+                    reminders = foodReminders,
                     localPaddingValues = localPaddingValues,
                     globalPaddingValues = globalPaddingValues,
                     deleteReminder = deleteReminder
@@ -863,7 +907,7 @@ fun Reminders(
 fun Reminder(
     reminder: ReminderEntity,
     deleteReminder: (ReminderEntity) -> Unit,
-    deleteIconColor: Color
+    deleteIconColor: Color,
 ) {
     Row(
         modifier = Modifier
@@ -897,7 +941,11 @@ fun Reminder(
 
             Text(
                 buildAnnotatedString {
-                    append("${reminder.date} ${HelperFunctions.getMonthFromIndex(month.toInt()).substring(0..2)} ${reminder.year}, ")
+                    append(
+                        "${reminder.date} ${
+                            HelperFunctions.getMonthFromIndex(month.toInt()).substring(0..2)
+                        } ${reminder.year}, "
+                    )
                     withStyle(
                         style = SpanStyle(
                             color = primaryDarkTextColor,
@@ -936,7 +984,12 @@ fun Reminder(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 color = primaryDarkTextColor,
-                modifier = Modifier.padding(top = SMALL_PADDING, bottom = MEDIUM_PADDING, end = MEDIUM_PADDING, start = MEDIUM_PADDING),
+                modifier = Modifier.padding(
+                    top = SMALL_PADDING,
+                    bottom = MEDIUM_PADDING,
+                    end = MEDIUM_PADDING,
+                    start = MEDIUM_PADDING
+                ),
             )
         }
 

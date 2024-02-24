@@ -18,7 +18,7 @@ fun NavGraphBuilder.yogaComposable(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
     yogaPoses: YogaPosesDto?,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
 ) {
     composable(
         route = UtilityScreen.YogaPoses.route,
@@ -33,7 +33,7 @@ fun NavGraphBuilder.yogaComposable(
         exitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { fullWidth ->
-                    -fullWidth
+                    fullWidth
                 },
                 animationSpec = tween(
                     durationMillis = 300

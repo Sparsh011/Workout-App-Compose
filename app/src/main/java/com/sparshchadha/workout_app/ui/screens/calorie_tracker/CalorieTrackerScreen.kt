@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -48,7 +47,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -62,9 +60,11 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
@@ -142,7 +142,7 @@ fun CalorieTrackerScreen(
                                         shouldShowCaloriesBottomSheet = true
                                     },
                                     caloriesConsumed = caloriesConsumed,
-                                    progressIndicatorColor =  HelperFunctions.getAchievementColor(
+                                    progressIndicatorColor = HelperFunctions.getAchievementColor(
                                         achieved = caloriesConsumed.toInt(),
                                         target = caloriesGoal.toInt()
                                     )
@@ -223,31 +223,19 @@ fun CalorieTrackerScreen(
                 }
             } else {
                 items(
-                    items = foodItemsConsumed,
-                    key = { foodItem ->
-                        foodItem.id.toString()
+                    count = foodItemsConsumed.size,
+                    key = { index ->
+                        foodItemsConsumed[index].id.toString()
                     }
-                ) { foodItem ->
-                    var shouldShowFoodItemDetails by remember {
-                        mutableStateOf(false)
-                    }
-
+                ) { index ->
                     PopulateConsumedFoodItem(
-                        consumedFoodItem = foodItem,
+                        consumedFoodItem = foodItemsConsumed[index],
                         showFoodItemDetails = {
-                            navController.navigate(route = "FoodItemDetails/${foodItem.id}")
+                            navController.navigate(route = "FoodItemDetails/${foodItemsConsumed[index].id}")
                         },
-                        removeFoodItem = removeFoodItem
+                        removeFoodItem = removeFoodItem,
+                        showDivider = index != foodItemsConsumed.size - 1
                     )
-
-                    if (shouldShowFoodItemDetails) {
-                        FoodItemDialogBox(
-                            foodItem,
-                            hideFoodItemDialogBox = {
-                                shouldShowFoodItemDetails = false
-                            }
-                        )
-                    }
                 }
             }
         }
@@ -260,7 +248,7 @@ fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                bottom = Dimensions.SMALL_PADDING
+                bottom = SMALL_PADDING
             ),
         horizontalArrangement = Arrangement.Center
     ) {
@@ -269,7 +257,7 @@ fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
             Row {
                 Canvas(
                     modifier = Modifier
-                        .padding(Dimensions.SMALL_PADDING)
+                        .padding(SMALL_PADDING)
                         .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
 
                 ) {
@@ -278,7 +266,7 @@ fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
 
                 Canvas(
                     modifier = Modifier
-                        .padding(Dimensions.SMALL_PADDING)
+                        .padding(SMALL_PADDING)
                         .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
 
                 ) {
@@ -290,7 +278,7 @@ fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
             Row {
                 Canvas(
                     modifier = Modifier
-                        .padding(Dimensions.SMALL_PADDING)
+                        .padding(SMALL_PADDING)
                         .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
 
                 ) {
@@ -299,7 +287,7 @@ fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
 
                 Canvas(
                     modifier = Modifier
-                        .padding(Dimensions.SMALL_PADDING)
+                        .padding(SMALL_PADDING)
                         .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
 
                 ) {
@@ -494,6 +482,7 @@ fun PopulateConsumedFoodItem(
     consumedFoodItem: FoodItemEntity,
     showFoodItemDetails: () -> Unit,
     removeFoodItem: (FoodItemEntity) -> Unit,
+    showDivider: Boolean,
 ) {
     Column(
         modifier = Modifier
@@ -506,29 +495,39 @@ fun PopulateConsumedFoodItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimensions.SMALL_PADDING)
+                .padding(horizontal = SMALL_PADDING)
         ) {
             Column(
                 modifier = Modifier.weight(4f)
             ) {
                 consumedFoodItem.foodItemDetails?.name?.let { itemName ->
                     Text(
-                        text = itemName.capitalize(),
+                        buildAnnotatedString {
+                            append("${consumedFoodItem.servings} x ")
+                            withStyle(
+                                style = SpanStyle(
+                                    color = primaryDarkTextColor,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.nonScaledSp,
+                                )
+                            ) {
+                                append(itemName.capitalize())
+                            }
+                        },
                         color = primaryDarkTextColor,
-                        fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .padding(5.dp),
-                        fontSize = 18.nonScaledSp,
+                            .padding(SMALL_PADDING),
+                        fontSize = 16.nonScaledSp,
                         textAlign = TextAlign.Start,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
 
                 Text(
-                    text = "${(consumedFoodItem.servings * (consumedFoodItem.foodItemDetails?.calories ?: 0).toInt())} KCAL",
+                    text = "${(consumedFoodItem.servings * (consumedFoodItem.foodItemDetails?.calories ?: 0).toInt())} kcal",
                     color = primaryDarkTextColor,
                     modifier = Modifier
-                        .padding(5.dp),
+                        .padding(SMALL_PADDING),
                     fontSize = 14.nonScaledSp,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -547,10 +546,11 @@ fun PopulateConsumedFoodItem(
             )
         }
 
-        CustomDivider()
+        if (showDivider) {
+            CustomDivider(dividerColor = primaryLightGray)
+        }
     }
 }
-
 
 @Composable
 fun DishesConsumedOnAParticularDayHeader(modifier: Modifier) {

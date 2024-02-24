@@ -2,6 +2,8 @@ package com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -19,7 +21,13 @@ fun NavGraphBuilder.calorieTrackerComposable(
     foodItemsViewModel: FoodItemsViewModel,
 ) {
     composable(
-        route = BottomBarScreen.CalorieTracker.route
+        route = BottomBarScreen.CalorieTracker.route,
+        enterTransition = {
+            EnterTransition.None
+        },
+        exitTransition = {
+            ExitTransition.None
+        }
     ) {
 
         LaunchedEffect(key1 = true) {

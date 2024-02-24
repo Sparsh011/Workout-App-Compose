@@ -13,11 +13,11 @@ import kotlinx.coroutines.flow.flow
 import java.io.IOException
 
 class PexelsRepositoryImpl(
-    val api: PexelsApi
+    val api: PexelsApi,
 ) : PexelsRepository {
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    override fun searchImageOnPexel(searchQuery: String): Flow<Resource<PexelResponseDto>>  = flow {
+    override fun searchImageOnPexel(searchQuery: String): Flow<Resource<PexelResponseDto>> = flow {
         emit(Resource.Loading())
 
         try {

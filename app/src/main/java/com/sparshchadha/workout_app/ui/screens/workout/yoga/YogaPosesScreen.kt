@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -32,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -45,17 +44,25 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
+import com.sparshchadha.workout_app.ui.components.CustomDivider
 import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.components.rememberPickerState
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
-import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.Dimensions.DESCRIPTION_SIZE
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.TITLE_SIZE
 import com.sparshchadha.workout_app.util.Extensions.capitalize
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.HelperFunctions.getCurrentDateAndMonth
+import com.sparshchadha.workout_app.util.HelperFunctions.noRippleClickable
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
@@ -91,11 +98,14 @@ fun HandleYogaScreenUIEvents(
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation))
-            val progress by animateLottieCompositionAsState(composition)
-
-            ShowLoadingScreen(
-                composition = composition, progress = progress
+            PopulateYogaPoses(
+                yogaPoses = YogaPosesDto(difficultyLevel, -1, emptyList()),
+                navController = navController,
+                difficultyLevel = difficultyLevel,
+                saveYogaPose = saveYogaPose,
+                globalPaddingValues = globalPaddingValues,
+                isLoading = true,
+                topBarDescription = ""
             )
         }
 
@@ -127,11 +137,13 @@ fun PopulateYogaPoses(
     difficultyLevel: String,
     saveYogaPose: (YogaEntity) -> Unit,
     globalPaddingValues: PaddingValues,
+    isLoading: Boolean = false,
+    topBarDescription: String = "${difficultyLevel.lowercase().capitalize()} Yoga Poses",
 ) {
     Scaffold(
         topBar = {
             ScaffoldTopBar(
-                topBarDescription = "${difficultyLevel.lowercase().capitalize()} Yoga Poses",
+                topBarDescription = topBarDescription,
                 onBackButtonPressed = {
                     navController.popBackStack(
                         route = BottomBarScreen.WorkoutScreen.route,
@@ -141,29 +153,42 @@ fun PopulateYogaPoses(
             )
         }
     ) { localPaddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .background(Color.White)
-                .padding(top = localPaddingValues.calculateTopPadding(), bottom = globalPaddingValues.calculateBottomPadding()),
-            horizontalAlignment = CenterHorizontally
-        ) {
+        if (isLoading) {
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation))
+            val progress by animateLottieCompositionAsState(composition)
 
-            items(yogaPoses.poses) { pose ->
-                var showBottomSheetWithAllDetails by remember {
-                    mutableStateOf(false)
+            ShowLoadingScreen(
+                composition = composition, progress = progress
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .background(Color.White)
+                    .padding(
+                        top = localPaddingValues.calculateTopPadding(),
+                        bottom = globalPaddingValues.calculateBottomPadding()
+                    ),
+                horizontalAlignment = CenterHorizontally
+            ) {
+
+                items(yogaPoses.poses.size) { index ->
+                    var showBottomSheetWithAllDetails by remember {
+                        mutableStateOf(false)
+                    }
+
+                    val sheetState = rememberModalBottomSheetState()
+
+                    YogaPose(
+                        pose = yogaPoses.poses[index],
+                        shouldShowBottomSheetWithDetails = showBottomSheetWithAllDetails,
+                        toggleBottomSheetWithDetails = { toggle ->
+                            showBottomSheetWithAllDetails = toggle
+                        },
+                        sheetState = sheetState,
+                        saveYogaPose = saveYogaPose,
+                        showDivider = index != yogaPoses.poses.size - 1
+                    )
                 }
-
-                val sheetState = rememberModalBottomSheetState()
-
-                YogaPose(
-                    pose = pose,
-                    shouldShowBottomSheetWithDetails = showBottomSheetWithAllDetails,
-                    toggleBottomSheetWithDetails = { toggle ->
-                        showBottomSheetWithAllDetails = toggle
-                    },
-                    sheetState = sheetState,
-                    saveYogaPose = saveYogaPose
-                )
             }
         }
     }
@@ -177,18 +202,29 @@ fun YogaPose(
     toggleBottomSheetWithDetails: (Boolean) -> Unit,
     sheetState: SheetState,
     saveYogaPose: (YogaEntity) -> Unit,
+    showDivider: Boolean,
 ) {
+
+    var showPickSetsBottomSheet by remember {
+        mutableStateOf(false)
+    }
 
     if (shouldShowBottomSheetWithDetails) {
         ShowYogaPoseDetailsInModalBottomSheet(
-            sheetState = sheetState, toggleBottomSheetWithDetails = toggleBottomSheetWithDetails, pose = pose
+            sheetState = sheetState,
+            toggleBottomSheetWithDetails = toggleBottomSheetWithDetails,
+            pose = pose,
+            showPickSetBottomSheet = {
+                toggleBottomSheetWithDetails(false)
+                showPickSetsBottomSheet = true
+            }
         )
     }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimensions.LARGE_PADDING)
+            .padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING)
             .clickable {
                 toggleBottomSheetWithDetails(true)
             }
@@ -197,41 +233,39 @@ fun YogaPose(
             model = pose.url_png,
             contentDescription = null,
             modifier = Modifier
-                .padding(horizontal = Dimensions.MEDIUM_PADDING)
+                .padding(horizontal = MEDIUM_PADDING)
         )
 
         Column {
             Text(
-                text = "${pose.english_name} (${pose.sanskrit_name})",
-                fontWeight = FontWeight.Bold,
-                fontSize = Dimensions.TITLE_SIZE,
-                color = ColorsUtil.primaryDarkTextColor
+                text = pose.english_name,
+                fontWeight = Bold,
+                fontSize = TITLE_SIZE,
+                color = primaryDarkTextColor
             )
 
             Text(
                 text = pose.pose_benefits,
-                color = ColorsUtil.primaryDarkTextColor,
+                color = primaryDarkTextColor,
                 maxLines = 3,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontSize = DESCRIPTION_SIZE
             )
 
-            Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
+            Spacer(modifier = Modifier.height(LARGE_PADDING))
 
-            var showPickSetsBottomSheet by remember {
-                mutableStateOf(false)
-            }
-
-            Button(
-                onClick = {
-                    showPickSetsBottomSheet = true
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = ColorsUtil.primaryDarkTextColor
-                ),
-                modifier = Modifier.align(CenterHorizontally)
-            ) {
-                Text(text = "Add", color = Color.White)
-            }
+            Text(
+                text = "Add",
+                color = primaryBlue,
+                modifier = Modifier
+                    .align(CenterHorizontally)
+                    .noRippleClickable {
+                        showPickSetsBottomSheet = true
+                    },
+                fontSize = 15.nonScaledSp,
+                fontWeight = Bold
+            )
+//            }
 
             if (showPickSetsBottomSheet) {
                 ShowPickSetsBottomSheet(
@@ -243,6 +277,11 @@ fun YogaPose(
                 )
             }
         }
+    }
+
+
+    if (showDivider) {
+        CustomDivider(dividerColor = primaryLightGray)
     }
 }
 
@@ -266,29 +305,29 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
                 append("Select ")
                 withStyle(
                     style = SpanStyle(
-                        color = ColorsUtil.primaryDarkTextColor,
-                        fontWeight = FontWeight.Bold
+                        color = primaryDarkTextColor,
+                        fontWeight = Bold
                     )
                 ) {
-                    append("Sets Performed!")
+                    append("Sets")
                 }
             },
             modifier = Modifier
                 .align(CenterHorizontally)
                 .fillMaxWidth()
-                .padding(horizontal = Dimensions.LARGE_PADDING),
+                .padding(horizontal = LARGE_PADDING),
             textAlign = TextAlign.Start,
-            color = ColorsUtil.primaryDarkTextColor,
+            color = primaryDarkTextColor,
         )
 
         PickNumberOfSetsOrQuantity(
             items = HelperFunctions.getNumberOfSetsOrQuantity(),
             state = valuesPickerState,
             modifier = Modifier.align(CenterHorizontally),
-            textModifier = Modifier.padding(Dimensions.LARGE_PADDING)
+            textModifier = Modifier.padding(LARGE_PADDING)
         )
 
-        Spacer(modifier = Modifier.height(Dimensions.LARGE_PADDING))
+        Spacer(modifier = Modifier.height(LARGE_PADDING))
 
         Button(
             onClick = {
@@ -304,11 +343,11 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
                 hidePickSetsBottomSheet()
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = ColorsUtil.primaryDarkTextColor
+                containerColor = primaryDarkTextColor
             ),
             modifier = Modifier
                 .align(CenterHorizontally)
-                .padding(horizontal = Dimensions.LARGE_PADDING)
+                .padding(horizontal = LARGE_PADDING)
                 .fillMaxWidth()
         ) {
             if (valuesPickerState.selectedItem == "1") {
@@ -318,7 +357,7 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
             }
         }
 
-        Spacer(modifier = Modifier.height(Dimensions.LARGE_PADDING))
+        Spacer(modifier = Modifier.height(LARGE_PADDING))
     }
 }
 
@@ -328,6 +367,7 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
     sheetState: SheetState,
     toggleBottomSheetWithDetails: (Boolean) -> Unit,
     pose: Pose,
+    showPickSetBottomSheet: () -> Unit = {},
 ) {
     ModalBottomSheet(
         sheetState = sheetState, onDismissRequest = {
@@ -340,49 +380,75 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
         ) {
             AsyncImage(
                 model = pose.url_png, contentDescription = null, modifier = Modifier
-                    .padding(Dimensions.MEDIUM_PADDING)
+                    .padding(MEDIUM_PADDING)
                     .align(CenterHorizontally)
             )
 
             Text(
                 text = "${pose.english_name} (${pose.sanskrit_name})",
-                fontWeight = FontWeight.Bold,
-                fontSize = Dimensions.TITLE_SIZE,
-                color = ColorsUtil.primaryDarkTextColor,
+                fontWeight = Bold,
+                fontSize = TITLE_SIZE,
+                color = primaryDarkTextColor,
                 modifier = Modifier
                     .align(CenterHorizontally)
-                    .padding(Dimensions.LARGE_PADDING)
+                    .padding(LARGE_PADDING)
             )
 
             Text(
                 text = "Benefits ",
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = Dimensions.LARGE_PADDING, vertical = Dimensions.MEDIUM_PADDING),
+                fontWeight = Bold,
+                modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
                 color = Color.Black,
-                fontSize = Dimensions.TITLE_SIZE
+                fontSize = TITLE_SIZE
             )
 
             Text(
                 text = pose.pose_benefits,
-                color = ColorsUtil.primaryDarkTextColor,
+                color = primaryDarkTextColor,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = Dimensions.LARGE_PADDING, vertical = Dimensions.MEDIUM_PADDING),
+                modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
             )
 
             Text(
                 text = "Description ",
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = Dimensions.LARGE_PADDING, vertical = Dimensions.MEDIUM_PADDING),
-                fontSize = Dimensions.TITLE_SIZE,
+                fontWeight = Bold,
+                modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
+                fontSize = TITLE_SIZE,
                 color = Color.Black
             )
 
             Text(
                 text = pose.pose_description,
-                color = ColorsUtil.primaryDarkTextColor,
+                color = primaryDarkTextColor,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = Dimensions.LARGE_PADDING, vertical = Dimensions.MEDIUM_PADDING),
+                modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
             )
+
+            Button(
+                onClick = {
+                    showPickSetBottomSheet()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = primaryDarkTextColor
+                ),
+                modifier = Modifier
+                    .align(CenterHorizontally)
+                    .padding(horizontal = LARGE_PADDING)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = "Add",
+                    color = Color.White,
+                    modifier = Modifier
+                        .noRippleClickable {
+                            showPickSetBottomSheet()
+                        },
+                    fontSize = 15.nonScaledSp,
+                    fontWeight = Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(LARGE_PADDING))
         }
     }
 }

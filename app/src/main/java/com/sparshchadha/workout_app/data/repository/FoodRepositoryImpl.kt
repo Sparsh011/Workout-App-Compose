@@ -53,7 +53,7 @@ class FoodRepositoryImpl(
         foodItemsDao.removeFoodItem(foodItem = foodItem)
     }
 
-    override suspend fun getFoodItemById(id: Int) : Flow<FoodItemEntity?> {
+    override suspend fun getFoodItemById(id: Int): Flow<FoodItemEntity?> {
         return foodItemsDao.getFoodItemById(id)
     }
 }

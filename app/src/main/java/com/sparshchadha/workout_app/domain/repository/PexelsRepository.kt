@@ -5,5 +5,5 @@ import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface PexelsRepository {
-    fun searchImageOnPexel(searchQuery: String) : Flow<Resource<PexelResponseDto>>
+    fun searchImageOnPexel(searchQuery: String): Flow<Resource<PexelResponseDto>>
 }

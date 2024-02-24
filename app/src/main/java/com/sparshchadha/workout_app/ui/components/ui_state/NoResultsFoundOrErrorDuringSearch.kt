@@ -21,7 +21,11 @@ import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 @Composable
-fun NoResultsFoundOrErrorDuringSearch(globalPaddingValues: PaddingValues, localPaddingValues: PaddingValues, message: String = "") {
+fun NoResultsFoundOrErrorDuringSearch(
+    globalPaddingValues: PaddingValues,
+    localPaddingValues: PaddingValues,
+    message: String = "",
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()

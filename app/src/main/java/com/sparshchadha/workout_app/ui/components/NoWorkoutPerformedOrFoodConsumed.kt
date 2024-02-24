@@ -29,7 +29,7 @@ fun NoWorkoutPerformedOrFoodConsumed(
     localPaddingValues: PaddingValues = PaddingValues(),
     globalPaddingValues: PaddingValues = PaddingValues(),
     animationModifier: Modifier = Modifier,
-    textSize: TextUnit = 24.nonScaledSp
+    textSize: TextUnit = 24.nonScaledSp,
 ) {
     Column(
         modifier = Modifier

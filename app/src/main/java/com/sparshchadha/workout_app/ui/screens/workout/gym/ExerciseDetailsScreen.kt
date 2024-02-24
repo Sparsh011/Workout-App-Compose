@@ -20,10 +20,10 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 fun ExerciseDetailsScreen(
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
 ) {
     val exercise = workoutViewModel.exerciseDetails.value
-    Scaffold (
+    Scaffold(
         topBar = {
             ScaffoldTopBar(
                 topBarDescription = exercise?.name ?: "Unable To Get Exercise Name",
@@ -34,10 +34,11 @@ fun ExerciseDetailsScreen(
             )
         },
         containerColor = Color.White
-    ){ localPaddingValues ->
+    ) { localPaddingValues ->
         exercise?.let {
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
                     .padding(
                         top = localPaddingValues.calculateTopPadding(),
                         bottom = globalPaddingValues.calculateBottomPadding(),

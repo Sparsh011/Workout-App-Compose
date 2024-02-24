@@ -9,26 +9,26 @@ interface GymExercisesApi {
     @GET("v1/exercises")
     suspend fun getExercisesByDifficultyLevel(
         @Query("difficulty") difficulty: String,
-        @Header("X-Api-Key") apiKey: String
-    ) : GymExercisesDto
+        @Header("X-Api-Key") apiKey: String,
+    ): GymExercisesDto
 
     @GET("v1/exercises")
     suspend fun getExercisesByMuscle(
         @Query("muscle") muscle: String,
-        @Header("X-Api-Key") apiKey: String
-    ) : GymExercisesDto
+        @Header("X-Api-Key") apiKey: String,
+    ): GymExercisesDto
 
     @GET("v1/exercises")
     suspend fun getExercisesByWorkoutType(
         @Query("type") workoutType: String,
-        @Header("X-Api-Key") apiKey: String
-    ) : GymExercisesDto
+        @Header("X-Api-Key") apiKey: String,
+    ): GymExercisesDto
 
     @GET("v1/exercises")
     suspend fun getExerciseByName(
         @Query("name") name: String,
-        @Header("X-Api-Key") apiKey: String
-    ) : GymExercisesDto
+        @Header("X-Api-Key") apiKey: String,
+    ): GymExercisesDto
 
     companion object {
         val BASE_URL = "https://api.api-ninjas.com/"

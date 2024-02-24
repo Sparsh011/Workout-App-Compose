@@ -10,32 +10,32 @@ import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface WorkoutRepository {
-    fun getYogaPosesByDifficultyFromApi(difficulty: DifficultyLevel) : Flow<Resource<YogaPosesDto>>
+    fun getYogaPosesByDifficultyFromApi(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>>
 
-    fun getExercisesByDifficultyLevelFromApi(difficulty: String) : Flow<Resource<GymExercisesDto>>
+    fun getExercisesByDifficultyLevelFromApi(difficulty: String): Flow<Resource<GymExercisesDto>>
 
-    fun getExercisesByMuscleFromApi(muscleType: String) : Flow<Resource<GymExercisesDto>>
+    fun getExercisesByMuscleFromApi(muscleType: String): Flow<Resource<GymExercisesDto>>
 
-    fun getExercisesByWorkoutTypeFromApi(workoutType: String) : Flow<Resource<GymExercisesDto>>
+    fun getExercisesByWorkoutTypeFromApi(workoutType: String): Flow<Resource<GymExercisesDto>>
 
-    fun getExerciseByNameFromApi(name: String) : Flow<Resource<GymExercisesDto>>
+    fun getExerciseByNameFromApi(name: String): Flow<Resource<GymExercisesDto>>
 
-    suspend fun getAllYogaPosesPerformed() : Flow<List<YogaEntity>>
+    suspend fun getAllYogaPosesPerformed(): Flow<List<YogaEntity>>
 
     suspend fun saveYogaPose(yogaPose: YogaEntity)
 
     suspend fun getYogaPosesPerformedOn(
         date: String = HelperFunctions.getCurrentDateAndMonth().first.toString(),
-        month: String = HelperFunctions.getCurrentDateAndMonth().second
+        month: String = HelperFunctions.getCurrentDateAndMonth().second,
     ): Flow<List<YogaEntity>>
 
     suspend fun saveGymExercise(gymExercisesEntity: GymExercisesEntity)
 
     suspend fun getGymExercisesPerformedOn(
         date: String = HelperFunctions.getCurrentDateAndMonth().first.toString(),
-        month: String = HelperFunctions.getCurrentDateAndMonth().second
+        month: String = HelperFunctions.getCurrentDateAndMonth().second,
     ): Flow<List<GymExercisesEntity>>
 
-    suspend fun getAllGymExercisesPerformed() : Flow<List<GymExercisesEntity>>
+    suspend fun getAllGymExercisesPerformed(): Flow<List<GymExercisesEntity>>
 
 }

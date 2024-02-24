@@ -7,8 +7,8 @@ import retrofit2.http.Query
 interface YogaApi {
     @GET("v1/poses")
     suspend fun getYogaPosesByDifficulty(
-        @Query("level") difficulty: String
-    ) : YogaPosesDto
+        @Query("level") difficulty: String,
+    ): YogaPosesDto
 
     companion object {
         val BASE_URL = "https://yoga-api-nzy4.onrender.com/"

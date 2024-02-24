@@ -16,6 +16,6 @@ data class FoodItem(
     val protein_g: Double,
     val serving_size_g: Double,
     val sodium_mg: Int,
-    val sugar_g: Double
-)  : Parcelable
+    val sugar_g: Double,
+) : Parcelable
 

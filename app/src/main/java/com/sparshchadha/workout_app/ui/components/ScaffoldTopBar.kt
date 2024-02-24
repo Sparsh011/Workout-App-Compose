@@ -27,7 +27,7 @@ fun ScaffoldTopBar(
     onBackButtonPressed: () -> Unit = {},
     showBackIcon: Boolean = true,
     topBarHorizontalPadding: Dp = MEDIUM_PADDING,
-    topBarVerticalPadding: Dp = MEDIUM_PADDING
+    topBarVerticalPadding: Dp = MEDIUM_PADDING,
 ) {
     Row(
         modifier = Modifier

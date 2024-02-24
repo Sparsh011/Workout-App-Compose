@@ -9,8 +9,8 @@ interface PexelsApi {
     @GET("v1/search")
     suspend fun searchImageOnPexel(
         @Query("query") searchQuery: String,
-        @Header("Authorization") apiKey: String
-    ) : PexelResponseDto
+        @Header("Authorization") apiKey: String,
+    ): PexelResponseDto
 
     companion object {
         val BASE_URL = "https://api.pexels.com/"
