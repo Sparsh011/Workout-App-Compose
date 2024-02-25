@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -54,12 +55,13 @@ fun WorkoutAppTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
+    val statusBarColor = statusBarColor
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = Color.White.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = statusBarColor.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
         }
     }
 

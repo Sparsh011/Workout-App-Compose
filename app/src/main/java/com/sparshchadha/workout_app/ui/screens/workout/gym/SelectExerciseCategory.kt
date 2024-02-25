@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
@@ -27,7 +26,10 @@ import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.dividerColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
@@ -109,13 +111,12 @@ fun ExerciseCategoryItems(
                 topBarDescription = topBarDescription,
                 onBackButtonPressed = onBackButtonPressed
             )
-        },
-        containerColor = Color.White
+        }
     ) { localPaddingValues ->
         if (topBarDescription == stringResource(id = R.string.select_body_part_heading)) {
             LazyColumn(
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(scaffoldBackgroundColor)
                     .padding(
                         top = localPaddingValues.calculateTopPadding(),
                         bottom = globalPaddingValues.calculateBottomPadding()
@@ -189,7 +190,7 @@ fun ExerciseCategoryItems(
         } else {
             LazyColumn(
                 modifier = Modifier
-                    .background(Color.White)
+                    .background(scaffoldBackgroundColor)
                     .padding(
                         top = localPaddingValues.calculateTopPadding(),
                         bottom = globalPaddingValues.calculateBottomPadding()
@@ -214,13 +215,12 @@ fun BodyPartStickyHeader(
     bodyPart: String,
 ) {
     Surface(
-        modifier = modifier,
-        color = Color.White
+        modifier = modifier
     ) {
         Text(
             text = bodyPart,
             fontSize = 20.nonScaledSp,
-            color = ColorsUtil.primaryDarkTextColor,
+            color = primaryTextColor,
             modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
             fontWeight = FontWeight.Bold
         )
@@ -243,7 +243,7 @@ fun CategoryItem(
         Text(
             text = categoryItem,
             fontSize = categoryItemFontSize.nonScaledSp,
-            color = ColorsUtil.primaryDarkTextColor,
+            color = primaryTextColor,
             modifier = Modifier
                 .padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING)
                 .weight(0.8f)
@@ -253,14 +253,14 @@ fun CategoryItem(
         Icon(
             imageVector = Icons.Default.KeyboardArrowRight,
             contentDescription = null,
-            tint = ColorsUtil.primaryDarkTextColor,
+            tint = primaryTextColor,
             modifier = Modifier.padding(LARGE_PADDING)
         )
     }
 
     if (showDivider) {
         CustomDivider(
-            dividerColor = primaryLightGray
+            dividerColor = dividerColor
         )
     }
 }

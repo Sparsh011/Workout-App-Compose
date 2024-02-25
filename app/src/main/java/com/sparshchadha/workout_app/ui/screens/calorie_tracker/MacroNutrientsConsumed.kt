@@ -34,9 +34,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.unselectedBottomBarIconColor
 import com.sparshchadha.workout_app.util.Constants.CARBOHYDRATES_TOTAL_G
 import com.sparshchadha.workout_app.util.Constants.COLOR_TO_NUTRIENT_MAP
@@ -73,7 +73,7 @@ fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>, caloriesGoal:
                 bottom = dimensionResource(id = R.dimen.medium_padding)
             )
             .clip(RoundedCornerShape(10.dp))
-            .background(primaryLightGray)
+            .background(cardBackgroundColor)
     ) {
 
         CardHeading("Daily Nutrients", headingSize = HEADING_SIZE)
@@ -149,7 +149,7 @@ fun MacroNutrientProgress(
         Text(
             text = String.format("%.1f", (goal)) + "g",
             fontSize = 10.nonScaledSp,
-            color = primaryDarkTextColor,
+            color = primaryTextColor,
             textAlign = TextAlign.End,
             modifier = Modifier
                 .fillMaxWidth()
@@ -161,8 +161,7 @@ fun MacroNutrientProgress(
             color = color,
             strokeCap = StrokeCap.Round,
             trackColor = customDividerColor,
-
-            )
+        )
     }
 }
 
@@ -355,7 +354,7 @@ fun MacroNutrientAnnotatedString(
         buildAnnotatedString {
             withStyle(
                 style = SpanStyle(
-                    color = primaryDarkTextColor,
+                    color = primaryTextColor,
                     fontWeight = FontWeight.Bold
                 )
             ) {
@@ -363,7 +362,7 @@ fun MacroNutrientAnnotatedString(
             }
             append("$macroNutrientQuantity g")
         },
-        color = primaryDarkTextColor,
+        color = primaryTextColor,
         modifier = modifier
             .wrapContentSize(Center),
         fontSize = 14.nonScaledSp,

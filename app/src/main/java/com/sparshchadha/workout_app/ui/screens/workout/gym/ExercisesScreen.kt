@@ -48,6 +48,7 @@ import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.ShowQuantityOrSetsPicker
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -147,7 +148,7 @@ fun ShowExercises(
 
     LazyColumn(
         modifier = Modifier
-            .background(Color.White)
+            .background(scaffoldBackgroundColor)
             .padding(top = localPaddingValues.calculateTopPadding(), bottom = globalPaddingValues.calculateBottomPadding())
             .fillMaxSize()
     ) {
@@ -220,7 +221,7 @@ fun Exercise(
                 .fillMaxWidth()
                 .padding(20.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ColorsUtil.primaryDarkTextColor
+                containerColor = ColorsUtil.primaryTextColor
             )
         ) {
             Text(
@@ -292,6 +293,6 @@ fun ExerciseSubTitlesAndDescription(subTitle: String, description: String) {
     Text(
         text = description.capitalize(),
         modifier = Modifier.padding(10.dp),
-        color = ColorsUtil.primaryDarkTextColor
+        color = ColorsUtil.primaryTextColor
     )
 }

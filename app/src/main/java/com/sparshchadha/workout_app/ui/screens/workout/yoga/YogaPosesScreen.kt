@@ -52,7 +52,7 @@ import com.sparshchadha.workout_app.ui.components.rememberPickerState
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.Dimensions.DESCRIPTION_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
@@ -241,12 +241,12 @@ fun YogaPose(
                 text = pose.english_name,
                 fontWeight = Bold,
                 fontSize = TITLE_SIZE,
-                color = primaryDarkTextColor
+                color = primaryTextColor
             )
 
             Text(
                 text = pose.pose_benefits,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = DESCRIPTION_SIZE
@@ -305,7 +305,7 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
                 append("Select ")
                 withStyle(
                     style = SpanStyle(
-                        color = primaryDarkTextColor,
+                        color = primaryTextColor,
                         fontWeight = Bold
                     )
                 ) {
@@ -317,7 +317,7 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
                 .fillMaxWidth()
                 .padding(horizontal = LARGE_PADDING),
             textAlign = TextAlign.Start,
-            color = primaryDarkTextColor,
+            color = primaryTextColor,
         )
 
         PickNumberOfSetsOrQuantity(
@@ -343,7 +343,7 @@ fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hide
                 hidePickSetsBottomSheet()
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = primaryDarkTextColor
+                containerColor = primaryTextColor
             ),
             modifier = Modifier
                 .align(CenterHorizontally)
@@ -388,7 +388,7 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
                 text = "${pose.english_name} (${pose.sanskrit_name})",
                 fontWeight = Bold,
                 fontSize = TITLE_SIZE,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 modifier = Modifier
                     .align(CenterHorizontally)
                     .padding(LARGE_PADDING)
@@ -404,7 +404,7 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
 
             Text(
                 text = pose.pose_benefits,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
             )
@@ -419,7 +419,7 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
 
             Text(
                 text = pose.pose_description,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
             )
@@ -429,7 +429,7 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
                     showPickSetBottomSheet()
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = primaryDarkTextColor
+                    containerColor = primaryTextColor
                 ),
                 modifier = Modifier
                     .align(CenterHorizontally)

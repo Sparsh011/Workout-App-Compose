@@ -18,6 +18,8 @@ import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
@@ -42,13 +44,13 @@ fun SearchBarToLaunchSearchScreen(
             navController.navigate("SearchScreen/food")
         },
         placeholder = {
-            Text(text = "Search Dishes...", color = primaryDarkGray, fontSize = 18.nonScaledSp)
+            Text(text = "Search Dishes...", color = primaryTextColor, fontSize = 18.nonScaledSp)
         },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = null,
-                tint = primaryDarkGray
+                tint = primaryTextColor
             )
         },
         trailingIcon = { },
@@ -56,7 +58,7 @@ fun SearchBarToLaunchSearchScreen(
             .fillMaxWidth()
             .padding(horizontal = Dimensions.LARGE_PADDING),
         colors = SearchBarDefaults.colors(
-            containerColor = primaryLightGray,
+            containerColor = scaffoldBackgroundColor,
             inputFieldColors = TextFieldDefaults.textFieldColors(
                 focusedTextColor = primaryGreenCardBackground
             )

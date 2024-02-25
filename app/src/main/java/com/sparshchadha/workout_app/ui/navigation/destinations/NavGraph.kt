@@ -60,7 +60,9 @@ fun NavGraph(
         )
 
         // Profile Screen
-        profileComposable()
+        profileComposable(
+            globalPaddingValues = globalPaddingValues
+        )
 
         // Yoga Screen
         yogaComposable(

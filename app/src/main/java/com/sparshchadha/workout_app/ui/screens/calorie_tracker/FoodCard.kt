@@ -37,7 +37,7 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.rememberPickerState
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -131,12 +131,12 @@ private fun FoodItemDetailsCard(
                 modifier = Modifier.weight(0.7f),
                 fontWeight = FontWeight.Bold,
                 fontSize = TITLE_SIZE,
-                color = primaryDarkTextColor
+                color = primaryTextColor
             )
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
-                tint = primaryDarkTextColor,
+                tint = primaryTextColor,
                 modifier = Modifier.clickable {
                     showBottomSheetToSelectFoodItemQuantity = true
                 }
@@ -201,7 +201,7 @@ fun ShowQuantityOrSetsPicker(
                 append("Select ")
                 withStyle(
                     style = SpanStyle(
-                        color = primaryDarkTextColor,
+                        color = primaryTextColor,
                         fontWeight = FontWeight.Bold
                     )
                 ) {
@@ -213,7 +213,7 @@ fun ShowQuantityOrSetsPicker(
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
             textAlign = TextAlign.Start,
-            color = primaryDarkTextColor,
+            color = primaryTextColor,
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -233,7 +233,7 @@ fun ShowQuantityOrSetsPicker(
                 hideQuantityOrSetsPickerBottomSheet()
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = primaryDarkTextColor
+                containerColor = primaryTextColor
             ),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -259,13 +259,13 @@ private fun toggleCardExpansion(isExpanded: Boolean, collapseCard: () -> Unit, e
 fun NutritionalValueText(nutrient: String, quantityOfNutrient: String, unit: String = "grams") {
     Text(
         buildAnnotatedString {
-            withStyle(style = SpanStyle(color = primaryDarkTextColor, fontWeight = FontWeight.Bold)) {
+            withStyle(style = SpanStyle(color = primaryTextColor, fontWeight = FontWeight.Bold)) {
                 append("$nutrient : ")
             }
             append("$quantityOfNutrient $unit")
         },
         modifier = Modifier
             .padding(horizontal = LARGE_PADDING, vertical = SMALL_PADDING),
-        color = primaryDarkTextColor
+        color = primaryTextColor
     )
 }

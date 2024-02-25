@@ -97,7 +97,7 @@ fun PickNumberOfSetsOrQuantity(
                     modifier = Modifier
                         .onSizeChanged { size -> itemHeightPixels.intValue = size.height }
                         .then(textModifier),
-                    color = ColorsUtil.primaryDarkTextColor
+                    color = ColorsUtil.primaryTextColor
                 )
             }
         }

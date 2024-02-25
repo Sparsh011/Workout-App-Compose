@@ -20,6 +20,7 @@ class AndroidAlarmScheduler(
     @SuppressLint("ScheduleExactAlarm")
     override fun schedule(item: AlarmItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
+            addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
             putExtra(REMINDER_DESCRIPTION_KEY, item.description)
         }
 

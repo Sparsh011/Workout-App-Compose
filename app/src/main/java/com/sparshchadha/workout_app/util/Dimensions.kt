@@ -54,4 +54,8 @@ object Dimensions {
     val YOGA_AND_DUMBBELL_SVG_SIZE: Dp
         @Composable
         get() = dimensionResource(id = R.dimen.yoga_and_dumbbell_svg_size)
+
+    val PROFILE_PICTURE_SIZE: Dp
+        @Composable
+        get() = dimensionResource(id = R.dimen.profile_picture_size)
 }
