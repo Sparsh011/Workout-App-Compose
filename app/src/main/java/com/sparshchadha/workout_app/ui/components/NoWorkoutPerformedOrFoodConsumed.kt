@@ -35,7 +35,7 @@ fun NoWorkoutPerformedOrFoodConsumed(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = localPaddingValues.calculateTopPadding())
-            .background(Color.White),
+            .background(ColorsUtil.scaffoldBackgroundColor),
         horizontalAlignment = CenterHorizontally
     ) {
         LottieAnimation(
@@ -48,7 +48,7 @@ fun NoWorkoutPerformedOrFoodConsumed(
         Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
         Text(
             text = text,
-            color = ColorsUtil.primaryDarkTextColor,
+            color = ColorsUtil.primaryTextColor,
             modifier = Modifier
                 .align(CenterHorizontally)
                 .padding(Dimensions.LARGE_PADDING),

@@ -200,7 +200,7 @@ fun ExerciseEntity(
             exerciseEntity.exerciseDetails?.let { exercise ->
                 Text(
                     text = exercise.name,
-                    color = ColorsUtil.primaryDarkTextColor,
+                    color = ColorsUtil.primaryTextColor,
                     fontSize = 26.nonScaledSp,
                     fontWeight = FontWeight.Bold
                 )
@@ -212,14 +212,14 @@ fun ExerciseEntity(
                         append("Difficulty Level : ")
                         withStyle(
                             style = SpanStyle(
-                                color = ColorsUtil.primaryDarkTextColor,
+                                color = ColorsUtil.primaryTextColor,
                                 fontWeight = FontWeight.Bold,
                             )
                         ) {
                             append(exercise.difficulty)
                         }
                     },
-                    color = ColorsUtil.primaryDarkTextColor,
+                    color = ColorsUtil.primaryTextColor,
                     fontSize = 16.nonScaledSp
                 )
 
@@ -230,14 +230,14 @@ fun ExerciseEntity(
                         append("Sets Performed : ")
                         withStyle(
                             style = SpanStyle(
-                                color = ColorsUtil.primaryDarkTextColor,
+                                color = ColorsUtil.primaryTextColor,
                                 fontWeight = FontWeight.Bold,
                             )
                         ) {
                             append(exerciseEntity.setsPerformed.toString())
                         }
                     },
-                    color = ColorsUtil.primaryDarkTextColor,
+                    color = ColorsUtil.primaryTextColor,
                     fontSize = 16.nonScaledSp
                 )
 

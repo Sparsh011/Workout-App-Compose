@@ -204,7 +204,7 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
                         append("${pose.english_name} ")
                         withStyle(
                             style = SpanStyle(
-                                color = ColorsUtil.primaryDarkTextColor,
+                                color = ColorsUtil.primaryTextColor,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 26.sp
                             )
@@ -212,7 +212,7 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
                             append("(${pose.sanskrit_name})")
                         }
                     },
-                    color = ColorsUtil.primaryDarkTextColor,
+                    color = ColorsUtil.primaryTextColor,
                     fontSize = 26.sp
                 )
 
@@ -222,7 +222,7 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
                         append("Difficulty Level : ")
                         withStyle(
                             style = SpanStyle(
-                                color = ColorsUtil.primaryDarkTextColor,
+                                color = ColorsUtil.primaryTextColor,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             )
@@ -230,7 +230,7 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
                             append(pose.difficulty_level)
                         }
                     },
-                    color = ColorsUtil.primaryDarkTextColor,
+                    color = ColorsUtil.primaryTextColor,
                     fontSize = 16.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -240,7 +240,7 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
                         append("Sets Performed : ")
                         withStyle(
                             style = SpanStyle(
-                                color = ColorsUtil.primaryDarkTextColor,
+                                color = ColorsUtil.primaryTextColor,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             )
@@ -248,7 +248,7 @@ fun YogaEntityItem(yogaEntity: YogaEntity) {
                             append("${yogaEntity.setsPerformed}")
                         }
                     },
-                    color = ColorsUtil.primaryDarkTextColor,
+                    color = ColorsUtil.primaryTextColor,
                     fontSize = 16.sp
                 )
                 Spacer(modifier = Modifier.height(8.dp))

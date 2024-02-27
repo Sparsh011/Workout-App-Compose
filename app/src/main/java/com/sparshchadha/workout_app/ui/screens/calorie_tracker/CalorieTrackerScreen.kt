@@ -19,13 +19,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -39,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -59,8 +55,9 @@ import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsum
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -113,7 +110,7 @@ fun CalorieTrackerScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.White)
+                .background(scaffoldBackgroundColor)
                 .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
         ) {
 
@@ -201,7 +198,7 @@ fun CalorieTrackerScreen(
                             .clickable {
                                 navController.navigate(UtilityScreen.RemindersScreen.route)
                             },
-                        tint = Black
+                        tint = primaryTextColor
                     )
                 }
             }
@@ -228,7 +225,7 @@ fun CalorieTrackerScreen(
                         foodItemsConsumed[index].id.toString()
                     }
                 ) { index ->
-                    PopulateConsumedFoodItem(
+                    ConsumedFoodItem(
                         consumedFoodItem = foodItemsConsumed[index],
                         showFoodItemDetails = {
                             navController.navigate(route = "FoodItemDetails/${foodItemsConsumed[index].id}")
@@ -299,134 +296,6 @@ fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FoodItemDialogBox(
-    foodItem: FoodItemEntity,
-    hideFoodItemDialogBox: () -> Unit,
-) {
-    val sheetState = rememberModalBottomSheetState()
-    ModalBottomSheet(
-        sheetState = sheetState,
-        containerColor = Color.White,
-        onDismissRequest = {
-            hideFoodItemDialogBox()
-        },
-        content = {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(MEDIUM_PADDING)
-                    .fillMaxWidth()
-            ) {
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    title = foodItem.foodItemDetails?.name?.capitalize() ?: "Sorry, Unable To Get Name!"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Servings:",
-                    quantityOfMacroNutrient = foodItem.servings.toString()
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Calories Per Serving: ",
-                    quantityOfMacroNutrient = foodItem.foodItemDetails?.calories.toString() + " KCAL"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Total Calories: ",
-                    quantityOfMacroNutrient = (foodItem.servings * (foodItem.foodItemDetails?.calories?.toInt()
-                        ?: 0)).toString() + " KCAL"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Carbohydrates:",
-                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.carbohydrates_total_g} g"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Protein:",
-                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.protein_g} g"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Total Fat:",
-                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.fat_total_g} g"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Saturated Fat:",
-                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.fat_saturated_g} g"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Sugar:",
-                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.sugar_g} g"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Cholesterol:",
-                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.cholesterol_mg} mg"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Sodium:",
-                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.sodium_mg} mg"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Fiber:",
-                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.fiber_g} g"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Potassium:",
-                    quantityOfMacroNutrient = "${foodItem.foodItemDetails?.potassium_mg} mg"
-                )
-            }
-        }
-    )
-}
-
 @Composable
 fun FoodItemText(
     modifier: Modifier = Modifier,
@@ -441,7 +310,7 @@ fun FoodItemText(
             textAlign = TextAlign.Center,
             fontSize = 24.nonScaledSp,
             fontWeight = FontWeight.Bold,
-            color = primaryDarkTextColor,
+            color = primaryTextColor,
             overflow = TextOverflow.Ellipsis
         )
     } else {
@@ -456,7 +325,7 @@ fun FoodItemText(
                     .weight(2f)
                     .padding(MEDIUM_PADDING),
                 fontWeight = FontWeight.Bold,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 overflow = TextOverflow.Ellipsis
             )
 
@@ -468,7 +337,7 @@ fun FoodItemText(
                     .padding(MEDIUM_PADDING),
                 fontSize = 16.nonScaledSp,
                 fontWeight = FontWeight.Normal,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 overflow = TextOverflow.Ellipsis
             )
         }
@@ -478,7 +347,7 @@ fun FoodItemText(
 }
 
 @Composable
-fun PopulateConsumedFoodItem(
+fun ConsumedFoodItem(
     consumedFoodItem: FoodItemEntity,
     showFoodItemDetails: () -> Unit,
     removeFoodItem: (FoodItemEntity) -> Unit,
@@ -491,11 +360,13 @@ fun PopulateConsumedFoodItem(
             .clickable {
                 showFoodItemDetails()
             }
+            .background(scaffoldBackgroundColor)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = SMALL_PADDING)
+                .background(scaffoldBackgroundColor)
         ) {
             Column(
                 modifier = Modifier.weight(4f)
@@ -506,7 +377,7 @@ fun PopulateConsumedFoodItem(
                             append("${consumedFoodItem.servings} x ")
                             withStyle(
                                 style = SpanStyle(
-                                    color = primaryDarkTextColor,
+                                    color = primaryTextColor,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.nonScaledSp,
                                 )
@@ -514,7 +385,7 @@ fun PopulateConsumedFoodItem(
                                 append(itemName.capitalize())
                             }
                         },
-                        color = primaryDarkTextColor,
+                        color = primaryTextColor,
                         modifier = Modifier
                             .padding(SMALL_PADDING),
                         fontSize = 16.nonScaledSp,
@@ -525,7 +396,7 @@ fun PopulateConsumedFoodItem(
 
                 Text(
                     text = "${(consumedFoodItem.servings * (consumedFoodItem.foodItemDetails?.calories ?: 0).toInt())} kcal",
-                    color = primaryDarkTextColor,
+                    color = primaryTextColor,
                     modifier = Modifier
                         .padding(SMALL_PADDING),
                     fontSize = 14.nonScaledSp,
@@ -559,7 +430,7 @@ fun DishesConsumedOnAParticularDayHeader(modifier: Modifier) {
             append("Dishes ")
             withStyle(
                 style = SpanStyle(
-                    color = primaryDarkTextColor,
+                    color = primaryTextColor,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.nonScaledSp,
                 )
@@ -568,7 +439,7 @@ fun DishesConsumedOnAParticularDayHeader(modifier: Modifier) {
             }
         },
         fontSize = 20.nonScaledSp,
-        color = primaryDarkTextColor,
+        color = primaryTextColor,
         textAlign = TextAlign.Start,
         modifier = modifier,
         overflow = TextOverflow.Ellipsis

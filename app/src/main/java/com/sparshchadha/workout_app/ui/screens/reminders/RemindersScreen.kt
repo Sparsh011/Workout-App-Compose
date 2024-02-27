@@ -80,8 +80,11 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreen
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.ColorsUtil.unselectedBottomBarIconColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
@@ -162,7 +165,7 @@ fun RemindersScreen(
                 onClick = {
                     showBottomSheetToAddReminder = true
                 },
-                containerColor = primaryDarkTextColor,
+                containerColor = targetAchievedColor,
                 contentColor = White
             ) {
                 Icon(
@@ -176,7 +179,6 @@ fun RemindersScreen(
 
         Column(
             modifier = Modifier
-                .background(White)
                 .fillMaxSize()
                 .padding(
                     top = localPaddingValues.calculateTopPadding(),
@@ -198,13 +200,11 @@ fun RemindersScreen(
 
             TabRow(
                 selectedTabIndex = selectedTabIndex,
-                containerColor = White,
                 modifier = Modifier
                     .fillMaxWidth(),
                 divider = {
                     Divider(
                         thickness = 1.dp,
-                        color = customDividerColor,
                         modifier = Modifier
                             .padding(horizontal = MEDIUM_PADDING)
                     )
@@ -218,14 +218,14 @@ fun RemindersScreen(
                     )
                 }
             ) {
-                tabBarHeadings.forEachIndexed { index, s ->
+                tabBarHeadings.forEachIndexed { index, heading ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = {
                             selectedTabIndex = index
                         },
                         text = {
-                            Text(text = s, color = primaryDarkTextColor, fontSize = 20.nonScaledSp)
+                            Text(text = heading, color = primaryTextColor, fontSize = 20.nonScaledSp)
                         },
                         modifier = Modifier.fillMaxWidth(1f)
                     )
@@ -408,7 +408,7 @@ fun BottomSheetToAddReminder(
                     )
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = primaryDarkTextColor
+                    containerColor = primaryTextColor
                 ),
                 modifier = Modifier
                     .padding(LARGE_PADDING)
@@ -553,8 +553,8 @@ fun SetDateAndTime(
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
             unfocusedTextColor = primaryDarkGray,
-            disabledTextColor = primaryDarkTextColor,
-            disabledBorderColor = primaryDarkTextColor
+            disabledTextColor = primaryTextColor,
+            disabledBorderColor = primaryTextColor
         ),
         enabled = false
     )
@@ -575,8 +575,8 @@ fun SetDateAndTime(
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
             unfocusedTextColor = primaryDarkGray,
-            disabledTextColor = primaryDarkTextColor,
-            disabledBorderColor = primaryDarkTextColor
+            disabledTextColor = primaryTextColor,
+            disabledBorderColor = primaryTextColor
         ),
         enabled = false
     )
@@ -605,7 +605,7 @@ fun SelectReminderType(
                     }
                     .padding(LARGE_PADDING)
                     .clip(RoundedCornerShape(MEDIUM_PADDING))
-                    .background(primaryDarkTextColor)
+                    .background(primaryTextColor)
                     .padding(MEDIUM_PADDING),
 
                 textAlign = TextAlign.Center
@@ -653,7 +653,7 @@ fun SelectReminderType(
                     }
                     .padding(LARGE_PADDING)
                     .clip(RoundedCornerShape(MEDIUM_PADDING))
-                    .background(primaryDarkTextColor)
+                    .background(primaryTextColor)
                     .padding(MEDIUM_PADDING),
                 textAlign = TextAlign.Center
             )
@@ -751,7 +751,7 @@ fun SelectedPagerHeading(
                 text = text,
                 modifier = modifier,
                 textAlign = TextAlign.Center,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 fontSize = 20.nonScaledSp,
                 fontWeight = FontWeight.Bold
             )
@@ -812,7 +812,7 @@ fun Reminders(
                             append("Past")
                             withStyle(
                                 style = SpanStyle(
-                                    color = primaryDarkTextColor,
+                                    color = primaryTextColor,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.nonScaledSp,
                                 )
@@ -821,7 +821,7 @@ fun Reminders(
                             }
                         },
                         fontSize = 20.nonScaledSp,
-                        color = primaryDarkTextColor,
+                        color = primaryTextColor,
                         modifier = Modifier.padding(MEDIUM_PADDING)
                     )
                 }
@@ -845,7 +845,7 @@ fun Reminders(
                             append("Upcoming")
                             withStyle(
                                 style = SpanStyle(
-                                    color = primaryDarkTextColor,
+                                    color = primaryTextColor,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.nonScaledSp,
                                 )
@@ -854,7 +854,7 @@ fun Reminders(
                             }
                         },
                         fontSize = 20.nonScaledSp,
-                        color = primaryDarkTextColor,
+                        color = primaryTextColor,
                         modifier = Modifier.padding(MEDIUM_PADDING)
                     )
                 }
@@ -875,8 +875,7 @@ fun Reminders(
                 item {
                     Column(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .background(White),
+                            .fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -892,7 +891,7 @@ fun Reminders(
                         Text(
                             text = "No Reminders",
                             fontSize = 18.nonScaledSp,
-                            color = primaryDarkTextColor,
+                            color = primaryTextColor,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -914,7 +913,7 @@ fun Reminder(
             .fillMaxWidth()
             .padding(MEDIUM_PADDING)
             .clip(RoundedCornerShape(MEDIUM_PADDING))
-            .background(primaryLightGray),
+            .background(scaffoldBackgroundColor),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
@@ -928,7 +927,7 @@ fun Reminder(
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(MEDIUM_PADDING)
             )
@@ -948,7 +947,7 @@ fun Reminder(
                     )
                     withStyle(
                         style = SpanStyle(
-                            color = primaryDarkTextColor,
+                            color = primaryTextColor,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.nonScaledSp,
                         )
@@ -963,7 +962,7 @@ fun Reminder(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2,
                 modifier = Modifier.padding(vertical = SMALL_PADDING, horizontal = MEDIUM_PADDING),
-                color = primaryDarkTextColor
+                color = primaryTextColor
             )
 
             Text(
@@ -971,7 +970,7 @@ fun Reminder(
                     append("Reminder For ")
                     withStyle(
                         style = SpanStyle(
-                            color = primaryDarkTextColor,
+                            color = primaryTextColor,
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.nonScaledSp,
                         )
@@ -983,7 +982,7 @@ fun Reminder(
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 modifier = Modifier.padding(
                     top = SMALL_PADDING,
                     bottom = MEDIUM_PADDING,

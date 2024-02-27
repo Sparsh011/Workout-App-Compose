@@ -53,7 +53,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
@@ -90,7 +91,7 @@ fun CaloriesConsumedCard(
                 bottom = dimensionResource(id = R.dimen.medium_padding)
             )
             .clip(RoundedCornerShape(10.dp))
-            .background(primaryLightGray)
+            .background(cardBackgroundColor)
     ) {
 
         CardHeading(heading = "Daily Calories", headingSize = HEADING_SIZE)
@@ -128,7 +129,7 @@ fun CaloriesGoalText(showCaloriesGoalBottomSheet: () -> Unit) {
             .clickable {
                 showCaloriesGoalBottomSheet()
             },
-        color = primaryDarkTextColor,
+        color = primaryTextColor,
         fontSize = 15.nonScaledSp,
         textAlign = TextAlign.Center
     )
@@ -144,7 +145,7 @@ fun CardHeading(
             append("Count Your ")
             withStyle(
                 style = SpanStyle(
-                    color = primaryDarkTextColor,
+                    color = primaryTextColor,
                     fontWeight = FontWeight.Bold,
                     fontSize = 22.nonScaledSp
                 )
@@ -153,7 +154,7 @@ fun CardHeading(
             }
         },
         fontSize = 22.nonScaledSp,
-        color = primaryDarkTextColor,
+        color = primaryTextColor,
         textAlign = TextAlign.Start,
         modifier = Modifier
             .fillMaxWidth()
@@ -225,7 +226,7 @@ fun CenterCaloriesGoalBox(
             buildAnnotatedString {
                 withStyle(
                     style = SpanStyle(
-                        color = primaryDarkTextColor,
+                        color = primaryTextColor,
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.nonScaledSp,
                     )
@@ -235,7 +236,7 @@ fun CenterCaloriesGoalBox(
                 append("\nkcal")
             },
             fontSize = 13.nonScaledSp,
-            color = primaryDarkTextColor,
+            color = primaryTextColor,
             textAlign = TextAlign.Center
         )
 
@@ -264,7 +265,7 @@ fun CaloriesLeftOrEatenColumn(calories: String, description: String, modifier: M
             modifier = Modifier.align(CenterHorizontally),
             fontWeight = FontWeight.Bold,
             fontSize = 20.nonScaledSp,
-            color = Color.Black
+            color = primaryTextColor
         )
 
         if (calories.toInt() <= 0) {
@@ -272,7 +273,7 @@ fun CaloriesLeftOrEatenColumn(calories: String, description: String, modifier: M
                 text = "0 kcal",
                 modifier = Modifier.align(CenterHorizontally),
                 fontSize = 16.nonScaledSp,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 textAlign = TextAlign.Center
             )
         } else {
@@ -280,7 +281,7 @@ fun CaloriesLeftOrEatenColumn(calories: String, description: String, modifier: M
                 text = "$calories kcal",
                 modifier = Modifier.align(CenterHorizontally),
                 fontSize = 16.nonScaledSp,
-                color = primaryDarkTextColor,
+                color = primaryTextColor,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -358,8 +359,8 @@ fun UpdateCaloriesGoalSlider(
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Color.Black,
             unfocusedTextColor = ColorsUtil.primaryDarkGray,
-            disabledTextColor = primaryDarkTextColor,
-            disabledBorderColor = primaryDarkTextColor
+            disabledTextColor = primaryTextColor,
+            disabledBorderColor = primaryTextColor
         ),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
@@ -370,7 +371,7 @@ fun UpdateCaloriesGoalSlider(
             hideUpdateCaloriesBottomSheet()
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = primaryDarkTextColor
+            containerColor = primaryTextColor
         ),
         modifier = Modifier
             .padding(LARGE_PADDING)

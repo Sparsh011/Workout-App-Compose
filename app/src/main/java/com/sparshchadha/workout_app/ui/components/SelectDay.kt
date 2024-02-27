@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
@@ -55,7 +57,7 @@ fun CalendarRow(
         LazyRow(
             state = lazyRowState,
             modifier = Modifier
-                .background(Color.White)
+                .background(scaffoldBackgroundColor)
         ) {
             items(last30Days) {
                 if (
@@ -117,13 +119,13 @@ private fun DayAndDate(
     date: String,
     month: String,
     monthColor: Color = Color.Black,
-    dateColor: Color = ColorsUtil.primaryDarkTextColor,
+    dateColor: Color = primaryTextColor,
     indicatorColor: Color = Color.Transparent,
 ) {
     if (isSelected) {
         Column(
             modifier = modifier
-                .background(Color.White)
+                .background(scaffoldBackgroundColor)
                 .padding(Dimensions.MEDIUM_PADDING),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -131,7 +133,7 @@ private fun DayAndDate(
                 text = month,
                 fontSize = 16.nonScaledSp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = primaryTextColor,
                 overflow = TextOverflow.Ellipsis
             )
 
@@ -140,7 +142,7 @@ private fun DayAndDate(
             Text(
                 text = date,
                 fontSize = 14.nonScaledSp,
-                color = Color.Black,
+                color = primaryTextColor,
                 overflow = TextOverflow.Ellipsis
             )
 
@@ -156,7 +158,7 @@ private fun DayAndDate(
     } else {
         Column(
             modifier = modifier
-                .background(Color.White)
+                .background(scaffoldBackgroundColor)
                 .padding(Dimensions.MEDIUM_PADDING),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {

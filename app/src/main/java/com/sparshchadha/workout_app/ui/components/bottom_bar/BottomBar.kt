@@ -15,6 +15,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldContentColor
 
 @Composable
 fun BottomBar(navHostController: NavHostController) {
@@ -28,8 +31,8 @@ fun BottomBar(navHostController: NavHostController) {
     val currentDestination = navBackStackEntry?.destination
 
     BottomAppBar(
-        containerColor = ColorsUtil.primaryLightGray,
-        contentColor = ColorsUtil.primaryBlack
+        containerColor = scaffoldBackgroundColor,
+        contentColor = scaffoldContentColor
     ) {
         screens.forEach { screen ->
             AddItem(screen = screen, currentDestination = currentDestination, navHostController = navHostController)
@@ -60,14 +63,13 @@ fun RowScope.AddItem(
                 Icon(
                     imageVector = screen.selectedIcon,
                     contentDescription = null,
-                    tint = Color.Black
+                    tint = primaryTextColor
                 )
 
             } else {
                 Icon(
                     imageVector = screen.unselectedIcon,
-                    contentDescription = null,
-                    tint = ColorsUtil.unselectedBottomBarIconColor
+                    contentDescription = null
                 )
             }
         },
@@ -75,7 +77,7 @@ fun RowScope.AddItem(
             if (selected) {
                 Text(
                     text = screen.title,
-                    color = Color.Black
+                    color = Color.White
                 )
             } else {
                 Text(
@@ -85,8 +87,7 @@ fun RowScope.AddItem(
             }
         },
         colors = NavigationBarItemDefaults.colors(
-            indicatorColor = ColorsUtil.primaryLightGray,
-            selectedIconColor = Color.Black
+            selectedIconColor = Color.White
         )
     )
 }
