@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,11 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
@@ -56,9 +55,10 @@ fun SearchBarToLaunchSearchScreen(
         trailingIcon = { },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimensions.LARGE_PADDING),
+            .background(statusBarColor)
+            .padding(horizontal = Dimensions.MEDIUM_PADDING),
         colors = SearchBarDefaults.colors(
-            containerColor = scaffoldBackgroundColor,
+            containerColor = statusBarColor,
             inputFieldColors = TextFieldDefaults.textFieldColors(
                 focusedTextColor = primaryGreenCardBackground
             )

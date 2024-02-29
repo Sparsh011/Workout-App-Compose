@@ -296,4 +296,44 @@ object HelperFunctions {
             onClick()
         }
     }
+
+    fun getGymWorkoutCategories(): List<String> {
+        return listOf(
+            "Track Workouts",
+            "Activity",
+            "Personal Records",
+            "Goals",
+            "Saved Exercises"
+        )
+    }
+
+    fun getYogaCategories(): List<String> {
+        return listOf(
+            "Track Workouts",
+            "Activity",
+            "Goals",
+            "Saved Poses"
+        )
+    }
+
+    fun getCaloriesTrackerCategories(): List<String> {
+        return listOf(
+            "Track Food",
+            "Activity",
+            "Goals",
+            "Saved Food Items"
+        )
+    }
+
+    fun getPersonalInfoCategories(): List<String> {
+        return listOf(
+            "Height",
+            "Weight",
+            "Gender",
+            "BMI",
+            "Age",
+            "Weight Goal",
+            "Calories Goal"
+        )
+    }
 }

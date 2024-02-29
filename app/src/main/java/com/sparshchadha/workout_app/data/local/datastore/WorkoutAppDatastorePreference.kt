@@ -27,8 +27,68 @@ class WorkoutAppDatastorePreference @Inject constructor(
             null ?: pref[CALORIES_GOAL_KEY]
         }
 
+    suspend fun saveHeight(height: String?) {
+        dataStorePreference.edit { pref ->
+            pref[CURRENT_HEIGHT_KEY] = height!!
+        }
+    }
+
+    val readHeight: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            null ?: pref[CURRENT_HEIGHT_KEY]
+        }
+
+    suspend fun saveWeightGoal(weightGoal: String?) {
+        dataStorePreference.edit { pref ->
+            pref[WEIGHT_GOAL_KEY] = weightGoal!!
+        }
+    }
+
+    val readWeightGoal: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            null ?: pref[WEIGHT_GOAL_KEY]
+        }
+
+    suspend fun saveCurrentWeight(weight: String?) {
+        dataStorePreference.edit { pref ->
+            pref[CURRENT_WEIGHT_KEY] = weight!!
+        }
+    }
+
+    val readCurrentWeight: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            null ?: pref[CURRENT_WEIGHT_KEY]
+        }
+
+    suspend fun saveAge(age: String?) {
+        dataStorePreference.edit { pref ->
+            pref[AGE_KEY] = age!!
+        }
+    }
+
+    val readAge: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            null ?: pref[AGE_KEY]
+        }
+
+    suspend fun saveGender(gender: String?) {
+        dataStorePreference.edit { pref ->
+            pref[GENDER_KEY] = gender!!
+        }
+    }
+
+    val readGender: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            null ?: pref[GENDER_KEY]
+        }
+
     companion object {
         val CALORIES_GOAL_KEY = stringPreferencesKey("CALORIES_GOAL_KEY")
+        val WEIGHT_GOAL_KEY = stringPreferencesKey("WEIGHT_GOAL_KEY")
+        val CURRENT_WEIGHT_KEY = stringPreferencesKey("CURRENT_WEIGHT_KEY")
+        val CURRENT_HEIGHT_KEY = stringPreferencesKey("CURRENT_HEIGHT_KEY")
+        val GENDER_KEY = stringPreferencesKey("GENDER_KEY")
+        val AGE_KEY = stringPreferencesKey("AGE_KEY")
     }
 
 }

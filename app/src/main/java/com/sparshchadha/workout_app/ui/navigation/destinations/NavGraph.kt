@@ -22,6 +22,7 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComp
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaPosesPerformedTodayComposable
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -35,6 +36,7 @@ fun NavGraph(
     gymExercises: GymExercisesDto?,
     yogaPoses: YogaPosesDto?,
     remindersViewModel: RemindersViewModel,
+    profileViewModel: ProfileViewModel,
 ) {
     NavHost(navController = navController, startDestination = BottomBarScreen.CalorieTracker.route) {
         // Workout Tracker in Bottom Bar
@@ -61,7 +63,9 @@ fun NavGraph(
 
         // Profile Screen
         profileComposable(
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            navController = navController,
+            profileViewModel = profileViewModel
         )
 
         // Yoga Screen

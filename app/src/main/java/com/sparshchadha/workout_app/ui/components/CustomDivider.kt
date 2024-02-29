@@ -11,7 +11,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil
 @Composable
 fun CustomDivider(
     modifier: Modifier = Modifier,
-    dividerColor: Color = ColorsUtil.customDividerColor,
+    dividerColor: Color = ColorsUtil.dividerColor,
 ) {
     Divider(
         color = dividerColor,

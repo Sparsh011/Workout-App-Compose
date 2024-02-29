@@ -55,7 +55,6 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
@@ -246,7 +245,7 @@ fun CenterCaloriesGoalBox(
             progress = progress,
             modifier = Modifier.size(PIE_CHART_SIZE),
             strokeWidth = MEDIUM_PADDING,
-            trackColor = ColorsUtil.customDividerColor,
+            trackColor = ColorsUtil.dividerColor,
             color = progressIndicatorColor,
             strokeCap = StrokeCap.Round,
         )

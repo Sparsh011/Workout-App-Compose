@@ -54,9 +54,9 @@ import com.sparshchadha.workout_app.ui.components.CustomDivider
 import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.dividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
@@ -267,7 +267,7 @@ fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
                         .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
 
                 ) {
-                    drawCircle(color = customDividerColor)
+                    drawCircle(color = dividerColor)
                 }
             }
 
@@ -279,7 +279,7 @@ fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
                         .size(Dimensions.ACHIEVEMENT_INDICATOR_COLOR_SIZE)
 
                 ) {
-                    drawCircle(color = customDividerColor)
+                    drawCircle(color = dividerColor)
                 }
 
                 Canvas(

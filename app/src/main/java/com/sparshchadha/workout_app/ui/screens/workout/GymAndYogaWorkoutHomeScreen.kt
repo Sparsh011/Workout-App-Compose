@@ -38,6 +38,7 @@ import com.sparshchadha.workout_app.ui.screens.workout.gym.util.GymWorkoutCatego
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
@@ -55,100 +56,116 @@ fun GymAndYogaWorkoutHomeScreen(
     gymWorkoutCategories: List<String>,
     globalPaddingValues: PaddingValues,
 ) {
-    LazyColumn(
-        modifier = Modifier
+    Column (
+        modifier = Modifier.fillMaxSize()
             .background(scaffoldBackgroundColor)
-            .padding(
-                top = MEDIUM_PADDING,
-                start = MEDIUM_PADDING,
-                end = MEDIUM_PADDING,
-                bottom = globalPaddingValues.calculateBottomPadding()
-            )
-            .fillMaxSize()
     ) {
+        Text(
+            text = "Perform Workout",
+            fontSize = 20.nonScaledSp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.fillMaxWidth()
+                .background(statusBarColor)
+                .padding(MEDIUM_PADDING),
+            color = primaryTextColor
+        )
 
-        // Gym workout
-        stickyHeader {
-            Surface(
-                modifier = Modifier.fillParentMaxWidth(),
-                color = scaffoldBackgroundColor
-            ) {
-                HeaderText(
-                    heading = "Gym Workout"
+        LazyColumn(
+            modifier = Modifier
+                .background(scaffoldBackgroundColor)
+                .padding(
+                    top = MEDIUM_PADDING,
+                    start = MEDIUM_PADDING,
+                    end = MEDIUM_PADDING,
+                    bottom = globalPaddingValues.calculateBottomPadding()
                 )
-            }
-        }
+                .fillMaxSize()
+        ) {
 
-        items(gymWorkoutCategories.size) {
-            CategoryItem(
-                categoryItem = gymWorkoutCategories[it],
-                onCategoryItemSelected = { categorySelected ->
-                    handleGymExercisesCategorySelection(
-                        categorySelected = categorySelected,
-                        updateGymWorkoutCategory = { categoryType ->
-                            workoutViewModel.updateCategoryTypeForGymWorkout(categoryType = categoryType)
-                        },
-                        navigateToScreen = { route ->
-                            navController.navigate(route)
-                        },
+            // Gym workout
+            stickyHeader {
+                Surface(
+                    modifier = Modifier.fillParentMaxWidth(),
+                    color = scaffoldBackgroundColor
+                ) {
+                    HeaderText(
+                        heading = "Gym Workout"
                     )
-                },
-                showDivider = it != gymWorkoutCategories.size - 1
-            )
-        }
+                }
+            }
 
-        // Yoga poses
-        stickyHeader {
-            Surface(
-                modifier = Modifier.fillParentMaxWidth(),
-                color = scaffoldBackgroundColor
-            ) {
-                HeaderText(
-                    heading = "Yoga Poses"
+            items(gymWorkoutCategories.size) {
+                CategoryItem(
+                    categoryItem = gymWorkoutCategories[it],
+                    onCategoryItemSelected = { categorySelected ->
+                        handleGymExercisesCategorySelection(
+                            categorySelected = categorySelected,
+                            updateGymWorkoutCategory = { categoryType ->
+                                workoutViewModel.updateCategoryTypeForGymWorkout(categoryType = categoryType)
+                            },
+                            navigateToScreen = { route ->
+                                navController.navigate(route)
+                            },
+                        )
+                    },
+                    showDivider = it != gymWorkoutCategories.size - 1
                 )
             }
-        }
 
-        items(difficultyLevels.size) {
-            PopulateYogaDifficulty(
-                yogaDifficulty = difficultyLevels[it],
-                onYogaDifficultySelection = { difficultyLevel ->
-                    workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
-                    // navigate to yoga screen
-                    workoutViewModel.getYogaPosesFromApi()
-                    navController.navigate(route = UtilityScreen.YogaPoses.route)
-                },
-                showDivider = it != difficultyLevels.size - 1
-            )
-        }
+            // Yoga poses
+            stickyHeader {
+                Surface(
+                    modifier = Modifier.fillParentMaxWidth(),
+                    color = scaffoldBackgroundColor
+                ) {
+                    HeaderText(
+                        heading = "Yoga Poses"
+                    )
+                }
+            }
 
-        stickyHeader {
-            HeaderText(
-                heading = "Track Workouts"
-            )
-        }
+            items(difficultyLevels.size) {
+                PopulateYogaDifficulty(
+                    yogaDifficulty = difficultyLevels[it],
+                    onYogaDifficultySelection = { difficultyLevel ->
+                        workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
+                        // navigate to yoga screen
+                        workoutViewModel.getYogaPosesFromApi()
+                        navController.navigate(route = UtilityScreen.YogaPoses.route)
+                    },
+                    showDivider = it != difficultyLevels.size - 1
+                )
+            }
 
-        item {
-            TodayWorkoutCard(
-                category = "Yoga",
-                onCategoryItemSelected = {
-                    navController.navigate(UtilityScreen.YogaPosesPerformed.route)
-                },
-                icon = R.drawable.yoga_svg
-            )
-        }
+            stickyHeader {
+                HeaderText(
+                    heading = "Track Workouts"
+                )
+            }
 
-        item {
-            TodayWorkoutCard(
-                category = "Gym",
-                onCategoryItemSelected = {
-                    navController.navigate(UtilityScreen.GymExercisesPerformed.route)
-                },
-                icon = R.drawable.dumbbell_svg,
-                showDivider = false
-            )
+            item {
+                TodayWorkoutCard(
+                    category = "Yoga",
+                    onCategoryItemSelected = {
+                        navController.navigate(UtilityScreen.YogaPosesPerformed.route)
+                    },
+                    icon = R.drawable.yoga_svg
+                )
+            }
+
+            item {
+                TodayWorkoutCard(
+                    category = "Gym",
+                    onCategoryItemSelected = {
+                        navController.navigate(UtilityScreen.GymExercisesPerformed.route)
+                    },
+                    icon = R.drawable.dumbbell_svg,
+                    showDivider = false
+                )
+            }
         }
     }
+
 }
 
 @Composable

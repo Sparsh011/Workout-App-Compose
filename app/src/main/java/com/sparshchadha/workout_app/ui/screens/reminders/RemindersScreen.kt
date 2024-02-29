@@ -77,13 +77,10 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.ReminderEntity
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.util.ColorsUtil.customDividerColor
+import com.sparshchadha.workout_app.util.ColorsUtil.carbohydratesColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreen
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.ColorsUtil.unselectedBottomBarIconColor
@@ -165,7 +162,7 @@ fun RemindersScreen(
                 onClick = {
                     showBottomSheetToAddReminder = true
                 },
-                containerColor = targetAchievedColor,
+                containerColor = carbohydratesColor,
                 contentColor = White
             ) {
                 Icon(
@@ -180,6 +177,7 @@ fun RemindersScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(scaffoldBackgroundColor)
                 .padding(
                     top = localPaddingValues.calculateTopPadding(),
                     bottom = globalPaddingValues.calculateBottomPadding(),
@@ -216,7 +214,8 @@ fun RemindersScreen(
                             .clip(RoundedCornerShape(topStart = 5.dp, topEnd = 5.dp))
                             .padding(horizontal = MEDIUM_PADDING)
                     )
-                }
+                },
+                containerColor = scaffoldBackgroundColor
             ) {
                 tabBarHeadings.forEachIndexed { index, heading ->
                     Tab(
