@@ -37,6 +37,7 @@ fun CalendarRow(
     selectedMonth: String,
     selectedDay: Int,
     indicatorColor: Color = Color.Red,
+    updateSelectedDayPair: (Pair<Int, String>) -> Unit = {}
 ) {
     val last30Days = HelperFunctions.getLast30Days()
     last30Days.reverse()
@@ -73,6 +74,7 @@ fun CalendarRow(
                         month = it.second.substring(0..2),
                         modifier = Modifier
                             .clickable {
+                                updateSelectedDayPair(Pair(it.first, it.second))
                                 getResultsForDateAndMonth(Pair(it.first, it.second))
                             }
                             .width(width),
@@ -82,6 +84,7 @@ fun CalendarRow(
                     DayAndDate(
                         modifier = Modifier
                             .clickable {
+                                updateSelectedDayPair(Pair(it.first, it.second))
                                 getResultsForDateAndMonth(Pair(it.first, it.second))
                             }
                             .width(width),
@@ -108,7 +111,11 @@ fun CalendarRow(
     }
 }
 
-private fun selectedDayAndMonth(selectedDay: Int, selectedMonth: String, pair: Pair<Int, String>): Boolean {
+private fun selectedDayAndMonth(
+    selectedDay: Int,
+    selectedMonth: String,
+    pair: Pair<Int, String>
+): Boolean {
     return selectedMonth == pair.second && selectedDay == pair.first
 }
 
@@ -121,6 +128,7 @@ private fun DayAndDate(
     monthColor: Color = Color.Black,
     dateColor: Color = primaryTextColor,
     indicatorColor: Color = Color.Transparent,
+    updateSelectedDayPair: (Pair<Int, String>) -> Unit = {}
 ) {
     if (isSelected) {
         Column(
@@ -155,6 +163,8 @@ private fun DayAndDate(
                 drawCircle(color = indicatorColor)
             }
         }
+
+        updateSelectedDayPair(Pair(date.toInt(), month))
     } else {
         Column(
             modifier = modifier

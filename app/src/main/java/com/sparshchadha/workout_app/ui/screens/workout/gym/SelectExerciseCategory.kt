@@ -25,10 +25,8 @@ import com.sparshchadha.workout_app.ui.components.CustomDivider
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
-import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.dividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -51,11 +49,19 @@ fun SelectExerciseCategory(
                 topBarDescription = stringResource(id = R.string.select_difficulty_level_heading),
                 globalPaddingValues = globalPaddingValues,
                 onCategoryItemSelected = {
-                    workoutViewModel.getExercisesByDifficultyFromApi(difficultyLevel = it.replace(' ', '_'))
+                    workoutViewModel.getExercisesByDifficultyFromApi(
+                        difficultyLevel = it.replace(
+                            ' ',
+                            '_'
+                        )
+                    )
                     navController.navigate("ExercisesScreen/$it")
                 },
                 onBackButtonPressed = {
-                    navController.popBackStack(BottomBarScreen.WorkoutScreen.route, inclusive = false)
+                    navController.popBackStack(
+                        BottomBarScreen.WorkoutScreen.route,
+                        inclusive = false
+                    )
                 }
             )
         }
@@ -66,11 +72,19 @@ fun SelectExerciseCategory(
                 topBarDescription = stringResource(id = R.string.select_program_heading),
                 globalPaddingValues = globalPaddingValues,
                 onCategoryItemSelected = {
-                    workoutViewModel.getExercisesByWorkoutTypeFromApi(workoutType = it.replace(' ', '_'))
+                    workoutViewModel.getExercisesByWorkoutTypeFromApi(
+                        workoutType = it.replace(
+                            ' ',
+                            '_'
+                        )
+                    )
                     navController.navigate("ExercisesScreen/$it")
                 },
                 onBackButtonPressed = {
-                    navController.popBackStack(BottomBarScreen.WorkoutScreen.route, inclusive = false)
+                    navController.popBackStack(
+                        BottomBarScreen.WorkoutScreen.route,
+                        inclusive = false
+                    )
                 }
             )
         }
@@ -85,7 +99,10 @@ fun SelectExerciseCategory(
                     navController.navigate("ExercisesScreen/$it")
                 },
                 onBackButtonPressed = {
-                    navController.popBackStack(BottomBarScreen.WorkoutScreen.route, inclusive = false)
+                    navController.popBackStack(
+                        BottomBarScreen.WorkoutScreen.route,
+                        inclusive = false
+                    )
                 }
             )
         }

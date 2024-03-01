@@ -37,7 +37,8 @@ fun NavGraphBuilder.calorieTrackerComposable(
 
         val caloriesGoal = foodItemsViewModel.caloriesGoal.value ?: "0"
         val caloriesConsumed = foodItemsViewModel.caloriesConsumed.value ?: "0"
-        val selectedDateAndMonth = foodItemsViewModel.selectedDateAndMonthForFoodItems.collectAsStateWithLifecycle().value
+        val selectedDateAndMonth =
+            foodItemsViewModel.selectedDateAndMonthForFoodItems.collectAsStateWithLifecycle().value
 
         CalorieTrackerScreen(
             navController = navController,

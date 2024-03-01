@@ -27,7 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -84,8 +85,16 @@ fun CalorieTrackerScreen(
     foodItemsViewModel: FoodItemsViewModel,
 ) {
 
-    val foodItemsConsumed = foodItemsViewModel.savedFoodItems.collectAsState().value
+    LaunchedEffect(key1 = Unit) {
+        foodItemsViewModel.updateSelectedDay(
+            selectedDateAndMonth?.first ?: 1,
+            selectedDateAndMonth?.second ?: "Jan"
+        )
+    }
+
+    val foodItemsConsumed = foodItemsViewModel.savedFoodItems.collectAsStateWithLifecycle().value
     val nutrientsConsumed = foodItemsViewModel.nutrientsConsumed
+    val selectedDayPair = foodItemsViewModel.selectedDayPosition
 
     var shouldShowCaloriesBottomSheet by remember {
         mutableStateOf(false)
@@ -111,7 +120,10 @@ fun CalorieTrackerScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(scaffoldBackgroundColor)
-                .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+                .padding(
+                    bottom = paddingValues.calculateBottomPadding(),
+                    top = localPaddingValues.calculateTopPadding()
+                )
         ) {
 
             // Show Today's calories and nutrients -
@@ -169,12 +181,15 @@ fun CalorieTrackerScreen(
             item {
                 CalendarRow(
                     getResultsForDateAndMonth = getDishesConsumedOnSelectedDayAndMonth,
-                    selectedMonth = selectedDateAndMonth?.second ?: "January",
-                    selectedDay = selectedDateAndMonth?.first ?: 1,
+                    selectedMonth = selectedDayPair.value.first,
+                    selectedDay = selectedDayPair.value.second,
                     indicatorColor = HelperFunctions.getAchievementColor(
                         achieved = caloriesConsumed.toInt(),
                         target = caloriesGoal.toInt()
-                    )
+                    ),
+                    updateSelectedDayPair = {
+                        foodItemsViewModel.updateSelectedDay(it.first, it.second)
+                    }
                 )
             }
 

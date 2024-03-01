@@ -11,8 +11,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "ProfileViewModelTagggg"
+
 @HiltViewModel
-class ProfileViewModel@Inject constructor(
+class ProfileViewModel @Inject constructor(
     private val datastorePreference: WorkoutAppDatastorePreference,
 ) : ViewModel() {
     val readAge: Flow<String?>
@@ -34,26 +35,38 @@ class ProfileViewModel@Inject constructor(
         get() = datastorePreference.readCaloriesGoal
 
     fun saveAge(age: String) {
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.saveAge(age)
         }
     }
 
     fun saveGender(gender: String) {
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.saveGender(gender)
         }
     }
 
     fun saveHeight(height: String) {
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.saveHeight(height)
         }
     }
 
-    fun saveWeight(weight: String) {
-        viewModelScope.launch (Dispatchers.IO) {
+    fun saveCurrentWeight(weight: String) {
+        viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.saveCurrentWeight(weight)
+        }
+    }
+
+    fun saveCaloriesGoal(newCaloriesGoal: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            datastorePreference.saveCaloriesGoal(newCaloriesGoal)
+        }
+    }
+
+    fun saveWeightGoal(newWeightGoal: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            datastorePreference.saveWeightGoal(newWeightGoal)
         }
     }
 

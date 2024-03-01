@@ -17,7 +17,7 @@ object ColorsUtil {
     val primaryGreenCardBackground: Color = Color(39, 255, 147, 255)
     private val primaryBlack: Color = Color(21, 23, 31, 255)
     val unselectedBottomBarIconColor: Color = Color(139, 143, 156, 255)
-    val dividerColor: Color =  Color(0xFFA4A6B2)
+    val dividerColor: Color = Color(0xFFA4A6B2)
 
     val targetAchievedColor: Color = Color(0xFF00C980)
     val partialTargetAchievedColor: Color = Color(0xFFFDD835)
@@ -34,13 +34,13 @@ object ColorsUtil {
 
     val scaffoldBackgroundColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) Color.White else Color(0xFF2A2A32)
+        get() = if (!isSystemInDarkTheme()) White else Color(0xFF2A2A32)
 
     val cardBackgroundColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) LightGray else primaryDarkColor
+        get() = if (!isSystemInDarkTheme()) primaryLightGray else statusBarColor
 
     val statusBarColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) Color.White else Color(0xFF222227)
+        get() = if (!isSystemInDarkTheme()) White else Color(0xFF222227)
 }

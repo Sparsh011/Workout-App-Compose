@@ -35,7 +35,8 @@ fun FoodItemDetails(
         Scaffold(
             topBar = {
                 ScaffoldTopBar(
-                    topBarDescription = foodItem?.foodItemDetails?.name?.capitalize() ?: "Sorry, Unable To Get Name!",
+                    topBarDescription = foodItem?.foodItemDetails?.name?.capitalize()
+                        ?: "Sorry, Unable To Get Name!",
                     onBackButtonPressed = {
                         navController.popBackStack(BottomBarScreen.CalorieTracker.route, false)
                     }

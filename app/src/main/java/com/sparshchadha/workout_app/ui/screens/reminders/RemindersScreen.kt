@@ -224,7 +224,11 @@ fun RemindersScreen(
                             selectedTabIndex = index
                         },
                         text = {
-                            Text(text = heading, color = primaryTextColor, fontSize = 20.nonScaledSp)
+                            Text(
+                                text = heading,
+                                color = primaryTextColor,
+                                fontSize = 20.nonScaledSp
+                            )
                         },
                         modifier = Modifier.fillMaxWidth(1f)
                     )
@@ -791,7 +795,9 @@ fun Reminders(
         val (pastReminders, upcomingReminders) = reminders.partition { reminder ->
             val reminderDateTime = LocalDateTime.of(
                 reminder.year.toInt(),
-                Month.valueOf(HelperFunctions.getMonthFromIndex(reminder.month.toInt()).uppercase()).value,
+                Month.valueOf(
+                    HelperFunctions.getMonthFromIndex(reminder.month.toInt()).uppercase()
+                ).value,
                 reminder.date.toInt(),
                 reminder.hours,
                 reminder.minutes
@@ -952,7 +958,8 @@ fun Reminder(
                         )
                     ) {
                         val hours = convertTo12HourFormat(reminder.hours)
-                        val minutes = if (reminder.minutes < 10) "0${reminder.minutes}" else reminder.minutes.toString()
+                        val minutes =
+                            if (reminder.minutes < 10) "0${reminder.minutes}" else reminder.minutes.toString()
                         append("${hours.first}: $minutes ${hours.second}")
                     }
                 },

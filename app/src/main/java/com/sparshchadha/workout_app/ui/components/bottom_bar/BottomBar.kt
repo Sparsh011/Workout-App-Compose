@@ -35,7 +35,11 @@ fun BottomBar(navHostController: NavHostController) {
         contentColor = scaffoldContentColor
     ) {
         screens.forEach { screen ->
-            AddItem(screen = screen, currentDestination = currentDestination, navHostController = navHostController)
+            AddItem(
+                screen = screen,
+                currentDestination = currentDestination,
+                navHostController = navHostController
+            )
         }
     }
 }
@@ -53,9 +57,11 @@ fun RowScope.AddItem(
     NavigationBarItem(
         selected = selected,
         onClick = {
-            navHostController.navigate(screen.route) {
-                popUpTo(navHostController.graph.findStartDestination().id)
-                launchSingleTop = true
+            if (!selected) {
+                navHostController.navigate(screen.route) {
+                    popUpTo(navHostController.graph.findStartDestination().id)
+                    launchSingleTop = true
+                }
             }
         },
         icon = {
@@ -77,7 +83,7 @@ fun RowScope.AddItem(
             if (selected) {
                 Text(
                     text = screen.title,
-                    color = Color.White
+                    color = primaryTextColor
                 )
             } else {
                 Text(

@@ -56,15 +56,16 @@ fun GymAndYogaWorkoutHomeScreen(
     gymWorkoutCategories: List<String>,
     globalPaddingValues: PaddingValues,
 ) {
-    Column (
-        modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
             .background(scaffoldBackgroundColor)
     ) {
         Text(
             text = "Perform Workout",
-            fontSize = 20.nonScaledSp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.fillMaxWidth()
+            fontSize = 24.nonScaledSp,
+            modifier = Modifier
+                .fillMaxWidth()
                 .background(statusBarColor)
                 .padding(MEDIUM_PADDING),
             color = primaryTextColor

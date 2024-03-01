@@ -52,8 +52,8 @@ import com.sparshchadha.workout_app.ui.components.rememberPickerState
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.Dimensions.DESCRIPTION_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -287,7 +287,11 @@ fun YogaPose(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShowPickSetsBottomSheet(pose: Pose, saveYogaPose: (YogaEntity) -> Unit, hidePickSetsBottomSheet: () -> Unit) {
+fun ShowPickSetsBottomSheet(
+    pose: Pose,
+    saveYogaPose: (YogaEntity) -> Unit,
+    hidePickSetsBottomSheet: () -> Unit
+) {
     val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(

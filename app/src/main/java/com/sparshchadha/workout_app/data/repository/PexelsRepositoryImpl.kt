@@ -21,7 +21,10 @@ class PexelsRepositoryImpl(
         emit(Resource.Loading())
 
         try {
-            val remoteImages = api.searchImageOnPexel(searchQuery = searchQuery, apiKey = BuildConfig.PEXELS_API_KEY)
+            val remoteImages = api.searchImageOnPexel(
+                searchQuery = searchQuery,
+                apiKey = BuildConfig.PEXELS_API_KEY
+            )
             emit(Resource.Success(remoteImages))
 
         } catch (e: HttpException) {

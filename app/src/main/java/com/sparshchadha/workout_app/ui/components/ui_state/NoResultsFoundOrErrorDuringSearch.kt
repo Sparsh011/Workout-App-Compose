@@ -29,7 +29,10 @@ fun NoResultsFoundOrErrorDuringSearch(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = globalPaddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+            .padding(
+                bottom = globalPaddingValues.calculateBottomPadding(),
+                top = localPaddingValues.calculateTopPadding()
+            )
     ) {
         val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_results_found_animation))
         val progress by animateLottieCompositionAsState(composition)

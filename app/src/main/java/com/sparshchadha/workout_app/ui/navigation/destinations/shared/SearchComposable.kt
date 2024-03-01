@@ -41,11 +41,13 @@ fun NavGraphBuilder.searchComposable(
 
         when (searchFor) {
             "food" -> {
-                foodUIStateEvent = foodItemsViewModel.uiEventStateFlow.collectAsStateWithLifecycle().value
+                foodUIStateEvent =
+                    foodItemsViewModel.uiEventStateFlow.collectAsStateWithLifecycle().value
             }
 
             "exercises" -> {
-                workoutUIStateEvent = workoutViewModel.uiEventStateFlow.collectAsStateWithLifecycle().value
+                workoutUIStateEvent =
+                    workoutViewModel.uiEventStateFlow.collectAsStateWithLifecycle().value
             }
         }
 

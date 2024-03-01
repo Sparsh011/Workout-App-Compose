@@ -53,7 +53,8 @@ class WorkoutViewModel @Inject constructor(
     private val _selectedDateAndMonthForYogaPoses = MutableStateFlow<Pair<Int, String>?>(null)
     val selectedDateAndMonthForYogaPoses = _selectedDateAndMonthForYogaPoses.asStateFlow()
 
-    private val _gymExercisesPerformedOnUIEventState = MutableStateFlow<UIEvent?>(UIEvent.ShowLoader)
+    private val _gymExercisesPerformedOnUIEventState =
+        MutableStateFlow<UIEvent?>(UIEvent.ShowLoader)
     val gymExercisesPerformedOnUIEventState = _gymExercisesPerformedOnUIEventState.asStateFlow()
 
     private val _selectedDateAndMonthForGymExercises = MutableStateFlow<Pair<Int, String>?>(null)
@@ -64,7 +65,8 @@ class WorkoutViewModel @Inject constructor(
 
     fun getYogaPosesFromApi() {
         viewModelScope.launch {
-            val poses = workoutRepository.getYogaPosesByDifficultyFromApi(difficulty = _difficultyForYoga.value)
+            val poses =
+                workoutRepository.getYogaPosesByDifficultyFromApi(difficulty = _difficultyForYoga.value)
 
             poses.collect { response ->
                 when (response) {
@@ -126,7 +128,8 @@ class WorkoutViewModel @Inject constructor(
 
     fun getExercisesByWorkoutTypeFromApi(workoutType: String) {
         viewModelScope.launch {
-            val exercises = workoutRepository.getExercisesByWorkoutTypeFromApi(workoutType = workoutType)
+            val exercises =
+                workoutRepository.getExercisesByWorkoutTypeFromApi(workoutType = workoutType)
 
             exercises.collect { response ->
                 when (response) {
@@ -157,7 +160,8 @@ class WorkoutViewModel @Inject constructor(
 
     fun getExercisesByDifficultyFromApi(difficultyLevel: String) {
         viewModelScope.launch {
-            val exercises = workoutRepository.getExercisesByDifficultyLevelFromApi(difficulty = difficultyLevel)
+            val exercises =
+                workoutRepository.getExercisesByDifficultyLevelFromApi(difficulty = difficultyLevel)
 
             exercises.collect { response ->
                 when (response) {

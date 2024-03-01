@@ -38,7 +38,8 @@ class RemindersViewModel @Inject constructor(
             if (isReminderValid(reminderEntity = reminderEntity)) {
 
                 try {
-                    val addReminder = remindersRepository.addReminder(reminderEntity = reminderEntity)
+                    val addReminder =
+                        remindersRepository.addReminder(reminderEntity = reminderEntity)
                     if (addReminder.toInt() != -1) {
                         _remindersUIEvent.emit(
                             RemindersUIEvent.ShowToast(message = "Reminder Added")
@@ -79,7 +80,8 @@ class RemindersViewModel @Inject constructor(
             if (isReminderValid(reminderEntity = reminderEntity)) {
 
                 try {
-                    val updateReminder = remindersRepository.updateReminder(reminderEntity = reminderEntity)
+                    val updateReminder =
+                        remindersRepository.updateReminder(reminderEntity = reminderEntity)
                     if (updateReminder != -1) {
                         _remindersUIEvent.emit(
                             RemindersUIEvent.ShowToast(message = "Reminder Update")
@@ -104,7 +106,8 @@ class RemindersViewModel @Inject constructor(
 
     fun getRemindersByReminderType(reminderType: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val reminders = remindersRepository.getRemindersByReminderType(reminderType = reminderType)
+            val reminders =
+                remindersRepository.getRemindersByReminderType(reminderType = reminderType)
 
             reminders.collect {
                 if (reminderType == ReminderTypes.FOOD.name) {

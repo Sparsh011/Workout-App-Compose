@@ -25,66 +25,71 @@ class WorkoutRepositoryImpl(
     val gymExercisesDao: GymExercisesDao,
 ) : WorkoutRepository {
 
-    override fun getYogaPosesByDifficultyFromApi(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>> = flow {
-        emit(Resource.Loading())
+    override fun getYogaPosesByDifficultyFromApi(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>> =
+        flow {
+            emit(Resource.Loading())
 
-        try {
-            val remoteYogaPoses = yogaApi.getYogaPosesByDifficulty(difficulty = difficulty.name.lowercase())
-            emit(Resource.Success(remoteYogaPoses))
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
+            try {
+                val remoteYogaPoses =
+                    yogaApi.getYogaPosesByDifficulty(difficulty = difficulty.name.lowercase())
+                emit(Resource.Success(remoteYogaPoses))
+            } catch (e: Exception) {
+                emit(
+                    Resource.Error(error = e)
+                )
+            }
         }
-    }
 
-    override fun getExercisesByDifficultyLevelFromApi(difficulty: String): Flow<Resource<GymExercisesDto>> = flow {
-        emit(Resource.Loading())
+    override fun getExercisesByDifficultyLevelFromApi(difficulty: String): Flow<Resource<GymExercisesDto>> =
+        flow {
+            emit(Resource.Loading())
 
-        try {
-            val remoteExercises = gymExercisesApi.getExercisesByDifficultyLevel(
-                difficulty = difficulty.lowercase(),
-                apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
-            )
-            emit(Resource.Success(remoteExercises))
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
+            try {
+                val remoteExercises = gymExercisesApi.getExercisesByDifficultyLevel(
+                    difficulty = difficulty.lowercase(),
+                    apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
+                )
+                emit(Resource.Success(remoteExercises))
+            } catch (e: Exception) {
+                emit(
+                    Resource.Error(error = e)
+                )
+            }
         }
-    }
 
-    override fun getExercisesByMuscleFromApi(muscleType: String): Flow<Resource<GymExercisesDto>> = flow {
-        emit(Resource.Loading())
+    override fun getExercisesByMuscleFromApi(muscleType: String): Flow<Resource<GymExercisesDto>> =
+        flow {
+            emit(Resource.Loading())
 
-        try {
-            val remoteExercises = gymExercisesApi.getExercisesByMuscle(
-                muscle = muscleType.lowercase(),
-                apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
-            )
-            emit(Resource.Success(remoteExercises))
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
+            try {
+                val remoteExercises = gymExercisesApi.getExercisesByMuscle(
+                    muscle = muscleType.lowercase(),
+                    apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
+                )
+                emit(Resource.Success(remoteExercises))
+            } catch (e: Exception) {
+                emit(
+                    Resource.Error(error = e)
+                )
+            }
         }
-    }
 
-    override fun getExercisesByWorkoutTypeFromApi(workoutType: String): Flow<Resource<GymExercisesDto>> = flow {
-        emit(Resource.Loading())
+    override fun getExercisesByWorkoutTypeFromApi(workoutType: String): Flow<Resource<GymExercisesDto>> =
+        flow {
+            emit(Resource.Loading())
 
-        try {
-            val remoteExercises = gymExercisesApi.getExercisesByWorkoutType(
-                workoutType = workoutType.lowercase(),
-                apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
-            )
-            emit(Resource.Success(remoteExercises))
-        } catch (e: Exception) {
-            emit(
-                Resource.Error(error = e)
-            )
+            try {
+                val remoteExercises = gymExercisesApi.getExercisesByWorkoutType(
+                    workoutType = workoutType.lowercase(),
+                    apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
+                )
+                emit(Resource.Success(remoteExercises))
+            } catch (e: Exception) {
+                emit(
+                    Resource.Error(error = e)
+                )
+            }
         }
-    }
 
     override fun getExerciseByNameFromApi(name: String): Flow<Resource<GymExercisesDto>> = flow {
         emit(Resource.Loading())
@@ -110,7 +115,10 @@ class WorkoutRepositoryImpl(
         yogaDao.addYogaPose(yogaPose = yogaPose)
     }
 
-    override suspend fun getYogaPosesPerformedOn(date: String, month: String): Flow<List<YogaEntity>> {
+    override suspend fun getYogaPosesPerformedOn(
+        date: String,
+        month: String
+    ): Flow<List<YogaEntity>> {
         return yogaDao.getYogaPosesPerformedOn(
             date = date,
             month = month
@@ -121,7 +129,10 @@ class WorkoutRepositoryImpl(
         gymExercisesDao.addGymExercise(gymExercisesEntity = gymExercisesEntity)
     }
 
-    override suspend fun getGymExercisesPerformedOn(date: String, month: String): Flow<List<GymExercisesEntity>> {
+    override suspend fun getGymExercisesPerformedOn(
+        date: String,
+        month: String
+    ): Flow<List<GymExercisesEntity>> {
         return gymExercisesDao.getExercisesPerformedOn(
             date = date,
             month = month

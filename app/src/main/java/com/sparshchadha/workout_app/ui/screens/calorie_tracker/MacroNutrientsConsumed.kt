@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
-import com.sparshchadha.workout_app.util.ColorsUtil.dividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.unselectedBottomBarIconColor
 import com.sparshchadha.workout_app.util.Constants.CARBOHYDRATES_TOTAL_G
@@ -160,7 +159,7 @@ fun MacroNutrientProgress(
             progress = progress,
             color = color,
             strokeCap = StrokeCap.Round,
-            trackColor = dividerColor,
+            trackColor = Color.LightGray,
         )
     }
 }

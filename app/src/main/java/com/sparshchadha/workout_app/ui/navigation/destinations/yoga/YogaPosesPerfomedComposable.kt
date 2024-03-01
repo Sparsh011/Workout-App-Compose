@@ -51,8 +51,10 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
         )
 
         val yogaPosesPerformedToday = workoutViewModel.yogaPosesPerformed.value
-        val uiEventState = workoutViewModel.yogaPosesPerformedOnUIEventState.collectAsStateWithLifecycle().value
-        val selectedDayAndMonth = workoutViewModel.selectedDateAndMonthForYogaPoses.collectAsStateWithLifecycle().value
+        val uiEventState =
+            workoutViewModel.yogaPosesPerformedOnUIEventState.collectAsStateWithLifecycle().value
+        val selectedDayAndMonth =
+            workoutViewModel.selectedDateAndMonthForYogaPoses.collectAsStateWithLifecycle().value
 
         GetYogaPosesPerformedOnParticularDay(
             yogaPosesPerformedToday = yogaPosesPerformedToday,
@@ -65,7 +67,10 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
                 )
             },
             getYogaPosesPerformedOn = {
-                workoutViewModel.getYogaPosesPerformedOn(date = it.first.toString(), month = it.second)
+                workoutViewModel.getYogaPosesPerformedOn(
+                    date = it.first.toString(),
+                    month = it.second
+                )
             },
             selectedMonth = selectedDayAndMonth?.second ?: "January",
             selectedDay = selectedDayAndMonth?.first ?: 1

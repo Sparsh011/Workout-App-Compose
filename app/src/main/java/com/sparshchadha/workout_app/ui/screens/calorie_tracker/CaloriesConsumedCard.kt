@@ -245,7 +245,7 @@ fun CenterCaloriesGoalBox(
             progress = progress,
             modifier = Modifier.size(PIE_CHART_SIZE),
             strokeWidth = MEDIUM_PADDING,
-            trackColor = ColorsUtil.dividerColor,
+            trackColor = Color.LightGray,
             color = progressIndicatorColor,
             strokeCap = StrokeCap.Round,
         )

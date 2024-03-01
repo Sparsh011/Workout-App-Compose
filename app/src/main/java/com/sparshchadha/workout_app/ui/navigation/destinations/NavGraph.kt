@@ -38,7 +38,10 @@ fun NavGraph(
     remindersViewModel: RemindersViewModel,
     profileViewModel: ProfileViewModel,
 ) {
-    NavHost(navController = navController, startDestination = BottomBarScreen.CalorieTracker.route) {
+    NavHost(
+        navController = navController,
+        startDestination = BottomBarScreen.CalorieTracker.route
+    ) {
         // Workout Tracker in Bottom Bar
         bottomWorkoutComposable(
             workoutViewModel = workoutViewModel,

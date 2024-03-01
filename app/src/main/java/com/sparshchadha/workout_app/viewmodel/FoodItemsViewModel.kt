@@ -55,9 +55,18 @@ class FoodItemsViewModel @Inject constructor(
     private val _foodItemEntity = mutableStateOf<FoodItemEntity?>(null)
     val foodItemEntity = _foodItemEntity
 
+    private val _selectedDayPair = mutableStateOf(
+        Pair(
+            HelperFunctions.getCurrentDateAndMonth().second,
+            HelperFunctions.getCurrentDateAndMonth().first
+        )
+    )
+    val selectedDayPosition = _selectedDayPair
+
     fun getFoodItemsFromApi() {
         viewModelScope.launch {
-            val nutritionalValues = foodItemsRepository.getFoodItemsFromApi(foodSearchQuery = _searchQuery.value)
+            val nutritionalValues =
+                foodItemsRepository.getFoodItemsFromApi(foodSearchQuery = _searchQuery.value)
             nutritionalValues.collect { result ->
                 when (result) {
                     is Resource.Success -> {
@@ -109,6 +118,7 @@ class FoodItemsViewModel @Inject constructor(
                 }
                 _uiEventState.emit(WorkoutViewModel.UIEvent.HideLoaderAndShowResponse)
                 _selectedDateAndMonthForFoodItems.emit(Pair(date.toInt(), month))
+                _selectedDayPair.value = Pair(month, date.toInt())
             }
         }
     }
@@ -121,14 +131,17 @@ class FoodItemsViewModel @Inject constructor(
                 val foodItemDetails = foodItemEntity.foodItemDetails
 
                 if (foodItemDetails != null) {
-                    _nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G] = (_nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G]
-                        ?: 0.0) + (foodItemDetails.carbohydrates_total_g * foodItemEntity.servings)
+                    _nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G] =
+                        (_nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G]
+                            ?: 0.0) + (foodItemDetails.carbohydrates_total_g * foodItemEntity.servings)
 
-                    _nutrientsConsumed[Constants.FAT_TOTAL_G] = (_nutrientsConsumed[Constants.FAT_TOTAL_G]
-                        ?: 0.0) + (foodItemDetails.fat_total_g * foodItemEntity.servings)
+                    _nutrientsConsumed[Constants.FAT_TOTAL_G] =
+                        (_nutrientsConsumed[Constants.FAT_TOTAL_G]
+                            ?: 0.0) + (foodItemDetails.fat_total_g * foodItemEntity.servings)
 
                     _nutrientsConsumed[Constants.PROTEIN_G] =
-                        (_nutrientsConsumed[Constants.PROTEIN_G] ?: 0.0) + (foodItemDetails.protein_g * foodItemEntity.servings)
+                        (_nutrientsConsumed[Constants.PROTEIN_G]
+                            ?: 0.0) + (foodItemDetails.protein_g * foodItemEntity.servings)
 
                 }
             }
@@ -139,7 +152,8 @@ class FoodItemsViewModel @Inject constructor(
 
             _nutrientsConsumed[Constants.CARBOHYDRATES_TOTAL_G]?.let { carbs ->
                 if (_nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] != null) {
-                    _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] = _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G]!! + carbs
+                    _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] =
+                        _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G]!! + carbs
                 } else {
                     _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] = carbs
                 }
@@ -147,7 +161,8 @@ class FoodItemsViewModel @Inject constructor(
 
             _nutrientsConsumed[Constants.FAT_TOTAL_G]?.let { fats ->
                 if (_nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] != null) {
-                    _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] = _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G]!! + fats
+                    _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] =
+                        _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G]!! + fats
                 } else {
                     _nutrientsConsumed[Constants.TOTAL_NUTRIENTS_G] = fats
                 }
@@ -166,7 +181,8 @@ class FoodItemsViewModel @Inject constructor(
         var totalCaloriesConsumed = 0
         if (foodItemsConsumed != null) {
             for (item in foodItemsConsumed) {
-                totalCaloriesConsumed += item.servings * (item.foodItemDetails?.calories?.toInt() ?: 0)
+                totalCaloriesConsumed += item.servings * (item.foodItemDetails?.calories?.toInt()
+                    ?: 0)
             }
 
             _caloriesConsumed.value = totalCaloriesConsumed.toString()
@@ -207,5 +223,9 @@ class FoodItemsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun updateSelectedDay(date: Int, month: String) {
+        _selectedDayPair.value = Pair(month, date)
     }
 }

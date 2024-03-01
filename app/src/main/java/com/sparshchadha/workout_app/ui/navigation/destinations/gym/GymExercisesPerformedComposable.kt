@@ -44,8 +44,10 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
         }
 
         val exercisesPerformed = workoutViewModel.gymExercisesPerformed.value
-        val uiEventState = workoutViewModel.gymExercisesPerformedOnUIEventState.collectAsStateWithLifecycle()
-        val selectedDateAndMonth = workoutViewModel.selectedDateAndMonthForGymExercises.collectAsStateWithLifecycle().value
+        val uiEventState =
+            workoutViewModel.gymExercisesPerformedOnUIEventState.collectAsStateWithLifecycle()
+        val selectedDateAndMonth =
+            workoutViewModel.selectedDateAndMonthForGymExercises.collectAsStateWithLifecycle().value
 
         GymExercisesPerformed(
             navController = navController,
@@ -54,7 +56,10 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
             uiEventState = uiEventState,
             selectedDateAndMonth = selectedDateAndMonth,
             getExercisesPerformedOn = {
-                workoutViewModel.getGymExercisesPerformed(date = it.first.toString(), month = it.second)
+                workoutViewModel.getGymExercisesPerformed(
+                    date = it.first.toString(),
+                    month = it.second
+                )
             }
         )
     }

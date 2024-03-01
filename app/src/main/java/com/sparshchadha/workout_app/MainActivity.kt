@@ -47,6 +47,7 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.destinations.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.util.ColorsUtil.carbohydratesColor
+import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
@@ -242,7 +243,15 @@ class MainActivity : ComponentActivity() {
 
             Button(
                 onClick = {
-                    if (areDetailsValid(ageStr, weightStr, heightStr, caloriesGoalStr, genderStr, weightGoalStr)) {
+                    if (areDetailsValid(
+                            ageStr,
+                            weightStr,
+                            heightStr,
+                            caloriesGoalStr,
+                            genderStr,
+                            weightGoalStr
+                        )
+                    ) {
                         Toast.makeText(
                             context,
                             "Good.",
@@ -280,47 +289,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Composable
-    private fun GenderIcon(
-        modifier: Modifier,
-        resourceId: Int,
-        selected: Boolean,
-        onClick: () -> Unit
-    ) {
-        if (selected) {
-            Column (
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = modifier.clickable {
-                    onClick()
-                }
-            ) {
-                Image(
-                    painter = painterResource(id = resourceId),
-                    contentDescription = null,
-                )
-
-                Spacer(modifier = Modifier.height(SMALL_PADDING))
-
-                Icon(
-                    imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = null,
-                    tint = carbohydratesColor,
-                    modifier = Modifier.size(
-                        LARGE_PADDING
-                    )
-                )
-            }
-        } else {
-            Image(
-                painter = painterResource(id = resourceId),
-                contentDescription = null,
-                modifier = modifier.clickable {
-                    onClick()
-                }
-            )
-        }
-    }
-
     private fun areDetailsValid(
         vararg args: String
     ): Boolean {
@@ -332,33 +300,75 @@ class MainActivity : ComponentActivity() {
 
         return true
     }
+}
 
-    @Composable
-    fun LandingPageOutlinedTextField(
-        label: String,
-        value: String,
-        onValueChange: (String) -> Unit
-    ) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = {
-                if (it.isDigitsOnly()) onValueChange(it)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = LARGE_PADDING, vertical = SMALL_PADDING),
-            label = {
-                Text(text = label, color = primaryTextColor)
-            },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedTextColor = primaryTextColor,
-                unfocusedTextColor = primaryTextColor,
-                disabledTextColor = primaryTextColor,
-                disabledBorderColor = primaryBlue,
-                unfocusedBorderColor = primaryBlue,
-                focusedBorderColor = carbohydratesColor
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+@Composable
+fun LandingPageOutlinedTextField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    showErrorColor: Boolean = false
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = {
+            if (it.isDigitsOnly()) onValueChange(it)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = LARGE_PADDING, vertical = SMALL_PADDING),
+        label = {
+            Text(text = label, color = primaryTextColor)
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = primaryTextColor,
+            unfocusedTextColor = primaryTextColor,
+            disabledTextColor = primaryTextColor,
+            disabledBorderColor = if (showErrorColor) noAchievementColor else primaryBlue,
+            unfocusedBorderColor = if (showErrorColor) noAchievementColor else primaryBlue,
+            focusedBorderColor = if (showErrorColor) noAchievementColor else primaryBlue
+        ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+    )
+}
+
+@Composable
+fun GenderIcon(
+    modifier: Modifier,
+    resourceId: Int,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    if (selected) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier.clickable {
+                onClick()
+            }
+        ) {
+            Image(
+                painter = painterResource(id = resourceId),
+                contentDescription = null,
+            )
+
+            Spacer(modifier = Modifier.height(SMALL_PADDING))
+
+            Icon(
+                imageVector = Icons.Filled.CheckCircle,
+                contentDescription = null,
+                tint = carbohydratesColor,
+                modifier = Modifier.size(
+                    LARGE_PADDING
+                )
+            )
+        }
+    } else {
+        Image(
+            painter = painterResource(id = resourceId),
+            contentDescription = null,
+            modifier = modifier.clickable {
+                onClick()
+            }
         )
     }
 }

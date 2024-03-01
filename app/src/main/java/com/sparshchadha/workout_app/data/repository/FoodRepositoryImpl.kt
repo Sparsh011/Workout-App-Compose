@@ -17,23 +17,30 @@ class FoodRepositoryImpl(
     private val datastorePreference: WorkoutAppDatastorePreference,
 ) : FoodItemsRepository {
 
-    override fun getFoodItemsFromApi(foodSearchQuery: String): Flow<Resource<NutritionalValueDto>> = flow {
-        emit(Resource.Loading())
+    override fun getFoodItemsFromApi(foodSearchQuery: String): Flow<Resource<NutritionalValueDto>> =
+        flow {
+            emit(Resource.Loading())
 
-        try {
-            val remoteDishes = api.getNutritionalValue(query = foodSearchQuery, apiKey = BuildConfig.FOOD_API_KEY)
-            emit(Resource.Success(remoteDishes))
+            try {
+                val remoteDishes = api.getNutritionalValue(
+                    query = foodSearchQuery,
+                    apiKey = BuildConfig.FOOD_API_KEY
+                )
+                emit(Resource.Success(remoteDishes))
 
-        } catch (e: Exception) {
-            throw e
+            } catch (e: Exception) {
+                throw e
+            }
         }
-    }
 
     override suspend fun saveFoodItem(foodItemEntity: FoodItemEntity) {
         foodItemsDao.addFoodItem(foodItem = foodItemEntity)
     }
 
-    override suspend fun getFoodItemsConsumedOn(date: String, month: String): Flow<List<FoodItemEntity>> {
+    override suspend fun getFoodItemsConsumedOn(
+        date: String,
+        month: String
+    ): Flow<List<FoodItemEntity>> {
         return foodItemsDao.getFoodItemsConsumedOn(date = date, month = month)
     }
 

@@ -46,10 +46,19 @@ fun ExerciseDetailsScreen(
                         end = MEDIUM_PADDING,
                     )
             ) {
-                ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = exercise.difficulty)
+                ExerciseSubTitlesAndDescription(
+                    subTitle = "Difficulty",
+                    description = exercise.difficulty
+                )
                 ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = exercise.muscle)
-                ExerciseSubTitlesAndDescription(subTitle = "Equipment Required", description = exercise.equipment)
-                ExerciseSubTitlesAndDescription(subTitle = "Instructions", description = exercise.instructions)
+                ExerciseSubTitlesAndDescription(
+                    subTitle = "Equipment Required",
+                    description = exercise.equipment
+                )
+                ExerciseSubTitlesAndDescription(
+                    subTitle = "Instructions",
+                    description = exercise.instructions
+                )
             }
         }
     }

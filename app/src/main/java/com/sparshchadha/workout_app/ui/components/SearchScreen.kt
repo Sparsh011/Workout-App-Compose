@@ -264,7 +264,10 @@ fun FoodSearchResults(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+                    .padding(
+                        bottom = paddingValues.calculateBottomPadding(),
+                        top = localPaddingValues.calculateTopPadding()
+                    )
             ) {
                 items(items.size) { index ->
                     FoodCard(
@@ -315,7 +318,10 @@ fun ExerciseSearchResults(
         } else {
             LazyColumn(
                 modifier = Modifier
-                    .padding(bottom = paddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+                    .padding(
+                        bottom = paddingValues.calculateBottomPadding(),
+                        top = localPaddingValues.calculateTopPadding()
+                    )
                     .fillMaxSize()
             ) {
                 items(it) { exercise ->

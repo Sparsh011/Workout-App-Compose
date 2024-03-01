@@ -147,7 +147,11 @@ object SharedModule {
         foodItemsDao: FoodItemsDao,
         datastorePreference: WorkoutAppDatastorePreference,
     ): FoodItemsRepository {
-        return FoodRepositoryImpl(api = api, foodItemsDao = foodItemsDao, datastorePreference = datastorePreference)
+        return FoodRepositoryImpl(
+            api = api,
+            foodItemsDao = foodItemsDao,
+            datastorePreference = datastorePreference
+        )
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)

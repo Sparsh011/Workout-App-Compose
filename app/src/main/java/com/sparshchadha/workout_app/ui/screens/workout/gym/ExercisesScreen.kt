@@ -71,7 +71,10 @@ fun ExercisesScreen(
                 ScaffoldTopBar(
                     topBarDescription = topBarDescription,
                     onBackButtonPressed = {
-                        navController.popBackStack(route = UtilityScreen.SelectExerciseCategory.route, inclusive = false)
+                        navController.popBackStack(
+                            route = UtilityScreen.SelectExerciseCategory.route,
+                            inclusive = false
+                        )
                     }
                 )
             }
@@ -149,7 +152,10 @@ fun ShowExercises(
     LazyColumn(
         modifier = Modifier
             .background(scaffoldBackgroundColor)
-            .padding(top = localPaddingValues.calculateTopPadding(), bottom = globalPaddingValues.calculateBottomPadding())
+            .padding(
+                top = localPaddingValues.calculateTopPadding(),
+                bottom = globalPaddingValues.calculateBottomPadding()
+            )
             .fillMaxSize()
     ) {
         if (exercises != null) {
@@ -272,10 +278,19 @@ fun ExerciseDetailsModalBottomSheet(
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             ExerciseSubTitlesAndDescription(subTitle = "Exercise Name", description = exercise.name)
-            ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = exercise.difficulty)
+            ExerciseSubTitlesAndDescription(
+                subTitle = "Difficulty",
+                description = exercise.difficulty
+            )
             ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = exercise.muscle)
-            ExerciseSubTitlesAndDescription(subTitle = "Equipment Required", description = exercise.equipment)
-            ExerciseSubTitlesAndDescription(subTitle = "Instructions", description = exercise.instructions)
+            ExerciseSubTitlesAndDescription(
+                subTitle = "Equipment Required",
+                description = exercise.equipment
+            )
+            ExerciseSubTitlesAndDescription(
+                subTitle = "Instructions",
+                description = exercise.instructions
+            )
         }
     }
 }

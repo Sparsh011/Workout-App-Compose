@@ -37,8 +37,8 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.rememberPickerState
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
@@ -154,7 +154,11 @@ private fun FoodItemDetailsCard(
             NutritionalValueText(nutrient = "Saturated Fat", quantityOfNutrient = saturatedFat)
             NutritionalValueText(nutrient = "Fiber", quantityOfNutrient = fiber)
             NutritionalValueText(nutrient = "Sodium", quantityOfNutrient = sodium, unit = "mg")
-            NutritionalValueText(nutrient = "Cholesterol", quantityOfNutrient = cholesterol, unit = "mg")
+            NutritionalValueText(
+                nutrient = "Cholesterol",
+                quantityOfNutrient = cholesterol,
+                unit = "mg"
+            )
         }
 
         if (showBottomSheetToSelectFoodItemQuantity) {
@@ -247,7 +251,11 @@ fun ShowQuantityOrSetsPicker(
     }
 }
 
-private fun toggleCardExpansion(isExpanded: Boolean, collapseCard: () -> Unit, expandCard: () -> Unit) {
+private fun toggleCardExpansion(
+    isExpanded: Boolean,
+    collapseCard: () -> Unit,
+    expandCard: () -> Unit
+) {
     if (isExpanded) {
         collapseCard()
     } else {
