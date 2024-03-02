@@ -16,13 +16,16 @@ object ColorsUtil {
     val primaryLightGray: Color = Color(249, 249, 250, 255)
     val primaryGreenCardBackground: Color = Color(39, 255, 147, 255)
     private val primaryBlack: Color = Color(21, 23, 31, 255)
-    val unselectedBottomBarIconColor: Color = Color(139, 143, 156, 255)
-    val dividerColor: Color = Color(0xFFA4A6B2)
+    val unselectedBottomBarIconColor: Color = Color(152, 155, 167, 255)
 
     val targetAchievedColor: Color = Color(0xFF00C980)
     val partialTargetAchievedColor: Color = Color(0xFFFDD835)
     val noAchievementColor: Color = Color(0xFFFF4646)
-    val carbohydratesColor: Color = Color(0xFF9E3DC0)
+    val primaryPurple: Color = Color(0xFF9E3DC0)
+
+    val proteinColor: Color = Color(0xFFFF4646)
+    val fatsColor: Color =  Color(0xFFFDD835)
+    val carbohydratesColor: Color = Color(0xFF03A9F4)
 
     val primaryTextColor: Color
         @Composable
@@ -42,5 +45,13 @@ object ColorsUtil {
 
     val statusBarColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) White else Color(0xFF222227)
+        get() = if (!isSystemInDarkTheme()) primaryPurple else Color(0xFF222227)
+
+    val bottomBarColor: Color
+        @Composable
+        get() = if (!isSystemInDarkTheme()) primaryLightGray else statusBarColor
+
+    val dividerColor: Color
+        @Composable
+        get() = if (!isSystemInDarkTheme()) Color(0xFFCACACE) else DarkGray
 }

@@ -52,10 +52,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.screens.profile.AlertDialogToUpdate
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -63,14 +64,12 @@ import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CaloriesConsumedCard(
-    shouldShowCaloriesBottomSheet: Boolean,
-    sheetState: SheetState,
+    showDialogToUpdateCalories: Boolean,
     caloriesGoal: String,
-    hideCaloriesBottomSheet: () -> Unit,
-    saveNewCaloriesGoal: (Int) -> Unit,
+    hideUpdateCaloriesDialog: () -> Unit,
+    saveNewCaloriesGoal: (String) -> Unit,
     showCaloriesGoalBottomSheet: () -> Unit,
     caloriesConsumed: String,
     progressIndicatorColor: Color,
@@ -99,21 +98,22 @@ fun CaloriesConsumedCard(
             caloriesConsumed = caloriesConsumed,
             showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet,
             caloriesGoal = caloriesGoal,
-            progressIndicatorColor = targetAchievedColor
+            progressIndicatorColor = primaryPurple
         )
 
         CaloriesGoalText(showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet)
     }
 
     // Bottom sheet to update calories goal
-    if (shouldShowCaloriesBottomSheet) {
-        UpdateCaloriesBottomSheet(
-            sheetState = sheetState,
-            caloriesGoal = caloriesGoal,
-            onSheetDismissed = {
-                hideCaloriesBottomSheet()
+    if (showDialogToUpdateCalories) {
+        AlertDialogToUpdate(
+            hideDialog = hideUpdateCaloriesDialog,
+            value = caloriesGoal,
+            onConfirmClick = {
+                saveNewCaloriesGoal(it)
             },
-            saveNewCaloriesGoal = saveNewCaloriesGoal
+            label = "Weight Goal",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
     }
 }

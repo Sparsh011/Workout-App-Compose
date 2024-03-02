@@ -15,8 +15,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldContentColor
 
 @Composable
@@ -31,7 +31,7 @@ fun BottomBar(navHostController: NavHostController) {
     val currentDestination = navBackStackEntry?.destination
 
     BottomAppBar(
-        containerColor = scaffoldBackgroundColor,
+        containerColor = bottomBarColor,
         contentColor = scaffoldContentColor
     ) {
         screens.forEach { screen ->
@@ -75,7 +75,8 @@ fun RowScope.AddItem(
             } else {
                 Icon(
                     imageVector = screen.unselectedIcon,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = ColorsUtil.unselectedBottomBarIconColor
                 )
             }
         },

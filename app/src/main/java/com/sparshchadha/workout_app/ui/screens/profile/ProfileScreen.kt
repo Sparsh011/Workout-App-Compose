@@ -8,15 +8,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
@@ -38,6 +41,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -50,6 +55,7 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.ui.components.CustomDivider
 import com.sparshchadha.workout_app.ui.screens.workout.HeaderText
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
@@ -83,6 +89,8 @@ fun ProfileScreen(
     val age = profileViewModel.readAge.collectAsStateWithLifecycle(initialValue = "").value ?: ""
     val caloriesGoal =
         profileViewModel.readCaloriesGoal.collectAsStateWithLifecycle(initialValue = "").value ?: ""
+    val name =
+        profileViewModel.readName.collectAsStateWithLifecycle(initialValue = "").value ?: "Guest"
 
     var shouldShowDialogToUpdateValue by remember {
         mutableStateOf(false)
@@ -124,7 +132,12 @@ fun ProfileScreen(
         }
 
         item {
-            ProfilePictureAndUserName()
+            ProfilePictureAndUserName(
+                name = name,
+                onNameChange = { newName ->
+                    profileViewModel.saveName(newName)
+                }
+            )
         }
 
         item {
@@ -155,13 +168,14 @@ fun ProfileScreen(
             SettingsCategoryHeader(text = "Gym Workouts")
         }
 
-        items(HelperFunctions.getGymWorkoutCategories()) {
+        items(HelperFunctions.getGymWorkoutCategories().size) {
             SettingsCategory(
-                text = it,
+                text = HelperFunctions.getGymWorkoutCategories()[it],
                 onClick = { navigateToRoute ->
 
                 },
-                verticalLineColor = primaryBlue
+                verticalLineColor = primaryBlue,
+                showDivider = it != HelperFunctions.getGymWorkoutCategories().size - 1
             )
         }
 
@@ -169,13 +183,14 @@ fun ProfileScreen(
             SettingsCategoryHeader(text = "Yoga")
         }
 
-        items(HelperFunctions.getYogaCategories()) {
+        items(HelperFunctions.getYogaCategories().size) {
             SettingsCategory(
-                text = it,
+                text = HelperFunctions.getYogaCategories()[it],
                 onClick = { navigateToRoute ->
 
                 },
-                verticalLineColor = noAchievementColor
+                verticalLineColor = primaryBlue,
+                showDivider = it != HelperFunctions.getYogaCategories().size - 1
             )
         }
 
@@ -183,13 +198,14 @@ fun ProfileScreen(
             SettingsCategoryHeader(text = "Calories & Food")
         }
 
-        items(HelperFunctions.getCaloriesTrackerCategories()) {
+        items(HelperFunctions.getCaloriesTrackerCategories().size) {
             SettingsCategory(
-                text = it,
+                text = HelperFunctions.getCaloriesTrackerCategories()[it],
                 onClick = { navigateToRoute ->
 
                 },
-                verticalLineColor = targetAchievedColor
+                verticalLineColor = primaryBlue,
+                showDivider = it != HelperFunctions.getCaloriesTrackerCategories().size - 1
             )
         }
     }
@@ -216,7 +232,8 @@ fun DialogToUpdate(
                 onConfirmClick = {
                     profileViewModel.saveHeight(it)
                 },
-                label = "Height (cm)"
+                label = "Height (cm)",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
 
@@ -228,7 +245,8 @@ fun DialogToUpdate(
                 onConfirmClick = {
                     profileViewModel.saveCurrentWeight(it)
                 },
-                label = "Weight (kg)"
+                label = "Weight (kg)",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
 
@@ -241,7 +259,8 @@ fun DialogToUpdate(
                     profileViewModel.saveGender(it)
                 },
                 isGender = true,
-                label = ""
+                label = "",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
 
@@ -258,7 +277,8 @@ fun DialogToUpdate(
                 onConfirmClick = {
                     profileViewModel.saveAge(it)
                 },
-                label = "Age"
+                label = "Age",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
 
@@ -270,7 +290,8 @@ fun DialogToUpdate(
                 onConfirmClick = {
                     profileViewModel.saveWeightGoal(it)
                 },
-                label = "Weight Goal"
+                label = "Weight Goal",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
 
@@ -282,7 +303,8 @@ fun DialogToUpdate(
                 onConfirmClick = {
                     profileViewModel.saveCaloriesGoal(it)
                 },
-                label = "Calories Goal"
+                label = "Calories Goal",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
         }
     }
@@ -295,8 +317,10 @@ fun AlertDialogToUpdate(
     value: String,
     onConfirmClick: (String) -> Unit,
     isGender: Boolean = false,
-    label: String
-) {
+    label: String,
+    keyboardOptions: KeyboardOptions,
+    isText: Boolean = false
+    ) {
     AlertDialog(
         onDismissRequest = {
             hideDialog()
@@ -312,7 +336,7 @@ fun AlertDialogToUpdate(
             Column(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
-                    .background(statusBarColor),
+                    .background(bottomBarColor),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -336,10 +360,16 @@ fun AlertDialogToUpdate(
                     label = label,
                     value = newValue,
                     onValueChange = {
+                        if (isText) {
+                            newValue = it
+                        } else {
+                            if (it.isDigitsOnly()) newValue = it
+                        }
                         isEmpty = it.isBlank()
-                        if (it.isDigitsOnly()) newValue = it
                     },
-                    showErrorColor = isEmpty
+                    showErrorColor = isEmpty,
+                    keyboardOptions = keyboardOptions,
+                    isText = isText
                 )
 
                 Button(
@@ -353,7 +383,7 @@ fun AlertDialogToUpdate(
                         .padding(LARGE_PADDING)
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = ColorsUtil.carbohydratesColor
+                        containerColor = ColorsUtil.primaryPurple
                     )
                 ) {
                     Text(text = "Update", color = Color.White)
@@ -365,7 +395,7 @@ fun AlertDialogToUpdate(
                     .fillMaxWidth()
                     .padding(MEDIUM_PADDING)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(statusBarColor)
+                    .background(bottomBarColor)
                     .padding(LARGE_PADDING)
             ) {
                 GenderIcon(
@@ -430,7 +460,7 @@ fun PersonalInformation(
             .fillMaxWidth()
             .padding(start = MEDIUM_PADDING, bottom = SMALL_PADDING, end = MEDIUM_PADDING)
             .clip(RoundedCornerShape(20.dp))
-            .background(statusBarColor)
+            .background(bottomBarColor)
     ) {
         HelperFunctions.getPersonalInfoCategories().forEachIndexed { index, category ->
             var categoryValue = ""
@@ -502,7 +532,7 @@ fun PersonalInfoCategory(
             fontSize = 16.nonScaledSp,
             color = primaryTextColor,
             modifier = Modifier
-                .padding(MEDIUM_PADDING)
+                .padding(start = MEDIUM_PADDING, top = MEDIUM_PADDING, bottom = MEDIUM_PADDING)
                 .weight(4f)
         )
 
@@ -510,9 +540,11 @@ fun PersonalInfoCategory(
             text = categoryValue,
             color = categoryValueColor,
             modifier = Modifier
-                .padding(MEDIUM_PADDING)
+                .padding(end = MEDIUM_PADDING, top = MEDIUM_PADDING, bottom = MEDIUM_PADDING)
                 .weight(1f),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            fontSize = 16.nonScaledSp,
+            maxLines = 1
         )
     }
 }
@@ -521,7 +553,8 @@ fun PersonalInfoCategory(
 fun SettingsCategory(
     text: String,
     onClick: (String) -> Unit,
-    verticalLineColor: Color
+    verticalLineColor: Color,
+    showDivider: Boolean = true
 ) {
     Column(
         modifier = Modifier
@@ -553,7 +586,7 @@ fun SettingsCategory(
             )
         }
 
-        CustomDivider()
+        if (showDivider) CustomDivider()
     }
 }
 
@@ -565,7 +598,8 @@ fun SettingsCategoryHeader(text: String) {
             .fillMaxSize()
             .padding(MEDIUM_PADDING),
         color = primaryTextColor,
-        fontSize = 20.nonScaledSp
+        fontSize = 20.nonScaledSp,
+        fontWeight = FontWeight.Bold
     )
 }
 
@@ -577,17 +611,40 @@ fun StickyHeaderTextContent(modifier: Modifier, text: String) {
     ) {
         Text(
             text = text,
-            fontSize = 24.nonScaledSp,
-            color = primaryTextColor,
-            modifier = Modifier.padding(MEDIUM_PADDING)
+            fontSize = 20.nonScaledSp,
+            color = Color.White,
+            modifier = Modifier.padding(vertical = SMALL_PADDING, horizontal = MEDIUM_PADDING)
         )
     }
 }
 
 @Composable
-fun ProfilePictureAndUserName() {
+fun ProfilePictureAndUserName(
+    name: String,
+    onNameChange: (String) -> Unit
+) {
+    var shouldShowNameChangeDialog by remember {
+        mutableStateOf(false)
+    }
+
+    if (shouldShowNameChangeDialog) {
+        AlertDialogToUpdate(
+            hideDialog = {
+                shouldShowNameChangeDialog = false
+            },
+            value = name,
+            onConfirmClick = {
+                onNameChange(it)
+            },
+            label = "Your Name",
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, capitalization = KeyboardCapitalization.Words),
+            isText = true
+        )
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(MEDIUM_PADDING),
         verticalAlignment = Alignment.Top
     ) {
@@ -605,13 +662,33 @@ fun ProfilePictureAndUserName() {
                     .fillMaxSize()
             )
         }
-        Text(
-            text = "Sparsh Chadha",
-            fontSize = 24.nonScaledSp,
+
+        Row (
             modifier = Modifier
                 .weight(5f)
-                .padding(SMALL_PADDING),
-            color = primaryTextColor
-        )
+                .clickable {
+                    shouldShowNameChangeDialog = true
+                }
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = name,
+                fontSize = 20.nonScaledSp,
+                modifier = Modifier
+                    .padding(SMALL_PADDING),
+                color = primaryTextColor,
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.width(SMALL_PADDING))
+
+            Icon(
+                imageVector = Icons.Filled.Edit,
+                contentDescription = null,
+                tint = primaryTextColor,
+                modifier = Modifier.size(LARGE_PADDING)
+            )
+        }
     }
 }

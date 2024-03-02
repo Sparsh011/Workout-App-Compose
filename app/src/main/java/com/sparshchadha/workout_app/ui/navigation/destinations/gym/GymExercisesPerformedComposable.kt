@@ -60,6 +60,9 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
                     date = it.first.toString(),
                     month = it.second
                 )
+            },
+            removeExercise = {
+                workoutViewModel.removeGymExercise(it)
             }
         )
     }

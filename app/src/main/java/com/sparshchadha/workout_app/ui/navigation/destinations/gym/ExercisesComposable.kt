@@ -1,8 +1,8 @@
 package com.sparshchadha.workout_app.ui.navigation.destinations.gym
 
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,14 +34,7 @@ fun NavGraphBuilder.gymExercisesComposable(
             )
         },
         exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth ->
-                    fullWidth
-                },
-                animationSpec = tween(
-                    durationMillis = 300
-                )
-            )
+            ExitTransition.None
         }
     ) { backStackEntry ->
         val uiEventState by workoutViewModel.uiEventStateFlow.collectAsStateWithLifecycle()

@@ -4,8 +4,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,9 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,10 +30,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.navigation.NavHostController
@@ -44,6 +51,7 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -57,6 +65,7 @@ fun GymExercisesPerformed(
     uiEventState: State<WorkoutViewModel.UIEvent?>,
     selectedDateAndMonth: Pair<Int, String>?,
     getExercisesPerformedOn: (Pair<Int, String>) -> Unit,
+    removeExercise: (GymExercisesEntity) -> Unit,
 ) {
     uiEventState.value?.let { event ->
         HandleUIEventsForExercisesPerformedToday(
@@ -65,7 +74,8 @@ fun GymExercisesPerformed(
             globalPaddingValues = globalPaddingValues,
             navController = navController,
             selectedDateAndMonth = selectedDateAndMonth,
-            getExercisesPerformedOn = getExercisesPerformedOn
+            getExercisesPerformedOn = getExercisesPerformedOn,
+            removeExercise = removeExercise
         )
     }
 }
@@ -79,6 +89,7 @@ fun HandleUIEventsForExercisesPerformedToday(
     navController: NavHostController,
     selectedDateAndMonth: Pair<Int, String>?,
     getExercisesPerformedOn: (Pair<Int, String>) -> Unit,
+    removeExercise: (GymExercisesEntity) -> Unit,
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -101,7 +112,8 @@ fun HandleUIEventsForExercisesPerformedToday(
                     )
                 },
                 selectedDateAndMonth = selectedDateAndMonth,
-                getExercisesPerformedOn = getExercisesPerformedOn
+                getExercisesPerformedOn = getExercisesPerformedOn,
+                removeExercise = removeExercise
             )
         }
 
@@ -120,6 +132,7 @@ fun PopulatePerformedExercises(
     onBackButtonPressed: () -> Unit,
     getExercisesPerformedOn: (Pair<Int, String>) -> Unit,
     selectedDateAndMonth: Pair<Int, String>?,
+    removeExercise: (GymExercisesEntity) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -133,6 +146,7 @@ fun PopulatePerformedExercises(
 
         LazyColumn(
             modifier = Modifier
+                .background(scaffoldBackgroundColor)
                 .fillMaxSize()
                 .padding(
                     top = localPaddingValues.calculateTopPadding(),
@@ -163,7 +177,10 @@ fun PopulatePerformedExercises(
                 }
             } else {
                 items(exercisesPerformed) {
-                    ExerciseEntity(exerciseEntity = it)
+                    ExerciseEntity(
+                        exerciseEntity = it,
+                        removeExercise = removeExercise
+                    )
                 }
             }
         }
@@ -174,6 +191,7 @@ fun PopulatePerformedExercises(
 @Composable
 fun ExerciseEntity(
     exerciseEntity: GymExercisesEntity,
+    removeExercise: (GymExercisesEntity) -> Unit,
 ) {
     var shouldShowExerciseDetailsBottomSheet by remember {
         mutableStateOf(false)
@@ -186,66 +204,66 @@ fun ExerciseEntity(
             shouldShowExerciseDetailsBottomSheet = true
         },
         colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryLightGray
+            containerColor = ColorsUtil.cardBackgroundColor
         )
     ) {
-        Column(
-            modifier = Modifier
-                .background(ColorsUtil.primaryLightGray)
-                .padding(Dimensions.LARGE_PADDING)
+        Row (
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = Dimensions.SMALL_PADDING),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
-
-            exerciseEntity.exerciseDetails?.let { exercise ->
-                Text(
-                    text = exercise.name,
-                    color = ColorsUtil.primaryTextColor,
-                    fontSize = 26.nonScaledSp,
-                    fontWeight = FontWeight.Bold
-                )
+            Column(
+                modifier = Modifier
+                    .weight(9f)
+                    .background(ColorsUtil.cardBackgroundColor)
+                    .padding(Dimensions.MEDIUM_PADDING)
+            ) {
 
                 Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
 
-                Text(
-                    buildAnnotatedString {
-                        append("Difficulty Level : ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = ColorsUtil.primaryTextColor,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        ) {
-                            append(exercise.difficulty)
-                        }
-                    },
-                    color = ColorsUtil.primaryTextColor,
-                    fontSize = 16.nonScaledSp
-                )
+                exerciseEntity.exerciseDetails?.let { exercise ->
+                    Text(
+                        text = exercise.name,
+                        color = ColorsUtil.primaryTextColor,
+                        fontSize = 20.nonScaledSp,
+                        fontWeight = FontWeight.Bold
+                    )
 
-                Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
+                    Spacer(modifier = Modifier.height(Dimensions.SMALL_PADDING))
 
-                Text(
-                    buildAnnotatedString {
-                        append("Sets Performed : ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = ColorsUtil.primaryTextColor,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        ) {
-                            append(exerciseEntity.setsPerformed.toString())
-                        }
-                    },
-                    color = ColorsUtil.primaryTextColor,
-                    fontSize = 16.nonScaledSp
-                )
+                    Text(
+                        buildAnnotatedString {
+                            append("Performed at ")
+                            withStyle(
+                                style = SpanStyle(
+                                    fontStyle = FontStyle.Italic,
+                                    color = ColorsUtil.primaryTextColor,
+                                )
+                            ) {
+                                append("${exerciseEntity.hour}: ${exerciseEntity.minutes}: ${exerciseEntity.seconds}")
+                            }
+                        },
+                        color = ColorsUtil.primaryTextColor,
+                        fontSize = 13.nonScaledSp
+                    )
 
-                Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
+                    Spacer(modifier = Modifier.height(Dimensions.SMALL_PADDING))
+                }
             }
+
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = null,
+                tint = ColorsUtil.noAchievementColor,
+                modifier = Modifier.padding(Dimensions.SMALL_PADDING)
+                    .clickable {
+                        removeExercise(exerciseEntity)
+                    }
+            )
         }
     }
 
+    // TODO - add navigation here instead of bottom sheet. do same for yoga poses perf screen
     if (shouldShowExerciseDetailsBottomSheet) {
         exerciseEntity.exerciseDetails?.let {
             ExerciseDetailsModalBottomSheet(

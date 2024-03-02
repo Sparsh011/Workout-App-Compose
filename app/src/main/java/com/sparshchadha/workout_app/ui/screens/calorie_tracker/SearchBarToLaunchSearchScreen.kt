@@ -1,70 +1,52 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryGreenCardBackground
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
-import com.sparshchadha.workout_app.util.Dimensions
+import androidx.compose.ui.graphics.Color
+import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBarToLaunchSearchScreen(
-    searchBarQuery: String,
-    updateSearchBarQuery: (String) -> Unit,
-    navController: NavHostController,
+    navigateToSearchScreen: () -> Unit
 ) {
-    SearchBar(
-        query = searchBarQuery,
-        onQueryChange = {
-            updateSearchBarQuery(it)
-        },
-        onSearch = {
-
-        },
-        active = false,
-        onActiveChange = {
-            navController.navigate("SearchScreen/food")
-        },
-        placeholder = {
-            Text(text = "Search Dishes...", color = primaryTextColor, fontSize = 18.nonScaledSp)
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null,
-                tint = primaryTextColor
-            )
-        },
-        trailingIcon = { },
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(statusBarColor)
-            .padding(horizontal = Dimensions.MEDIUM_PADDING),
-        colors = SearchBarDefaults.colors(
-            containerColor = statusBarColor,
-            inputFieldColors = TextFieldDefaults.textFieldColors(
-                focusedTextColor = primaryGreenCardBackground
-            )
-        ),
-        shape = RoundedCornerShape(size = 10.dp)
+            .background(ColorsUtil.statusBarColor)
+            .padding(SMALL_PADDING)
+            .clickable {
+                navigateToSearchScreen()
+            },
+        verticalAlignment = Alignment.CenterVertically
     ) {
+        Icon(
+            imageVector = Icons.Default.Search,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.weight(0.5f)
+                .size(LARGE_PADDING)
+        )
 
+        Text(
+            text = "Search Dishes...",
+            fontSize = 20.nonScaledSp,
+            color = Color.White,
+            modifier = Modifier.weight(4.5f)
+        )
     }
 }

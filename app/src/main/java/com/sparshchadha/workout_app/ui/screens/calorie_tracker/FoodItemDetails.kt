@@ -8,15 +8,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 
 @Composable
@@ -36,7 +43,7 @@ fun FoodItemDetails(
             topBar = {
                 ScaffoldTopBar(
                     topBarDescription = foodItem?.foodItemDetails?.name?.capitalize()
-                        ?: "Sorry, Unable To Get Name!",
+                        ?: "Unable To Get Name!",
                     onBackButtonPressed = {
                         navController.popBackStack(BottomBarScreen.CalorieTracker.route, false)
                     }
@@ -46,7 +53,7 @@ fun FoodItemDetails(
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
-                    .background(Color.White)
+                    .background(scaffoldBackgroundColor)
                     .padding(
                         top = localPaddingValues.calculateTopPadding(),
                         start = MEDIUM_PADDING,
@@ -55,12 +62,23 @@ fun FoodItemDetails(
                     )
             ) {
 
+                Text(
+                    text = "Nutritional information of ${foodItem?.foodItemDetails?.name?.capitalize()} per serving(s) is listed below",
+                    textAlign = TextAlign.Start,
+                    color = primaryTextColor,
+                    fontSize = 20.nonScaledSp,
+                    overflow = TextOverflow.Ellipsis,
+                    fontStyle = FontStyle.Italic,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(end = MEDIUM_PADDING, top = MEDIUM_PADDING, bottom = MEDIUM_PADDING)
+                )
+
                 FoodItemText(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Servings",
-                    quantityOfMacroNutrient = foodItem?.servings.toString()
+                    quantityOfMacroNutrient = "1"
                 )
 
                 FoodItemText(
@@ -69,17 +87,6 @@ fun FoodItemDetails(
                         .padding(MEDIUM_PADDING),
                     macroNutrient = "Calories Per Serving ",
                     quantityOfMacroNutrient = foodItem?.foodItemDetails?.calories.toString() + " KCAL"
-                )
-
-                FoodItemText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(MEDIUM_PADDING),
-                    macroNutrient = "Total Calories ",
-                    quantityOfMacroNutrient = (foodItem?.servings?.times(
-                        (foodItem.foodItemDetails?.calories?.toInt()
-                            ?: 0)
-                    )).toString() + " KCAL"
                 )
 
                 FoodItemText(

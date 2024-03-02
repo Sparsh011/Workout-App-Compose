@@ -53,7 +53,8 @@ fun NavGraph(
         calorieTrackerComposable(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            foodItemsViewModel = foodItemsViewModel
+            foodItemsViewModel = foodItemsViewModel,
+            profileViewModel = profileViewModel
         )
 
         // Search Screen
@@ -108,6 +109,13 @@ fun NavGraph(
             globalPaddingValues = globalPaddingValues
         )
 
+        // Exercise Details screen
+        exerciseDetailsComposable(
+            navController = navController,
+            workoutViewModel = workoutViewModel,
+            globalPaddingValues = globalPaddingValues
+        )
+
         // Food Item Details
         foodItemDetailsComposable(
             navController = navController,
@@ -122,12 +130,6 @@ fun NavGraph(
             remindersViewModel = remindersViewModel
         )
 
-        // Exercise Details screen
-        exerciseDetailsComposable(
-            navController = navController,
-            workoutViewModel = workoutViewModel,
-            globalPaddingValues = globalPaddingValues
-        )
     }
 }
 

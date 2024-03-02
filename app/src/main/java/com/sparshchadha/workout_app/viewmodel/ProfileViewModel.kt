@@ -34,6 +34,9 @@ class ProfileViewModel @Inject constructor(
     val readCaloriesGoal: Flow<String?>
         get() = datastorePreference.readCaloriesGoal
 
+    val readName: Flow<String?>
+        get() = datastorePreference.readName
+
     fun saveAge(age: String) {
         viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.saveAge(age)
@@ -70,6 +73,12 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun saveName(name: String) {
+        viewModelScope.launch (Dispatchers.IO) {
+            datastorePreference.saveName(name)
+        }
+    }
+
     fun saveAllDetails(
         age: String,
         height: String,
@@ -78,7 +87,7 @@ class ProfileViewModel @Inject constructor(
         weightGoal: String,
         caloriesGoal: String
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch (Dispatchers.IO) {
             async {
                 datastorePreference.saveAge(age)
             }

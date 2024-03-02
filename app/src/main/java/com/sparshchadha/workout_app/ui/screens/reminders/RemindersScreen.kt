@@ -77,7 +77,7 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.ReminderEntity
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.util.ColorsUtil.carbohydratesColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
@@ -162,7 +162,7 @@ fun RemindersScreen(
                 onClick = {
                     showBottomSheetToAddReminder = true
                 },
-                containerColor = carbohydratesColor,
+                containerColor = primaryPurple,
                 contentColor = White
             ) {
                 Icon(

@@ -1,6 +1,7 @@
 package com.sparshchadha.workout_app.data.local.room_db.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -17,4 +18,7 @@ interface GymExercisesDao {
 
     @Query("SELECT * FROM GymExercisesEntity WHERE date = :date AND month = :month")
     fun getExercisesPerformedOn(date: String, month: String): Flow<List<GymExercisesEntity>>
+
+    @Delete
+    fun removeGymExercise(exercisesEntity: GymExercisesEntity)
 }

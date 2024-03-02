@@ -17,7 +17,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -39,9 +38,6 @@ class FoodItemsViewModel @Inject constructor(
 
     private val _savedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
     val savedFoodItems = _savedFoodItems
-
-    private val _caloriesGoal: MutableState<String?> = mutableStateOf(null)
-    val caloriesGoal = _caloriesGoal
 
     private val _caloriesConsumed: MutableState<String?> = mutableStateOf(null)
     val caloriesConsumed = _caloriesConsumed
@@ -65,32 +61,39 @@ class FoodItemsViewModel @Inject constructor(
 
     fun getFoodItemsFromApi() {
         viewModelScope.launch {
-            val nutritionalValues =
-                foodItemsRepository.getFoodItemsFromApi(foodSearchQuery = _searchQuery.value)
-            nutritionalValues.collect { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        Log.e(TAG, "getFoodItems: response - ${result.data}")
-                        _foodItemsFromApi.value = result.data
-                        _uiEventState.emit(
-                            WorkoutViewModel.UIEvent.HideLoaderAndShowResponse
-                        )
-                    }
+            try {
+                val nutritionalValues =
+                    foodItemsRepository.getFoodItemsFromApi(foodSearchQuery = _searchQuery.value)
+                nutritionalValues.collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            Log.e(TAG, "getFoodItems: response - ${result.data}")
+                            _foodItemsFromApi.value = result.data
+                            _uiEventState.emit(
+                                WorkoutViewModel.UIEvent.HideLoaderAndShowResponse
+                            )
+                        }
 
-                    is Resource.Loading -> {
-                        _uiEventState.emit(
-                            WorkoutViewModel.UIEvent.ShowLoader
-                        )
-                    }
+                        is Resource.Loading -> {
+                            _uiEventState.emit(
+                                WorkoutViewModel.UIEvent.ShowLoader
+                            )
+                        }
 
-                    is Resource.Error -> {
+                        is Resource.Error -> {
 //                        _uiEventState.emit(
 //                            WorkoutViewModel.UIEvent.ShowError(errorMessage = result.error?.message.toString())
 //                        )
 
+                        }
                     }
                 }
+            } catch (_: Exception) {
+                _uiEventState.emit(
+                    WorkoutViewModel.UIEvent.ShowError(errorMessage = "Something Went Wrong!")
+                )
             }
+
         }
     }
 
@@ -188,24 +191,6 @@ class FoodItemsViewModel @Inject constructor(
             _caloriesConsumed.value = totalCaloriesConsumed.toString()
         } else {
             _caloriesConsumed.value = "0"
-        }
-    }
-
-    fun addOrUpdateCaloriesGoal(caloriesGoal: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            foodItemsRepository.saveOrUpdateCaloriesGoal(caloriesGoal = caloriesGoal.toString())
-        }
-    }
-
-    fun getCaloriesGoal() {
-        viewModelScope.launch(Dispatchers.IO) {
-            foodItemsRepository.getCaloriesGoal().catch { e ->
-                Log.e(TAG, "Error getting calories goal: ${e.message}")
-            }.collect { value ->
-                withContext(Dispatchers.Main) {
-                    _caloriesGoal.value = value
-                }
-            }
         }
     }
 

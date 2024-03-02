@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -63,19 +64,19 @@ fun GymAndYogaWorkoutHomeScreen(
     ) {
         Text(
             text = "Perform Workout",
-            fontSize = 24.nonScaledSp,
+            fontSize = 20.nonScaledSp,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(statusBarColor)
-                .padding(MEDIUM_PADDING),
-            color = primaryTextColor
+                .padding(vertical = SMALL_PADDING, horizontal = MEDIUM_PADDING),
+            color = Color.White
         )
 
         LazyColumn(
             modifier = Modifier
                 .background(scaffoldBackgroundColor)
                 .padding(
-                    top = MEDIUM_PADDING,
+                    top = SMALL_PADDING,
                     start = MEDIUM_PADDING,
                     end = MEDIUM_PADDING,
                     bottom = globalPaddingValues.calculateBottomPadding()
@@ -211,11 +212,11 @@ fun TodayWorkoutCard(
                 colorFilter = ColorFilter.tint(
                     primaryTextColor
                 ),
-                modifier = Modifier.padding(LARGE_PADDING)
+                modifier = Modifier.padding(horizontal = LARGE_PADDING)
             )
         }
 
-        if (showDivider) CustomDivider(dividerColor = ColorsUtil.dividerColor)
+        if (showDivider) CustomDivider(dividerColor = ColorsUtil.dividerColor, verticalPadding = 0.dp)
     }
 }
 
@@ -228,7 +229,7 @@ fun HeaderText(
         fontSize = 20.nonScaledSp,
         color = primaryTextColor,
         modifier = Modifier
-            .padding(MEDIUM_PADDING)
+            .padding(vertical = MEDIUM_PADDING, horizontal = SMALL_PADDING)
             .fillMaxWidth(),
         fontWeight = FontWeight.Bold
     )
@@ -300,13 +301,14 @@ fun PopulateYogaDifficulty(
         modifier = Modifier.clickable {
             onYogaDifficultySelection(yogaDifficulty)
         }
+            .padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING)
     ) {
         Text(
             text = yogaDifficulty.name.lowercase().capitalize(),
             fontSize = 16.nonScaledSp,
             color = primaryTextColor,
             modifier = Modifier
-                .padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING)
+                .padding(MEDIUM_PADDING)
                 .weight(0.8f)
                 .fillMaxWidth()
         )
@@ -315,13 +317,11 @@ fun PopulateYogaDifficulty(
             imageVector = Icons.Default.KeyboardArrowRight,
             contentDescription = null,
             tint = primaryTextColor,
-            modifier = Modifier.padding(LARGE_PADDING)
+            modifier = Modifier.padding(vertical = MEDIUM_PADDING)
         )
     }
 
     if (showDivider) {
-        CustomDivider(
-            dividerColor = ColorsUtil.dividerColor
-        )
+        CustomDivider()
     }
 }

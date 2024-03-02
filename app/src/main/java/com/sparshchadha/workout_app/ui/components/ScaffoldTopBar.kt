@@ -12,11 +12,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -44,7 +44,7 @@ fun ScaffoldTopBar(
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = null,
-                tint = primaryTextColor,
+                tint = Color.White,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(horizontal = MEDIUM_PADDING)
@@ -56,7 +56,7 @@ fun ScaffoldTopBar(
 
         Text(
             text = topBarDescription,
-            color = primaryTextColor,
+            color = Color.White,
             fontSize = 20.nonScaledSp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier

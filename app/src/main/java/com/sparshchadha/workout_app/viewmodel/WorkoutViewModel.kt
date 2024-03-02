@@ -293,6 +293,18 @@ class WorkoutViewModel @Inject constructor(
         _exerciseDetails.value = exercisesDtoItem
     }
 
+    fun removeYogaPose(yogaEntity: YogaEntity) {
+        viewModelScope.launch (Dispatchers.IO) {
+            workoutRepository.removeYogaPose(yogaEntity)
+        }
+    }
+
+    fun removeGymExercise(exercisesEntity: GymExercisesEntity) {
+        viewModelScope.launch (Dispatchers.IO) {
+            workoutRepository.removeGymExercise(exercisesEntity)
+        }
+    }
+
     sealed class UIEvent {
         data class ShowError(val errorMessage: String) : UIEvent()
         object HideLoaderAndShowResponse : UIEvent()

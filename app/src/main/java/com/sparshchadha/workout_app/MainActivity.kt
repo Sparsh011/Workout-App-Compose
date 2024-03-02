@@ -46,7 +46,7 @@ import androidx.navigation.compose.rememberNavController
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.destinations.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
-import com.sparshchadha.workout_app.util.ColorsUtil.carbohydratesColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
@@ -278,7 +278,7 @@ class MainActivity : ComponentActivity() {
                     .padding(LARGE_PADDING)
                     .fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = carbohydratesColor
+                    containerColor = primaryPurple
                 )
             ) {
                 Text(
@@ -307,12 +307,18 @@ fun LandingPageOutlinedTextField(
     label: String,
     value: String,
     onValueChange: (String) -> Unit,
-    showErrorColor: Boolean = false
+    showErrorColor: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+    isText: Boolean = false
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = {
-            if (it.isDigitsOnly()) onValueChange(it)
+            if (isText) {
+                onValueChange(it)
+            } else {
+                if (it.isDigitsOnly()) onValueChange(it)
+            }
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -328,7 +334,7 @@ fun LandingPageOutlinedTextField(
             unfocusedBorderColor = if (showErrorColor) noAchievementColor else primaryBlue,
             focusedBorderColor = if (showErrorColor) noAchievementColor else primaryBlue
         ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        keyboardOptions = keyboardOptions
     )
 }
 
@@ -356,7 +362,7 @@ fun GenderIcon(
             Icon(
                 imageVector = Icons.Filled.CheckCircle,
                 contentDescription = null,
-                tint = carbohydratesColor,
+                tint = primaryPurple,
                 modifier = Modifier.size(
                     LARGE_PADDING
                 )

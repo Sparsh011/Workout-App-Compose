@@ -52,6 +52,8 @@ import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodCard
 import com.sparshchadha.workout_app.ui.screens.workout.gym.Exercise
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
@@ -85,7 +87,7 @@ fun SearchScreen(
     })
 
     Scaffold(
-        containerColor = Color.White,
+        containerColor = scaffoldBackgroundColor,
         topBar = {
             MySearchBar(
                 searchBarQuery = searchBarQuery,
@@ -356,16 +358,16 @@ fun MySearchBar(
     onCloseClicked: () -> Unit,
 ) {
     Surface(
-        border = BorderStroke(2.dp, Color.White),
-        color = Color.White
+        border = BorderStroke(1.dp, scaffoldBackgroundColor),
+        color = scaffoldBackgroundColor
     ) {
         TextField(
             colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedContainerColor = ColorsUtil.primaryLightGray,
-                unfocusedContainerColor = ColorsUtil.primaryLightGray,
-                disabledContainerColor = ColorsUtil.primaryLightGray,
+                focusedTextColor = primaryTextColor,
+                unfocusedTextColor = primaryTextColor,
+                focusedContainerColor = scaffoldBackgroundColor,
+                unfocusedContainerColor = scaffoldBackgroundColor,
+                disabledContainerColor = scaffoldBackgroundColor
             ),
             modifier = Modifier
                 .fillMaxWidth()

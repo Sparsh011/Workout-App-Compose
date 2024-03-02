@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,11 +26,10 @@ import com.sparshchadha.workout_app.ui.components.CustomDivider
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
-import com.sparshchadha.workout_app.util.ColorsUtil.dividerColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
-import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -128,11 +128,13 @@ fun ExerciseCategoryItems(
                 topBarDescription = topBarDescription,
                 onBackButtonPressed = onBackButtonPressed
             )
-        }
+        },
+        containerColor = scaffoldBackgroundColor
     ) { localPaddingValues ->
         if (topBarDescription == stringResource(id = R.string.select_body_part_heading)) {
             LazyColumn(
                 modifier = Modifier
+                    .fillMaxSize()
                     .background(scaffoldBackgroundColor)
                     .padding(
                         top = localPaddingValues.calculateTopPadding(),
@@ -232,13 +234,14 @@ fun BodyPartStickyHeader(
     bodyPart: String,
 ) {
     Surface(
-        modifier = modifier
+        modifier = modifier,
+        color = scaffoldBackgroundColor
     ) {
         Text(
             text = bodyPart,
             fontSize = 20.nonScaledSp,
             color = primaryTextColor,
-            modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
+            modifier = Modifier.padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING),
             fontWeight = FontWeight.Bold
         )
     }
@@ -256,13 +259,14 @@ fun CategoryItem(
         modifier = Modifier.clickable {
             onCategoryItemSelected(categoryItem)
         }
+            .padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING)
     ) {
         Text(
             text = categoryItem,
             fontSize = categoryItemFontSize.nonScaledSp,
             color = primaryTextColor,
             modifier = Modifier
-                .padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING)
+                .padding(MEDIUM_PADDING)
                 .weight(0.8f)
                 .fillMaxWidth()
         )
@@ -270,14 +274,11 @@ fun CategoryItem(
         Icon(
             imageVector = Icons.Default.KeyboardArrowRight,
             contentDescription = null,
-            tint = primaryTextColor,
-            modifier = Modifier.padding(LARGE_PADDING)
+            tint = primaryTextColor
         )
     }
 
     if (showDivider) {
-        CustomDivider(
-            dividerColor = dividerColor
-        )
+        CustomDivider()
     }
 }

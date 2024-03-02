@@ -13,12 +13,14 @@ import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerScreen
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.calorieTrackerComposable(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
     foodItemsViewModel: FoodItemsViewModel,
+    profileViewModel: ProfileViewModel
 ) {
     composable(
         route = BottomBarScreen.CalorieTracker.route,
@@ -32,10 +34,11 @@ fun NavGraphBuilder.calorieTrackerComposable(
 
         LaunchedEffect(key1 = true) {
             foodItemsViewModel.getFoodItemsConsumedOn()
-            foodItemsViewModel.getCaloriesGoal()
         }
 
-        val caloriesGoal = foodItemsViewModel.caloriesGoal.value ?: "0"
+        val caloriesGoal =
+            profileViewModel.readCaloriesGoal.collectAsStateWithLifecycle(initialValue = "0").value
+                ?: "0"
         val caloriesConsumed = foodItemsViewModel.caloriesConsumed.value ?: "0"
         val selectedDateAndMonth =
             foodItemsViewModel.selectedDateAndMonthForFoodItems.collectAsStateWithLifecycle().value
@@ -47,7 +50,7 @@ fun NavGraphBuilder.calorieTrackerComposable(
                 foodItemsViewModel.getFoodItemsConsumedOn(it.first.toString(), it.second)
             },
             saveNewCaloriesGoal = {
-                foodItemsViewModel.addOrUpdateCaloriesGoal(caloriesGoal = it)
+                profileViewModel.saveCaloriesGoal(it)
             },
             caloriesGoal = caloriesGoal,
             caloriesConsumed = caloriesConsumed,

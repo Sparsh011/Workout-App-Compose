@@ -24,6 +24,8 @@ interface WorkoutRepository {
 
     suspend fun saveYogaPose(yogaPose: YogaEntity)
 
+    suspend fun removeYogaPose(yogaPose: YogaEntity)
+
     suspend fun getYogaPosesPerformedOn(
         date: String = HelperFunctions.getCurrentDateAndMonth().first.toString(),
         month: String = HelperFunctions.getCurrentDateAndMonth().second,
@@ -37,5 +39,6 @@ interface WorkoutRepository {
     ): Flow<List<GymExercisesEntity>>
 
     suspend fun getAllGymExercisesPerformed(): Flow<List<GymExercisesEntity>>
+    suspend fun removeGymExercise(exercisesEntity: GymExercisesEntity)
 
 }

@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,13 +31,14 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.rememberPickerState
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryLightGray
+import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
@@ -57,7 +57,6 @@ fun FoodCard(
     foodItem: FoodItem,
     saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
 ) {
-    Log.e(TAG, "FoodCard: here with $shouldExpandCard")
     FoodItemDetailsCard(
         foodItemName = foodItem.name.capitalize(),
         calories = foodItem.calories.toString(),
@@ -107,7 +106,7 @@ private fun FoodItemDetailsCard(
 
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = primaryLightGray
+            containerColor = cardBackgroundColor
         ),
         modifier = Modifier
             .fillMaxWidth()
@@ -198,7 +197,7 @@ fun ShowQuantityOrSetsPicker(
         },
         sheetState = rememberModalBottomSheetState(),
         windowInsets = WindowInsets(0, 0, 0, 10),
-        containerColor = Color.White
+        containerColor = scaffoldBackgroundColor
     ) {
         Text(
             buildAnnotatedString {
@@ -215,21 +214,21 @@ fun ShowQuantityOrSetsPicker(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = LARGE_PADDING),
             textAlign = TextAlign.Start,
             color = primaryTextColor,
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(SMALL_PADDING))
 
         PickNumberOfSetsOrQuantity(
             items = HelperFunctions.getNumberOfSetsOrQuantity(),
             state = pickerState,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            textModifier = Modifier.padding(15.dp)
+            textModifier = Modifier.padding(MEDIUM_PADDING)
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(LARGE_PADDING))
 
         Button(
             onClick = {
@@ -237,17 +236,17 @@ fun ShowQuantityOrSetsPicker(
                 hideQuantityOrSetsPickerBottomSheet()
             },
             colors = ButtonDefaults.buttonColors(
-                containerColor = primaryTextColor
+                containerColor = primaryPurple
             ),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = LARGE_PADDING)
                 .fillMaxWidth()
         ) {
             Text(text = "Add ${pickerState.selectedItem} $title", color = Color.White)
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(LARGE_PADDING))
     }
 }
 

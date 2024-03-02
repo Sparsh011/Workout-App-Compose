@@ -82,6 +82,17 @@ class WorkoutAppDatastorePreference @Inject constructor(
             null ?: pref[GENDER_KEY]
         }
 
+    suspend fun saveName(name: String?) {
+        dataStorePreference.edit { pref ->
+            pref[NAME_KEY] = name!!
+        }
+    }
+
+    val readName: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            null ?: pref[NAME_KEY]
+        }
+
     companion object {
         val CALORIES_GOAL_KEY = stringPreferencesKey("CALORIES_GOAL_KEY")
         val WEIGHT_GOAL_KEY = stringPreferencesKey("WEIGHT_GOAL_KEY")
@@ -89,6 +100,7 @@ class WorkoutAppDatastorePreference @Inject constructor(
         val CURRENT_HEIGHT_KEY = stringPreferencesKey("CURRENT_HEIGHT_KEY")
         val GENDER_KEY = stringPreferencesKey("GENDER_KEY")
         val AGE_KEY = stringPreferencesKey("AGE_KEY")
+        val NAME_KEY = stringPreferencesKey("NAME_KEY")
     }
 
 }

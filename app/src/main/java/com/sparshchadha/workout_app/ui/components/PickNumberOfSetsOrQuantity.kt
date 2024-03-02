@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
@@ -87,7 +88,7 @@ fun PickNumberOfSetsOrQuantity(
                 .fillMaxWidth()
                 .height(itemHeightDp * visibleItemsCount)
                 .fadingEdge(fadingEdgeGradient)
-                .background(Color.White)
+                .background(scaffoldBackgroundColor)
         ) {
             items(listScrollCount) { index ->
                 Text(

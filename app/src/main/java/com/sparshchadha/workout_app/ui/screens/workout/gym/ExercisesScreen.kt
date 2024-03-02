@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,8 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
@@ -48,8 +48,14 @@ import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.ShowQuantityOrSetsPicker
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -192,25 +198,20 @@ fun Exercise(
     saveExercise: (GymExercisesEntity) -> Unit,
     navigateToExerciseDetailsScreen: (GymExercisesDtoItem) -> Unit,
 ) {
-    if (shouldShowBottomSheet) {
-        ExerciseDetailsModalBottomSheet(
-            exercise = exercise,
-            hideBottomSheet = hideBottomSheet
-        )
-    }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(LARGE_PADDING)
             .clickable {
-//                showBottomSheet()
                 navigateToExerciseDetailsScreen(exercise)
             },
         colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryLightGray
+            containerColor = ColorsUtil.cardBackgroundColor
         )
     ) {
+        Spacer(modifier = Modifier.height(MEDIUM_PADDING))
+
         ExerciseSubTitlesAndDescription(subTitle = "Exercise Name", description = exercise.name)
         ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = exercise.difficulty)
         ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = exercise.muscle)
@@ -225,9 +226,9 @@ fun Exercise(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(LARGE_PADDING),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ColorsUtil.primaryTextColor
+                containerColor = primaryPurple
             )
         ) {
             Text(
@@ -300,14 +301,15 @@ fun ExerciseSubTitlesAndDescription(subTitle: String, description: String) {
     Text(
         text = subTitle, // already capitalized when passed as argument
         fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
-        color = Color.Black,
-        modifier = Modifier.padding(10.dp)
+        fontSize = 18.nonScaledSp,
+        color = primaryTextColor,
+        modifier = Modifier.padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING)
     )
 
     Text(
         text = description.capitalize(),
-        modifier = Modifier.padding(10.dp),
-        color = ColorsUtil.primaryTextColor
+        modifier = Modifier.padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING),
+        color = primaryTextColor,
+        fontSize = 14.nonScaledSp
     )
 }

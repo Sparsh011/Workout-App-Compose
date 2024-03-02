@@ -8,11 +8,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -33,7 +33,7 @@ fun ExerciseDetailsScreen(
                 topBarVerticalPadding = 0.dp
             )
         },
-        containerColor = Color.White
+        containerColor = scaffoldBackgroundColor
     ) { localPaddingValues ->
         exercise?.let {
             Column(

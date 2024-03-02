@@ -4,8 +4,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,9 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -25,14 +30,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
@@ -44,7 +49,13 @@ import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
+import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 
@@ -60,6 +71,7 @@ fun GetYogaPosesPerformedOnParticularDay(
     getYogaPosesPerformedOn: (Pair<Int, String>) -> Unit,
     selectedDay: Int,
     selectedMonth: String,
+    removePose: (YogaEntity) -> Unit
 ) {
     if (uiEventState != null) {
         HandleUIEventState(
@@ -69,7 +81,8 @@ fun GetYogaPosesPerformedOnParticularDay(
             onBackButtonPressed = onBackButtonPressed,
             getYogaPosesPerformedOn = getYogaPosesPerformedOn,
             selectedDay = selectedDay,
-            selectedMonth = selectedMonth
+            selectedMonth = selectedMonth,
+            removePose = removePose
         )
     }
 }
@@ -84,6 +97,7 @@ fun HandleUIEventState(
     getYogaPosesPerformedOn: (Pair<Int, String>) -> Unit,
     selectedMonth: String,
     selectedDay: Int,
+    removePose: (YogaEntity) -> Unit
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -102,7 +116,8 @@ fun HandleUIEventState(
                 onBackButtonPressed = onBackButtonPressed,
                 getYogaPosesPerformedOn = getYogaPosesPerformedOn,
                 selectedDay = selectedDay,
-                selectedMonth = selectedMonth
+                selectedMonth = selectedMonth,
+                removePose = removePose
             )
         }
 
@@ -122,6 +137,7 @@ fun PopulatePerformedYogaPoses(
     getYogaPosesPerformedOn: (Pair<Int, String>) -> Unit,
     selectedDay: Int,
     selectedMonth: String,
+    removePose: (YogaEntity) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -138,6 +154,7 @@ fun PopulatePerformedYogaPoses(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .background(scaffoldBackgroundColor)
                 .padding(
                     top = localPaddingValues.calculateTopPadding(),
                     bottom = globalPaddingValues.calculateBottomPadding()
@@ -167,7 +184,10 @@ fun PopulatePerformedYogaPoses(
                 }
             } else {
                 items(yogaPosesPerformedToday) { yogaEntity ->
-                    YogaEntityItem(yogaEntity = yogaEntity)
+                    YogaEntityItem(
+                        yogaEntity = yogaEntity,
+                        removePose = removePose
+                    )
                 }
             }
         }
@@ -177,82 +197,84 @@ fun PopulatePerformedYogaPoses(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun YogaEntityItem(yogaEntity: YogaEntity) {
+fun YogaEntityItem(
+    yogaEntity: YogaEntity,
+    removePose: (YogaEntity) -> Unit
+) {
     var shouldShowPoseDetailsBottomSheet by remember {
         mutableStateOf(false)
     }
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(MEDIUM_PADDING),
         onClick = {
             shouldShowPoseDetailsBottomSheet = true
         },
         colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.primaryLightGray
+            containerColor = cardBackgroundColor
         )
     ) {
-        Column(
-            modifier = Modifier
-                .background(ColorsUtil.primaryLightGray)
-                .padding(16.dp)
+        Row (
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = SMALL_PADDING),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-            yogaEntity.yogaPoseDetails?.let { pose ->
-                Text(
-                    buildAnnotatedString {
-                        append("${pose.english_name} ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = ColorsUtil.primaryTextColor,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 26.sp
-                            )
-                        ) {
-                            append("(${pose.sanskrit_name})")
-                        }
-                    },
-                    color = ColorsUtil.primaryTextColor,
-                    fontSize = 26.sp
-                )
+            Column(
+                modifier = Modifier
+                    .weight(9f)
+                    .background(cardBackgroundColor)
+                    .padding(MEDIUM_PADDING)
+            ) {
 
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    buildAnnotatedString {
-                        append("Difficulty Level : ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = ColorsUtil.primaryTextColor,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
-                            )
-                        ) {
-                            append(pose.difficulty_level)
-                        }
-                    },
-                    color = ColorsUtil.primaryTextColor,
-                    fontSize = 16.sp
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(SMALL_PADDING))
 
-                Text(
-                    buildAnnotatedString {
-                        append("Sets Performed : ")
-                        withStyle(
-                            style = SpanStyle(
-                                color = ColorsUtil.primaryTextColor,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
-                            )
-                        ) {
-                            append("${yogaEntity.setsPerformed}")
-                        }
-                    },
-                    color = ColorsUtil.primaryTextColor,
-                    fontSize = 16.sp
-                )
-                Spacer(modifier = Modifier.height(8.dp))
+                yogaEntity.yogaPoseDetails?.let { pose ->
+                    Text(
+                        buildAnnotatedString {
+                            append(pose.english_name)
+                            withStyle(
+                                style = SpanStyle(
+                                    color = ColorsUtil.primaryTextColor,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            ) {
+//                                append("(${pose.sanskrit_name})")
+                            }
+                        },
+                        color = ColorsUtil.primaryTextColor,
+                        fontSize = 20.nonScaledSp
+                    )
+
+                    Spacer(modifier = Modifier.height(SMALL_PADDING))
+
+                    Text(
+                        buildAnnotatedString {
+                            append("Performed at ")
+                            withStyle(
+                                style = SpanStyle(
+                                    color = ColorsUtil.primaryTextColor,
+                                    fontStyle = FontStyle.Italic,
+                                    )
+                            ) {
+                                append("${yogaEntity.hour}: ${yogaEntity.minutes}: ${yogaEntity.seconds}")
+                            }
+                        },
+                        color = ColorsUtil.primaryTextColor,
+                        fontSize = 13.nonScaledSp
+                    )
+                }
             }
+
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = null,
+                tint = noAchievementColor,
+                modifier = Modifier.padding(SMALL_PADDING)
+                    .clickable {
+                        removePose(yogaEntity)
+                    }
+            )
         }
     }
 

@@ -142,4 +142,12 @@ class WorkoutRepositoryImpl(
     override suspend fun getAllGymExercisesPerformed(): Flow<List<GymExercisesEntity>> {
         return gymExercisesDao.getAllExercisesPerformed()
     }
+
+    override suspend fun removeYogaPose(yogaPose: YogaEntity) {
+        yogaDao.removeYogaPose(yogaPose)
+    }
+
+    override suspend fun removeGymExercise(exercisesEntity: GymExercisesEntity) {
+        gymExercisesDao.removeGymExercise(exercisesEntity)
+    }
 }
