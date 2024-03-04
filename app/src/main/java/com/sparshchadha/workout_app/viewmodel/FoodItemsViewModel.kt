@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
@@ -36,8 +37,8 @@ class FoodItemsViewModel @Inject constructor(
     private val _uiEventState = MutableStateFlow<WorkoutViewModel.UIEvent?>(value = null)
     val uiEventStateFlow = _uiEventState.asStateFlow()
 
-    private val _savedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
-    val savedFoodItems = _savedFoodItems
+    private val _consumedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
+    val consumedFoodItems = _consumedFoodItems
 
     private val _caloriesConsumed: MutableState<String?> = mutableStateOf(null)
     val caloriesConsumed = _caloriesConsumed
@@ -50,6 +51,12 @@ class FoodItemsViewModel @Inject constructor(
 
     private val _foodItemEntity = mutableStateOf<FoodItemEntity?>(null)
     val foodItemEntity = _foodItemEntity
+
+    private val _selectedFoodItem = mutableStateOf<FoodItem?>(null)
+    val selectedFoodItem = _selectedFoodItem
+
+    private val _savedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
+    val savedFoodItems = _savedFoodItems.asStateFlow()
 
     private val _selectedDayPair = mutableStateOf(
         Pair(
@@ -114,7 +121,7 @@ class FoodItemsViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val foodItems = foodItemsRepository.getFoodItemsConsumedOn(date, month)
             foodItems.collect { response ->
-                _savedFoodItems.emit(response)
+                _consumedFoodItems.emit(response)
                 withContext(Dispatchers.Main) {
                     getTotalCaloriesConsumed(foodItemsConsumed = response)
                     getNutrientsConsumed(foodItemsConsumed = response)
@@ -212,5 +219,17 @@ class FoodItemsViewModel @Inject constructor(
 
     fun updateSelectedDay(date: Int, month: String) {
         _selectedDayPair.value = Pair(month, date)
+    }
+
+    fun getSavedFoodItems() {
+        viewModelScope.launch(Dispatchers.IO) {
+            foodItemsRepository.getAllFoodItems(isConsumed = false).collect {
+                _savedFoodItems.value = it
+            }
+        }
+    }
+
+    fun updateSelectedFoodItem(foodItem: FoodItem?) {
+        _selectedFoodItem.value = foodItem
     }
 }

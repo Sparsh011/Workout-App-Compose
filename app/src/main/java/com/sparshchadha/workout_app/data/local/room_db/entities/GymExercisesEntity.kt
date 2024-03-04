@@ -14,6 +14,7 @@ data class GymExercisesEntity(
     val hour: Int = LocalTime.now().hour,
     val minutes: Int = LocalTime.now().minute,
     val seconds: Int = LocalTime.now().second,
+    val isPerformed: Boolean = true,
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
 )

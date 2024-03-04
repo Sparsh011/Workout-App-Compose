@@ -52,7 +52,7 @@ import androidx.navigation.NavController
 import com.sparshchadha.workout_app.GenderIcon
 import com.sparshchadha.workout_app.LandingPageOutlinedTextField
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.ui.components.CustomDivider
+import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.screens.workout.HeaderText
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
@@ -168,14 +168,19 @@ fun ProfileScreen(
             SettingsCategoryHeader(text = "Gym Workouts")
         }
 
-        items(HelperFunctions.getGymWorkoutCategories().size) {
+        items(HelperFunctions.settingsForGym().size) {
             SettingsCategory(
-                text = HelperFunctions.getGymWorkoutCategories()[it],
-                onClick = { navigateToRoute ->
-
+                text = HelperFunctions.settingsForGym()[it],
+                onClick = {
+                    handleGymItemClick(
+                        clickedItem = HelperFunctions.settingsForGym()[it],
+                        navigateToScreen = { route ->
+                            navController.navigate(route)
+                        }
+                    )
                 },
                 verticalLineColor = primaryBlue,
-                showDivider = it != HelperFunctions.getGymWorkoutCategories().size - 1
+                showDivider = it != HelperFunctions.settingsForGym().size - 1
             )
         }
 
@@ -183,14 +188,19 @@ fun ProfileScreen(
             SettingsCategoryHeader(text = "Yoga")
         }
 
-        items(HelperFunctions.getYogaCategories().size) {
+        items(HelperFunctions.settingsForYoga().size) {
             SettingsCategory(
-                text = HelperFunctions.getYogaCategories()[it],
-                onClick = { navigateToRoute ->
-
+                text = HelperFunctions.settingsForYoga()[it],
+                onClick = {
+                    handleYogaItemClick(
+                        clickedItem = HelperFunctions.settingsForYoga()[it],
+                        navigateToScreen = { route ->
+                            navController.navigate(route)
+                        }
+                    )
                 },
                 verticalLineColor = primaryBlue,
-                showDivider = it != HelperFunctions.getYogaCategories().size - 1
+                showDivider = it != HelperFunctions.settingsForYoga().size - 1
             )
         }
 
@@ -198,15 +208,94 @@ fun ProfileScreen(
             SettingsCategoryHeader(text = "Calories & Food")
         }
 
-        items(HelperFunctions.getCaloriesTrackerCategories().size) {
+        items(HelperFunctions.settingsForCalorieTracker().size) {
             SettingsCategory(
-                text = HelperFunctions.getCaloriesTrackerCategories()[it],
-                onClick = { navigateToRoute ->
-
+                text = HelperFunctions.settingsForCalorieTracker()[it],
+                onClick = {
+                    handleCaloriesTrackerItemClick(
+                        clickedItem = HelperFunctions.settingsForCalorieTracker()[it],
+                        navigateToScreen = { route ->
+                            navController.navigate(route)
+                        }
+                    )
                 },
                 verticalLineColor = primaryBlue,
-                showDivider = it != HelperFunctions.getCaloriesTrackerCategories().size - 1
+                showDivider = it != HelperFunctions.settingsForCalorieTracker().size - 1
             )
+        }
+    }
+}
+
+fun handleCaloriesTrackerItemClick(
+    clickedItem: String,
+    navigateToScreen: (String) -> Unit
+) {
+    when (clickedItem) {
+        "Track Food" -> {
+
+        }
+
+        "Activity" -> {
+
+        }
+
+        "Goals" -> {
+
+        }
+
+        "Saved Food Items" -> {
+            navigateToScreen("SavedItemsScreen/calorieTracker")
+        }
+    }
+}
+
+fun handleGymItemClick(
+    clickedItem: String,
+    navigateToScreen: (String) -> Unit
+) {
+    when (clickedItem) {
+        "Track Workouts" -> {
+
+        }
+
+        "Activity" -> {
+
+        }
+
+        "Personal Records" -> {
+
+        }
+
+        "Goals" -> {
+
+        }
+
+        "Saved Exercises" -> {
+            navigateToScreen("SavedItemsScreen/gym")
+        }
+    }
+}
+
+
+fun handleYogaItemClick(
+    clickedItem: String,
+    navigateToScreen: (String) -> Unit
+) {
+    when (clickedItem) {
+        "Track Workouts" -> {
+
+        }
+
+        "Activity" -> {
+
+        }
+
+        "Goals" -> {
+
+        }
+
+        "Saved Poses" -> {
+            navigateToScreen("SavedItemsScreen/yoga")
         }
     }
 }
@@ -320,7 +409,7 @@ fun AlertDialogToUpdate(
     label: String,
     keyboardOptions: KeyboardOptions,
     isText: Boolean = false
-    ) {
+) {
     AlertDialog(
         onDismissRequest = {
             hideDialog()
@@ -552,7 +641,7 @@ fun PersonalInfoCategory(
 @Composable
 fun SettingsCategory(
     text: String,
-    onClick: (String) -> Unit,
+    onClick: () -> Unit,
     verticalLineColor: Color,
     showDivider: Boolean = true
 ) {
@@ -561,7 +650,7 @@ fun SettingsCategory(
             .fillMaxWidth()
             .padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING)
             .clickable {
-                onClick("")
+                onClick()
             }
     ) {
         Row(
@@ -637,7 +726,10 @@ fun ProfilePictureAndUserName(
                 onNameChange(it)
             },
             label = "Your Name",
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, capitalization = KeyboardCapitalization.Words),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                capitalization = KeyboardCapitalization.Words
+            ),
             isText = true
         )
     }
@@ -663,7 +755,7 @@ fun ProfilePictureAndUserName(
             )
         }
 
-        Row (
+        Row(
             modifier = Modifier
                 .weight(5f)
                 .clickable {

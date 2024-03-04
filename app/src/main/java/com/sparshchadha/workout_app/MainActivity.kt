@@ -44,11 +44,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.core.text.isDigitsOnly
 import androidx.navigation.compose.rememberNavController
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
-import com.sparshchadha.workout_app.ui.navigation.destinations.NavGraph
+import com.sparshchadha.workout_app.ui.navigation.nav_graph.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
@@ -80,7 +80,11 @@ class MainActivity : ComponentActivity() {
             WorkoutAppTheme {
 
                 val sharedPreferences = getSharedPreferences("my_prefs", MODE_PRIVATE)
-                if (sharedPreferences.getBoolean("landing_page_shown", false)) {
+                var navigateToHomeScreen by remember {
+                    mutableStateOf(false)
+                }
+
+                if (sharedPreferences.getBoolean("landing_page_shown", false) || navigateToHomeScreen) {
                     val navHostController = rememberNavController()
                     val gymExercises = workoutViewModel.gymExercisesFromApi.value
                     val yogaPoses = workoutViewModel.yogaPosesFromApi.value
@@ -103,22 +107,31 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 } else {
-                    LandingPage(profileViewModel)
+                    LandingPage(
+                        profileViewModel,
+                        navigateToHomeScreen = {
+                            navigateToHomeScreen = true
+                        }
+                    )
                 }
             }
         }
     }
 
-    private fun landingPageShown() {
+    private fun landingPageShown(
+        navigateToHomeScreen: () -> Unit
+    ) {
         val sharedPreferences = getSharedPreferences("my_prefs", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("landing_page_shown", true)
         editor.apply()
+        navigateToHomeScreen()
     }
 
     @Composable
     fun LandingPage(
-        profileViewModel: ProfileViewModel
+        profileViewModel: ProfileViewModel,
+        navigateToHomeScreen: () -> Unit
     ) {
         Column(
             modifier = Modifier
@@ -252,11 +265,6 @@ class MainActivity : ComponentActivity() {
                             weightGoalStr
                         )
                     ) {
-                        Toast.makeText(
-                            context,
-                            "Good.",
-                            Toast.LENGTH_SHORT
-                        ).show()
                         profileViewModel.saveAllDetails(
                             height = heightStr,
                             age = ageStr,
@@ -265,7 +273,7 @@ class MainActivity : ComponentActivity() {
                             weightGoal = weightGoalStr,
                             caloriesGoal = caloriesGoalStr
                         )
-                        landingPageShown()
+                        landingPageShown(navigateToHomeScreen)
                     } else {
                         Toast.makeText(
                             context,

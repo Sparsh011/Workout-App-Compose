@@ -107,12 +107,9 @@ class WorkoutRepositoryImpl(
         }
     }
 
-    override suspend fun getAllYogaPosesPerformed(): Flow<List<YogaEntity>> {
-        return yogaDao.getAllPerformedYogaPoses()
-    }
-
-    override suspend fun saveYogaPose(yogaPose: YogaEntity) {
-        yogaDao.addYogaPose(yogaPose = yogaPose)
+    override suspend fun getAllPoses(performed: Boolean): Flow<List<YogaEntity>> {
+        return if (performed) yogaDao.getAllPerformedYogaPoses()
+        else yogaDao.getSavedPoses()
     }
 
     override suspend fun getYogaPosesPerformedOn(
@@ -125,10 +122,6 @@ class WorkoutRepositoryImpl(
         )
     }
 
-    override suspend fun saveGymExercise(gymExercisesEntity: GymExercisesEntity) {
-        gymExercisesDao.addGymExercise(gymExercisesEntity = gymExercisesEntity)
-    }
-
     override suspend fun getGymExercisesPerformedOn(
         date: String,
         month: String
@@ -139,8 +132,9 @@ class WorkoutRepositoryImpl(
         )
     }
 
-    override suspend fun getAllGymExercisesPerformed(): Flow<List<GymExercisesEntity>> {
-        return gymExercisesDao.getAllExercisesPerformed()
+    override suspend fun getAllExercises(performed: Boolean): Flow<List<GymExercisesEntity>> {
+        return if (performed) gymExercisesDao.getAllExercisesPerformed()
+        else gymExercisesDao.getSavedExercises()
     }
 
     override suspend fun removeYogaPose(yogaPose: YogaEntity) {
@@ -149,5 +143,13 @@ class WorkoutRepositoryImpl(
 
     override suspend fun removeGymExercise(exercisesEntity: GymExercisesEntity) {
         gymExercisesDao.removeGymExercise(exercisesEntity)
+    }
+
+    override suspend fun saveExerciseToDB(exercisesEntity: GymExercisesEntity) {
+        gymExercisesDao.addGymExercise(exercisesEntity)
+    }
+
+    override suspend fun saveYogaPoseToDB(yogaPose: YogaEntity) {
+        yogaDao.addYogaPose(yogaPose)
     }
 }

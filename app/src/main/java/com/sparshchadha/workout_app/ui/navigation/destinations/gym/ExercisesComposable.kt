@@ -46,7 +46,7 @@ fun NavGraphBuilder.gymExercisesComposable(
             uiEventState = uiEventState,
             globalPaddingValues = globalPaddingValues,
             saveExercise = { gymExerciseEntity ->
-                workoutViewModel.saveGymExercise(gymExercisesEntity = gymExerciseEntity)
+                workoutViewModel.addGymExerciseToWorkout(gymExercisesEntity = gymExerciseEntity)
             },
             workoutViewModel = workoutViewModel
         )

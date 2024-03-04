@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.components
+package com.sparshchadha.workout_app.ui.components.shared
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
@@ -47,6 +47,7 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEnti
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodCard
@@ -164,7 +165,7 @@ fun HandleFoodSearch(
     foodUIStateEvent?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.food_search_animation))
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
                 val progress by animateLottieCompositionAsState(composition)
                 ShowLoadingScreen(
                     composition = composition,
@@ -205,7 +206,7 @@ fun HandleExercisesSearch(
     workoutUIStateEvent?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
                 val progress by animateLottieCompositionAsState(composition)
                 ShowLoadingScreen(
                     composition = composition,
@@ -340,7 +341,7 @@ fun ExerciseSearchResults(
                         saveExercise = saveExercise
                     ) { exerciseToUpdate ->
                         workoutViewModel.updateExerciseDetails(exerciseToUpdate)
-
+                        navController.navigate(UtilityScreen.ExerciseDetailScreen.route)
                     }
                 }
             }

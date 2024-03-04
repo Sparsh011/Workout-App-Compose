@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.navigation.destinations
+package com.sparshchadha.workout_app.ui.navigation.nav_graph
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -18,6 +18,7 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesP
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.workoutCategoryComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.remindersComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.shared.savedItemsScreenComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaPosesPerformedTodayComposable
@@ -130,6 +131,13 @@ fun NavGraph(
             remindersViewModel = remindersViewModel
         )
 
+        // saved items (food, yoga and gym) screen
+        savedItemsScreenComposable(
+            navController = navController,
+            globalPaddingValues = globalPaddingValues,
+            foodItemsViewModel = foodItemsViewModel,
+            workoutViewModel = workoutViewModel
+        )
     }
 }
 

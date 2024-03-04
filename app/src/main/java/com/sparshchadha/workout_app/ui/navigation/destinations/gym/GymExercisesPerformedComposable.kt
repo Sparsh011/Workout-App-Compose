@@ -43,7 +43,7 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
             workoutViewModel.getGymExercisesPerformed()
         }
 
-        val exercisesPerformed = workoutViewModel.gymExercisesPerformed.value
+        val exercisesPerformed = workoutViewModel.gymExercisesPerformed.collectAsStateWithLifecycle().value
         val uiEventState =
             workoutViewModel.gymExercisesPerformedOnUIEventState.collectAsStateWithLifecycle()
         val selectedDateAndMonth =
@@ -62,7 +62,7 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
                 )
             },
             removeExercise = {
-                workoutViewModel.removeGymExercise(it)
+                workoutViewModel.removeExerciseFromDB(it)
             }
         )
     }

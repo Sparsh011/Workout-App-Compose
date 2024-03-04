@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.SearchScreen
+import com.sparshchadha.workout_app.ui.components.shared.SearchScreen
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -67,7 +67,7 @@ fun NavGraphBuilder.searchComposable(
                 foodItemsViewModel.saveFoodItem(foodItemEntity = it)
             },
             saveExercise = {
-                workoutViewModel.saveGymExercise(gymExercisesEntity = it)
+                workoutViewModel.addGymExerciseToWorkout(gymExercisesEntity = it)
             },
             navController = navController
         )

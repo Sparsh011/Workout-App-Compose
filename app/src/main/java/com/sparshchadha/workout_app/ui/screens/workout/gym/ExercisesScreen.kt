@@ -4,21 +4,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,10 +26,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
@@ -42,21 +40,17 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
-import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
-import com.sparshchadha.workout_app.ui.screens.calorie_tracker.ShowQuantityOrSetsPicker
-import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
-import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
-import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
@@ -112,7 +106,7 @@ fun HandleUIEventsForExercises(
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
             val progress by animateLottieCompositionAsState(composition)
             ShowLoadingScreen(
                 composition = composition,
@@ -121,7 +115,7 @@ fun HandleUIEventsForExercises(
         }
 
         is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.gym_exercises_animation))
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
             val progress by animateLottieCompositionAsState(composition)
             ShowExercises(
                 category = category,
@@ -199,66 +193,34 @@ fun Exercise(
     navigateToExerciseDetailsScreen: (GymExercisesDtoItem) -> Unit,
 ) {
 
-    Card(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(LARGE_PADDING)
             .clickable {
                 navigateToExerciseDetailsScreen(exercise)
-            },
-        colors = CardDefaults.cardColors(
-            containerColor = ColorsUtil.cardBackgroundColor
-        )
+            }
+            .padding(MEDIUM_PADDING),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Spacer(modifier = Modifier.height(MEDIUM_PADDING))
-
-        ExerciseSubTitlesAndDescription(subTitle = "Exercise Name", description = exercise.name)
-        ExerciseSubTitlesAndDescription(subTitle = "Difficulty", description = exercise.difficulty)
-        ExerciseSubTitlesAndDescription(subTitle = "Muscle", description = exercise.muscle)
-
-        var shouldShowQuantityOrSetsPicker by remember {
-            mutableStateOf(false)
-        }
-
-        Button(
-            onClick = {
-                shouldShowQuantityOrSetsPicker = true
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(LARGE_PADDING),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = primaryPurple
-            )
+        Column(
+            modifier = Modifier.weight(4f)
         ) {
-            Text(
-                text = "Add To Today's Workout",
-                color = Color.White,
-                textAlign = TextAlign.Center
+            ExerciseSubTitlesAndDescription(
+                subTitle = "Exercise Name",
+                description = exercise.name,
+                showSubtitle = false
             )
         }
 
-        if (shouldShowQuantityOrSetsPicker) {
-            ShowQuantityOrSetsPicker(
-                hideQuantityOrSetsPickerBottomSheet = {
-                    shouldShowQuantityOrSetsPicker = false
-                },
-                saveQuantityOrSets = { setsPerformed ->
-                    saveExercise(
-                        GymExercisesEntity(
-                            date = HelperFunctions.getCurrentDateAndMonth().first.toString(),
-                            month = HelperFunctions.getCurrentDateAndMonth().second,
-                            setsPerformed = setsPerformed,
-                            exerciseDetails = exercise
-                        )
-                    )
-
-                    hideBottomSheet()
-                },
-                title = "Sets"
-            )
-        }
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowRight,
+            contentDescription = null,
+            modifier = Modifier.weight(1f),
+            tint = primaryTextColor
+        )
     }
+
+    CustomDivider()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -297,19 +259,32 @@ fun ExerciseDetailsModalBottomSheet(
 }
 
 @Composable
-fun ExerciseSubTitlesAndDescription(subTitle: String, description: String) {
-    Text(
-        text = subTitle, // already capitalized when passed as argument
-        fontWeight = FontWeight.Bold,
-        fontSize = 18.nonScaledSp,
-        color = primaryTextColor,
-        modifier = Modifier.padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING)
-    )
+fun ExerciseSubTitlesAndDescription(
+    subTitle: String,
+    description: String,
+    showSubtitle: Boolean = true,
+) {
+    if (showSubtitle) {
+        Text(
+            text = subTitle, // already capitalized when passed as argument
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.nonScaledSp,
+            color = primaryTextColor,
+            modifier = Modifier.padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING)
+        )
 
-    Text(
-        text = description.capitalize(),
-        modifier = Modifier.padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING),
-        color = primaryTextColor,
-        fontSize = 14.nonScaledSp
-    )
+        Text(
+            text = description.capitalize(),
+            modifier = Modifier.padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING),
+            color = primaryTextColor,
+            fontSize = 14.nonScaledSp
+        )
+    } else {
+        Text(
+            text = description.capitalize(),
+            modifier = Modifier.padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING),
+            color = primaryTextColor,
+            fontSize = 18.nonScaledSp
+        )
+    }
 }

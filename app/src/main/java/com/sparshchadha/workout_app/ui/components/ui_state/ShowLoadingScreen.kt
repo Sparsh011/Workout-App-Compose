@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,6 +17,7 @@ import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 
 @Composable
 fun ShowLoadingScreen(
@@ -29,7 +31,9 @@ fun ShowLoadingScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LottieAnimation(composition = composition, progress = { progress })
+
+        LottieAnimation(composition = composition, progress = { progress }, modifier = Modifier.size(PIE_CHART_SIZE))
+
         Text(
             text = "Loading...",
             fontSize = 24.sp,

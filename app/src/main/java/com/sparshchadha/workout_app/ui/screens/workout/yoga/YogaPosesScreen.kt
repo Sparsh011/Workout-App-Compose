@@ -44,11 +44,11 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
-import com.sparshchadha.workout_app.ui.components.CustomDivider
-import com.sparshchadha.workout_app.ui.components.PickNumberOfSetsOrQuantity
-import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.ui.components.rememberPickerState
+import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.ui.components.shared.PickNumberOfSetsOrQuantity
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.shared.rememberPickerState
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
@@ -72,18 +72,26 @@ fun YogaPosesScreen(
     navController: NavController,
     difficultyLevel: String,
     uiEventState: WorkoutViewModel.UIEvent?,
-    saveYogaPose: (YogaEntity) -> Unit,
     globalPaddingValues: PaddingValues,
+    workoutViewModel: WorkoutViewModel
 ) {
-
     uiEventState?.let { event ->
         HandleYogaScreenUIEvents(
             event = event,
             yogaPoses = yogaPoses,
             navController = navController,
             difficultyLevel = difficultyLevel,
-            saveYogaPose = saveYogaPose,
-            globalPaddingValues = globalPaddingValues
+            savePerformedYogaPose = { yogaEntity ->
+                workoutViewModel.saveYogaPose(
+                    yogaEntity
+                )
+            },
+            globalPaddingValues = globalPaddingValues,
+            saveYogaPose = {
+                workoutViewModel.saveYogaPoseToDB(
+                    HelperFunctions.getYogaPoseWithNegatives(it)
+                )
+            }
         )
     }
 }
@@ -94,8 +102,9 @@ fun HandleYogaScreenUIEvents(
     yogaPoses: YogaPosesDto?,
     navController: NavController,
     difficultyLevel: String,
-    saveYogaPose: (YogaEntity) -> Unit,
+    savePerformedYogaPose: (YogaEntity) -> Unit,
     globalPaddingValues: PaddingValues,
+    saveYogaPose: (Pose) -> Unit
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -103,10 +112,11 @@ fun HandleYogaScreenUIEvents(
                 yogaPoses = YogaPosesDto(difficultyLevel, -1, emptyList()),
                 navController = navController,
                 difficultyLevel = difficultyLevel,
-                saveYogaPose = saveYogaPose,
+                savePerformedYogaPose = savePerformedYogaPose,
                 globalPaddingValues = globalPaddingValues,
                 isLoading = true,
-                topBarDescription = ""
+                topBarDescription = "",
+                saveYogaPose = {}
             )
         }
 
@@ -116,8 +126,9 @@ fun HandleYogaScreenUIEvents(
                     yogaPoses = yogaPoses,
                     navController = navController,
                     difficultyLevel = difficultyLevel,
-                    saveYogaPose = saveYogaPose,
-                    globalPaddingValues = globalPaddingValues
+                    savePerformedYogaPose = savePerformedYogaPose,
+                    globalPaddingValues = globalPaddingValues,
+                    saveYogaPose = saveYogaPose
                 )
             } else {
                 ErrorDuringFetch(errorMessage = "")
@@ -136,10 +147,11 @@ fun PopulateYogaPoses(
     yogaPoses: YogaPosesDto,
     navController: NavController,
     difficultyLevel: String,
-    saveYogaPose: (YogaEntity) -> Unit,
+    savePerformedYogaPose: (YogaEntity) -> Unit,
     globalPaddingValues: PaddingValues,
     isLoading: Boolean = false,
     topBarDescription: String = "${difficultyLevel.lowercase().capitalize()} Yoga Poses",
+    saveYogaPose: (Pose) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -155,7 +167,7 @@ fun PopulateYogaPoses(
         }
     ) { localPaddingValues ->
         if (isLoading) {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation))
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
             val progress by animateLottieCompositionAsState(composition)
 
             ShowLoadingScreen(
@@ -187,8 +199,9 @@ fun PopulateYogaPoses(
                             showBottomSheetWithAllDetails = toggle
                         },
                         sheetState = sheetState,
-                        saveYogaPose = saveYogaPose,
-                        showDivider = index != yogaPoses.poses.size - 1
+                        savePerformedYogaPose = savePerformedYogaPose,
+                        showDivider = index != yogaPoses.poses.size - 1,
+                        saveYogaPose = saveYogaPose
                     )
                 }
             }
@@ -203,8 +216,9 @@ fun YogaPose(
     shouldShowBottomSheetWithDetails: Boolean,
     toggleBottomSheetWithDetails: (Boolean) -> Unit,
     sheetState: SheetState,
-    saveYogaPose: (YogaEntity) -> Unit,
+    savePerformedYogaPose: (YogaEntity) -> Unit,
     showDivider: Boolean,
+    saveYogaPose: (Pose) -> Unit
 ) {
 
     var showPickSetsBottomSheet by remember {
@@ -219,7 +233,8 @@ fun YogaPose(
             showPickSetBottomSheet = {
                 toggleBottomSheetWithDetails(false)
                 showPickSetsBottomSheet = true
-            }
+            },
+            saveYogaPose = saveYogaPose
         )
     }
 
@@ -262,7 +277,7 @@ fun YogaPose(
             if (showPickSetsBottomSheet) {
                 ShowPickSetsBottomSheet(
                     pose = pose,
-                    saveYogaPose = saveYogaPose,
+                    saveYogaPose = savePerformedYogaPose,
                     hidePickSetsBottomSheet = {
                         showPickSetsBottomSheet = false
                     }
@@ -363,6 +378,7 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
     toggleBottomSheetWithDetails: (Boolean) -> Unit,
     pose: Pose,
     showPickSetBottomSheet: () -> Unit = {},
+    saveYogaPose: (Pose) -> Unit
 ) {
     ModalBottomSheet(
         sheetState = sheetState,
@@ -450,7 +466,7 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
 
                 Button(
                     onClick = {
-                        showPickSetBottomSheet()
+                        saveYogaPose(pose)
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = primaryPurple

@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -43,16 +42,15 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
-import com.sparshchadha.workout_app.ui.components.CalendarRow
-import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
-import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
+import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
-import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
@@ -101,7 +99,7 @@ fun HandleUIEventState(
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.yoga_animation))
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
             val progress by animateLottieCompositionAsState(composition)
 
             ShowLoadingScreen(
@@ -171,15 +169,9 @@ fun PopulatePerformedYogaPoses(
 
             if (yogaPosesPerformedToday.isNullOrEmpty()) {
                 item {
-                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_gym_or_yoga_performed))
-                    val progress by animateLottieCompositionAsState(composition)
-
                     NoWorkoutPerformedOrFoodConsumed(
                         text = "No Yoga Poses Performed",
-                        composition = composition,
-                        progress = progress,
                         localPaddingValues = localPaddingValues,
-                        animationModifier = Modifier.size(Dimensions.LOTTIE_ANIMATION_SIZE_LARGE)
                     )
                 }
             } else {
@@ -285,7 +277,8 @@ fun YogaEntityItem(
                 toggleBottomSheetWithDetails = { showOrHideBottomSheet ->
                     shouldShowPoseDetailsBottomSheet = showOrHideBottomSheet
                 },
-                pose = it
+                pose = it,
+                saveYogaPose = {}
             )
         }
     }

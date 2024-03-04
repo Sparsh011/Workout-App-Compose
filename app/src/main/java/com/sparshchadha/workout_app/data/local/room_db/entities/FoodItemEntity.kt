@@ -15,6 +15,7 @@ data class FoodItemEntity(
     val minutes: Int = LocalTime.now().minute,
     val seconds: Int = LocalTime.now().second,
     val foodItemDetails: FoodItem?,
+    val isConsumed: Boolean = true,
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
 )

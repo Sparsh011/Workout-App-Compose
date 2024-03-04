@@ -85,4 +85,9 @@ sealed class UtilityScreen(
         route = "ExerciseDetailScreen",
         title = "Exercise Details"
     )
+
+    object SavedItemsScreen: UtilityScreen(
+        route = "SavedItemsScreen/{category}",
+        title = "Saved Items Screen"
+    )
 }

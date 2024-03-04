@@ -1,0 +1,39 @@
+package com.sparshchadha.workout_app.ui.navigation.destinations.shared
+
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.screens.shared.SavedItemsScreen
+import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
+
+fun NavGraphBuilder.savedItemsScreenComposable(
+    navController: NavHostController,
+    globalPaddingValues: PaddingValues,
+    foodItemsViewModel: FoodItemsViewModel,
+    workoutViewModel: WorkoutViewModel
+) {
+    composable(
+        route = UtilityScreen.SavedItemsScreen.route,
+        enterTransition = {
+            EnterTransition.None
+        },
+        exitTransition = {
+            ExitTransition.None
+        }
+    ) { backStackEntry ->
+        val category = backStackEntry.arguments?.getString("category")
+
+        SavedItemsScreen(
+            navController = navController,
+            globalPaddingValues = globalPaddingValues,
+            foodItemsViewModel = foodItemsViewModel,
+            workoutViewModel = workoutViewModel,
+            category = category ?: "Unable To Get Exercises"
+        )
+    }
+}

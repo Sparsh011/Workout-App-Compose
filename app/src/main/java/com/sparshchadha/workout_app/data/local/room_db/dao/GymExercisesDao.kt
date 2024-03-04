@@ -21,4 +21,7 @@ interface GymExercisesDao {
 
     @Delete
     fun removeGymExercise(exercisesEntity: GymExercisesEntity)
+
+    @Query("SELECT * FROM GymExercisesEntity WHERE setsPerformed = -1")
+    fun getSavedExercises(): Flow<List<GymExercisesEntity>>
 }

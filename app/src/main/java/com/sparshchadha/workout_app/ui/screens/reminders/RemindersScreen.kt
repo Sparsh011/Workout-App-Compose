@@ -75,7 +75,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.ReminderEntity
-import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor

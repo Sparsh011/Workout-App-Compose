@@ -22,8 +22,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.ui.components.CustomDivider
-import com.sparshchadha.workout_app.ui.components.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor

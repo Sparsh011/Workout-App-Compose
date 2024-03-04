@@ -75,7 +75,7 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
             selectedMonth = selectedDayAndMonth?.second ?: "January",
             selectedDay = selectedDayAndMonth?.first ?: 1,
             removePose = {
-                workoutViewModel.removeYogaPose(it)
+                workoutViewModel.removeYogaPoseFromDB(it)
             }
         )
     }

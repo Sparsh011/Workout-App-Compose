@@ -43,15 +43,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
-import com.sparshchadha.workout_app.ui.components.CalendarRow
-import com.sparshchadha.workout_app.ui.components.CustomDivider
-import com.sparshchadha.workout_app.ui.components.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
+import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
@@ -59,6 +56,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
@@ -88,7 +86,7 @@ fun CalorieTrackerScreen(
         )
     }
 
-    val foodItemsConsumed = foodItemsViewModel.savedFoodItems.collectAsStateWithLifecycle().value
+    val foodItemsConsumed = foodItemsViewModel.consumedFoodItems.collectAsStateWithLifecycle().value
     val nutrientsConsumed = foodItemsViewModel.nutrientsConsumed
     val selectedDayPair = foodItemsViewModel.selectedDayPosition
 
@@ -197,16 +195,11 @@ fun CalorieTrackerScreen(
         // Dishes consumed on a particular day -
         if (foodItemsConsumed.isNullOrEmpty()) {
             item {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_food_item_added_animation))
-                val progress by animateLottieCompositionAsState(composition)
 
                 NoWorkoutPerformedOrFoodConsumed(
-                    composition = composition,
-                    progress = progress,
-                    animationModifier = Modifier.size(
-                        Dimensions.LOTTIE_ANIMATION_SIZE_LARGE
-                    ),
-                    textSize = 20.nonScaledSp
+                    text = "No Food Items Consumed",
+                    textSize = 20.nonScaledSp,
+                    iconSize = PIE_CHART_SIZE
                 )
             }
         } else {
@@ -227,7 +220,6 @@ fun CalorieTrackerScreen(
             }
         }
     }
-
 }
 
 @Composable

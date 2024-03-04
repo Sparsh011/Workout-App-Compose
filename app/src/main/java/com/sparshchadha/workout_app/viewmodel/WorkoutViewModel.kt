@@ -7,6 +7,7 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEnti
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
+import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
@@ -44,8 +45,8 @@ class WorkoutViewModel @Inject constructor(
     private var _yogaPosesPerformed = mutableStateOf<List<YogaEntity>?>(null)
     val yogaPosesPerformed = _yogaPosesPerformed
 
-    private var _gymExercisesPerformed = mutableStateOf<List<GymExercisesEntity>?>(null)
-    val gymExercisesPerformed = _gymExercisesPerformed
+    private var _gymExercisesPerformed = MutableStateFlow<List<GymExercisesEntity>?>(null)
+    val gymExercisesPerformed = _gymExercisesPerformed.asStateFlow()
 
     private val _yogaPosesPerformedOnUIEventState = MutableStateFlow<UIEvent?>(UIEvent.ShowLoader)
     val yogaPosesPerformedOnUIEventState = _yogaPosesPerformedOnUIEventState.asStateFlow()
@@ -62,6 +63,18 @@ class WorkoutViewModel @Inject constructor(
 
     private val _exerciseDetails = mutableStateOf<GymExercisesDtoItem?>(null)
     val exerciseDetails = _exerciseDetails
+
+    private val _savedExercises = MutableStateFlow<List<GymExercisesEntity>?>(null)
+    val savedExercises = _savedExercises.asStateFlow()
+
+    private val _savedPoses = MutableStateFlow<List<YogaEntity>?>(null)
+    val savedPoses = _savedPoses.asStateFlow()
+
+    private val _selectedExercise = mutableStateOf<GymExercisesDtoItem?>(null)
+    val selectedExercise = _selectedExercise
+
+    private val _selectedPose = mutableStateOf<Pose?>(null)
+    val selectedPose = _selectedPose
 
     fun getYogaPosesFromApi() {
         viewModelScope.launch {
@@ -235,13 +248,13 @@ class WorkoutViewModel @Inject constructor(
 
     fun saveYogaPose(yogaPose: YogaEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            workoutRepository.saveYogaPose(yogaPose = yogaPose)
+            workoutRepository.saveYogaPoseToDB(yogaPose = yogaPose)
         }
     }
 
     fun getAllPerformedYogaPoses() {
         viewModelScope.launch(Dispatchers.IO) {
-            val poses = workoutRepository.getAllYogaPosesPerformed()
+            val poses = workoutRepository.getAllPoses(performed = true)
             poses.collect { response ->
                 withContext(Dispatchers.Main) {
                     _yogaPosesPerformed.value = response
@@ -283,9 +296,9 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun saveGymExercise(gymExercisesEntity: GymExercisesEntity) {
+    fun addGymExerciseToWorkout(gymExercisesEntity: GymExercisesEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            workoutRepository.saveGymExercise(gymExercisesEntity = gymExercisesEntity)
+            workoutRepository.saveExerciseToDB(exercisesEntity = gymExercisesEntity)
         }
     }
 
@@ -293,16 +306,56 @@ class WorkoutViewModel @Inject constructor(
         _exerciseDetails.value = exercisesDtoItem
     }
 
-    fun removeYogaPose(yogaEntity: YogaEntity) {
+    fun removeYogaPoseFromDB(yogaEntity: YogaEntity) {
         viewModelScope.launch (Dispatchers.IO) {
             workoutRepository.removeYogaPose(yogaEntity)
         }
     }
 
-    fun removeGymExercise(exercisesEntity: GymExercisesEntity) {
+    fun removeExerciseFromDB(exercisesEntity: GymExercisesEntity) {
         viewModelScope.launch (Dispatchers.IO) {
             workoutRepository.removeGymExercise(exercisesEntity)
         }
+    }
+
+    fun saveExerciseToDB(exercisesEntity: GymExercisesEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            workoutRepository.saveExerciseToDB(exercisesEntity =  exercisesEntity)
+        }
+    }
+
+    fun saveYogaPoseToDB(yogaEntity: YogaEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            workoutRepository.saveYogaPoseToDB(yogaEntity)
+        }
+    }
+
+    fun getAllExercisesPerformed() {
+
+    }
+
+    fun getSavedExercises() {
+        viewModelScope.launch(Dispatchers.IO) {
+            workoutRepository.getAllExercises(performed = false).collect {
+                _savedExercises.value = it
+            }
+        }
+    }
+
+    fun getSavedYogaPoses() {
+        viewModelScope.launch(Dispatchers.IO) {
+            workoutRepository.getAllPoses(performed = false).collect {
+                _savedPoses.value = it
+            }
+        }
+    }
+
+    fun updateSelectedExercise(selectedExercise: GymExercisesDtoItem?) {
+        _selectedExercise.value = selectedExercise
+    }
+
+    fun updateSelectedYogaPose(selectedPose: Pose?) {
+        _selectedPose.value = selectedPose
     }
 
     sealed class UIEvent {

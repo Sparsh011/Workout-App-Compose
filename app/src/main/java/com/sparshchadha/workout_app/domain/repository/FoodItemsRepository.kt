@@ -12,7 +12,7 @@ interface FoodItemsRepository {
 
     suspend fun getFoodItemsConsumedOn(date: String, month: String): Flow<List<FoodItemEntity>>
 
-    suspend fun getAllFoodItemsConsumed(): Flow<List<FoodItemEntity>>
+    suspend fun getAllFoodItems(isConsumed: Boolean): Flow<List<FoodItemEntity>>
 
     suspend fun saveOrUpdateCaloriesGoal(caloriesGoal: String)
 

@@ -44,8 +44,9 @@ class FoodRepositoryImpl(
         return foodItemsDao.getFoodItemsConsumedOn(date = date, month = month)
     }
 
-    override suspend fun getAllFoodItemsConsumed(): Flow<List<FoodItemEntity>> {
-        return foodItemsDao.getAllFoodItemsConsumed()
+    override suspend fun getAllFoodItems(isConsumed: Boolean): Flow<List<FoodItemEntity>> {
+        return if (isConsumed) foodItemsDao.getAllFoodItemsConsumed()
+        else foodItemsDao.getSavedFoodItems()
     }
 
     override suspend fun saveOrUpdateCaloriesGoal(caloriesGoal: String) {

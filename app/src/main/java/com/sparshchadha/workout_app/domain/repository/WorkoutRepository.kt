@@ -20,9 +20,7 @@ interface WorkoutRepository {
 
     fun getExerciseByNameFromApi(name: String): Flow<Resource<GymExercisesDto>>
 
-    suspend fun getAllYogaPosesPerformed(): Flow<List<YogaEntity>>
-
-    suspend fun saveYogaPose(yogaPose: YogaEntity)
+    suspend fun getAllPoses(performed: Boolean): Flow<List<YogaEntity>>
 
     suspend fun removeYogaPose(yogaPose: YogaEntity)
 
@@ -31,14 +29,17 @@ interface WorkoutRepository {
         month: String = HelperFunctions.getCurrentDateAndMonth().second,
     ): Flow<List<YogaEntity>>
 
-    suspend fun saveGymExercise(gymExercisesEntity: GymExercisesEntity)
-
     suspend fun getGymExercisesPerformedOn(
         date: String = HelperFunctions.getCurrentDateAndMonth().first.toString(),
         month: String = HelperFunctions.getCurrentDateAndMonth().second,
     ): Flow<List<GymExercisesEntity>>
 
-    suspend fun getAllGymExercisesPerformed(): Flow<List<GymExercisesEntity>>
+    suspend fun getAllExercises(performed: Boolean): Flow<List<GymExercisesEntity>>
+
     suspend fun removeGymExercise(exercisesEntity: GymExercisesEntity)
+
+    suspend fun saveExerciseToDB(exercisesEntity: GymExercisesEntity)
+
+    suspend fun saveYogaPoseToDB(yogaPose: YogaEntity)
 
 }

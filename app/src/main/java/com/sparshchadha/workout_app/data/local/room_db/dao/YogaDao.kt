@@ -21,4 +21,7 @@ interface YogaDao {
 
     @Delete
     fun removeYogaPose(yogaPose: YogaEntity)
+
+    @Query("SELECT * FROM YogaEntity WHERE setsPerformed = -1")
+    fun getSavedPoses(): Flow<List<YogaEntity>>
 }

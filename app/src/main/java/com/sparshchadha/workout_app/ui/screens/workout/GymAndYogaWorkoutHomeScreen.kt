@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.ui.components.CustomDivider
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.screens.workout.gym.CategoryItem
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.GymWorkoutCategories

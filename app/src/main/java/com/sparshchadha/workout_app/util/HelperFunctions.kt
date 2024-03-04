@@ -8,6 +8,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
+import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
+import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.MuscleType
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.WorkoutType
@@ -298,7 +300,7 @@ object HelperFunctions {
         }
     }
 
-    fun getGymWorkoutCategories(): List<String> {
+    fun settingsForGym(): List<String> {
         return listOf(
             "Track Workouts",
             "Activity",
@@ -308,21 +310,21 @@ object HelperFunctions {
         )
     }
 
-    fun getYogaCategories(): List<String> {
+    fun settingsForYoga(): List<String> {
         return listOf(
             "Track Workouts",
             "Activity",
             "Goals",
-            "Saved Poses"
+            "Saved Poses",
         )
     }
 
-    fun getCaloriesTrackerCategories(): List<String> {
+    fun settingsForCalorieTracker(): List<String> {
         return listOf(
             "Track Food",
             "Activity",
             "Goals",
-            "Saved Food Items"
+            "Saved Food Items",
         )
     }
 
@@ -335,6 +337,18 @@ object HelperFunctions {
             "Age",
             "Weight Goal",
             "Calories Goal"
+        )
+    }
+
+    fun getYogaPoseWithNegatives(pose: Pose): YogaEntity {
+        return YogaEntity(
+            date = "",
+            month = "",
+            setsPerformed = -1,
+            yogaPoseDetails = pose,
+            hour = -1,
+            minutes = -1,
+            seconds = -1,
         )
     }
 }

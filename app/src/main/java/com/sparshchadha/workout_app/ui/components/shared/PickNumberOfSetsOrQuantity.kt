@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.ui.components
+package com.sparshchadha.workout_app.ui.components.shared
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
