@@ -24,7 +24,8 @@ fun BottomBar(navHostController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.CalorieTracker,
         BottomBarScreen.WorkoutScreen,
-        BottomBarScreen.ProfileScreen
+        BottomBarScreen.RemindersScreen,
+        BottomBarScreen.ProfileScreen,
     )
 
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()

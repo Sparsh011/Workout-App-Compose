@@ -21,7 +21,9 @@ import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 @Composable
-fun NoSavedItem() {
+fun NoSavedItem(
+    text: String = "No Saved Item"
+) {
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -35,7 +37,7 @@ fun NoSavedItem() {
         )
 
         Text(
-            text = "No Saved Item",
+            text = text,
             color = primaryTextColor,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,

@@ -12,6 +12,7 @@ import com.sparshchadha.workout_app.data.local.room_db.Converters
 import com.sparshchadha.workout_app.data.local.room_db.WorkoutAppDatabase
 import com.sparshchadha.workout_app.data.local.room_db.dao.FoodItemsDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.GymExercisesDao
+import com.sparshchadha.workout_app.data.local.room_db.dao.PRDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.RemindersDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.YogaDao
 import com.sparshchadha.workout_app.data.remote.api.FoodApi
@@ -19,10 +20,12 @@ import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
 import com.sparshchadha.workout_app.data.remote.api.PexelsApi
 import com.sparshchadha.workout_app.data.remote.api.YogaApi
 import com.sparshchadha.workout_app.data.repository.FoodRepositoryImpl
+import com.sparshchadha.workout_app.data.repository.PRRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.PexelsRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.RemindersRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.WorkoutRepositoryImpl
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
+import com.sparshchadha.workout_app.domain.repository.PRRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.domain.repository.RemindersRepository
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
@@ -221,8 +224,20 @@ object SharedModule {
 
     @Singleton
     @Provides
+    fun providePRDao(database: WorkoutAppDatabase): PRDao {
+        return database.prDao()
+    }
+
+    @Singleton
+    @Provides
     fun provideRemindersRepository(remindersDao: RemindersDao): RemindersRepository {
         return RemindersRepositoryImpl(remindersDao = remindersDao)
+    }
+
+    @Singleton
+    @Provides
+    fun providePRRepository(prDao: PRDao): PRRepository {
+        return PRRepositoryImpl(prDao = prDao)
     }
 
     @Singleton

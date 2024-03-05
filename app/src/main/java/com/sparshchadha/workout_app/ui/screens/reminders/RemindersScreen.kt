@@ -77,6 +77,7 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.ReminderEntity
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
@@ -146,17 +147,6 @@ fun RemindersScreen(
     }
 
     Scaffold(
-        topBar = {
-            ScaffoldTopBar(
-                topBarDescription = "Reminders",
-                onBackButtonPressed = {
-                    navController.popBackStack(
-                        route = BottomBarScreen.CalorieTracker.route,
-                        inclusive = false
-                    )
-                }
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -181,10 +171,18 @@ fun RemindersScreen(
                 .padding(
                     top = localPaddingValues.calculateTopPadding(),
                     bottom = globalPaddingValues.calculateBottomPadding(),
-                    start = MEDIUM_PADDING,
-                    end = MEDIUM_PADDING,
                 )
         ) {
+
+            Text(
+                text = "Reminders",
+                fontSize = 20.nonScaledSp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(ColorsUtil.statusBarColor)
+                    .padding(vertical = SMALL_PADDING, horizontal = MEDIUM_PADDING),
+                color = White
+            )
 
             LaunchedEffect(key1 = selectedTabIndex) {
                 pagerState.animateScrollToPage(selectedTabIndex)

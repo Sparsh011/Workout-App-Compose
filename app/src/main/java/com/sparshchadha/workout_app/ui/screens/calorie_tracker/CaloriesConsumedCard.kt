@@ -112,7 +112,7 @@ fun CaloriesConsumedCard(
             onConfirmClick = {
                 saveNewCaloriesGoal(it)
             },
-            label = "Weight Goal",
+            label = "Calories Goal (kcal)",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
     }

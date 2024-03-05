@@ -16,6 +16,7 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.gym.exerciseDetai
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesPerformedComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.workoutCategoryComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.profile.personalRecordsScreen
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.remindersComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.savedItemsScreenComposable
@@ -137,6 +138,13 @@ fun NavGraph(
             globalPaddingValues = globalPaddingValues,
             foodItemsViewModel = foodItemsViewModel,
             workoutViewModel = workoutViewModel
+        )
+
+        // personal records screen
+        personalRecordsScreen(
+            navController = navController,
+            workoutViewModel = workoutViewModel,
+            globalPaddingValues = globalPaddingValues
         )
     }
 }

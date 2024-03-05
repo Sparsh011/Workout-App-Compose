@@ -1,5 +1,7 @@
 package com.sparshchadha.workout_app.util
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -8,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
+import androidx.core.app.ActivityCompat
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
@@ -20,6 +23,7 @@ import java.time.Year
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+
 
 object HelperFunctions {
     fun getDifficultyLevels(): List<String> {
@@ -350,5 +354,21 @@ object HelperFunctions {
             minutes = -1,
             seconds = -1,
         )
+    }
+
+    fun hasPermissions(context: Context?, vararg permissions: String?): Boolean {
+        if (context != null) {
+            for (permission in permissions) {
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        permission!!
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    return false
+                }
+            }
+        }
+
+        return true
     }
 }

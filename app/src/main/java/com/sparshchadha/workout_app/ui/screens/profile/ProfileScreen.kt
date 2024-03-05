@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.ui.screens.profile
 
+import android.Manifest
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -49,9 +51,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.sparshchadha.workout_app.GenderIcon
-import com.sparshchadha.workout_app.LandingPageOutlinedTextField
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.activity.components.GenderIcon
+import com.sparshchadha.workout_app.activity.components.LandingPageOutlinedTextField
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.screens.workout.HeaderText
 import com.sparshchadha.workout_app.util.ColorsUtil
@@ -96,6 +99,8 @@ fun ProfileScreen(
         mutableStateOf(false)
     }
 
+    val context = LocalContext.current
+
     var showDialogToUpdateValueOf by remember {
         mutableStateOf("")
     }
@@ -136,6 +141,24 @@ fun ProfileScreen(
                 name = name,
                 onNameChange = { newName ->
                     profileViewModel.saveName(newName)
+                },
+                requestCameraAndStoragePermission = {
+                    if (HelperFunctions.hasPermissions(
+                            context, Manifest.permission.CAMERA,
+                            Manifest.permission.READ_MEDIA_IMAGES,
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                        )
+                    ) {
+
+                    } else {
+                        profileViewModel.requestPermissions(
+                            listOf(
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.READ_MEDIA_IMAGES,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                            )
+                        )
+                    }
                 }
             )
         }
@@ -263,7 +286,7 @@ fun handleGymItemClick(
         }
 
         "Personal Records" -> {
-
+            navigateToScreen(UtilityScreen.PersonalRecordsScreen.route)
         }
 
         "Goals" -> {
@@ -710,7 +733,8 @@ fun StickyHeaderTextContent(modifier: Modifier, text: String) {
 @Composable
 fun ProfilePictureAndUserName(
     name: String,
-    onNameChange: (String) -> Unit
+    onNameChange: (String) -> Unit,
+    requestCameraAndStoragePermission: () -> Unit
 ) {
     var shouldShowNameChangeDialog by remember {
         mutableStateOf(false)
@@ -723,7 +747,7 @@ fun ProfilePictureAndUserName(
             },
             value = name,
             onConfirmClick = {
-                onNameChange(it)
+                onNameChange(it.trim())
             },
             label = "Your Name",
             keyboardOptions = KeyboardOptions(
@@ -746,6 +770,9 @@ fun ProfilePictureAndUserName(
                 .weight(1.3f)
                 .clip(shape = CircleShape)
                 .background(primaryBlue)
+                .clickable {
+                    requestCameraAndStoragePermission()
+                }
         ) {
             Image(
                 imageVector = Icons.Filled.Person,
@@ -765,7 +792,7 @@ fun ProfilePictureAndUserName(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = name,
+                text = name.trim(),
                 fontSize = 20.nonScaledSp,
                 modifier = Modifier
                     .padding(SMALL_PADDING),

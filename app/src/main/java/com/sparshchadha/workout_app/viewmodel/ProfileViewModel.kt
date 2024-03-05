@@ -7,6 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,6 +38,19 @@ class ProfileViewModel @Inject constructor(
 
     val readName: Flow<String?>
         get() = datastorePreference.readName
+
+    private val _showPermissionDialog = MutableStateFlow<Boolean?>(null)
+    val showPermissionDialog = _showPermissionDialog.asStateFlow()
+
+    private val _requestPermissions = MutableStateFlow<List<String>?>(null)
+    val requestPermissions = _requestPermissions.asStateFlow()
+
+    private val _openCamera = MutableStateFlow<Boolean?>(null)
+    val openCamera = _openCamera.asStateFlow()
+
+
+    private val _openGallery = MutableStateFlow<Boolean?>(null)
+    val openGallery = _openGallery.asStateFlow()
 
     fun saveAge(age: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -74,7 +89,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun saveName(name: String) {
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.saveName(name)
         }
     }
@@ -87,7 +102,7 @@ class ProfileViewModel @Inject constructor(
         weightGoal: String,
         caloriesGoal: String
     ) {
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             async {
                 datastorePreference.saveAge(age)
             }
@@ -109,5 +124,25 @@ class ProfileViewModel @Inject constructor(
                 datastorePreference.saveCaloriesGoal(caloriesGoal)
             }
         }
+    }
+
+    fun showPermissionDialog() {
+        _showPermissionDialog.value = true
+    }
+
+    fun hidePermissionDialog() {
+        _showPermissionDialog.value = false
+    }
+
+    fun requestPermissions(permissions: List<String>) {
+        _requestPermissions.value = permissions
+    }
+
+    fun openGallery() {
+        _openGallery.value = true
+    }
+
+    fun openCamera() {
+        _openCamera.value = true
     }
 }

@@ -2,9 +2,11 @@ package com.sparshchadha.workout_app.ui.components.bottom_bar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,6 +29,13 @@ sealed class BottomBarScreen(
         title = "Workout",
         selectedIcon = Icons.Default.List,
         unselectedIcon = Icons.Outlined.List
+    )
+
+    object RemindersScreen : BottomBarScreen(
+        route = "RemindersScreen",
+        title = "Reminders",
+        selectedIcon = Icons.Default.DateRange,
+        unselectedIcon = Icons.Outlined.DateRange
     )
 
     object ProfileScreen : BottomBarScreen(
@@ -76,11 +85,6 @@ sealed class UtilityScreen(
         title = "Food Item Details"
     )
 
-    object RemindersScreen : UtilityScreen(
-        route = "RemindersScreen",
-        title = "Reminders Screen"
-    )
-
     object ExerciseDetailScreen : UtilityScreen(
         route = "ExerciseDetailScreen",
         title = "Exercise Details"
@@ -89,5 +93,10 @@ sealed class UtilityScreen(
     object SavedItemsScreen: UtilityScreen(
         route = "SavedItemsScreen/{category}",
         title = "Saved Items Screen"
+    )
+
+    object PersonalRecordsScreen: UtilityScreen(
+        route = "PersonalRecordsScreen",
+        title = "Personal Records Screen"
     )
 }

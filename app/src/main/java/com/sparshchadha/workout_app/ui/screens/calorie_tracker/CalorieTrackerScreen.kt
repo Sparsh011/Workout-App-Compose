@@ -10,12 +10,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -33,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -43,18 +40,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
+import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
-import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
@@ -134,7 +128,7 @@ fun CalorieTrackerScreen(
                                     showDialogToUpdateCalories = true
                                 },
                                 caloriesConsumed = caloriesConsumed,
-                                progressIndicatorColor = primaryPurple
+                                progressIndicatorColor = noAchievementColor
                             )
                         }
 
@@ -149,7 +143,7 @@ fun CalorieTrackerScreen(
 
                 CurrentlySelectedCard(
                     currentPage = pagerState.currentPage,
-                    indicatorColor = primaryPurple
+                    indicatorColor = noAchievementColor
                 )
             }
         }
@@ -160,7 +154,7 @@ fun CalorieTrackerScreen(
                 getResultsForDateAndMonth = getDishesConsumedOnSelectedDayAndMonth,
                 selectedMonth = selectedDayPair.value.first,
                 selectedDay = selectedDayPair.value.second,
-                indicatorColor =primaryPurple,
+                indicatorColor = noAchievementColor,
                 updateSelectedDayPair = {
                     foodItemsViewModel.updateSelectedDay(it.first, it.second)
                 }
@@ -169,27 +163,10 @@ fun CalorieTrackerScreen(
 
         // Dishes consumed on header
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = CenterVertically
-            ) {
-                DishesConsumedOnAParticularDayHeader(
-                    modifier = Modifier.padding(MEDIUM_PADDING)
-                )
-
-                Spacer(modifier = Modifier.width(MEDIUM_PADDING))
-
-                Icon(
-                    painter = painterResource(id = R.drawable.reminders_svg),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(LARGE_PADDING)
-                        .clickable {
-                            navController.navigate(UtilityScreen.RemindersScreen.route)
-                        },
-                    tint = primaryTextColor
-                )
-            }
+            DishesConsumedOnAParticularDayHeader(
+                modifier = Modifier.padding(MEDIUM_PADDING)
+                    .fillMaxWidth()
+            )
         }
 
         // Dishes consumed on a particular day -
