@@ -1,21 +1,24 @@
 package com.sparshchadha.workout_app.ui.screens.workout.gym
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -30,13 +33,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.core.text.isDigitsOnly
@@ -75,16 +78,45 @@ fun PersonalRecordsScreen(
     }
 
     val prList by workoutViewModel.personalRecords.collectAsStateWithLifecycle()
+    var prId by remember {
+        mutableIntStateOf(-1)
+    }
+
+    var updatePr by remember {
+        mutableStateOf(false)
+    }
 
     if (showBottomSheetToAddPR) {
-        PRModalBottomSheet(
-            hideBottomSheet = {
-                showBottomSheetToAddPR = false
-            },
-            addPR = {
-                workoutViewModel.addPR(it)
-            }
-        )
+        if (updatePr) {
+            PRModalBottomSheet(
+                hideBottomSheet = {
+                    showBottomSheetToAddPR = false
+                    updatePr = false
+                },
+                addPR = { newPr ->
+                    if (newPr.second) {
+                        workoutViewModel.updatePR(newPr.first)
+                    } else {
+                        workoutViewModel.addPR(newPr.first)
+                    }
+                },
+                prId = prId
+            )
+        } else {
+            PRModalBottomSheet(
+                hideBottomSheet = {
+                    showBottomSheetToAddPR = false
+                    updatePr = false
+                },
+                addPR = { newPr ->
+                    if (newPr.second) {
+                        workoutViewModel.updatePR(newPr.first)
+                    } else {
+                        workoutViewModel.addPR(newPr.first)
+                    }
+                }
+            )
+        }
     }
 
     Scaffold(
@@ -127,7 +159,9 @@ fun PersonalRecordsScreen(
                     PR(
                         record = it,
                         onEditClick = {
-                            workoutViewModel.updatePR(it)
+                            showBottomSheetToAddPR = true
+                            updatePr = true
+                            prId = it.id ?: -1
                         },
                         onDeleteClick = {
                             workoutViewModel.deletePR(it)
@@ -150,7 +184,7 @@ fun PR(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(SMALL_PADDING),
+            .padding(horizontal = SMALL_PADDING),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -158,68 +192,58 @@ fun PR(
             fontWeight = FontWeight.Bold,
             fontSize = 20.nonScaledSp,
             modifier = Modifier
-                .weight(3.5f)
-                .padding(MEDIUM_PADDING),
+                .weight(4.3f)
+                .padding(horizontal = MEDIUM_PADDING),
             color = primaryTextColor
         )
 
-        EditAndDeleteIcons(
-            onEditClick = onEditClick,
-            onDeleteClick = onDeleteClick,
-            modifier = Modifier.weight(1.5f)
+        Icon(
+            imageVector = Icons.Default.Edit,
+            contentDescription = null,
+            tint = primaryTextColor,
+            modifier = Modifier
+                .clickable {
+                    onEditClick()
+                }
+                .weight(0.7f)
+                .padding(vertical = SMALL_PADDING)
         )
     }
 
+    Spacer(modifier = Modifier.height(SMALL_PADDING))
+
+    Text(
+        text = "${record.weight} kg, ${record.reps} reps",
+        color = primaryTextColor,
+        modifier = Modifier.padding(horizontal = MEDIUM_PADDING + SMALL_PADDING),
+        fontSize = 20.nonScaledSp,
+        fontWeight = FontWeight.Bold
+    )
+
+    Spacer(modifier = Modifier.height(SMALL_PADDING))
+
     if (record.optionalDescription.isNotBlank()) {
         Text(
-            text = "Description: ${record.optionalDescription}",
+            text = record.optionalDescription,
             color = primaryTextColor,
-            modifier = Modifier.padding(start = MEDIUM_PADDING + SMALL_PADDING, end = MEDIUM_PADDING + SMALL_PADDING, bottom = SMALL_PADDING),
+            modifier = Modifier.padding(
+                start = MEDIUM_PADDING + SMALL_PADDING,
+                end = MEDIUM_PADDING + SMALL_PADDING,
+                bottom = SMALL_PADDING
+            ),
             fontSize = 17.nonScaledSp
         )
     }
 
     Text(
-        text = "Performed on ${record.date} / ${record.month.lowercase()} / ${record.year}",
+        text = ("${record.date} ${record.month.lowercase().capitalize()} ${record.year}"),
         color = primaryTextColor,
         modifier = Modifier.padding(horizontal = MEDIUM_PADDING + SMALL_PADDING),
         fontSize = 14.nonScaledSp,
-        fontStyle = FontStyle.Italic
     )
 
+    Spacer(modifier = Modifier.height(MEDIUM_PADDING))
     CustomDivider()
-}
-
-@Composable
-fun EditAndDeleteIcons(
-    onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    modifier: Modifier
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Default.Edit,
-            contentDescription = null,
-            tint = primaryTextColor,
-            modifier = Modifier.clickable {
-                onEditClick()
-            }
-                .weight(1f)
-        )
-
-        Icon(
-            imageVector = Icons.Default.Delete,
-            contentDescription = null,
-            tint = noAchievementColor,
-            modifier = Modifier.clickable {
-                onDeleteClick()
-            }
-                .weight(1f)
-        )
-    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -227,14 +251,15 @@ fun EditAndDeleteIcons(
 @Composable
 fun PRModalBottomSheet(
     hideBottomSheet: () -> Unit,
-    addPR: (PersonalRecordsEntity) -> Unit
+    addPR: (Pair<PersonalRecordsEntity, Boolean>) -> Unit,
+    prId: Int = -1
 ) {
     ModalBottomSheet(
         onDismissRequest = {
             hideBottomSheet()
         },
         containerColor = scaffoldBackgroundColor,
-        windowInsets = WindowInsets(0, 0, 0, 0)
+        windowInsets = WindowInsets.ime
     ) {
         var exerciseName by remember {
             mutableStateOf("")
@@ -296,18 +321,21 @@ fun PRModalBottomSheet(
 
         Button(
             onClick = {
-            addPR(
-                PersonalRecordsEntity(
-                    exerciseName = exerciseName,
-                    reps = reps.toInt(),
-                    date = LocalDate.now().dayOfMonth.toString(),
-                    month = LocalDate.now().month.toString(),
-                    year = LocalDate.now().year.toString(),
-                    weight = weight.toLong(),
-                    optionalDescription = optionalDescription
+                addPR(
+                    Pair(
+                        PersonalRecordsEntity(
+                            exerciseName = exerciseName,
+                            reps = reps.toInt(),
+                            date = LocalDate.now().dayOfMonth.toString(),
+                            month = LocalDate.now().month.toString(),
+                            year = LocalDate.now().year.toString(),
+                            weight = weight.toLong(),
+                            optionalDescription = optionalDescription
+                        ),
+                        prId == -1
+                    )
                 )
-            )
-        },
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(LARGE_PADDING + MEDIUM_PADDING),

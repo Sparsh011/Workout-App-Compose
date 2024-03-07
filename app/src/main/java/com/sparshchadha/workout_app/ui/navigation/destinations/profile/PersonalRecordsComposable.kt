@@ -2,8 +2,9 @@ package com.sparshchadha.workout_app.ui.navigation.destinations.profile
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -21,7 +22,12 @@ fun NavGraphBuilder.personalRecordsScreen(
     composable(
         route = UtilityScreen.PersonalRecordsScreen.route,
         enterTransition = {
-            EnterTransition.None
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> fullWidth },
+                animationSpec = tween(
+                    durationMillis = 300
+                )
+            )
         },
         exitTransition = {
             ExitTransition.None

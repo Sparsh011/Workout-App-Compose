@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
@@ -28,7 +29,7 @@ fun SearchBarToLaunchSearchScreen(
         modifier = Modifier
             .fillMaxWidth()
             .background(ColorsUtil.statusBarColor)
-            .padding(SMALL_PADDING)
+            .padding(start = SMALL_PADDING, end = SMALL_PADDING, top = SMALL_PADDING, bottom = MEDIUM_PADDING)
             .clickable {
                 navigateToSearchScreen()
             },

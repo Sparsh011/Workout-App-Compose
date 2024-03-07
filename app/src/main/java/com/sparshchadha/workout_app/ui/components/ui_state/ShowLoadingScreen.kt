@@ -17,6 +17,7 @@ import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 
 @Composable
@@ -32,7 +33,7 @@ fun ShowLoadingScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        LottieAnimation(composition = composition, progress = { progress }, modifier = Modifier.size(PIE_CHART_SIZE))
+        LottieAnimation(composition = composition, progress = { progress }, modifier = Modifier.size(PIE_CHART_SIZE - LARGE_PADDING))
 
         Text(
             text = "Loading...",

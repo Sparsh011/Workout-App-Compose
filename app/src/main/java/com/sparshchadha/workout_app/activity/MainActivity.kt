@@ -1,13 +1,21 @@
 package com.sparshchadha.workout_app.activity
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.graphics.Rect
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -34,6 +42,7 @@ import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+
 private const val TAG = "MainActivityTaggg"
 
 @AndroidEntryPoint
@@ -44,22 +53,46 @@ class MainActivity : ComponentActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
 
             WorkoutAppTheme {
-                requestPermissionLauncher =
-                    rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                requestPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
                         if (isGranted) {
 
                         } else {
 
                         }
                     }
+
+                when (profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
+                    true -> {
+
+                    }
+                    false -> {
+
+                    }
+                }
+
+                val pickMedia =
+                    rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                        if (uri != null) {
+                            val bitmap = getCapturedImage(uri)
+                            profileViewModel.setImageBitmap(bitmap)
+                            profileViewModel.cacheBitmap(bitmap)
+                        } else {
+                            Log.d(TAG, "No media selected")
+                        }
+                        profileViewModel.galleryClosed()
+                    }
+
+                val openGallery by profileViewModel.openGallery.collectAsStateWithLifecycle()
+
+                if (openGallery == true) {
+                    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                }
 
                 val showPermissionDialogFlow by profileViewModel.showPermissionDialog.collectAsStateWithLifecycle()
                 val requestPermissions by profileViewModel.requestPermissions.collectAsStateWithLifecycle()
@@ -70,20 +103,21 @@ class MainActivity : ComponentActivity() {
                             profileViewModel.hidePermissionDialog()
                         }
                     }
+
                     false -> {
 
                     }
 
                     else -> {
-
+                        // ignore
                     }
                 }
 
                 if (requestPermissions != null) {
                     if (requestPermissions?.size == 1) {
-                            LaunchedEffect(key1 = Unit) {
-                                requestPermissionHandler(permission = requestPermissions!![0])
-                            }
+                        LaunchedEffect(key1 = Unit) {
+                            requestPermissionHandler(permission = requestPermissions!![0])
+                        }
 
                     } else {
                         LaunchedEffect(key1 = Unit) {
@@ -97,7 +131,11 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(false)
                 }
 
-                if (sharedPreferences.getBoolean("landing_page_shown", false) || navigateToHomeScreen) {
+                if (sharedPreferences.getBoolean(
+                        "landing_page_shown",
+                        false
+                    ) || navigateToHomeScreen
+                ) {
                     val navHostController = rememberNavController()
                     val gymExercises = workoutViewModel.gymExercisesFromApi.value
                     val yogaPoses = workoutViewModel.yogaPosesFromApi.value
@@ -158,7 +196,11 @@ class MainActivity : ComponentActivity() {
         navigateToHomeScreen()
     }
 
-    private fun requestPermissionHandler(permission: String, forAndroidVersion: Int = -1, fallbackPermission: String = "") {
+    private fun requestPermissionHandler(
+        permission: String,
+        forAndroidVersion: Int = -1,
+        fallbackPermission: String = ""
+    ) {
         if (forAndroidVersion != -1 && fallbackPermission.isNotBlank()) {
             if (Build.VERSION.SDK_INT > forAndroidVersion) {
                 requestPermission(permission = permission)
@@ -178,6 +220,7 @@ class MainActivity : ComponentActivity() {
             ) -> {
 
             }
+
             else -> {
                 requestPermissionLauncher.launch(permission)
                 ActivityCompat.requestPermissions(this, arrayOf(permission), 123)
@@ -192,6 +235,26 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun LaunchCamera() {
-        
+
+    }
+
+    private fun getCapturedImage(selectedPhotoUri: Uri): Bitmap {
+        return when {
+            Build.VERSION.SDK_INT < 28 -> MediaStore.Images.Media.getBitmap(
+                this.contentResolver,
+                selectedPhotoUri
+            )
+
+            else -> {
+                val source = ImageDecoder.createSource(this.contentResolver, selectedPhotoUri)
+                ImageDecoder.decodeBitmap(source)
+            }
+        }
+    }
+
+    fun Activity.getStatusBarHeight(): Int {
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return if (resourceId > 0) resources.getDimensionPixelSize(resourceId)
+        else Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.top
     }
 }

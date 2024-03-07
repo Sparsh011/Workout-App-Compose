@@ -68,7 +68,7 @@ fun GymAndYogaWorkoutHomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(statusBarColor)
-                .padding(vertical = SMALL_PADDING, horizontal = MEDIUM_PADDING),
+                .padding(start = MEDIUM_PADDING, end = SMALL_PADDING, top = SMALL_PADDING, bottom = MEDIUM_PADDING),
             color = Color.White
         )
 

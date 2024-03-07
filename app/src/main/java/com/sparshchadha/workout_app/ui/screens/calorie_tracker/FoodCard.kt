@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -35,15 +36,17 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.ui.components.shared.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.shared.rememberPickerState
+import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.TITLE_SIZE
 import com.sparshchadha.workout_app.util.Extensions.capitalize
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.HelperFunctions.noRippleClickable
 
@@ -109,8 +112,8 @@ private fun FoodItemDetailsCard(
             containerColor = cardBackgroundColor
         ),
         modifier = Modifier
+            .padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING)
             .fillMaxWidth()
-            .padding(MEDIUM_PADDING)
             .noRippleClickable {
                 toggleCardExpansion(
                     isExpanded = isExpanded,
@@ -121,7 +124,7 @@ private fun FoodItemDetailsCard(
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING)
+                .padding(horizontal = LARGE_PADDING, vertical = SMALL_PADDING)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -142,8 +145,22 @@ private fun FoodItemDetailsCard(
             )
         }
 
-        NutritionalValueText(nutrient = "Calories", quantityOfNutrient = calories, unit = "kcal")
-        NutritionalValueText(nutrient = "Serving Size", quantityOfNutrient = servingSize)
+        Row (
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = LARGE_PADDING, vertical = SMALL_PADDING)
+        ) {
+            Text(
+                text = "$calories kcal",
+                color = targetAchievedColor,
+                fontSize = 14.nonScaledSp
+            )
+            Spacer(modifier = Modifier.width(SMALL_PADDING))
+            Text(
+                text = "/ $servingSize g serving",
+                color = primaryTextColor,
+                fontSize = 14.nonScaledSp
+            )
+        }
 
         if (isExpanded) {
             NutritionalValueText(nutrient = "Protein", quantityOfNutrient = protein)
@@ -197,7 +214,7 @@ fun ShowQuantityOrSetsPicker(
         },
         sheetState = rememberModalBottomSheetState(),
         windowInsets = WindowInsets(0, 0, 0, 10),
-        containerColor = scaffoldBackgroundColor
+        containerColor = bottomBarColor
     ) {
         Text(
             buildAnnotatedString {

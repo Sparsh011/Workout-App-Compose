@@ -54,13 +54,14 @@ import androidx.compose.ui.unit.sp
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.ui.screens.profile.AlertDialogToUpdate
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.carbohydratesColor
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 
@@ -82,12 +83,7 @@ fun CaloriesConsumedCard(
         modifier = Modifier
             .width(caloriesConsumedCardWidth)
             .height(caloriesConsumedCardHeight)
-            .padding(
-                top = dimensionResource(id = R.dimen.large_padding),
-                start = dimensionResource(id = R.dimen.large_padding),
-                end = dimensionResource(id = R.dimen.large_padding),
-                bottom = dimensionResource(id = R.dimen.medium_padding)
-            )
+            .padding(SMALL_PADDING)
             .clip(RoundedCornerShape(10.dp))
             .background(cardBackgroundColor)
     ) {
@@ -98,7 +94,7 @@ fun CaloriesConsumedCard(
             caloriesConsumed = caloriesConsumed,
             showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet,
             caloriesGoal = caloriesGoal,
-            progressIndicatorColor = primaryPurple
+            progressIndicatorColor = carbohydratesColor
         )
 
         CaloriesGoalText(showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet)
@@ -245,7 +241,7 @@ fun CenterCaloriesGoalBox(
             progress = progress,
             modifier = Modifier.size(PIE_CHART_SIZE),
             strokeWidth = MEDIUM_PADDING,
-            trackColor = Color.LightGray,
+            trackColor = ColorsUtil.progressTrackColor,
             color = progressIndicatorColor,
             strokeCap = StrokeCap.Round,
         )

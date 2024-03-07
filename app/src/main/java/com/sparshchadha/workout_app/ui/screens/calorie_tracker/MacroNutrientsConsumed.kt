@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.progressTrackColor
 import com.sparshchadha.workout_app.util.ColorsUtil.unselectedBottomBarIconColor
 import com.sparshchadha.workout_app.util.Constants.CARBOHYDRATES_TOTAL_G
 import com.sparshchadha.workout_app.util.Constants.COLOR_TO_NUTRIENT_MAP
@@ -65,12 +66,7 @@ fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>, caloriesGoal:
         modifier = Modifier
             .width(macroNutrientsCardWidth)
             .height(macroNutrientsCardHeight)
-            .padding(
-                top = dimensionResource(id = R.dimen.large_padding),
-                start = dimensionResource(id = R.dimen.large_padding),
-                end = dimensionResource(id = R.dimen.large_padding),
-                bottom = dimensionResource(id = R.dimen.medium_padding)
-            )
+            .padding(SMALL_PADDING)
             .clip(RoundedCornerShape(10.dp))
             .background(cardBackgroundColor)
     ) {
@@ -159,7 +155,7 @@ fun MacroNutrientProgress(
             progress = progress,
             color = color,
             strokeCap = StrokeCap.Round,
-            trackColor = Color.LightGray,
+            trackColor = progressTrackColor,
         )
     }
 }

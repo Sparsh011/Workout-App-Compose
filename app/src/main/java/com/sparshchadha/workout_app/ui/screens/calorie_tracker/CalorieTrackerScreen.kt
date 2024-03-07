@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,7 +45,6 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
-import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
@@ -55,6 +55,8 @@ import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 private const val TAG = "CalorieTrackerScreen"
 
@@ -102,6 +104,10 @@ fun CalorieTrackerScreen(
                     navController.navigate("SearchScreen/food")
                 }
             )
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(SMALL_PADDING))
         }
 
         // Show Today's calories and nutrients -
@@ -164,7 +170,8 @@ fun CalorieTrackerScreen(
         // Dishes consumed on header
         item {
             DishesConsumedOnAParticularDayHeader(
-                modifier = Modifier.padding(MEDIUM_PADDING)
+                modifier = Modifier
+                    .padding(MEDIUM_PADDING)
                     .fillMaxWidth()
             )
         }
@@ -306,6 +313,7 @@ fun FoodItemText(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ConsumedFoodItem(
     consumedFoodItem: FoodItemEntity,
@@ -355,16 +363,20 @@ fun ConsumedFoodItem(
                 }
 
 
+                val hour12Format = consumedFoodItem.hour % 12
+                val formattedTime = LocalTime.of(hour12Format, consumedFoodItem.minutes)
+                    .format(DateTimeFormatter.ofPattern("hh: mm a"))
+
                 Text(
                     buildAnnotatedString {
                         append("Consumed at ")
                         withStyle(
                             style = SpanStyle(
-                                fontStyle = FontStyle.Italic,
+                                fontWeight = FontWeight.Bold,
                                 color = primaryTextColor,
                             )
                         ) {
-                            append("${consumedFoodItem.hour}: ${consumedFoodItem.minutes}: ${consumedFoodItem.seconds}")
+                            append(formattedTime)
                         }
                     },
                     color = primaryTextColor,
@@ -381,7 +393,7 @@ fun ConsumedFoodItem(
                     .clickable {
                         removeFoodItem(consumedFoodItem)
                     },
-                tint = ColorsUtil.noAchievementColor // red
+                tint = noAchievementColor // red
             )
         }
 

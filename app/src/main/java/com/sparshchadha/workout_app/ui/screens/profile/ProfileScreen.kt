@@ -1,11 +1,9 @@
 package com.sparshchadha.workout_app.ui.screens.profile
 
 import android.Manifest
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
+import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,22 +13,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -49,8 +49,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.activity.components.GenderIcon
 import com.sparshchadha.workout_app.activity.components.LandingPageOutlinedTextField
@@ -63,7 +63,6 @@ import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
-import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -73,33 +72,26 @@ import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 
-@OptIn(ExperimentalFoundationApi::class)
+private const val TAG = "ProfileScreenTagggg"
+
 @Composable
 fun ProfileScreen(
     globalPaddingValues: PaddingValues,
     navController: NavController,
     profileViewModel: ProfileViewModel
 ) {
-    val height =
-        profileViewModel.readHeight.collectAsStateWithLifecycle(initialValue = "").value ?: ""
-    val weightGoal =
-        profileViewModel.readWeightGoal.collectAsStateWithLifecycle(initialValue = "").value ?: ""
-    val currentWeight =
-        profileViewModel.readCurrentWeight.collectAsStateWithLifecycle(initialValue = "").value
-            ?: ""
-    val gender =
-        profileViewModel.readGender.collectAsStateWithLifecycle(initialValue = "").value ?: ""
-    val age = profileViewModel.readAge.collectAsStateWithLifecycle(initialValue = "").value ?: ""
-    val caloriesGoal =
-        profileViewModel.readCaloriesGoal.collectAsStateWithLifecycle(initialValue = "").value ?: ""
-    val name =
-        profileViewModel.readName.collectAsStateWithLifecycle(initialValue = "").value ?: "Guest"
+    val height = profileViewModel.height.collectAsState().value
+    val weightGoal = profileViewModel.weightGoal.collectAsState().value
+    val currentWeight = profileViewModel.currentWeight.collectAsState().value
+    val gender = profileViewModel.gender.collectAsState().value
+    val age = profileViewModel.age.collectAsState().value
+    val caloriesGoal = profileViewModel.caloriesGoal.collectAsState().value
+    val name = profileViewModel.name.collectAsState().value
+    val profileBitmap = profileViewModel.profilePicBitmap.collectAsState().value
 
     var shouldShowDialogToUpdateValue by remember {
         mutableStateOf(false)
     }
-
-    val context = LocalContext.current
 
     var showDialogToUpdateValueOf by remember {
         mutableStateOf("")
@@ -121,129 +113,227 @@ fun ProfileScreen(
         )
     }
 
-
-    LazyColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(bottom = globalPaddingValues.calculateBottomPadding())
             .background(scaffoldBackgroundColor)
+            .verticalScroll(rememberScrollState())
     ) {
-        stickyHeader {
-            StickyHeaderTextContent(
+        Text(
+            text = "Your Profile",
+            fontSize = 20.nonScaledSp,
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ColorsUtil.statusBarColor)
+                .padding(
+                    start = MEDIUM_PADDING,
+                    end = SMALL_PADDING,
+                    top = SMALL_PADDING,
+                    bottom = MEDIUM_PADDING
+                ),
+        )
+
+        ProfilePictureAndUserName(
+            name = name,
+            onNameChange = { newName ->
+                profileViewModel.saveName(newName)
+            },
+            requestCameraAndStoragePermission = {
+                profileViewModel.requestPermissions(
+                    listOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_MEDIA_IMAGES,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    )
+                )
+            },
+            pickImage = {
+                profileViewModel.openGallery()
+            },
+            imageBitmap = profileBitmap
+        )
+
+        HeaderText(heading = "Settings")
+
+        AppSettings(
+            setDarkTheme = {
+                profileViewModel.enableDarkMode(it)
+            },
+            isDarkTheme = profileViewModel.darkTheme.collectAsState().value
+        )
+
+        HeaderText(heading = "Personal Details")
+
+        PersonalInformation(
+            height = height,
+            weight = currentWeight,
+            bmi = getBmi(height, currentWeight),
+            gender = gender,
+            age = age,
+            weightGoal = weightGoal,
+            caloriesGoal = caloriesGoal,
+            onItemClick = { item ->
+                HelperFunctions.getPersonalInfoCategories().forEach {
+                    if (item == it) {
+                        shouldShowDialogToUpdateValue = true
+                        showDialogToUpdateValueOf = item
+                    }
+                }
+            }
+        )
+
+        SettingsCategoryHeader(text = "Gym Workouts")
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SMALL_PADDING)
+                .clip(RoundedCornerShape(SMALL_PADDING))
+                .background(bottomBarColor)
+        ) {
+            for (i in 0 until HelperFunctions.settingsForGym().size) {
+                SettingsCategory(
+                    text = HelperFunctions.settingsForGym()[i],
+                    onClick = {
+                        handleGymItemClick(
+                            clickedItem = HelperFunctions.settingsForGym()[i],
+                            navigateToScreen = { route ->
+                                navController.navigate(route)
+                            }
+                        )
+                    },
+                    verticalLineColor = primaryBlue,
+//                    showDivider = i != HelperFunctions.settingsForGym().size - 1
+                )
+            }
+        }
+
+        SettingsCategoryHeader(text = "Yoga")
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SMALL_PADDING)
+                .clip(RoundedCornerShape(SMALL_PADDING))
+                .background(bottomBarColor)
+        ) {
+            for (i in 0 until HelperFunctions.settingsForYoga().size) {
+                SettingsCategory(
+                    text = HelperFunctions.settingsForYoga()[i],
+                    onClick = {
+                        handleYogaItemClick(
+                            clickedItem = HelperFunctions.settingsForYoga()[i],
+                            navigateToScreen = { route ->
+                                navController.navigate(route)
+                            }
+                        )
+                    },
+                    verticalLineColor = primaryBlue,
+//                    showDivider = i != HelperFunctions.settingsForYoga().size - 1
+                )
+            }
+        }
+
+        SettingsCategoryHeader(text = "Calories & Food")
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(SMALL_PADDING)
+                .clip(RoundedCornerShape(SMALL_PADDING))
+                .background(bottomBarColor)
+        ) {
+            for (i in 0 until HelperFunctions.settingsForCalorieTracker().size) {
+                SettingsCategory(
+                    text = HelperFunctions.settingsForCalorieTracker()[i],
+                    onClick = {
+                        handleCaloriesTrackerItemClick(
+                            clickedItem = HelperFunctions.settingsForCalorieTracker()[i],
+                            navigateToScreen = { route ->
+                                navController.navigate(route)
+                            }
+                        )
+                    },
+                    verticalLineColor = primaryBlue,
+//                    showDivider = i != HelperFunctions.settingsForCalorieTracker().size - 1
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AppSettings(
+    setDarkTheme: (Boolean) -> Unit,
+    isDarkTheme: Boolean
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(SMALL_PADDING)
+            .clip(RoundedCornerShape(SMALL_PADDING))
+            .background(bottomBarColor)
+    ) {
+        val list = listOf(
+            "Enable Dark Theme",
+            "Rate On Playstore",
+            "Login",
+        )
+
+        for (item in list) {
+            AppSettingCategory(
+                text = item,
+                showToggleSwitch = (item == "Enable Dark Theme"),
+                isDarkTheme = isDarkTheme,
+                setDarkTheme = setDarkTheme,
+                textColor = if (item == "Login") targetAchievedColor else primaryTextColor,
+                fontWeight = if (item == "Login") FontWeight.Bold else FontWeight.Normal
+            )
+        }
+    }
+}
+
+@Composable
+fun AppSettingCategory(
+    text: String,
+    showToggleSwitch: Boolean,
+    isDarkTheme: Boolean,
+    setDarkTheme: (Boolean) -> Unit,
+    textColor: Color,
+    fontWeight: FontWeight
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            fontSize = 16.nonScaledSp,
+            color = textColor,
+            modifier = Modifier
+                .padding(MEDIUM_PADDING)
+                .weight(4f),
+            fontWeight = fontWeight
+        )
+
+        if (showToggleSwitch) {
+            Switch(
+                checked = isDarkTheme,
+                onCheckedChange = {
+                    setDarkTheme(it)
+                },
                 modifier = Modifier
-                    .fillParentMaxWidth(),
-                text = "Your Profile"
+                    .padding(SMALL_PADDING)
+                    .weight(1f)
             )
-        }
-
-        item {
-            ProfilePictureAndUserName(
-                name = name,
-                onNameChange = { newName ->
-                    profileViewModel.saveName(newName)
-                },
-                requestCameraAndStoragePermission = {
-                    if (HelperFunctions.hasPermissions(
-                            context, Manifest.permission.CAMERA,
-                            Manifest.permission.READ_MEDIA_IMAGES,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        )
-                    ) {
-
-                    } else {
-                        profileViewModel.requestPermissions(
-                            listOf(
-                                Manifest.permission.CAMERA,
-                                Manifest.permission.READ_MEDIA_IMAGES,
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                            )
-                        )
-                    }
-                }
-            )
-        }
-
-        item {
-            HeaderText(heading = "Personal Details")
-        }
-
-        item {
-            PersonalInformation(
-                height = height,
-                weight = currentWeight,
-                bmi = getBmi(height, currentWeight),
-                gender = gender,
-                age = age,
-                weightGoal = weightGoal,
-                caloriesGoal = caloriesGoal,
-                onItemClick = { item ->
-                    HelperFunctions.getPersonalInfoCategories().forEach {
-                        if (item == it) {
-                            shouldShowDialogToUpdateValue = true
-                            showDialogToUpdateValueOf = item
-                        }
-                    }
-                }
-            )
-        }
-
-        item {
-            SettingsCategoryHeader(text = "Gym Workouts")
-        }
-
-        items(HelperFunctions.settingsForGym().size) {
-            SettingsCategory(
-                text = HelperFunctions.settingsForGym()[it],
-                onClick = {
-                    handleGymItemClick(
-                        clickedItem = HelperFunctions.settingsForGym()[it],
-                        navigateToScreen = { route ->
-                            navController.navigate(route)
-                        }
-                    )
-                },
-                verticalLineColor = primaryBlue,
-                showDivider = it != HelperFunctions.settingsForGym().size - 1
-            )
-        }
-
-        item {
-            SettingsCategoryHeader(text = "Yoga")
-        }
-
-        items(HelperFunctions.settingsForYoga().size) {
-            SettingsCategory(
-                text = HelperFunctions.settingsForYoga()[it],
-                onClick = {
-                    handleYogaItemClick(
-                        clickedItem = HelperFunctions.settingsForYoga()[it],
-                        navigateToScreen = { route ->
-                            navController.navigate(route)
-                        }
-                    )
-                },
-                verticalLineColor = primaryBlue,
-                showDivider = it != HelperFunctions.settingsForYoga().size - 1
-            )
-        }
-
-        item {
-            SettingsCategoryHeader(text = "Calories & Food")
-        }
-
-        items(HelperFunctions.settingsForCalorieTracker().size) {
-            SettingsCategory(
-                text = HelperFunctions.settingsForCalorieTracker()[it],
-                onClick = {
-                    handleCaloriesTrackerItemClick(
-                        clickedItem = HelperFunctions.settingsForCalorieTracker()[it],
-                        navigateToScreen = { route ->
-                            navController.navigate(route)
-                        }
-                    )
-                },
-                verticalLineColor = primaryBlue,
-                showDivider = it != HelperFunctions.settingsForCalorieTracker().size - 1
+        } else {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowRight,
+                contentDescription = null,
+                tint = primaryTextColor,
+                modifier = Modifier.weight(1f)
             )
         }
     }
@@ -447,7 +537,7 @@ fun AlertDialogToUpdate(
             }
             Column(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(LARGE_PADDING))
                     .background(bottomBarColor),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -570,8 +660,8 @@ fun PersonalInformation(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = MEDIUM_PADDING, bottom = SMALL_PADDING, end = MEDIUM_PADDING)
-            .clip(RoundedCornerShape(20.dp))
+            .padding(SMALL_PADDING)
+            .clip(RoundedCornerShape(SMALL_PADDING))
             .background(bottomBarColor)
     ) {
         HelperFunctions.getPersonalInfoCategories().forEachIndexed { index, category ->
@@ -666,7 +756,7 @@ fun SettingsCategory(
     text: String,
     onClick: () -> Unit,
     verticalLineColor: Color,
-    showDivider: Boolean = true
+    showDivider: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -716,29 +806,17 @@ fun SettingsCategoryHeader(text: String) {
 }
 
 @Composable
-fun StickyHeaderTextContent(modifier: Modifier, text: String) {
-    Surface(
-        modifier = modifier,
-        color = statusBarColor
-    ) {
-        Text(
-            text = text,
-            fontSize = 20.nonScaledSp,
-            color = Color.White,
-            modifier = Modifier.padding(vertical = SMALL_PADDING, horizontal = MEDIUM_PADDING)
-        )
-    }
-}
-
-@Composable
 fun ProfilePictureAndUserName(
     name: String,
     onNameChange: (String) -> Unit,
-    requestCameraAndStoragePermission: () -> Unit
+    requestCameraAndStoragePermission: () -> Unit,
+    pickImage: () -> Unit,
+    imageBitmap: Bitmap?
 ) {
     var shouldShowNameChangeDialog by remember {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
 
     if (shouldShowNameChangeDialog) {
         AlertDialogToUpdate(
@@ -764,23 +842,26 @@ fun ProfilePictureAndUserName(
             .padding(MEDIUM_PADDING),
         verticalAlignment = Alignment.Top
     ) {
-        Box(
+        AsyncImage(
+            model = imageBitmap,
+            contentDescription = "Profile Picture",
             modifier = Modifier
                 .size(PROFILE_PICTURE_SIZE)
-                .weight(1.3f)
-                .clip(shape = CircleShape)
-                .background(primaryBlue)
                 .clickable {
-                    requestCameraAndStoragePermission()
+                    if (!HelperFunctions.hasPermissions(
+                            context,
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                    ) {
+                        requestCameraAndStoragePermission()
+                    } else {
+                        pickImage()
+                    }
                 }
-        ) {
-            Image(
-                imageVector = Icons.Filled.Person,
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        }
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
+        )
 
         Row(
             modifier = Modifier

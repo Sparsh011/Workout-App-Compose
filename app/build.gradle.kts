@@ -147,4 +147,5 @@ dependencies {
 
     implementation("androidx.camera:camera-view:${cameraxVersion}")
     implementation("androidx.camera:camera-extensions:${cameraxVersion}")
+    // endregion
 }

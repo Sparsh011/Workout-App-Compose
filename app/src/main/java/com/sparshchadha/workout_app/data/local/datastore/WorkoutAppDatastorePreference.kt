@@ -93,6 +93,26 @@ class WorkoutAppDatastorePreference @Inject constructor(
             null ?: pref[NAME_KEY]
         }
 
+    suspend fun saveBase64Image(imageStr: String?) {
+        dataStorePreference.edit { pref ->
+            pref[IMAGE_URI_KEY] = imageStr ?: ""
+        }
+    }
+
+    val readBase64ProfilePic: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            null ?: pref[IMAGE_URI_KEY]
+        }
+    suspend fun setDarkMode(setTo: String) {
+        dataStorePreference.edit { pref ->
+            pref[DARK_MODE_THEME_key] = setTo
+        }
+    }
+
+    val readDarkMode: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            null ?: pref[DARK_MODE_THEME_key]
+        }
     companion object {
         val CALORIES_GOAL_KEY = stringPreferencesKey("CALORIES_GOAL_KEY")
         val WEIGHT_GOAL_KEY = stringPreferencesKey("WEIGHT_GOAL_KEY")
@@ -101,6 +121,8 @@ class WorkoutAppDatastorePreference @Inject constructor(
         val GENDER_KEY = stringPreferencesKey("GENDER_KEY")
         val AGE_KEY = stringPreferencesKey("AGE_KEY")
         val NAME_KEY = stringPreferencesKey("NAME_KEY")
+        val IMAGE_URI_KEY = stringPreferencesKey("IMAGE_URI_KEY")
+        val DARK_MODE_THEME_key = stringPreferencesKey("DARK_MODE_THEME_key")
     }
 
 }
