@@ -11,14 +11,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.workout.gym.ExercisesScreen
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 fun NavGraphBuilder.gymExercisesComposable(
     navController: NavController,
-    gymExercises: GymExercisesDto?,
     workoutViewModel: WorkoutViewModel,
     globalPaddingValues: PaddingValues,
 ) {
@@ -38,6 +36,8 @@ fun NavGraphBuilder.gymExercisesComposable(
         }
     ) { backStackEntry ->
         val uiEventState by workoutViewModel.uiEventStateFlow.collectAsStateWithLifecycle()
+
+        val gymExercises by workoutViewModel.gymExercisesFromApi
 
         ExercisesScreen(
             navController = navController,

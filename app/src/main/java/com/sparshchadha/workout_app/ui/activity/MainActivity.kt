@@ -137,8 +137,6 @@ class MainActivity : ComponentActivity() {
                     ) || navigateToHomeScreen
                 ) {
                     val navHostController = rememberNavController()
-                    val gymExercises = workoutViewModel.gymExercisesFromApi.value
-                    val yogaPoses = workoutViewModel.yogaPosesFromApi.value
 
                     if (sharedPreferences.getBoolean("app_first_launch", true)) {
                         LaunchedEffect(key1 = Unit) {
@@ -159,8 +157,6 @@ class MainActivity : ComponentActivity() {
                             globalPaddingValues = it,
                             foodItemsViewModel = foodItemsViewModel,
                             workoutViewModel = workoutViewModel,
-                            gymExercises = gymExercises,
-                            yogaPoses = yogaPoses,
                             remindersViewModel = remindersViewModel,
                             profileViewModel = profileViewModel
                         )

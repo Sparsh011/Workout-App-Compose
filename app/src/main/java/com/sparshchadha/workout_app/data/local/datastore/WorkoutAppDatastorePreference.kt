@@ -113,6 +113,17 @@ class WorkoutAppDatastorePreference @Inject constructor(
         get() = dataStorePreference.data.map { pref ->
             null ?: pref[DARK_MODE_THEME_key]
         }
+
+    suspend fun saveWaterGlassesGoal(goal: String) {
+        dataStorePreference.edit { pref ->
+            pref[WATER_GLASSES_GOAL_KEY] = goal
+        }
+    }
+
+    val readWaterGlassesGoal: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            null ?: pref[WATER_GLASSES_GOAL_KEY]
+        }
     companion object {
         val CALORIES_GOAL_KEY = stringPreferencesKey("CALORIES_GOAL_KEY")
         val WEIGHT_GOAL_KEY = stringPreferencesKey("WEIGHT_GOAL_KEY")
@@ -123,6 +134,7 @@ class WorkoutAppDatastorePreference @Inject constructor(
         val NAME_KEY = stringPreferencesKey("NAME_KEY")
         val IMAGE_URI_KEY = stringPreferencesKey("IMAGE_URI_KEY")
         val DARK_MODE_THEME_key = stringPreferencesKey("DARK_MODE_THEME_key")
+        val WATER_GLASSES_GOAL_KEY = stringPreferencesKey("WATER_GLASSES_GOAL_KEY")
     }
 
 }

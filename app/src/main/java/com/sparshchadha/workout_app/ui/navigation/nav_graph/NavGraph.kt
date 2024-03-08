@@ -37,8 +37,6 @@ fun NavGraph(
     globalPaddingValues: PaddingValues,
     foodItemsViewModel: FoodItemsViewModel,
     workoutViewModel: WorkoutViewModel,
-    gymExercises: GymExercisesDto?,
-    yogaPoses: YogaPosesDto?,
     remindersViewModel: RemindersViewModel,
     profileViewModel: ProfileViewModel,
 ) {
@@ -80,7 +78,6 @@ fun NavGraph(
         yogaComposable(
             workoutViewModel = workoutViewModel,
             navController = navController,
-            yogaPoses = yogaPoses,
             globalPaddingValues = globalPaddingValues
         )
 
@@ -94,7 +91,6 @@ fun NavGraph(
         // Exercises From Api
         gymExercisesComposable(
             navController = navController,
-            gymExercises = gymExercises,
             workoutViewModel = workoutViewModel,
             globalPaddingValues = globalPaddingValues
         )

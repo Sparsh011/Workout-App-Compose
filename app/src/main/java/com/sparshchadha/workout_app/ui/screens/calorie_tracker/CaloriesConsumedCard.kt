@@ -4,43 +4,39 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.SheetState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -50,13 +46,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.activity.components.LandingPageOutlinedTextField
 import com.sparshchadha.workout_app.ui.screens.profile.AlertDialogToUpdate
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.carbohydratesColor
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -74,6 +73,9 @@ fun CaloriesConsumedCard(
     showCaloriesGoalBottomSheet: () -> Unit,
     caloriesConsumed: String,
     progressIndicatorColor: Color,
+    waterGlassesGoal: Int,
+    waterGlassesConsumed: Int,
+    setWaterGlassesGoal: (Int) -> Unit
 ) {
     val configuration = LocalConfiguration.current;
     val caloriesConsumedCardWidth = configuration.screenWidthDp.dp
@@ -94,7 +96,10 @@ fun CaloriesConsumedCard(
             caloriesConsumed = caloriesConsumed,
             showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet,
             caloriesGoal = caloriesGoal,
-            progressIndicatorColor = carbohydratesColor
+            progressIndicatorColor = carbohydratesColor,
+            waterGlassesConsumed = waterGlassesConsumed,
+            waterGlassesGoal = waterGlassesGoal,
+            setWaterGlassesGoal = setWaterGlassesGoal
         )
 
         CaloriesGoalText(showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet)
@@ -165,6 +170,9 @@ fun CaloriesConsumedAndLeft(
     showCaloriesGoalBottomSheet: () -> Unit,
     caloriesGoal: String,
     progressIndicatorColor: Color,
+    waterGlassesConsumed: Int,
+    waterGlassesGoal: Int,
+    setWaterGlassesGoal: (Int) -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -173,13 +181,36 @@ fun CaloriesConsumedAndLeft(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
 
-        CaloriesLeftOrEatenColumn(
-            calories = caloriesConsumed,
-            description = "Eaten",
+        Column(
             modifier = Modifier
                 .weight(1f)
-                .padding(LARGE_PADDING),
-        )
+        ) {
+            CaloriesLeftOrEatenColumn(
+                calories = caloriesConsumed,
+                description = "Eaten",
+                modifier = Modifier
+            )
+
+            if (caloriesConsumed.isNotEmpty() && caloriesGoal.isNotEmpty()) {
+                CaloriesLeftOrEatenColumn(
+                    calories = (caloriesGoal.toInt() - caloriesConsumed.toInt()).toString(),
+                    description = "Left",
+                    modifier = Modifier
+                )
+
+                val percentage = String.format(
+                    "%.1f",
+                    (caloriesConsumed.toDouble() / caloriesGoal.toDouble()) * 100
+                )
+
+                Text(
+                    text = "$percentage% consumed",
+                    fontSize = 14.nonScaledSp,
+                    color = targetAchievedColor,
+                    textAlign = TextAlign.Start
+                )
+            }
+        }
 
         CenterCaloriesGoalBox(
             caloriesGoal = caloriesGoal,
@@ -195,14 +226,190 @@ fun CaloriesConsumedAndLeft(
             progressIndicatorColor = progressIndicatorColor
         )
 
-        if (caloriesConsumed.isNotEmpty() && caloriesGoal.isNotEmpty()) {
-            CaloriesLeftOrEatenColumn(
-                calories = (caloriesGoal.toInt() - caloriesConsumed.toInt()).toString(),
-                description = "Left",
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(dimensionResource(id = R.dimen.large_padding))
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            WaterTrackerColumn(
+                waterGlassesConsumed = waterGlassesConsumed,
+                waterGlassesGoal = waterGlassesGoal,
+                setWaterGlassesGoal = setWaterGlassesGoal
             )
+        }
+    }
+}
+
+@Composable
+fun WaterTrackerColumn(
+    waterGlassesConsumed: Int,
+    waterGlassesGoal: Int,
+    setWaterGlassesGoal: (Int) -> Unit
+) {
+    WaterColumnItem(
+        icon = R.drawable.water_glass,
+        heading = "Water",
+        text = waterGlassesConsumed.toString(),
+        isVector = false,
+        onClick = {
+
+        }
+    )
+
+    Spacer(modifier = Modifier.height(SMALL_PADDING))
+
+    var showDialogToSetWaterGoal by remember {
+        mutableStateOf(false)
+    }
+
+    WaterColumnItem(
+        icon = R.drawable.water_glass,
+        heading = "Goal",
+        text = waterGlassesGoal.toString(),
+        isVector = false,
+        onClick = {
+            showDialogToSetWaterGoal = true
+        }
+    )
+
+    if (showDialogToSetWaterGoal) {
+        DialogToUpdateWaterGlasses(
+            currentGoal = waterGlassesGoal,
+            setWaterGlassesGoal = setWaterGlassesGoal,
+            hideDialog = {
+                showDialogToSetWaterGoal = false
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DialogToUpdateWaterGlasses(
+    currentGoal: Int,
+    setWaterGlassesGoal: (Int) -> Unit,
+    hideDialog: () -> Unit
+) {
+    var newGlassesGoal by remember {
+        mutableStateOf(currentGoal.toString())
+    }
+
+    AlertDialog(
+        onDismissRequest = {
+            hideDialog()
+        }
+    ) {
+        var showError by remember {
+            mutableStateOf(false)
+        }
+        Column(
+            modifier = Modifier
+                .clip(RoundedCornerShape(LARGE_PADDING))
+                .background(ColorsUtil.bottomBarColor),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                buildAnnotatedString {
+                    append("Current ")
+                    withStyle(
+                        style = SpanStyle(
+                            color = primaryTextColor,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) {
+                        append(currentGoal.toString())
+                    }
+                },
+                color = primaryTextColor,
+                modifier = Modifier
+                    .padding(LARGE_PADDING)
+            )
+
+            LandingPageOutlinedTextField(
+                label = "Set Water Goal",
+                value = newGlassesGoal,
+                onValueChange = {
+                    showError = it.isEmpty()
+                    if (it.isDigitsOnly()) newGlassesGoal = it
+                },
+                showErrorColor = showError,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+
+            Button(
+                onClick = {
+                    if (newGlassesGoal.isNotBlank()) {
+                        setWaterGlassesGoal(newGlassesGoal.toInt())
+                        hideDialog()
+                    }
+                },
+                modifier = Modifier
+                    .padding(LARGE_PADDING)
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ColorsUtil.primaryPurple
+                )
+            ) {
+                Text(text = "Update", color = Color.White)
+            }
+        }
+    }
+}
+
+@Composable
+fun WaterColumnItem(
+    icon: Any,
+    isVector: Boolean,
+    heading: String,
+    text: String,
+    showIcon: Boolean = true,
+    textColor: Color = primaryTextColor,
+    onClick: () -> Unit,
+) {
+    Text(
+        text = heading,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.nonScaledSp,
+        color = primaryTextColor,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(modifier = Modifier.height(SMALL_PADDING))
+
+    Row(
+        verticalAlignment = CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }
+    ) {
+        Text(
+            text = text,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.nonScaledSp,
+            color = textColor,
+            textAlign = TextAlign.Start,
+        )
+
+        Spacer(modifier = Modifier.width(SMALL_PADDING))
+
+        if (showIcon) {
+            if (isVector) {
+                Icon(
+                    imageVector = icon as ImageVector,
+                    contentDescription = null,
+                    modifier = Modifier.size(LARGE_PADDING - SMALL_PADDING),
+                    tint = primaryBlue
+                )
+            } else {
+                Icon(
+                    painter = painterResource(id = (icon as Int)),
+                    contentDescription = null,
+                    modifier = Modifier.size(LARGE_PADDING),
+                    tint = primaryBlue
+                )
+            }
         }
     }
 }
@@ -257,127 +464,34 @@ fun CenterCaloriesGoalBox(
 fun CaloriesLeftOrEatenColumn(calories: String, description: String, modifier: Modifier) {
     Column(
         modifier = modifier,
-        horizontalAlignment = CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
         Text(
             text = description,
-            modifier = Modifier.align(CenterHorizontally),
             fontWeight = FontWeight.Bold,
             fontSize = 20.nonScaledSp,
-            color = primaryTextColor
+            color = primaryTextColor,
+            textAlign = TextAlign.Start
         )
 
         if (calories.toInt() <= 0) {
             Text(
                 text = "0 kcal",
-                modifier = Modifier.align(CenterHorizontally),
-                fontSize = 16.nonScaledSp,
+                fontSize = 14.nonScaledSp,
                 color = primaryTextColor,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Start
             )
         } else {
             Text(
                 text = "$calories kcal",
-                modifier = Modifier.align(CenterHorizontally),
-                fontSize = 16.nonScaledSp,
+                fontSize = 14.nonScaledSp,
                 color = primaryTextColor,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         }
+
+        Spacer(modifier = Modifier.height(MEDIUM_PADDING))
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun UpdateCaloriesBottomSheet(
-    sheetState: SheetState,
-    caloriesGoal: String,
-    onSheetDismissed: () -> Unit,
-    saveNewCaloriesGoal: (Int) -> Unit,
-) {
-
-    ModalBottomSheet(
-        sheetState = sheetState,
-        containerColor = Color.White,
-        onDismissRequest = {
-            onSheetDismissed()
-        },
-        windowInsets = WindowInsets(0, 0, 0, 0)
-    ) {
-        BoxWithConstraints(
-            Modifier
-                .navigationBarsPadding()
-                .padding(bottom = 10.dp)
-        ) {
-            Column {
-                UpdateCaloriesGoalSlider(
-                    calorieDescription = "Current Goal : ${caloriesGoal.toInt()}",
-                    textModifier = Modifier.padding(10.dp),
-                    newCaloriesGoal = caloriesGoal,
-                    saveNewCaloriesGoal = saveNewCaloriesGoal,
-                    hideUpdateCaloriesBottomSheet = onSheetDismissed
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun UpdateCaloriesGoalSlider(
-    calorieDescription: String,
-    textModifier: Modifier,
-    newCaloriesGoal: String,
-    saveNewCaloriesGoal: (Int) -> Unit,
-    hideUpdateCaloriesBottomSheet: () -> Unit,
-) {
-    var caloriesInput by remember {
-        mutableStateOf(newCaloriesGoal)
-    }
-
-    Text(
-        text = calorieDescription,
-        color = Color.Black,
-        fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
-        modifier = textModifier
-    )
-
-    OutlinedTextField(
-        value = caloriesInput,
-        onValueChange = {
-            caloriesInput = it
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(LARGE_PADDING),
-        label = {
-            Text(text = "Set Calories Goal", color = ColorsUtil.primaryDarkGray)
-        },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Color.Black,
-            unfocusedTextColor = ColorsUtil.primaryDarkGray,
-            disabledTextColor = primaryTextColor,
-            disabledBorderColor = primaryTextColor
-        ),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-    )
-
-    Button(
-        onClick = {
-            saveNewCaloriesGoal(caloriesInput.toInt())
-            hideUpdateCaloriesBottomSheet()
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = primaryTextColor
-        ),
-        modifier = Modifier
-            .padding(LARGE_PADDING)
-            .fillMaxWidth()
-    ) {
-        Text(text = "Set Calories Goal", color = Color.White)
-    }
-
-    Spacer(modifier = Modifier.height(MEDIUM_PADDING))
 }

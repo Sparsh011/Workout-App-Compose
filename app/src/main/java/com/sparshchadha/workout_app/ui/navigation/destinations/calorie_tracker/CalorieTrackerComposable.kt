@@ -32,16 +32,7 @@ fun NavGraphBuilder.calorieTrackerComposable(
 
         CalorieTrackerScreen(
             navController = navController,
-            paddingValues = globalPaddingValues,
-            getDishesConsumedOnSelectedDayAndMonth = {
-                foodItemsViewModel.getFoodItemsConsumedOn(it.first.toString(), it.second)
-            },
-            saveNewCaloriesGoal = {
-                profileViewModel.saveCaloriesGoal(it)
-            },
-            removeFoodItem = {
-                foodItemsViewModel.removeFoodItem(foodItem = it)
-            },
+            globalPaddingValues = globalPaddingValues,
             foodItemsViewModel = foodItemsViewModel,
             profileViewModel = profileViewModel
         )

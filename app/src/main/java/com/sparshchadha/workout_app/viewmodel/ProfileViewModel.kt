@@ -51,6 +51,9 @@ class ProfileViewModel @Inject constructor(
     private val _darkTheme = MutableStateFlow(false)
     val darkTheme: StateFlow<Boolean> = _darkTheme
 
+    private val _waterGlassesGoal = MutableStateFlow(0)
+    val waterGlassesGoal: StateFlow<Int> = _waterGlassesGoal
+
     private lateinit var bitmapLruCache: LruCache<String, Bitmap>
 
     init {
@@ -64,6 +67,15 @@ class ProfileViewModel @Inject constructor(
         readBase64ProfilePic()
         setupLruCache()
         readDarkTheme()
+        readWaterGlassesGoal()
+    }
+
+    private fun readWaterGlassesGoal() {
+        viewModelScope.launch {
+            datastorePreference.readWaterGlassesGoal.collect { goal ->
+                _waterGlassesGoal.value = goal?.toInt() ?: 8
+            }
+        }
     }
 
     private fun readDarkTheme() {
@@ -297,6 +309,12 @@ class ProfileViewModel @Inject constructor(
     fun enableDarkMode(setTo: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.setDarkMode(setTo.toString())
+        }
+    }
+
+    fun setWaterGlassesGoal(goal: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            datastorePreference.saveWaterGlassesGoal(goal.toString())
         }
     }
 }

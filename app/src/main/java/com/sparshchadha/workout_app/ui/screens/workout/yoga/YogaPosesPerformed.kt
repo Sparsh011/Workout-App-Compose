@@ -223,7 +223,7 @@ fun YogaEntityItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(MEDIUM_PADDING),
+            .padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING),
         onClick = {
             shouldShowPoseDetailsBottomSheet = true
         },
@@ -243,8 +243,6 @@ fun YogaEntityItem(
                     .background(cardBackgroundColor)
                     .padding(MEDIUM_PADDING)
             ) {
-
-                Spacer(modifier = Modifier.height(SMALL_PADDING))
 
                 yogaEntity.yogaPoseDetails?.let { pose ->
                     Text(

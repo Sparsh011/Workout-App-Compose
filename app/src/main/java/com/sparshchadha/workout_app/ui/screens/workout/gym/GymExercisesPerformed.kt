@@ -52,6 +52,7 @@ import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
+import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 import java.time.LocalTime
@@ -206,7 +207,7 @@ fun ExerciseEntity(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(Dimensions.MEDIUM_PADDING),
+            .padding(horizontal = Dimensions.MEDIUM_PADDING, vertical = SMALL_PADDING),
         onClick = {
             shouldShowExerciseDetailsBottomSheet = true
         },
@@ -217,7 +218,7 @@ fun ExerciseEntity(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimensions.SMALL_PADDING),
+                .padding(horizontal = SMALL_PADDING),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
@@ -227,8 +228,6 @@ fun ExerciseEntity(
                     .padding(Dimensions.MEDIUM_PADDING)
             ) {
 
-                Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
-
                 exerciseEntity.exerciseDetails?.let { exercise ->
                     Text(
                         text = exercise.name,
@@ -237,7 +236,7 @@ fun ExerciseEntity(
                         fontWeight = FontWeight.Bold
                     )
 
-                    Spacer(modifier = Modifier.height(Dimensions.SMALL_PADDING))
+                    Spacer(modifier = Modifier.height(SMALL_PADDING))
 
                     val hour12Format = exerciseEntity.hour % 12
                     val amPm = if (exerciseEntity.hour < 12) "AM" else "PM"
@@ -259,7 +258,7 @@ fun ExerciseEntity(
                         fontSize = 13.nonScaledSp
                     )
 
-                    Spacer(modifier = Modifier.height(Dimensions.SMALL_PADDING))
+                    Spacer(modifier = Modifier.height(SMALL_PADDING))
                 }
             }
 
@@ -268,7 +267,7 @@ fun ExerciseEntity(
                 contentDescription = null,
                 tint = ColorsUtil.noAchievementColor,
                 modifier = Modifier
-                    .padding(Dimensions.SMALL_PADDING)
+                    .padding(SMALL_PADDING)
                     .clickable {
                         removeExercise(exerciseEntity)
                     }
