@@ -37,11 +37,11 @@ object ColorsUtil {
 
     val scaffoldBackgroundColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) White else Black
+        get() = if (!isSystemInDarkTheme()) primaryLightGray else Black
 
     val cardBackgroundColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) primaryLightGray else statusBarColor
+        get() = if (!isSystemInDarkTheme()) White else statusBarColor
 
     val statusBarColor: Color
         @Composable
@@ -49,7 +49,7 @@ object ColorsUtil {
 
     val bottomBarColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) primaryLightGray else Color(0xFF19191D)
+        get() = if (!isSystemInDarkTheme()) White else Color(0xFF19191D)
 
     val dividerColor: Color
         @Composable

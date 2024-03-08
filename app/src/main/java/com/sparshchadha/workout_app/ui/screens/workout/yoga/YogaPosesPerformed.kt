@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,14 +35,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
@@ -55,6 +58,8 @@ import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 
 private const val TAG = "YogaPosesPerformedToday"
@@ -62,25 +67,43 @@ private const val TAG = "YogaPosesPerformedToday"
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GetYogaPosesPerformedOnParticularDay(
-    yogaPosesPerformedToday: List<YogaEntity>?,
-    uiEventState: WorkoutViewModel.UIEvent?,
+    navController: NavController,
     globalPaddingValues: PaddingValues,
-    onBackButtonPressed: () -> Unit,
-    getYogaPosesPerformedOn: (Pair<Int, String>) -> Unit,
-    selectedDay: Int,
-    selectedMonth: String,
-    removePose: (YogaEntity) -> Unit
+    workoutViewModel: WorkoutViewModel
 ) {
+    LaunchedEffect(
+        key1 = true,
+        block = {
+            workoutViewModel.getYogaPosesPerformedOn()
+        }
+    )
+
+    val yogaPosesPerformedToday = workoutViewModel.yogaPosesPerformed.value
+    val uiEventState = workoutViewModel.yogaPosesPerformedOnUIEventState.collectAsStateWithLifecycle().value
+    val selectedDayAndMonth = workoutViewModel.selectedDateAndMonthForYogaPoses.collectAsStateWithLifecycle().value
+
     if (uiEventState != null) {
         HandleUIEventState(
             event = uiEventState,
             yogaPosesPerformedToday = yogaPosesPerformedToday,
             globalPaddingValues = globalPaddingValues,
-            onBackButtonPressed = onBackButtonPressed,
-            getYogaPosesPerformedOn = getYogaPosesPerformedOn,
-            selectedDay = selectedDay,
-            selectedMonth = selectedMonth,
-            removePose = removePose
+            selectedDay = selectedDayAndMonth?.first ?: 1,
+            selectedMonth = selectedDayAndMonth?.second ?: "Jan",
+            getYogaPosesPerformedOn = {
+                workoutViewModel.getYogaPosesPerformedOn(
+                    date = it.first.toString(),
+                    month = it.second
+                )
+            },
+            removePose = {
+                workoutViewModel.removeYogaPoseFromDB(it)
+            },
+            onBackButtonPressed = {
+                navController.popBackStack(
+                    route = ScreenRoutes.WorkoutScreen.route,
+                    inclusive = false
+                )
+            },
         )
     }
 }
@@ -187,6 +210,7 @@ fun PopulatePerformedYogaPoses(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YogaEntityItem(
@@ -208,7 +232,8 @@ fun YogaEntityItem(
         )
     ) {
         Row (
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = SMALL_PADDING),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -240,16 +265,20 @@ fun YogaEntityItem(
 
                     Spacer(modifier = Modifier.height(SMALL_PADDING))
 
+                    val hour12Format = yogaEntity.hour % 12
+                    val amPm = if (yogaEntity.hour < 12) "AM" else "PM"
+                    val formattedTime = LocalTime.of(hour12Format, yogaEntity.minutes)
+                        .format(DateTimeFormatter.ofPattern("hh: mm"))
+
                     Text(
                         buildAnnotatedString {
                             append("Performed at ")
                             withStyle(
                                 style = SpanStyle(
                                     color = ColorsUtil.primaryTextColor,
-                                    fontStyle = FontStyle.Italic,
                                     )
                             ) {
-                                append("${yogaEntity.hour}: ${yogaEntity.minutes}: ${yogaEntity.seconds}")
+                                append("$formattedTime $amPm")
                             }
                         },
                         color = ColorsUtil.primaryTextColor,
@@ -262,7 +291,8 @@ fun YogaEntityItem(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = null,
                 tint = noAchievementColor,
-                modifier = Modifier.padding(SMALL_PADDING)
+                modifier = Modifier
+                    .padding(SMALL_PADDING)
                     .clickable {
                         removePose(yogaEntity)
                     }

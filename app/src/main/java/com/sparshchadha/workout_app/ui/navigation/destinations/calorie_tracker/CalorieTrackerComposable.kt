@@ -5,12 +5,10 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerScreen
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
@@ -23,7 +21,7 @@ fun NavGraphBuilder.calorieTrackerComposable(
     profileViewModel: ProfileViewModel
 ) {
     composable(
-        route = BottomBarScreen.CalorieTracker.route,
+        route = ScreenRoutes.CalorieTracker.route,
         enterTransition = {
             EnterTransition.None
         },
@@ -31,14 +29,6 @@ fun NavGraphBuilder.calorieTrackerComposable(
             ExitTransition.None
         }
     ) {
-
-        LaunchedEffect(key1 = true) {
-            foodItemsViewModel.getFoodItemsConsumedOn()
-        }
-
-        val caloriesGoal = profileViewModel.caloriesGoal.collectAsStateWithLifecycle(initialValue = "0").value
-        val caloriesConsumed = foodItemsViewModel.caloriesConsumed.value ?: "0"
-        val selectedDateAndMonth = foodItemsViewModel.selectedDateAndMonthForFoodItems.collectAsStateWithLifecycle().value
 
         CalorieTrackerScreen(
             navController = navController,
@@ -49,13 +39,11 @@ fun NavGraphBuilder.calorieTrackerComposable(
             saveNewCaloriesGoal = {
                 profileViewModel.saveCaloriesGoal(it)
             },
-            caloriesGoal = caloriesGoal,
-            caloriesConsumed = caloriesConsumed,
-            selectedDateAndMonth = selectedDateAndMonth,
             removeFoodItem = {
                 foodItemsViewModel.removeFoodItem(foodItem = it)
             },
-            foodItemsViewModel = foodItemsViewModel
+            foodItemsViewModel = foodItemsViewModel,
+            profileViewModel = profileViewModel
         )
     }
 }

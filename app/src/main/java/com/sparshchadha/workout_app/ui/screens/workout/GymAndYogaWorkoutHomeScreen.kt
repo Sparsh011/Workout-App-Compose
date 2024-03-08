@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.screens.workout.gym.CategoryItem
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
@@ -133,7 +133,7 @@ fun GymAndYogaWorkoutHomeScreen(
                         workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
                         // navigate to yoga screen
                         workoutViewModel.getYogaPosesFromApi()
-                        navController.navigate(route = UtilityScreen.YogaPoses.route)
+                        navController.navigate(route = UtilityScreenRoutes.YogaPoses.route)
                     },
                     showDivider = it != difficultyLevels.size - 1
                 )
@@ -149,7 +149,7 @@ fun GymAndYogaWorkoutHomeScreen(
                 TodayWorkoutCard(
                     category = "Yoga",
                     onCategoryItemSelected = {
-                        navController.navigate(UtilityScreen.YogaPosesPerformed.route)
+                        navController.navigate(UtilityScreenRoutes.YogaPosesPerformed.route)
                     },
                     icon = R.drawable.yoga_svg
                 )
@@ -159,7 +159,7 @@ fun GymAndYogaWorkoutHomeScreen(
                 TodayWorkoutCard(
                     category = "Gym",
                     onCategoryItemSelected = {
-                        navController.navigate(UtilityScreen.GymExercisesPerformed.route)
+                        navController.navigate(UtilityScreenRoutes.GymExercisesPerformed.route)
                     },
                     icon = R.drawable.dumbbell_svg,
                     showDivider = false
@@ -243,17 +243,17 @@ fun handleGymExercisesCategorySelection(
     when (categorySelected) {
         GymWorkoutCategories.PROGRAM.name.lowercase().capitalize() -> {
             updateGymWorkoutCategory(CategoryType.WORKOUT_TYPE)
-            navigateToScreen(UtilityScreen.SelectExerciseCategory.route)
+            navigateToScreen(UtilityScreenRoutes.SelectExerciseCategory.route)
         }
 
         GymWorkoutCategories.MUSCLE.name.lowercase().capitalize() -> {
             updateGymWorkoutCategory(CategoryType.MUSCLE_TYPE)
-            navigateToScreen(UtilityScreen.SelectExerciseCategory.route)
+            navigateToScreen(UtilityScreenRoutes.SelectExerciseCategory.route)
         }
 
         GymWorkoutCategories.DIFFICULTY.name.lowercase().capitalize() -> {
             updateGymWorkoutCategory(CategoryType.DIFFICULTY_LEVEL)
-            navigateToScreen(UtilityScreen.SelectExerciseCategory.route)
+            navigateToScreen(UtilityScreenRoutes.SelectExerciseCategory.route)
         }
 
         GymWorkoutCategories.SEARCH.name.lowercase().capitalize() -> {

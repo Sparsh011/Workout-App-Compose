@@ -52,9 +52,9 @@ import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.activity.components.GenderIcon
-import com.sparshchadha.workout_app.activity.components.LandingPageOutlinedTextField
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.activity.components.GenderIcon
+import com.sparshchadha.workout_app.ui.activity.components.LandingPageOutlinedTextField
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.screens.workout.HeaderText
 import com.sparshchadha.workout_app.util.ColorsUtil
@@ -289,7 +289,7 @@ fun AppSettings(
                 isDarkTheme = isDarkTheme,
                 setDarkTheme = setDarkTheme,
                 textColor = if (item == "Login") targetAchievedColor else primaryTextColor,
-                fontWeight = if (item == "Login") FontWeight.Bold else FontWeight.Normal
+                fontWeight = FontWeight.Normal
             )
         }
     }
@@ -368,15 +368,15 @@ fun handleGymItemClick(
 ) {
     when (clickedItem) {
         "Track Workouts" -> {
-
+            navigateToScreen(UtilityScreenRoutes.GymExercisesPerformed.route)
         }
 
         "Activity" -> {
-
+            navigateToScreen(UtilityScreenRoutes.GymActivityScreen.route)
         }
 
         "Personal Records" -> {
-            navigateToScreen(UtilityScreen.PersonalRecordsScreen.route)
+            navigateToScreen(UtilityScreenRoutes.PersonalRecordsScreen.route)
         }
 
         "Goals" -> {
@@ -396,11 +396,11 @@ fun handleYogaItemClick(
 ) {
     when (clickedItem) {
         "Track Workouts" -> {
-
+            navigateToScreen(UtilityScreenRoutes.YogaPosesPerformed.route)
         }
 
         "Activity" -> {
-
+            navigateToScreen(UtilityScreenRoutes.YogaActivityScreen.route)
         }
 
         "Goals" -> {

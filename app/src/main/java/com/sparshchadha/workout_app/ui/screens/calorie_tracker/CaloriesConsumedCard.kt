@@ -195,13 +195,15 @@ fun CaloriesConsumedAndLeft(
             progressIndicatorColor = progressIndicatorColor
         )
 
-        CaloriesLeftOrEatenColumn(
-            calories = (caloriesGoal.toInt() - caloriesConsumed.toInt()).toString(),
-            description = "Left",
-            modifier = Modifier
-                .weight(1f)
-                .padding(dimensionResource(id = R.dimen.large_padding))
-        )
+        if (caloriesConsumed.isNotEmpty() && caloriesGoal.isNotEmpty()) {
+            CaloriesLeftOrEatenColumn(
+                calories = (caloriesGoal.toInt() - caloriesConsumed.toInt()).toString(),
+                description = "Left",
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(dimensionResource(id = R.dimen.large_padding))
+            )
+        }
     }
 }
 
@@ -235,16 +237,18 @@ fun CenterCaloriesGoalBox(
             textAlign = TextAlign.Center
         )
 
-        val progress = caloriesConsumed.toFloat() / caloriesGoal.toFloat()
+        if (caloriesConsumed.isNotEmpty() && caloriesGoal.isNotEmpty()) {
+            val progress = caloriesConsumed.toFloat() / caloriesGoal.toFloat()
 
-        CircularProgressIndicator(
-            progress = progress,
-            modifier = Modifier.size(PIE_CHART_SIZE),
-            strokeWidth = MEDIUM_PADDING,
-            trackColor = ColorsUtil.progressTrackColor,
-            color = progressIndicatorColor,
-            strokeCap = StrokeCap.Round,
-        )
+            CircularProgressIndicator(
+                progress = progress,
+                modifier = Modifier.size(PIE_CHART_SIZE),
+                strokeWidth = MEDIUM_PADDING,
+                trackColor = ColorsUtil.progressTrackColor,
+                color = progressIndicatorColor,
+                strokeCap = StrokeCap.Round,
+            )
+        }
     }
 }
 

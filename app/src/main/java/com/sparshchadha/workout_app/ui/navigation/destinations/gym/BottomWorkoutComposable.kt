@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.GymAndYogaWorkoutHomeScreen
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.GymWorkoutCategories
@@ -19,7 +19,7 @@ fun NavGraphBuilder.bottomWorkoutComposable(
     globalPaddingValues: PaddingValues,
 ) {
     composable(
-        route = BottomBarScreen.WorkoutScreen.route,
+        route = ScreenRoutes.WorkoutScreen.route,
         enterTransition = {
             EnterTransition.None
         },

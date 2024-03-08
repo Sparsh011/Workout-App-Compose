@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.activity.components
+package com.sparshchadha.workout_app.ui.activity.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

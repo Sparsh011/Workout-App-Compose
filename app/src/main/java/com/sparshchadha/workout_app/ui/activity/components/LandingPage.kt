@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.activity.components
+package com.sparshchadha.workout_app.ui.activity.components
 
 import android.widget.Toast
 import androidx.compose.foundation.background

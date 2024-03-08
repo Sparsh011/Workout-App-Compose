@@ -8,11 +8,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.foodItemDetailsComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.bottomWorkoutComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.exerciseDetailsComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymActivityComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesPerformedComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.workoutCategoryComposable
@@ -21,6 +22,7 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileCo
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.remindersComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.savedItemsScreenComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaActivityComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaPosesPerformedTodayComposable
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
@@ -42,7 +44,7 @@ fun NavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = BottomBarScreen.CalorieTracker.route
+        startDestination = ScreenRoutes.CalorieTracker.route
     ) {
         // Workout Tracker in Bottom Bar
         bottomWorkoutComposable(
@@ -142,6 +144,20 @@ fun NavGraph(
 
         // personal records screen
         personalRecordsScreen(
+            navController = navController,
+            workoutViewModel = workoutViewModel,
+            globalPaddingValues = globalPaddingValues
+        )
+
+        // gym activity
+        gymActivityComposable(
+            navController = navController,
+            workoutViewModel = workoutViewModel,
+            globalPaddingValues = globalPaddingValues
+        )
+
+        // yoga activity
+        yogaActivityComposable(
             navController = navController,
             workoutViewModel = workoutViewModel,
             globalPaddingValues = globalPaddingValues

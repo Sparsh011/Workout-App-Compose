@@ -9,7 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.shared.SearchScreen
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -20,7 +20,7 @@ fun NavGraphBuilder.searchComposable(
     globalPaddingValues: PaddingValues,
 ) {
     composable(
-        route = UtilityScreen.SearchScreen.route,
+        route = UtilityScreenRoutes.SearchScreen.route,
         enterTransition = {
             slideInVertically(
                 animationSpec = tween(durationMillis = 1000),

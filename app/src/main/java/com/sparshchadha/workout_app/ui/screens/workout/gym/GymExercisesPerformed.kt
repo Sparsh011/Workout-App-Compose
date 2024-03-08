@@ -24,7 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,16 +34,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
@@ -54,18 +54,24 @@ import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun GymExercisesPerformed(
     navController: NavHostController,
-    exercisesPerformed: List<GymExercisesEntity>?,
     globalPaddingValues: PaddingValues,
-    uiEventState: State<WorkoutViewModel.UIEvent?>,
-    selectedDateAndMonth: Pair<Int, String>?,
-    getExercisesPerformedOn: (Pair<Int, String>) -> Unit,
-    removeExercise: (GymExercisesEntity) -> Unit,
+    workoutViewModel: WorkoutViewModel
 ) {
+    LaunchedEffect(key1 = true) {
+        workoutViewModel.getGymExercisesPerformed()
+    }
+
+    val exercisesPerformed = workoutViewModel.gymExercisesPerformed.collectAsStateWithLifecycle().value
+    val uiEventState = workoutViewModel.gymExercisesPerformedOnUIEventState.collectAsStateWithLifecycle()
+    val selectedDateAndMonth = workoutViewModel.selectedDateAndMonthForGymExercises.collectAsStateWithLifecycle().value
+
     uiEventState.value?.let { event ->
         HandleUIEventsForExercisesPerformedToday(
             event = event,
@@ -73,8 +79,15 @@ fun GymExercisesPerformed(
             globalPaddingValues = globalPaddingValues,
             navController = navController,
             selectedDateAndMonth = selectedDateAndMonth,
-            getExercisesPerformedOn = getExercisesPerformedOn,
-            removeExercise = removeExercise
+            getExercisesPerformedOn = {
+                workoutViewModel.getGymExercisesPerformed(
+                    date = it.first.toString(),
+                    month = it.second
+                )
+            },
+            removeExercise = {
+                workoutViewModel.removeExerciseFromDB(it)
+            }
         )
     }
 }
@@ -106,7 +119,7 @@ fun HandleUIEventsForExercisesPerformedToday(
                 exercisesPerformed = exercisesPerformed,
                 onBackButtonPressed = {
                     navController.popBackStack(
-                        route = BottomBarScreen.WorkoutScreen.route,
+                        route = ScreenRoutes.WorkoutScreen.route,
                         inclusive = false
                     )
                 },
@@ -180,6 +193,7 @@ fun PopulatePerformedExercises(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseEntity(
@@ -200,8 +214,9 @@ fun ExerciseEntity(
             containerColor = ColorsUtil.cardBackgroundColor
         )
     ) {
-        Row (
-            modifier = Modifier.fillMaxWidth()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = Dimensions.SMALL_PADDING),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -224,16 +239,20 @@ fun ExerciseEntity(
 
                     Spacer(modifier = Modifier.height(Dimensions.SMALL_PADDING))
 
+                    val hour12Format = exerciseEntity.hour % 12
+                    val amPm = if (exerciseEntity.hour < 12) "AM" else "PM"
+                    val formattedTime = LocalTime.of(hour12Format, exerciseEntity.minutes)
+                        .format(DateTimeFormatter.ofPattern("hh: mm"))
+
                     Text(
                         buildAnnotatedString {
                             append("Performed at ")
                             withStyle(
                                 style = SpanStyle(
-                                    fontStyle = FontStyle.Italic,
                                     color = ColorsUtil.primaryTextColor,
                                 )
                             ) {
-                                append("${exerciseEntity.hour}: ${exerciseEntity.minutes}: ${exerciseEntity.seconds}")
+                                append("$formattedTime $amPm")
                             }
                         },
                         color = ColorsUtil.primaryTextColor,
@@ -248,7 +267,8 @@ fun ExerciseEntity(
                 imageVector = Icons.Filled.Delete,
                 contentDescription = null,
                 tint = ColorsUtil.noAchievementColor,
-                modifier = Modifier.padding(Dimensions.SMALL_PADDING)
+                modifier = Modifier
+                    .padding(Dimensions.SMALL_PADDING)
                     .clickable {
                         removeExercise(exerciseEntity)
                     }

@@ -40,7 +40,7 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
@@ -72,7 +72,7 @@ fun ExercisesScreen(
                     topBarDescription = topBarDescription,
                     onBackButtonPressed = {
                         navController.popBackStack(
-                            route = UtilityScreen.SelectExerciseCategory.route,
+                            route = UtilityScreenRoutes.SelectExerciseCategory.route,
                             inclusive = false
                         )
                     }
@@ -173,7 +173,7 @@ fun ShowExercises(
                     saveExercise = saveExercise
                 ) {
                     workoutViewModel.updateExerciseDetails(it)
-                    navController.navigate(UtilityScreen.ExerciseDetailScreen.route)
+                    navController.navigate(UtilityScreenRoutes.ExerciseDetailScreen.route)
                 }
             }
         } else {

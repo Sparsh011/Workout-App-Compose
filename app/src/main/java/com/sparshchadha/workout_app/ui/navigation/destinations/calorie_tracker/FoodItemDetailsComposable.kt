@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodItemDetails
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 
@@ -19,7 +19,7 @@ fun NavGraphBuilder.foodItemDetailsComposable(
     foodItemsViewModel: FoodItemsViewModel,
 ) {
     composable(
-        route = UtilityScreen.FoodItemDetailsScreen.route,
+        route = UtilityScreenRoutes.FoodItemDetailsScreen.route,
         arguments = listOf(navArgument("foodItemId") { type = NavType.IntType }),
         enterTransition = {
             slideInHorizontally(

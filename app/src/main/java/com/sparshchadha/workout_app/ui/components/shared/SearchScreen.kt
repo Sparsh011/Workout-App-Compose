@@ -47,7 +47,7 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEnti
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodCard
@@ -341,7 +341,7 @@ fun ExerciseSearchResults(
                         saveExercise = saveExercise
                     ) { exerciseToUpdate ->
                         workoutViewModel.updateExerciseDetails(exerciseToUpdate)
-                        navController.navigate(UtilityScreen.ExerciseDetailScreen.route)
+                        navController.navigate(UtilityScreenRoutes.ExerciseDetailScreen.route)
                     }
                 }
             }

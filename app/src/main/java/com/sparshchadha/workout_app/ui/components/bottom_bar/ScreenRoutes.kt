@@ -11,34 +11,34 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.ui.graphics.vector.ImageVector
 
-sealed class BottomBarScreen(
+sealed class ScreenRoutes(
     val route: String,
     val title: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
 ) {
-    object CalorieTracker : BottomBarScreen(
+    object CalorieTracker : ScreenRoutes(
         route = "CalorieTrackerScreen",
         title = "Track Calories",
         selectedIcon = Icons.Default.Home,
         unselectedIcon = Icons.Outlined.Home
     )
 
-    object WorkoutScreen : BottomBarScreen(
+    object WorkoutScreen : ScreenRoutes(
         route = "WorkoutScreen",
         title = "Workout",
         selectedIcon = Icons.Default.List,
         unselectedIcon = Icons.Outlined.List
     )
 
-    object RemindersScreen : BottomBarScreen(
+    object RemindersScreen : ScreenRoutes(
         route = "RemindersScreen",
         title = "Reminders",
         selectedIcon = Icons.Default.DateRange,
         unselectedIcon = Icons.Outlined.DateRange
     )
 
-    object ProfileScreen : BottomBarScreen(
+    object ProfileScreen : ScreenRoutes(
         route = "ProfileScreen",
         title = "Profile",
         selectedIcon = Icons.Default.AccountCircle,
@@ -46,57 +46,67 @@ sealed class BottomBarScreen(
     )
 }
 
-sealed class UtilityScreen(
+sealed class UtilityScreenRoutes(
     val route: String,
     val title: String,
 ) {
-    object SearchScreen : UtilityScreen(
+    object SearchScreen : UtilityScreenRoutes(
         route = "SearchScreen/{searchFor}",
         title = "Search"
     )
 
-    object YogaPoses : UtilityScreen(
+    object YogaPoses : UtilityScreenRoutes(
         route = "YogaPosesScreen",
         title = "Yoga Poses"
     )
 
-    object SelectExerciseCategory : UtilityScreen(
+    object SelectExerciseCategory : UtilityScreenRoutes(
         route = "SelectExerciseCategory",
         title = "Select Exercise Category"
     )
 
-    object ExercisesScreen : UtilityScreen(
+    object ExercisesScreen : UtilityScreenRoutes(
         route = "ExercisesScreen/{category}",
         title = "Exercises"
     )
 
-    object YogaPosesPerformed : UtilityScreen(
+    object YogaPosesPerformed : UtilityScreenRoutes(
         route = "YogaPosesPerformed",
         title = "Yoga Poses Performed Today"
     )
 
-    object GymExercisesPerformed : UtilityScreen(
+    object GymExercisesPerformed : UtilityScreenRoutes(
         route = "GymExercisesPerformed",
         title = "Gym Exercises Performed Today"
     )
 
-    object FoodItemDetailsScreen : UtilityScreen(
+    object FoodItemDetailsScreen : UtilityScreenRoutes(
         route = "FoodItemDetails/{foodItemId}",
         title = "Food Item Details"
     )
 
-    object ExerciseDetailScreen : UtilityScreen(
+    object ExerciseDetailScreen : UtilityScreenRoutes(
         route = "ExerciseDetailScreen",
         title = "Exercise Details"
     )
 
-    object SavedItemsScreen: UtilityScreen(
+    object SavedItemsScreen: UtilityScreenRoutes(
         route = "SavedItemsScreen/{category}",
         title = "Saved Items Screen"
     )
 
-    object PersonalRecordsScreen: UtilityScreen(
+    object PersonalRecordsScreen: UtilityScreenRoutes(
         route = "PersonalRecordsScreen",
         title = "Personal Records Screen"
+    )
+
+    object GymActivityScreen: UtilityScreenRoutes(
+        route = "GymActivityScreen",
+        title = "GymActivityScreen"
+    )
+
+    object YogaActivityScreen: UtilityScreenRoutes(
+        route = "YogaActivityScreen",
+        title = "YogaActivityScreen"
     )
 }

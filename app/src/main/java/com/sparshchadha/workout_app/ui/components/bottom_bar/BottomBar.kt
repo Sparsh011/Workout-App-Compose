@@ -22,10 +22,10 @@ import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldContentColor
 @Composable
 fun BottomBar(navHostController: NavHostController) {
     val screens = listOf(
-        BottomBarScreen.CalorieTracker,
-        BottomBarScreen.WorkoutScreen,
-        BottomBarScreen.RemindersScreen,
-        BottomBarScreen.ProfileScreen,
+        ScreenRoutes.CalorieTracker,
+        ScreenRoutes.WorkoutScreen,
+        ScreenRoutes.RemindersScreen,
+        ScreenRoutes.ProfileScreen,
     )
 
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -47,7 +47,7 @@ fun BottomBar(navHostController: NavHostController) {
 
 @Composable
 fun RowScope.AddItem(
-    screen: BottomBarScreen,
+    screen: ScreenRoutes,
     currentDestination: NavDestination?,
     navHostController: NavHostController,
 ) {

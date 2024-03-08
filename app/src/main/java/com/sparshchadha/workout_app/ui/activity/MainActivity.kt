@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.activity
+package com.sparshchadha.workout_app.ui.activity
 
 import android.Manifest
 import android.app.Activity
@@ -30,8 +30,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.sparshchadha.workout_app.activity.components.LandingPage
-import com.sparshchadha.workout_app.activity.components.PermissionRequestDialog
+import com.sparshchadha.workout_app.ui.activity.components.LandingPage
+import com.sparshchadha.workout_app.ui.activity.components.PermissionRequestDialog
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.nav_graph.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme

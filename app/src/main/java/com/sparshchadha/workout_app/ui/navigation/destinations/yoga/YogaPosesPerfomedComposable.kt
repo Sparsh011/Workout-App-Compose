@@ -6,13 +6,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.workout.yoga.GetYogaPosesPerformedOnParticularDay
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -23,7 +20,7 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
     globalPaddingValues: PaddingValues,
 ) {
     composable(
-        route = UtilityScreen.YogaPosesPerformed.route,
+        route = UtilityScreenRoutes.YogaPosesPerformed.route,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
@@ -43,40 +40,11 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
             )
         }
     ) {
-        LaunchedEffect(
-            key1 = true,
-            block = {
-                workoutViewModel.getYogaPosesPerformedOn()
-            }
-        )
-
-        val yogaPosesPerformedToday = workoutViewModel.yogaPosesPerformed.value
-        val uiEventState =
-            workoutViewModel.yogaPosesPerformedOnUIEventState.collectAsStateWithLifecycle().value
-        val selectedDayAndMonth =
-            workoutViewModel.selectedDateAndMonthForYogaPoses.collectAsStateWithLifecycle().value
 
         GetYogaPosesPerformedOnParticularDay(
-            yogaPosesPerformedToday = yogaPosesPerformedToday,
-            uiEventState = uiEventState,
+            navController = navController,
             globalPaddingValues = globalPaddingValues,
-            onBackButtonPressed = {
-                navController.popBackStack(
-                    route = BottomBarScreen.WorkoutScreen.route,
-                    inclusive = false
-                )
-            },
-            getYogaPosesPerformedOn = {
-                workoutViewModel.getYogaPosesPerformedOn(
-                    date = it.first.toString(),
-                    month = it.second
-                )
-            },
-            selectedMonth = selectedDayAndMonth?.second ?: "January",
-            selectedDay = selectedDayAndMonth?.first ?: 1,
-            removePose = {
-                workoutViewModel.removeYogaPoseFromDB(it)
-            }
+            workoutViewModel = workoutViewModel
         )
     }
 }

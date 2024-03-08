@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.workout.gym.PersonalRecordsScreen
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -20,7 +20,7 @@ fun NavGraphBuilder.personalRecordsScreen(
     navController: NavController
 ) {
     composable(
-        route = UtilityScreen.PersonalRecordsScreen.route,
+        route = UtilityScreenRoutes.PersonalRecordsScreen.route,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },

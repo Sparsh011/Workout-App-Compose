@@ -44,7 +44,7 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
@@ -159,7 +159,7 @@ fun PopulateYogaPoses(
                 topBarDescription = topBarDescription,
                 onBackButtonPressed = {
                     navController.popBackStack(
-                        route = BottomBarScreen.WorkoutScreen.route,
+                        route = ScreenRoutes.WorkoutScreen.route,
                         inclusive = false
                     )
                 }

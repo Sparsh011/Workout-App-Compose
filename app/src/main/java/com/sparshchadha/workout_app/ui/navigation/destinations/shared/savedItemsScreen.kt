@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.shared.SavedItemsScreen
 import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -18,7 +18,7 @@ fun NavGraphBuilder.savedItemsScreenComposable(
     workoutViewModel: WorkoutViewModel
 ) {
     composable(
-        route = UtilityScreen.SavedItemsScreen.route,
+        route = UtilityScreenRoutes.SavedItemsScreen.route,
         enterTransition = {
             EnterTransition.None
         },

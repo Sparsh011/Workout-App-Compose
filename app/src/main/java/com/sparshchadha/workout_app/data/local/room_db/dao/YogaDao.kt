@@ -13,7 +13,7 @@ interface YogaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addYogaPose(yogaPose: YogaEntity): Long
 
-    @Query("SELECT * FROM YogaEntity")
+    @Query("SELECT * FROM YogaEntity WHERE setsPerformed != -1")
     fun getAllPerformedYogaPoses(): Flow<List<YogaEntity>>
 
     @Query("SELECT * FROM YogaEntity WHERE date = :date AND month = :month")

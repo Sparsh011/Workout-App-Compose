@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -15,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
@@ -23,7 +26,7 @@ import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 @Composable
 fun ShowLoadingScreen(
     composition: LottieComposition?,
-    progress: Float,
+    progress: Float = 0f
 ) {
     Column(
         modifier = Modifier
@@ -33,7 +36,12 @@ fun ShowLoadingScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        LottieAnimation(composition = composition, progress = { progress }, modifier = Modifier.size(PIE_CHART_SIZE - LARGE_PADDING))
+        val animProgress by animateLottieCompositionAsState(composition = composition, iterations = LottieConstants.IterateForever)
+        LottieAnimation(
+            composition = composition,
+            progress = { animProgress },
+            modifier = Modifier.size(PIE_CHART_SIZE - LARGE_PADDING),
+        )
 
         Text(
             text = "Loading...",

@@ -12,7 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.workout.gym.ExercisesScreen
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -24,7 +24,7 @@ fun NavGraphBuilder.gymExercisesComposable(
 ) {
     composable(
         arguments = listOf(navArgument("category") { type = NavType.StringType }),
-        route = UtilityScreen.ExercisesScreen.route,
+        route = UtilityScreenRoutes.ExercisesScreen.route,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },

@@ -82,6 +82,12 @@ class WorkoutViewModel @Inject constructor(
     private val _personalRecords = MutableStateFlow<List<PersonalRecordsEntity>?>(null)
     val personalRecords = _personalRecords.asStateFlow()
 
+    private val _allExercisesPerformed = MutableStateFlow<List<GymExercisesEntity>?>(null)
+    val allExercisesPerformed = _allExercisesPerformed.asStateFlow()
+
+    private val _allYogaPosesPerformed = MutableStateFlow<List<YogaEntity>?>(null)
+    val allYogaPosesPerformed = _allYogaPosesPerformed.asStateFlow()
+
     fun getYogaPosesFromApi() {
         viewModelScope.launch {
             val poses =
@@ -258,14 +264,10 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun getAllPerformedYogaPoses() {
+    fun getAllYogaPosesPerformed() {
         viewModelScope.launch(Dispatchers.IO) {
-            val poses = workoutRepository.getAllPoses(performed = true)
-            poses.collect { response ->
-                withContext(Dispatchers.Main) {
-                    _yogaPosesPerformed.value = response
-                }
-                _uiEventState.emit(UIEvent.HideLoaderAndShowResponse)
+            workoutRepository.getAllPoses(performed = true).collect {
+                _allYogaPosesPerformed.value = it
             }
         }
     }
@@ -337,7 +339,11 @@ class WorkoutViewModel @Inject constructor(
     }
 
     fun getAllExercisesPerformed() {
-
+        viewModelScope.launch(Dispatchers.IO) {
+            workoutRepository.getAllGymExercisesPerformed().collect {
+                _allExercisesPerformed.value = it
+            }
+        }
     }
 
     fun getSavedExercises() {

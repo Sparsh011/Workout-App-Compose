@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -45,7 +45,7 @@ fun FoodItemDetails(
                     topBarDescription = foodItem?.foodItemDetails?.name?.capitalize()
                         ?: "Unable To Get Name!",
                     onBackButtonPressed = {
-                        navController.popBackStack(BottomBarScreen.CalorieTracker.route, false)
+                        navController.popBackStack(ScreenRoutes.CalorieTracker.route, false)
                     }
                 )
             }

@@ -13,7 +13,7 @@ interface GymExercisesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addGymExercise(gymExercisesEntity: GymExercisesEntity): Long
 
-    @Query("SELECT * FROM GymExercisesEntity")
+    @Query("SELECT * FROM GymExercisesEntity WHERE isPerformed = 1")
     fun getAllExercisesPerformed(): Flow<List<GymExercisesEntity>>
 
     @Query("SELECT * FROM GymExercisesEntity WHERE date = :date AND month = :month")

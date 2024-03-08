@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.workout.yoga.YogaPosesScreen
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -21,7 +21,7 @@ fun NavGraphBuilder.yogaComposable(
     globalPaddingValues: PaddingValues,
 ) {
     composable(
-        route = UtilityScreen.YogaPoses.route,
+        route = UtilityScreenRoutes.YogaPoses.route,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
