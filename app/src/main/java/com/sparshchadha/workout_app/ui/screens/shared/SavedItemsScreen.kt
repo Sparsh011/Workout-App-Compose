@@ -31,7 +31,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
-import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 private const val TAG = "SavedItemsScreenTagggg"
@@ -40,7 +40,7 @@ private const val TAG = "SavedItemsScreenTagggg"
 fun SavedItemsScreen(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
-    foodItemsViewModel: FoodItemsViewModel,
+    foodItemsViewModel: FoodAndWaterViewModel,
     workoutViewModel: WorkoutViewModel,
     category: String
 ) {

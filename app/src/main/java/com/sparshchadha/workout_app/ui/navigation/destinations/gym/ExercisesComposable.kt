@@ -35,15 +35,10 @@ fun NavGraphBuilder.gymExercisesComposable(
             ExitTransition.None
         }
     ) { backStackEntry ->
-        val uiEventState by workoutViewModel.uiEventStateFlow.collectAsStateWithLifecycle()
-
-        val gymExercises by workoutViewModel.gymExercisesFromApi
 
         ExercisesScreen(
             navController = navController,
             category = backStackEntry.arguments?.getString("category"),
-            exercises = gymExercises,
-            uiEventState = uiEventState,
             globalPaddingValues = globalPaddingValues,
             saveExercise = { gymExerciseEntity ->
                 workoutViewModel.addGymExerciseToWorkout(gymExercisesEntity = gymExerciseEntity)

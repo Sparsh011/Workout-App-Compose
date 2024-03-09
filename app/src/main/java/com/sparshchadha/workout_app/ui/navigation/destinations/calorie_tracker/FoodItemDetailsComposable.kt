@@ -11,12 +11,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodItemDetails
-import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 
 fun NavGraphBuilder.foodItemDetailsComposable(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
-    foodItemsViewModel: FoodItemsViewModel,
+    foodItemsViewModel: FoodAndWaterViewModel,
 ) {
     composable(
         route = UtilityScreenRoutes.FoodItemDetailsScreen.route,

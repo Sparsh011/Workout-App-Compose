@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.WaterEntity
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
@@ -58,7 +59,7 @@ import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
-import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 
 private const val TAG = "CalorieTrackerScreen"
@@ -69,12 +70,12 @@ private const val TAG = "CalorieTrackerScreen"
 fun CalorieTrackerScreen(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
-    foodItemsViewModel: FoodItemsViewModel,
+    foodAndWaterViewModel: FoodAndWaterViewModel,
     profileViewModel: ProfileViewModel
 ) {
     val caloriesGoal = profileViewModel.caloriesGoal.collectAsState().value
-    val caloriesConsumed = foodItemsViewModel.caloriesConsumed.value ?: "0"
-    val selectedDateAndMonth = foodItemsViewModel.selectedDateAndMonthForFoodItems.collectAsState().value
+    val caloriesConsumed = foodAndWaterViewModel.caloriesConsumed.value ?: "0"
+    val selectedDateAndMonth = foodAndWaterViewModel.selectedDateAndMonthForFoodItems.collectAsState().value
     val waterGlassesGoal = profileViewModel.waterGlassesGoal.collectAsState().value
 
     val currentDate = HelperFunctions.getCurrentDateAndMonth().first
@@ -83,17 +84,19 @@ fun CalorieTrackerScreen(
 
     LaunchedEffect(key1 = Unit) {
         if (selectedDateAndMonth?.first != currentDate && selectedDateAndMonth?.second != currentMonth) {
-            foodItemsViewModel.getFoodItemsConsumedOn()
-            foodItemsViewModel.updateSelectedDay(
+            foodAndWaterViewModel.getFoodItemsConsumedOn()
+            foodAndWaterViewModel.updateSelectedDay(
                 selectedDateAndMonth?.first ?: 1,
                 selectedDateAndMonth?.second ?: "Jan"
             )
+            foodAndWaterViewModel.getWaterGlassesConsumedOn(date = (selectedDateAndMonth?.first ?: HelperFunctions.getCurrentDateAndMonth().first).toString(), month = selectedDateAndMonth?.second ?: HelperFunctions.getCurrentDateAndMonth().second, year = "2024")
         }
     }
 
-    val foodItemsConsumed = foodItemsViewModel.consumedFoodItems.collectAsState().value
-    val nutrientsConsumed = foodItemsViewModel.nutrientsConsumed
-    val selectedDayPair = foodItemsViewModel.selectedDayPosition
+    val foodItemsConsumed = foodAndWaterViewModel.consumedFoodItems.collectAsState().value
+    val nutrientsConsumed = foodAndWaterViewModel.nutrientsConsumed
+    val selectedDayPair = foodAndWaterViewModel.selectedDayPosition
+    val waterGlassesConsumed = foodAndWaterViewModel.waterGlassesEntity.collectAsState().value
 
     var showDialogToUpdateCalories by remember {
         mutableStateOf(false)
@@ -166,10 +169,22 @@ fun CalorieTrackerScreen(
                                     caloriesConsumed = caloriesConsumed,
                                     progressIndicatorColor = noAchievementColor,
                                     waterGlassesGoal = waterGlassesGoal,
-                                    waterGlassesConsumed = 0,
+                                    waterGlassesConsumed = waterGlassesConsumed?.glassesConsumed ?: 0,
                                     setWaterGlassesGoal = {
                                         profileViewModel.setWaterGlassesGoal(it)
-                                    }
+                                    },
+                                    setWaterGlassesConsumed = {
+                                        foodAndWaterViewModel.updateWaterGlassesEntity(
+                                            WaterEntity(
+                                                glassesConsumed = it,
+                                                date = waterGlassesConsumed?.date ?: HelperFunctions.getCurrentDateAndMonth().first.toString(),
+                                                month = waterGlassesConsumed?.month ?: HelperFunctions.getCurrentDateAndMonth().second,
+                                                year = waterGlassesConsumed?.year ?: "2024",
+                                                id = waterGlassesConsumed?.id
+                                            )
+                                        )
+                                    },
+                                    glassesConsumed = waterGlassesConsumed?.glassesConsumed ?: 0
                                 )
                             }
 
@@ -191,13 +206,14 @@ fun CalorieTrackerScreen(
                 // Select day to show that day's calories and dishes consumed
                 CalendarRow(
                     getResultsForDateAndMonth = {
-                        foodItemsViewModel.getFoodItemsConsumedOn(it.first.toString(), it.second)
+                        foodAndWaterViewModel.getFoodItemsConsumedOn(it.first.toString(), it.second)
+                        foodAndWaterViewModel.getWaterGlassesConsumedOn(it.first.toString(), it.second, "2024")
                     },
                     selectedMonth = selectedDayPair.value.first,
                     selectedDay = selectedDayPair.value.second,
                     indicatorColor = noAchievementColor,
                     updateSelectedDayPair = {
-                        foodItemsViewModel.updateSelectedDay(it.first, it.second)
+                        foodAndWaterViewModel.updateSelectedDay(it.first, it.second)
                     }
                 )
 
@@ -228,7 +244,7 @@ fun CalorieTrackerScreen(
                                     navController.navigate(route = "FoodItemDetails/${foodItemsConsumed[index].id}")
                                 },
                                 removeFoodItem = {
-                                    foodItemsViewModel.removeFoodItem(foodItem = it)
+                                    foodAndWaterViewModel.removeFoodItem(foodItem = it)
                                 },
                                 showDivider = false
                             )

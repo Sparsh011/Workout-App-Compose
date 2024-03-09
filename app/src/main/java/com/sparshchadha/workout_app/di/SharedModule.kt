@@ -14,6 +14,7 @@ import com.sparshchadha.workout_app.data.local.room_db.dao.FoodItemsDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.GymExercisesDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.PRDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.RemindersDao
+import com.sparshchadha.workout_app.data.local.room_db.dao.WaterDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.YogaDao
 import com.sparshchadha.workout_app.data.remote.api.FoodApi
 import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
@@ -23,11 +24,13 @@ import com.sparshchadha.workout_app.data.repository.FoodRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.PRRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.PexelsRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.RemindersRepositoryImpl
+import com.sparshchadha.workout_app.data.repository.WaterRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.WorkoutRepositoryImpl
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.domain.repository.PRRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.domain.repository.RemindersRepository
+import com.sparshchadha.workout_app.domain.repository.WaterRepository
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.util.Constants.DATABASE_NAME
 import com.sparshchadha.workout_app.util.GsonParser
@@ -230,8 +233,20 @@ object SharedModule {
 
     @Singleton
     @Provides
+    fun provideWaterDao(database: WorkoutAppDatabase): WaterDao {
+        return database.waterDao()
+    }
+
+    @Singleton
+    @Provides
     fun provideRemindersRepository(remindersDao: RemindersDao): RemindersRepository {
         return RemindersRepositoryImpl(remindersDao = remindersDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideWaterRepository(waterDao: WaterDao): WaterRepository {
+        return WaterRepositoryImpl(waterDao = waterDao)
     }
 
     @Singleton

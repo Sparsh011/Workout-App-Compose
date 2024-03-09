@@ -6,12 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -23,13 +23,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
@@ -41,12 +40,11 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEnti
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
+import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
@@ -57,12 +55,14 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 fun ExercisesScreen(
     navController: NavController,
     category: String?,
-    exercises: GymExercisesDto?,
-    uiEventState: WorkoutViewModel.UIEvent?,
     globalPaddingValues: PaddingValues,
     saveExercise: (GymExercisesEntity) -> Unit,
     workoutViewModel: WorkoutViewModel,
 ) {
+
+    val uiEventState by workoutViewModel.uiEventStateFlow.collectAsStateWithLifecycle()
+
+    val exercises by workoutViewModel.gymExercisesFromApi
 
     uiEventState?.let { event ->
         Scaffold(
@@ -77,14 +77,15 @@ fun ExercisesScreen(
                         )
                     }
                 )
-            }
+            },
+            modifier = Modifier.padding(
+                bottom = globalPaddingValues.calculateBottomPadding()
+            )
         ) { localPaddingValues ->
             HandleUIEventsForExercises(
                 event = event,
-                category = category,
                 navController = navController,
                 exercises = exercises,
-                globalPaddingValues = globalPaddingValues,
                 saveExercise = saveExercise,
                 workoutViewModel = workoutViewModel,
                 localPaddingValues = localPaddingValues
@@ -96,10 +97,8 @@ fun ExercisesScreen(
 @Composable
 fun HandleUIEventsForExercises(
     event: WorkoutViewModel.UIEvent,
-    category: String?,
     navController: NavController,
     exercises: GymExercisesDto?,
-    globalPaddingValues: PaddingValues,
     saveExercise: (GymExercisesEntity) -> Unit,
     workoutViewModel: WorkoutViewModel,
     localPaddingValues: PaddingValues,
@@ -118,15 +117,14 @@ fun HandleUIEventsForExercises(
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
             val progress by animateLottieCompositionAsState(composition)
             ShowExercises(
-                category = category,
                 navController = navController,
                 exercises = exercises,
                 composition = composition,
                 progress = progress,
-                globalPaddingValues = globalPaddingValues,
-                saveExercise = saveExercise,
-                workoutViewModel = workoutViewModel,
-                localPaddingValues
+                updateExerciseDetails = {
+                    workoutViewModel.updateExerciseDetails(it)
+                },
+                localPaddingValues = localPaddingValues
             )
         }
 
@@ -138,43 +136,35 @@ fun HandleUIEventsForExercises(
 
 @Composable
 fun ShowExercises(
-    category: String?,
     navController: NavController,
     exercises: GymExercisesDto?,
     composition: LottieComposition?,
     progress: Float,
-    globalPaddingValues: PaddingValues,
-    saveExercise: (GymExercisesEntity) -> Unit,
-    workoutViewModel: WorkoutViewModel,
+    updateExerciseDetails: (GymExercisesDtoItem) -> Unit,
     localPaddingValues: PaddingValues,
 ) {
 
     LazyColumn(
         modifier = Modifier
-            .background(scaffoldBackgroundColor)
             .padding(
                 top = localPaddingValues.calculateTopPadding(),
-                bottom = globalPaddingValues.calculateBottomPadding()
+                bottom = MEDIUM_PADDING,
+                start = MEDIUM_PADDING,
+                end = MEDIUM_PADDING
             )
-            .fillMaxSize()
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(MEDIUM_PADDING))
+            .background(bottomBarColor)
     ) {
         if (exercises != null) {
             items(exercises) { exercise ->
-                var shouldShowBottomSheet by remember {
-                    mutableStateOf(false)
-                }
-
                 Exercise(
-                    hideBottomSheet = {
-                        shouldShowBottomSheet = false
-                    },
-                    shouldShowBottomSheet = shouldShowBottomSheet,
                     exercise = exercise,
-                    saveExercise = saveExercise
-                ) {
-                    workoutViewModel.updateExerciseDetails(it)
-                    navController.navigate(UtilityScreenRoutes.ExerciseDetailScreen.route)
-                }
+                    navigateToExerciseDetailsScreen = {
+                        updateExerciseDetails(it)
+                        navController.navigate(UtilityScreenRoutes.ExerciseDetailScreen.route)
+                    }
+                )
             }
         } else {
             item {
@@ -186,13 +176,9 @@ fun ShowExercises(
 
 @Composable
 fun Exercise(
-    hideBottomSheet: () -> Unit,
-    shouldShowBottomSheet: Boolean,
     exercise: GymExercisesDtoItem,
-    saveExercise: (GymExercisesEntity) -> Unit,
     navigateToExerciseDetailsScreen: (GymExercisesDtoItem) -> Unit,
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -220,7 +206,6 @@ fun Exercise(
         )
     }
 
-    CustomDivider()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

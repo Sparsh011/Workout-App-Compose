@@ -36,7 +36,7 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.nav_graph.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
-import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -47,7 +47,7 @@ private const val TAG = "MainActivityTaggg"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val foodItemsViewModel: FoodItemsViewModel by viewModels()
+    private val foodItemsViewModel: FoodAndWaterViewModel by viewModels()
     private val workoutViewModel: WorkoutViewModel by viewModels()
     private val remindersViewModel: RemindersViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()

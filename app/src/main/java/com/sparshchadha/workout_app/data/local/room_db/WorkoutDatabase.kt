@@ -7,11 +7,13 @@ import com.sparshchadha.workout_app.data.local.room_db.dao.FoodItemsDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.GymExercisesDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.PRDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.RemindersDao
+import com.sparshchadha.workout_app.data.local.room_db.dao.WaterDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.YogaDao
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.local.room_db.entities.PersonalRecordsEntity
 import com.sparshchadha.workout_app.data.local.room_db.entities.ReminderEntity
+import com.sparshchadha.workout_app.data.local.room_db.entities.WaterEntity
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 
 @Database(
@@ -20,7 +22,8 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
         YogaEntity::class,
         GymExercisesEntity::class,
         ReminderEntity::class,
-        PersonalRecordsEntity::class
+        PersonalRecordsEntity::class,
+        WaterEntity::class
     ],
     version = 1
 )
@@ -30,6 +33,6 @@ abstract class WorkoutAppDatabase : RoomDatabase() {
     abstract fun yogaDao(): YogaDao
     abstract fun foodItemsDao(): FoodItemsDao
     abstract fun remindersDao(): RemindersDao
-
     abstract fun prDao(): PRDao
+    abstract fun waterDao(): WaterDao
 }

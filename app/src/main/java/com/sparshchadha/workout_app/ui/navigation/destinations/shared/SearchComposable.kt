@@ -10,11 +10,11 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.shared.SearchScreen
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 fun NavGraphBuilder.searchComposable(
-    foodItemsViewModel: FoodItemsViewModel,
+    foodItemsViewModel: FoodAndWaterViewModel,
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
     globalPaddingValues: PaddingValues,

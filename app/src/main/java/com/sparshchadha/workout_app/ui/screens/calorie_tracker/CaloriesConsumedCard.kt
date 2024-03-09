@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -48,11 +51,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.ui.activity.components.LandingPageOutlinedTextField
 import com.sparshchadha.workout_app.ui.screens.profile.AlertDialogToUpdate
 import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.ColorsUtil.carbohydratesColor
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
@@ -62,6 +64,7 @@ import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
+import com.sparshchadha.workout_app.util.HelperFunctions.noRippleClickable
 
 
 @Composable
@@ -75,7 +78,9 @@ fun CaloriesConsumedCard(
     progressIndicatorColor: Color,
     waterGlassesGoal: Int,
     waterGlassesConsumed: Int,
-    setWaterGlassesGoal: (Int) -> Unit
+    setWaterGlassesGoal: (Int) -> Unit,
+    setWaterGlassesConsumed: (Int) -> Unit,
+    glassesConsumed: Int
 ) {
     val configuration = LocalConfiguration.current;
     val caloriesConsumedCardWidth = configuration.screenWidthDp.dp
@@ -96,16 +101,16 @@ fun CaloriesConsumedCard(
             caloriesConsumed = caloriesConsumed,
             showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet,
             caloriesGoal = caloriesGoal,
-            progressIndicatorColor = carbohydratesColor,
             waterGlassesConsumed = waterGlassesConsumed,
             waterGlassesGoal = waterGlassesGoal,
-            setWaterGlassesGoal = setWaterGlassesGoal
+            setWaterGlassesGoal = setWaterGlassesGoal,
+            setWaterGlassesConsumed = setWaterGlassesConsumed,
+            glassesConsumed = glassesConsumed
         )
 
         CaloriesGoalText(showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet)
     }
 
-    // Bottom sheet to update calories goal
     if (showDialogToUpdateCalories) {
         AlertDialogToUpdate(
             hideDialog = hideUpdateCaloriesDialog,
@@ -169,10 +174,11 @@ fun CaloriesConsumedAndLeft(
     caloriesConsumed: String,
     showCaloriesGoalBottomSheet: () -> Unit,
     caloriesGoal: String,
-    progressIndicatorColor: Color,
     waterGlassesConsumed: Int,
     waterGlassesGoal: Int,
     setWaterGlassesGoal: (Int) -> Unit,
+    setWaterGlassesConsumed: (Int) -> Unit,
+    glassesConsumed: Int
 ) {
     Row(
         modifier = Modifier
@@ -206,11 +212,12 @@ fun CaloriesConsumedAndLeft(
                 Text(
                     text = "$percentage% consumed",
                     fontSize = 14.nonScaledSp,
-                    color = targetAchievedColor,
+                    color = if (caloriesConsumed.toDouble() < caloriesGoal.toDouble()) noAchievementColor else targetAchievedColor,
                     textAlign = TextAlign.Start
                 )
             }
         }
+
 
         CenterCaloriesGoalBox(
             caloriesGoal = caloriesGoal,
@@ -223,7 +230,7 @@ fun CaloriesConsumedAndLeft(
                     showCaloriesGoalBottomSheet()
                 },
             caloriesConsumed = caloriesConsumed,
-            progressIndicatorColor = progressIndicatorColor
+            progressIndicatorColor = getProgressIndicatorColor(caloriesConsumed, caloriesGoal)
         )
 
         Column(
@@ -232,9 +239,20 @@ fun CaloriesConsumedAndLeft(
             WaterTrackerColumn(
                 waterGlassesConsumed = waterGlassesConsumed,
                 waterGlassesGoal = waterGlassesGoal,
-                setWaterGlassesGoal = setWaterGlassesGoal
+                setWaterGlassesGoal = setWaterGlassesGoal,
+                setWaterGlassesConsumed = setWaterGlassesConsumed,
+                glassesConsumed = glassesConsumed
             )
         }
+    }
+}
+
+fun getProgressIndicatorColor(caloriesConsumed: String, caloriesGoal: String): Color {
+    return if (caloriesConsumed.isNotEmpty() && caloriesGoal.isNotEmpty()) {
+        if (caloriesConsumed.toDouble() < caloriesGoal.toDouble()) noAchievementColor
+        else targetAchievedColor
+    } else {
+        noAchievementColor
     }
 }
 
@@ -242,15 +260,21 @@ fun CaloriesConsumedAndLeft(
 fun WaterTrackerColumn(
     waterGlassesConsumed: Int,
     waterGlassesGoal: Int,
-    setWaterGlassesGoal: (Int) -> Unit
+    setWaterGlassesGoal: (Int) -> Unit,
+    setWaterGlassesConsumed: (Int) -> Unit,
+    glassesConsumed: Int
 ) {
+    var showDialogToUpdateWaterGlassesConsumed by remember {
+        mutableStateOf(false)
+    }
     WaterColumnItem(
         icon = R.drawable.water_glass,
         heading = "Water",
         text = waterGlassesConsumed.toString(),
+        textColor = if (waterGlassesConsumed < waterGlassesGoal) noAchievementColor else targetAchievedColor,
         isVector = false,
         onClick = {
-
+            showDialogToUpdateWaterGlassesConsumed = true
         }
     )
 
@@ -270,10 +294,22 @@ fun WaterTrackerColumn(
         }
     )
 
+    if (showDialogToUpdateWaterGlassesConsumed) {
+        DialogToUpdateWaterGlasses(
+            glasses = glassesConsumed,
+            setWaterGlassesConsumed = setWaterGlassesConsumed,
+            isGoal = false,
+            hideDialog = {
+                showDialogToUpdateWaterGlassesConsumed = false
+            }
+        )
+    }
+
     if (showDialogToSetWaterGoal) {
         DialogToUpdateWaterGlasses(
-            currentGoal = waterGlassesGoal,
+            glasses = waterGlassesGoal,
             setWaterGlassesGoal = setWaterGlassesGoal,
+            isGoal = true,
             hideDialog = {
                 showDialogToSetWaterGoal = false
             }
@@ -284,12 +320,14 @@ fun WaterTrackerColumn(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogToUpdateWaterGlasses(
-    currentGoal: Int,
-    setWaterGlassesGoal: (Int) -> Unit,
-    hideDialog: () -> Unit
+    glasses: Int,
+    setWaterGlassesGoal: (Int) -> Unit = {},
+    setWaterGlassesConsumed: (Int) -> Unit = {},
+    hideDialog: () -> Unit,
+    isGoal: Boolean
 ) {
-    var newGlassesGoal by remember {
-        mutableStateOf(currentGoal.toString())
+    var newGlassesValue by remember {
+        mutableStateOf(glasses.toString())
     }
 
     AlertDialog(
@@ -306,38 +344,71 @@ fun DialogToUpdateWaterGlasses(
                 .background(ColorsUtil.bottomBarColor),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                buildAnnotatedString {
-                    append("Current ")
-                    withStyle(
-                        style = SpanStyle(
-                            color = primaryTextColor,
-                            fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append(currentGoal.toString())
-                    }
-                },
-                color = primaryTextColor,
-                modifier = Modifier
-                    .padding(LARGE_PADDING)
-            )
 
-            LandingPageOutlinedTextField(
-                label = "Set Water Goal",
-                value = newGlassesGoal,
-                onValueChange = {
-                    showError = it.isEmpty()
-                    if (it.isDigitsOnly()) newGlassesGoal = it
-                },
-                showErrorColor = showError,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-            )
+            if (isGoal) {
+                Text(
+                    buildAnnotatedString {
+                        append("Current goal ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = primaryTextColor,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(glasses.toString())
+                        }
+                    },
+                    color = primaryTextColor,
+                    modifier = Modifier
+                        .padding(LARGE_PADDING)
+                )
+
+                GlassesIncrementOrDecrementRow(
+                    value = newGlassesValue,
+                    onIncrementClick = {
+                        newGlassesValue = (newGlassesValue.toInt() + 1).toString()
+                    },
+                    onDecrementClick = {
+                        newGlassesValue = (newGlassesValue.toInt() - 1).toString()
+                    }
+                )
+            } else {
+                Text(
+                    buildAnnotatedString {
+                        append("Glass volume ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = primaryTextColor,
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append("200 ml")
+                        }
+                    },
+                    color = primaryTextColor,
+                    modifier = Modifier
+                        .padding(LARGE_PADDING)
+                )
+
+                GlassesIncrementOrDecrementRow(
+                    value = newGlassesValue,
+                    onIncrementClick = {
+                        newGlassesValue = (newGlassesValue.toInt() + 1).toString()
+                    },
+                    onDecrementClick = {
+                        newGlassesValue = (newGlassesValue.toInt() - 1).toString()
+                    }
+                )
+            }
 
             Button(
                 onClick = {
-                    if (newGlassesGoal.isNotBlank()) {
-                        setWaterGlassesGoal(newGlassesGoal.toInt())
+                    if (newGlassesValue.isNotBlank()) {
+                        if (isGoal) {
+                            setWaterGlassesGoal(newGlassesValue.toInt())
+                        } else {
+                            setWaterGlassesConsumed(newGlassesValue.toInt())
+                        }
                         hideDialog()
                     }
                 },
@@ -351,6 +422,47 @@ fun DialogToUpdateWaterGlasses(
                 Text(text = "Update", color = Color.White)
             }
         }
+    }
+}
+
+@Composable
+fun GlassesIncrementOrDecrementRow(
+    value: String,
+    onIncrementClick: () -> Unit,
+    onDecrementClick: () -> Unit
+) {
+
+    Row (
+        verticalAlignment = CenterVertically
+    ){
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowDown,
+            contentDescription = null,
+            modifier = Modifier
+                .noRippleClickable {
+                    if (value.isDigitsOnly() && value.toInt() > 0) {
+                        onDecrementClick()
+                    }
+                }
+                .weight(1f),
+            tint = ColorsUtil.primaryPurple
+        )
+        Text(
+            text = value,
+            color = primaryTextColor
+        )
+        Icon(
+            imageVector = Icons.Default.KeyboardArrowUp,
+            contentDescription = null,
+            modifier = Modifier
+                .noRippleClickable {
+                    if (value.isDigitsOnly()) {
+                        onIncrementClick()
+                    }
+                }
+                .weight(1f),
+            tint = ColorsUtil.primaryPurple
+        )
     }
 }
 

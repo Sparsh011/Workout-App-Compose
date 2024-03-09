@@ -47,6 +47,7 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEnti
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
@@ -57,14 +58,14 @@ import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
-import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 private const val TAG = "SearchScreenTagg"
 
 @Composable
 fun SearchScreen(
-    searchFoodViewModel: FoodItemsViewModel,
+    searchFoodViewModel: FoodAndWaterViewModel,
     paddingValues: PaddingValues,
     onCloseClicked: () -> Unit,
     searchFor: String?,
@@ -127,7 +128,6 @@ fun SearchScreen(
                     paddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
                     exercises = exercises,
-                    saveExercise = saveExercise,
                     workoutViewModel = workoutViewModel,
                     navController = navController
                 )
@@ -139,7 +139,7 @@ fun SearchScreen(
 fun handleSearchFor(
     searchFor: String?,
     searchBarQuery: String,
-    searchFoodViewModel: FoodItemsViewModel,
+    searchFoodViewModel: FoodAndWaterViewModel,
     workoutViewModel: WorkoutViewModel,
 ) {
     when (searchFor) {
@@ -199,7 +199,6 @@ fun HandleExercisesSearch(
     paddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
     exercises: GymExercisesDto?,
-    saveExercise: (GymExercisesEntity) -> Unit,
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
 ) {
@@ -219,8 +218,9 @@ fun HandleExercisesSearch(
                     paddingValues = paddingValues,
                     exercises = exercises,
                     localPaddingValues = localPaddingValues,
-                    saveExercise = saveExercise,
-                    workoutViewModel = workoutViewModel,
+                    updateExercise = {
+                        workoutViewModel.updateExerciseDetails(it)
+                    },
                     navController = navController
                 )
             }
@@ -308,8 +308,7 @@ fun ExerciseSearchResults(
     paddingValues: PaddingValues,
     exercises: GymExercisesDto?,
     localPaddingValues: PaddingValues,
-    saveExercise: (GymExercisesEntity) -> Unit,
-    workoutViewModel: WorkoutViewModel,
+    updateExercise: (GymExercisesDtoItem) -> Unit,
     navController: NavController,
 ) {
     exercises?.let {
@@ -328,19 +327,10 @@ fun ExerciseSearchResults(
                     .fillMaxSize()
             ) {
                 items(it) { exercise ->
-                    var shouldShowBottomSheet by remember {
-                        mutableStateOf(false)
-                    }
-
                     Exercise(
-                        hideBottomSheet = {
-                            shouldShowBottomSheet = false
-                        },
-                        shouldShowBottomSheet = shouldShowBottomSheet,
                         exercise = exercise,
-                        saveExercise = saveExercise
                     ) { exerciseToUpdate ->
-                        workoutViewModel.updateExerciseDetails(exerciseToUpdate)
+                        updateExercise(exerciseToUpdate)
                         navController.navigate(UtilityScreenRoutes.ExerciseDetailScreen.route)
                     }
                 }

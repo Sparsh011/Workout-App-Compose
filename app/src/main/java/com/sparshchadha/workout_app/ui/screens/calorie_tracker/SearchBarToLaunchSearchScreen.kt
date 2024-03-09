@@ -1,7 +1,6 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,6 +18,7 @@ import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
+import com.sparshchadha.workout_app.util.HelperFunctions.noRippleClickable
 
 
 @Composable
@@ -30,7 +30,7 @@ fun SearchBarToLaunchSearchScreen(
             .fillMaxWidth()
             .background(ColorsUtil.statusBarColor)
             .padding(start = SMALL_PADDING, end = SMALL_PADDING, top = SMALL_PADDING, bottom = MEDIUM_PADDING)
-            .clickable {
+            .noRippleClickable {
                 navigateToSearchScreen()
             },
         verticalAlignment = Alignment.CenterVertically

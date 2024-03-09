@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
-import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.foodItemDetailsComposable
@@ -25,7 +23,7 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComp
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaActivityComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaPosesPerformedTodayComposable
-import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
@@ -35,7 +33,7 @@ import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 fun NavGraph(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
-    foodItemsViewModel: FoodItemsViewModel,
+    foodItemsViewModel: FoodAndWaterViewModel,
     workoutViewModel: WorkoutViewModel,
     remindersViewModel: RemindersViewModel,
     profileViewModel: ProfileViewModel,

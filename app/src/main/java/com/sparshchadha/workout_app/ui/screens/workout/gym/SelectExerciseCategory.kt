@@ -3,12 +3,15 @@ package com.sparshchadha.workout_app.ui.screens.workout.gym
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
@@ -18,14 +21,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
-import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
+import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -132,7 +137,7 @@ fun ExerciseCategoryItems(
         containerColor = scaffoldBackgroundColor
     ) { localPaddingValues ->
         if (topBarDescription == stringResource(id = R.string.select_body_part_heading)) {
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(scaffoldBackgroundColor)
@@ -140,88 +145,117 @@ fun ExerciseCategoryItems(
                         top = localPaddingValues.calculateTopPadding(),
                         bottom = globalPaddingValues.calculateBottomPadding()
                     )
+                    .verticalScroll(rememberScrollState())
             ) {
 
-                stickyHeader {
-                    BodyPartStickyHeader(
-                        modifier = Modifier.fillParentMaxWidth(),
-                        bodyPart = "Chest, Neck & Shoulders"
-                    )
+                BodyPartStickyHeader(
+                    modifier = Modifier.fillMaxWidth(),
+                    bodyPart = "Chest, Neck & Shoulders"
+                )
+
+                Column(
+                    modifier = Modifier
+                        .padding(MEDIUM_PADDING)
+                        .clip(RoundedCornerShape(MEDIUM_PADDING))
+                        .background(bottomBarColor)
+                ) {
+                    for (categoryItem in HelperFunctions.getChestShouldersAndNeck().indices) {
+                        CategoryItem(
+                            categoryItem = HelperFunctions.getChestShouldersAndNeck()[categoryItem],
+                            onCategoryItemSelected = onCategoryItemSelected,
+                            categoryItemFontSize = 16,
+                            showDivider = false
+                        )
+                    }
                 }
 
-                items(HelperFunctions.getChestShouldersAndNeck().size) { categoryItem ->
-                    CategoryItem(
-                        categoryItem = HelperFunctions.getChestShouldersAndNeck()[categoryItem],
-                        onCategoryItemSelected = onCategoryItemSelected,
-                        categoryItemFontSize = 16,
-                        showDivider = categoryItem != HelperFunctions.getChestShouldersAndNeck().size - 1
-                    )
+                BodyPartStickyHeader(
+                    modifier = Modifier.fillMaxWidth(),
+                    bodyPart = "Back"
+                )
+
+                Column(
+                    modifier = Modifier
+                        .padding(MEDIUM_PADDING)
+                        .clip(RoundedCornerShape(MEDIUM_PADDING))
+                        .background(bottomBarColor)
+                ) {
+                    for (categoryItem in HelperFunctions.getBack().indices) {
+                        CategoryItem(
+                            categoryItem = HelperFunctions.getBack()[categoryItem],
+                            onCategoryItemSelected = onCategoryItemSelected,
+                            categoryItemFontSize = 16,
+                            showDivider = false
+                        )
+                    }
                 }
 
-                stickyHeader {
-                    BodyPartStickyHeader(
-                        modifier = Modifier.fillParentMaxWidth(),
-                        bodyPart = "Back"
-                    )
+                BodyPartStickyHeader(
+                    modifier = Modifier.fillMaxWidth(),
+                    bodyPart = "Arms"
+                )
+
+
+                Column(
+                    modifier = Modifier
+                        .padding(MEDIUM_PADDING)
+                        .clip(RoundedCornerShape(MEDIUM_PADDING))
+                        .background(bottomBarColor)
+                ) {
+                    for (categoryItem in HelperFunctions.getArms().indices) {
+                        CategoryItem(
+                            categoryItem = HelperFunctions.getArms()[categoryItem],
+                            onCategoryItemSelected = onCategoryItemSelected,
+                            categoryItemFontSize = 16,
+                            showDivider = false
+                        )
+                    }
                 }
 
-                items(HelperFunctions.getBack().size) { categoryItem ->
-                    CategoryItem(
-                        categoryItem = HelperFunctions.getBack()[categoryItem],
-                        onCategoryItemSelected = onCategoryItemSelected,
-                        categoryItemFontSize = 16,
-                        showDivider = categoryItem != HelperFunctions.getBack().size - 1
-                    )
+                BodyPartStickyHeader(
+                    modifier = Modifier.fillMaxWidth(),
+                    bodyPart = "Legs"
+                )
+
+                Column(
+                    modifier = Modifier
+                        .padding(MEDIUM_PADDING)
+                        .clip(RoundedCornerShape(MEDIUM_PADDING))
+                        .background(bottomBarColor)
+                ) {
+                    for (categoryItem in HelperFunctions.getLegs().indices) {
+                        CategoryItem(
+                            categoryItem = HelperFunctions.getLegs()[categoryItem],
+                            onCategoryItemSelected = onCategoryItemSelected,
+                            categoryItemFontSize = 16,
+                            showDivider = false
+                        )
+                    }
                 }
 
-                stickyHeader {
-                    BodyPartStickyHeader(
-                        modifier = Modifier.fillParentMaxWidth(),
-                        bodyPart = "Arms"
-                    )
-                }
-
-                items(HelperFunctions.getArms().size) { categoryItem ->
-                    CategoryItem(
-                        categoryItem = HelperFunctions.getArms()[categoryItem],
-                        onCategoryItemSelected = onCategoryItemSelected,
-                        categoryItemFontSize = 16,
-                        showDivider = categoryItem != HelperFunctions.getArms().size - 1
-                    )
-                }
-
-                stickyHeader {
-                    BodyPartStickyHeader(
-                        modifier = Modifier.fillParentMaxWidth(),
-                        bodyPart = "Legs"
-                    )
-                }
-
-                items(HelperFunctions.getLegs().size) { categoryItem ->
-                    CategoryItem(
-                        categoryItem = HelperFunctions.getLegs()[categoryItem],
-                        onCategoryItemSelected = onCategoryItemSelected,
-                        categoryItemFontSize = 16,
-                        showDivider = categoryItem != HelperFunctions.getLegs().size - 1
-                    )
-                }
             }
         } else {
-            LazyColumn(
+            Column(
                 modifier = Modifier
-                    .background(scaffoldBackgroundColor)
                     .padding(
                         top = localPaddingValues.calculateTopPadding(),
                         bottom = globalPaddingValues.calculateBottomPadding()
                     )
+                    .verticalScroll(rememberScrollState())
             ) {
 
-                items(categoryItems.size) { categoryItem ->
-                    CategoryItem(
-                        categoryItem = categoryItems[categoryItem],
-                        onCategoryItemSelected = onCategoryItemSelected,
-                        showDivider = categoryItem != categoryItems.size - 1
-                    )
+                Column(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(MEDIUM_PADDING))
+                        .background(bottomBarColor)
+                ) {
+                    for (categoryItem in categoryItems.indices) {
+                        CategoryItem(
+                            categoryItem = categoryItems[categoryItem],
+                            onCategoryItemSelected = onCategoryItemSelected,
+                            showDivider = false
+                        )
+                    }
                 }
             }
         }
@@ -256,9 +290,10 @@ fun CategoryItem(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.clickable {
-            onCategoryItemSelected(categoryItem)
-        }
+        modifier = Modifier
+            .clickable {
+                onCategoryItemSelected(categoryItem)
+            }
             .padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING)
     ) {
         Text(

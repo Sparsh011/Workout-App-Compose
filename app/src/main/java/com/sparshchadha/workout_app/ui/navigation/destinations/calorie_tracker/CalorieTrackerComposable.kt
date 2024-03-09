@@ -10,14 +10,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerScreen
-import com.sparshchadha.workout_app.viewmodel.FoodItemsViewModel
+import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.calorieTrackerComposable(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
-    foodItemsViewModel: FoodItemsViewModel,
+    foodItemsViewModel: FoodAndWaterViewModel,
     profileViewModel: ProfileViewModel
 ) {
     composable(
@@ -33,7 +33,7 @@ fun NavGraphBuilder.calorieTrackerComposable(
         CalorieTrackerScreen(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            foodItemsViewModel = foodItemsViewModel,
+            foodAndWaterViewModel = foodItemsViewModel,
             profileViewModel = profileViewModel
         )
     }
