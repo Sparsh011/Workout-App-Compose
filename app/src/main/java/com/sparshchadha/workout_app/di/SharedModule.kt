@@ -18,15 +18,18 @@ import com.sparshchadha.workout_app.data.local.room_db.dao.WaterDao
 import com.sparshchadha.workout_app.data.local.room_db.dao.YogaDao
 import com.sparshchadha.workout_app.data.remote.api.FoodApi
 import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
+import com.sparshchadha.workout_app.data.remote.api.NewsApi
 import com.sparshchadha.workout_app.data.remote.api.PexelsApi
 import com.sparshchadha.workout_app.data.remote.api.YogaApi
 import com.sparshchadha.workout_app.data.repository.FoodRepositoryImpl
+import com.sparshchadha.workout_app.data.repository.NewsRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.PRRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.PexelsRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.RemindersRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.WaterRepositoryImpl
 import com.sparshchadha.workout_app.data.repository.WorkoutRepositoryImpl
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
+import com.sparshchadha.workout_app.domain.repository.NewsRepository
 import com.sparshchadha.workout_app.domain.repository.PRRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.domain.repository.RemindersRepository
@@ -145,6 +148,20 @@ object SharedModule {
             .create(GymExercisesApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideNewsApi(
+        okHttpClient: OkHttpClient,
+    ): NewsApi {
+        return Retrofit.Builder()
+            .baseUrl(NewsApi.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+            .client(okHttpClient)
+            .build()
+            .create(NewsApi::class.java)
+    }
+
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @Provides
     @Singleton
@@ -253,6 +270,12 @@ object SharedModule {
     @Provides
     fun providePRRepository(prDao: PRDao): PRRepository {
         return PRRepositoryImpl(prDao = prDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideNewsRepository(newsApi: NewsApi): NewsRepository {
+        return NewsRepositoryImpl(newsApi = newsApi)
     }
 
     @Singleton

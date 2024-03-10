@@ -109,4 +109,14 @@ sealed class UtilityScreenRoutes(
         route = "YogaActivityScreen",
         title = "YogaActivityScreen"
     )
+
+    object NewsArticlesScreen: UtilityScreenRoutes(
+        route = "NewsArticlesScreen",
+        title = "News Articles Screen"
+    )
+
+    object ArticleWebViewScreen: UtilityScreenRoutes(
+        route = "ArticleWebViewScreen",
+        title = "Article WebView Screen"
+    )
 }

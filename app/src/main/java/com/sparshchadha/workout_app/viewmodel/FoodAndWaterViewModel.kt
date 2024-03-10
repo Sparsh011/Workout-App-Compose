@@ -11,6 +11,7 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.WaterEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
+import com.sparshchadha.workout_app.domain.repository.NewsRepository
 import com.sparshchadha.workout_app.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.domain.repository.WaterRepository
 import com.sparshchadha.workout_app.util.Constants
@@ -30,7 +31,8 @@ private const val TAG = "SearchFoodViewModellll"
 class FoodAndWaterViewModel @Inject constructor(
     private val foodItemsRepository: FoodItemsRepository,
     private val pexelsRepository: PexelsRepository,
-    private val waterRepository: WaterRepository
+    private val waterRepository: WaterRepository,
+    private val newsRepository: NewsRepository
 ) : ViewModel() {
     private val _foodItemsFromApi = mutableStateOf<NutritionalValueDto?>(null)
     val foodItemsFromApi = _foodItemsFromApi

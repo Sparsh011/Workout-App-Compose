@@ -39,10 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
-import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
@@ -122,12 +118,7 @@ fun HandleUIEventState(
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
-            val progress by animateLottieCompositionAsState(composition)
-
-            ShowLoadingScreen(
-                composition = composition, progress = progress
-            )
+            ShowLoadingScreen()
         }
 
         is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {

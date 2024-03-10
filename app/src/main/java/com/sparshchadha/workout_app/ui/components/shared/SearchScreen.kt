@@ -38,10 +38,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
-import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
@@ -165,12 +161,7 @@ fun HandleFoodSearch(
     foodUIStateEvent?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
-                val progress by animateLottieCompositionAsState(composition)
-                ShowLoadingScreen(
-                    composition = composition,
-                    progress = progress
-                )
+                ShowLoadingScreen()
             }
 
             is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
@@ -205,12 +196,7 @@ fun HandleExercisesSearch(
     workoutUIStateEvent?.let { event ->
         when (event) {
             is WorkoutViewModel.UIEvent.ShowLoader -> {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
-                val progress by animateLottieCompositionAsState(composition)
-                ShowLoadingScreen(
-                    composition = composition,
-                    progress = progress
-                )
+                ShowLoadingScreen()
             }
 
             is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {

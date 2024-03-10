@@ -14,9 +14,11 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.gym.exerciseDetai
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymActivityComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesPerformedComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.shared.newsArticlesComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.workoutCategoryComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.personalRecordsScreen
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.shared.articleWebViewScreen
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.remindersComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.savedItemsScreenComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
@@ -152,6 +154,20 @@ fun NavGraph(
 
         // yoga activity
         yogaActivityComposable(
+            navController = navController,
+            workoutViewModel = workoutViewModel,
+            globalPaddingValues = globalPaddingValues
+        )
+
+        // news articles screen
+        newsArticlesComposable(
+            navController = navController,
+            workoutViewModel = workoutViewModel,
+            globalPaddingValues = globalPaddingValues
+        )
+
+        // news article WebView
+        articleWebViewScreen(
             navController = navController,
             workoutViewModel = workoutViewModel,
             globalPaddingValues = globalPaddingValues

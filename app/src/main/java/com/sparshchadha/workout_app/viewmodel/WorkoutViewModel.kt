@@ -8,8 +8,10 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.PersonalRecordsE
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
+import com.sparshchadha.workout_app.data.remote.dto.news_api.NewsArticlesDto
 import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
+import com.sparshchadha.workout_app.domain.repository.NewsRepository
 import com.sparshchadha.workout_app.domain.repository.PRRepository
 import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
@@ -29,7 +31,8 @@ private const val TAG = "WorkoutViewModel"
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
     private val workoutRepository: WorkoutRepository,
-    private val prRepository: PRRepository
+    private val prRepository: PRRepository,
+    private val newsRepository: NewsRepository
 ) : ViewModel() {
     private var _difficultyForYoga = mutableStateOf(DifficultyLevel.BEGINNER)
 
@@ -87,6 +90,15 @@ class WorkoutViewModel @Inject constructor(
 
     private val _allYogaPosesPerformed = MutableStateFlow<List<YogaEntity>?>(null)
     val allYogaPosesPerformed = _allYogaPosesPerformed.asStateFlow()
+
+    private val _newsArticles = mutableStateOf<NewsArticlesDto?>(null)
+    val newsArticles = _newsArticles
+
+    private val _articleToLoadUrl = MutableStateFlow("")
+    val articleToLoadUrl = _articleToLoadUrl.asStateFlow()
+
+    private val _newsSearchQuery = MutableStateFlow("")
+    val newsSearchQuery = _newsSearchQuery.asStateFlow()
 
     fun getYogaPosesFromApi() {
         viewModelScope.launch {
@@ -394,6 +406,22 @@ class WorkoutViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             prRepository.addPR(pr)
         }
+    }
+
+
+    fun getNewsArticles(forQuery: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val articles = newsRepository.getNewsArticlesFor(searchQuery = forQuery)
+            _newsArticles.value = articles
+        }
+    }
+
+    fun updateArticleToLoad(url: String) {
+        _articleToLoadUrl.value = url
+    }
+
+    fun updateNewsSearchQuery(searchQuery: String) {
+        _newsSearchQuery.value = searchQuery
     }
 
     sealed class UIEvent {

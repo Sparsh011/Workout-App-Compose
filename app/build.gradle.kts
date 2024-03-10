@@ -29,6 +29,7 @@ android {
         buildConfigField("String", "FOOD_API_KEY", "\"${properties["FOOD_API_KEY"]}\"")
         buildConfigField("String", "PEXELS_API_KEY", "\"${properties["PEXELS_API_KEY"]}\"")
         buildConfigField("String", "GYM_WORKOUTS_API_KEY", "\"${properties["GYM_WORKOUTS_API_KEY"]}\"")
+        buildConfigField("String", "NEWS_API_KEY", "\"${properties["NEWS_API_KEY"]}\"")
     }
 
     buildTypes {

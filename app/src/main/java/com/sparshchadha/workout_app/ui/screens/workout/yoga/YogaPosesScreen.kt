@@ -37,10 +37,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
-import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
 import com.sparshchadha.workout_app.data.remote.dto.yoga.Pose
 import com.sparshchadha.workout_app.data.remote.dto.yoga.YogaPosesDto
@@ -167,13 +163,7 @@ fun PopulateYogaPoses(
         }
     ) { localPaddingValues ->
         if (isLoading) {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
-            val progress by animateLottieCompositionAsState(composition)
-
-            ShowLoadingScreen(
-                composition = composition,
-                progress = progress
-            )
+            ShowLoadingScreen()
         } else {
             LazyColumn(
                 modifier = Modifier

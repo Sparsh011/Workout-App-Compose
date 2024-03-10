@@ -14,20 +14,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 
 @Composable
-fun ShowLoadingScreen(
-    composition: LottieComposition?,
-    progress: Float = 0f
-) {
+fun ShowLoadingScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,10 +34,10 @@ fun ShowLoadingScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        val animProgress by animateLottieCompositionAsState(composition = composition, iterations = LottieConstants.IterateForever)
+        val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
+        val animProgress by animateLottieCompositionAsState(composition = lottieComposition, iterations = LottieConstants.IterateForever)
         LottieAnimation(
-            composition = composition,
+            composition = lottieComposition,
             progress = { animProgress },
             modifier = Modifier.size(PIE_CHART_SIZE - LARGE_PADDING),
         )

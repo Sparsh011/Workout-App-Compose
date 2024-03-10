@@ -105,12 +105,7 @@ fun HandleUIEventsForExercises(
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
-            val progress by animateLottieCompositionAsState(composition)
-            ShowLoadingScreen(
-                composition = composition,
-                progress = progress
-            )
+            ShowLoadingScreen()
         }
 
         is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
