@@ -130,16 +130,22 @@ fun ExerciseDetailsScreen(
             ) {
                 ExerciseSubTitlesAndDescription(
                     subTitle = "Difficulty",
-                    description = exercise.difficulty
+                    description = exercise.difficulty,
                 )
-                ExerciseSubTitlesAndDescription(subTitle = "Targets", description = exercise.muscle)
+
+                ExerciseSubTitlesAndDescription(
+                    subTitle = "Targets",
+                    description = exercise.muscle,
+                )
+
                 ExerciseSubTitlesAndDescription(
                     subTitle = "Equipment Required",
-                    description = exercise.equipment
+                    description = exercise.equipment,
                 )
+
                 ExerciseSubTitlesAndDescription(
                     subTitle = "Instructions",
-                    description = exercise.instructions
+                    description = exercise.instructions,
                 )
 
                 Button(

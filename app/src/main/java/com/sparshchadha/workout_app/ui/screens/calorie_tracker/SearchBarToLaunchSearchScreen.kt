@@ -29,7 +29,12 @@ fun SearchBarToLaunchSearchScreen(
         modifier = Modifier
             .fillMaxWidth()
             .background(ColorsUtil.statusBarColor)
-            .padding(start = SMALL_PADDING, end = SMALL_PADDING, top = SMALL_PADDING, bottom = MEDIUM_PADDING)
+            .padding(
+                start = SMALL_PADDING,
+                end = SMALL_PADDING,
+                top = SMALL_PADDING,
+                bottom = MEDIUM_PADDING
+            )
             .noRippleClickable {
                 navigateToSearchScreen()
             },
@@ -39,7 +44,8 @@ fun SearchBarToLaunchSearchScreen(
             imageVector = Icons.Default.Search,
             contentDescription = null,
             tint = Color.White,
-            modifier = Modifier.weight(0.5f)
+            modifier = Modifier
+                .weight(0.5f)
                 .size(LARGE_PADDING)
         )
 

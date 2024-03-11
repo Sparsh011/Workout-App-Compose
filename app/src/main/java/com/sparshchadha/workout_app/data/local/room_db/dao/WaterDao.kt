@@ -20,5 +20,5 @@ interface WaterDao {
     fun getGlassesConsumedOn(date: String, month: String, year: String): Flow<WaterEntity>
 
     @Query("SELECT EXISTS(SELECT * FROM WaterEntity WHERE id = :id)")
-    fun doesRowExist(id : Int) : Boolean
+    fun doesRowExist(id: Int): Boolean
 }

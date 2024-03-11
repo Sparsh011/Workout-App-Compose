@@ -17,8 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -70,7 +70,11 @@ fun FoodItemDetails(
                     overflow = TextOverflow.Ellipsis,
                     fontStyle = FontStyle.Italic,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = MEDIUM_PADDING, top = MEDIUM_PADDING, bottom = MEDIUM_PADDING)
+                    modifier = Modifier.padding(
+                        end = MEDIUM_PADDING,
+                        top = MEDIUM_PADDING,
+                        bottom = MEDIUM_PADDING
+                    )
                 )
 
                 FoodItemText(

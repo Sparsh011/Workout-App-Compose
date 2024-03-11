@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.ui.screens.workout.gym
 
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background

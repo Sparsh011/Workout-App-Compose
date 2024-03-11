@@ -164,6 +164,15 @@ fun GymAndYogaWorkoutHomeScreen(
                     .clip(RoundedCornerShape(MEDIUM_PADDING))
                     .background(bottomBarColor)
             ) {
+
+                TodayWorkoutCard(
+                    category = "Gym",
+                    onCategoryItemSelected = {
+                        navController.navigate(UtilityScreenRoutes.GymExercisesPerformed.route)
+                    },
+                    showDivider = false,
+                )
+
                 TodayWorkoutCard(
                     category = "Yoga",
                     onCategoryItemSelected = {
@@ -171,21 +180,12 @@ fun GymAndYogaWorkoutHomeScreen(
                     },
                     showDivider = false
                 )
-
-                TodayWorkoutCard(
-                    category = "Gym",
-                    onCategoryItemSelected = {
-                        navController.navigate(UtilityScreenRoutes.GymExercisesPerformed.route)
-                    },
-
-                    showDivider = false,
-                )
             }
 
             HeaderText(heading = "Fitness News")
 
             NewsComposable(
-                text = "Stay updated with the latest trends & news in the world of fitness",
+                text = "Stay updated with the latest trends & news in the world of fitness.",
                 onClick = {
                     workoutViewModel.updateNewsSearchQuery("Gym news and exercises")
                     navController.navigate(UtilityScreenRoutes.NewsArticlesScreen.route)

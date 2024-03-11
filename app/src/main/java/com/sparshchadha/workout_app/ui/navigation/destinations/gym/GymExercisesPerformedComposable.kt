@@ -6,8 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -46,7 +44,7 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
         GymExercisesPerformed(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-           workoutViewModel = workoutViewModel
+            workoutViewModel = workoutViewModel
         )
     }
 }

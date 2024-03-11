@@ -75,8 +75,10 @@ fun GetYogaPosesPerformedOnParticularDay(
     )
 
     val yogaPosesPerformedToday = workoutViewModel.yogaPosesPerformed.value
-    val uiEventState = workoutViewModel.yogaPosesPerformedOnUIEventState.collectAsStateWithLifecycle().value
-    val selectedDayAndMonth = workoutViewModel.selectedDateAndMonthForYogaPoses.collectAsStateWithLifecycle().value
+    val uiEventState =
+        workoutViewModel.yogaPosesPerformedOnUIEventState.collectAsStateWithLifecycle().value
+    val selectedDayAndMonth =
+        workoutViewModel.selectedDateAndMonthForYogaPoses.collectAsStateWithLifecycle().value
 
     if (uiEventState != null) {
         HandleUIEventState(
@@ -222,7 +224,7 @@ fun YogaEntityItem(
             containerColor = cardBackgroundColor
         )
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = SMALL_PADDING),
@@ -265,7 +267,7 @@ fun YogaEntityItem(
                             withStyle(
                                 style = SpanStyle(
                                     color = ColorsUtil.primaryTextColor,
-                                    )
+                                )
                             ) {
                                 append("$formattedTime $amPm")
                             }

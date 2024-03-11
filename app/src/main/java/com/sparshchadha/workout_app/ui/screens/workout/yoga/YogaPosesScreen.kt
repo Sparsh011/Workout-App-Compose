@@ -60,50 +60,46 @@ import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.HelperFunctions.getCurrentDateAndMonth
 import com.sparshchadha.workout_app.util.HelperFunctions.noRippleClickable
+import com.sparshchadha.workout_app.util.Resource
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @Composable
 fun YogaPosesScreen(
-    yogaPoses: YogaPosesDto?,
     navController: NavController,
-    difficultyLevel: String,
-    uiEventState: WorkoutViewModel.UIEvent?,
     globalPaddingValues: PaddingValues,
     workoutViewModel: WorkoutViewModel
 ) {
-    uiEventState?.let { event ->
-        HandleYogaScreenUIEvents(
-            event = event,
-            yogaPoses = yogaPoses,
-            navController = navController,
-            difficultyLevel = difficultyLevel,
-            savePerformedYogaPose = { yogaEntity ->
-                workoutViewModel.saveYogaPose(
-                    yogaEntity
-                )
-            },
-            globalPaddingValues = globalPaddingValues,
-            saveYogaPose = {
-                workoutViewModel.saveYogaPoseToDB(
-                    HelperFunctions.getYogaPoseWithNegatives(it)
-                )
-            }
+    val difficultyLevel = workoutViewModel.getCurrentYogaDifficultyLevel()
+    val yogaPoses by workoutViewModel.yogaPosesFromApi
+
+    HandleYogaScreenUIEvents(
+        yogaPoses = yogaPoses,
+        navController = navController,
+        difficultyLevel = difficultyLevel,
+        savePerformedYogaPose = { yogaEntity ->
+            workoutViewModel.saveYogaPose(
+                yogaEntity
+            )
+        },
+        globalPaddingValues = globalPaddingValues
+    ) {
+        workoutViewModel.saveYogaPoseToDB(
+            HelperFunctions.getYogaPoseWithNegatives(it)
         )
     }
 }
 
 @Composable
 fun HandleYogaScreenUIEvents(
-    event: WorkoutViewModel.UIEvent,
-    yogaPoses: YogaPosesDto?,
+    yogaPoses: Resource<YogaPosesDto>?,
     navController: NavController,
     difficultyLevel: String,
     savePerformedYogaPose: (YogaEntity) -> Unit,
     globalPaddingValues: PaddingValues,
     saveYogaPose: (Pose) -> Unit
 ) {
-    when (event) {
-        is WorkoutViewModel.UIEvent.ShowLoader -> {
+    when (yogaPoses) {
+        is Resource.Loading -> {
             PopulateYogaPoses(
                 yogaPoses = YogaPosesDto(difficultyLevel, -1, emptyList()),
                 navController = navController,
@@ -116,10 +112,10 @@ fun HandleYogaScreenUIEvents(
             )
         }
 
-        is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
-            if (yogaPoses != null) {
+        is Resource.Success -> {
+            if (yogaPoses.data != null) {
                 PopulateYogaPoses(
-                    yogaPoses = yogaPoses,
+                    yogaPoses = yogaPoses.data,
                     navController = navController,
                     difficultyLevel = difficultyLevel,
                     savePerformedYogaPose = savePerformedYogaPose,
@@ -131,9 +127,11 @@ fun HandleYogaScreenUIEvents(
             }
         }
 
-        is WorkoutViewModel.UIEvent.ShowError -> {
-            ErrorDuringFetch(errorMessage = event.errorMessage)
+        is Resource.Error -> {
+            ErrorDuringFetch(errorMessage = yogaPoses.error?.message ?: "Unable To Get Poses")
         }
+
+        else -> {}
     }
 }
 
@@ -244,7 +242,7 @@ fun YogaPose(
                 .weight(1f)
         )
 
-        Column (
+        Column(
             modifier = Modifier.weight(1f)
         ) {
             Text(
@@ -428,9 +426,9 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
                 modifier = Modifier.padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING),
             )
 
-            Column (
+            Column(
                 modifier = Modifier.fillMaxWidth()
-            ){
+            ) {
                 Button(
                     onClick = {
                         showPickSetBottomSheet()
@@ -462,7 +460,10 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
                         containerColor = primaryPurple
                     ),
                     modifier = Modifier
-                        .padding(horizontal = LARGE_PADDING + MEDIUM_PADDING, vertical = SMALL_PADDING)
+                        .padding(
+                            horizontal = LARGE_PADDING + MEDIUM_PADDING,
+                            vertical = SMALL_PADDING
+                        )
                         .fillMaxWidth()
                 ) {
                     Text(

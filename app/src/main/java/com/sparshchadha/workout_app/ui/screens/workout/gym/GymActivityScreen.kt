@@ -40,7 +40,7 @@ fun GymActivityScreen(
         workoutViewModel.getAllExercisesPerformed()
     }
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(bottom = globalPaddingValues.calculateBottomPadding())
@@ -89,7 +89,7 @@ fun ExercisePerformed(
         modifier = Modifier
             .padding(MEDIUM_PADDING)
             .clickable {
-            onClick()
-        }
+                onClick()
+            }
     )
 }

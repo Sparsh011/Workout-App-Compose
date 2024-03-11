@@ -24,7 +24,7 @@ object ColorsUtil {
     val primaryPurple: Color = Color(0xFF9E3DC0)
 
     val proteinColor: Color = Color(0xFFFF4646)
-    val fatsColor: Color =  Color(0xFFFDD835)
+    val fatsColor: Color = Color(0xFFFDD835)
     val carbohydratesColor: Color = Color(0xFF03A9F4)
 
     val primaryTextColor: Color

@@ -61,6 +61,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
@@ -332,7 +333,7 @@ fun AppSettingCategory(
             Icon(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = null,
-                tint = primaryTextColor,
+                tint = primaryPurple,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -783,7 +784,7 @@ fun SettingsCategory(
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = primaryTextColor,
+                tint = primaryPurple,
                 modifier = Modifier.weight(1f)
             )
         }

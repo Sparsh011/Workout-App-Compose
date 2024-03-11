@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.data.local.room_db.entities
 
-import androidx.annotation.RequiresApi
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem

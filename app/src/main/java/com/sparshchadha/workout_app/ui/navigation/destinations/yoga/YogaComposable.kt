@@ -39,15 +39,9 @@ fun NavGraphBuilder.yogaComposable(
             )
         }
     ) {
-        val uiEventState by workoutViewModel.uiEventStateFlow.collectAsStateWithLifecycle()
-        val difficultyLevel = workoutViewModel.getCurrentYogaDifficultyLevel()
-        val yogaPoses by workoutViewModel.yogaPosesFromApi
 
         YogaPosesScreen(
             navController = navController,
-            difficultyLevel = difficultyLevel,
-            yogaPoses = yogaPoses,
-            uiEventState = uiEventState,
             globalPaddingValues = globalPaddingValues,
             workoutViewModel = workoutViewModel
         )

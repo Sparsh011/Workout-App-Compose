@@ -145,8 +145,9 @@ private fun FoodItemDetailsCard(
             )
         }
 
-        Row (
-            modifier = Modifier.fillMaxWidth()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = LARGE_PADDING, vertical = SMALL_PADDING)
         ) {
             Text(

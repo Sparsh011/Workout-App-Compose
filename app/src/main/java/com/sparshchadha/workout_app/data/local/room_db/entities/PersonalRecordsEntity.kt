@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class PersonalRecordsEntity (
+data class PersonalRecordsEntity(
     val category: String = "gym",
     val exerciseName: String,
     val reps: Int,

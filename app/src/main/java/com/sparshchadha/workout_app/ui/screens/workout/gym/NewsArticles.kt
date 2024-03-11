@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
@@ -42,6 +43,7 @@ import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
+import com.sparshchadha.workout_app.util.Resource
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 
@@ -56,7 +58,7 @@ fun NewsArticles(
         workoutViewModel.getNewsArticles(forQuery = searchQuery)
     }
 
-    val articles = workoutViewModel.newsArticles.value?.articles ?: emptyList()
+    val articlesResponse = workoutViewModel.newsArticles.value
 
     Scaffold(
         topBar = {
@@ -79,22 +81,48 @@ fun NewsArticles(
                 .clip(RoundedCornerShape(MEDIUM_PADDING))
                 .background(bottomBarColor)
         ) {
-            if (articles.isNotEmpty()) {
-                items(articles) {
-                    NewsArticle(
-                        title = it.title ?: "NA",
-                        urlToImage = it.urlToImage ?: "NA",
-                        source = it.source?.name ?: "NA",
-                        onClick = {
-                            workoutViewModel.updateArticleToLoad(url = it.url ?: "")
-                            navController.navigate(UtilityScreenRoutes.ArticleWebViewScreen.route)
+            when (articlesResponse) {
+                is Resource.Loading -> {
+                    item {
+                        ShowLoadingScreen()
+                    }
+                }
+
+                is Resource.Success -> {
+                    val articles = articlesResponse.data?.articles ?: emptyList()
+                    if (articles.isNotEmpty()) {
+                        items(articles) {
+                            NewsArticle(
+                                title = it.title ?: "NA",
+                                urlToImage = it.urlToImage ?: "NA",
+                                source = it.source?.name ?: "NA",
+                                onClick = {
+                                    workoutViewModel.updateArticleToLoad(url = it.url ?: "")
+                                    navController.navigate(UtilityScreenRoutes.ArticleWebViewScreen.route)
+                                }
+                            )
                         }
-                    )
+                    } else {
+                        item {
+                            NoResultsFoundOrErrorDuringSearch(
+                                globalPaddingValues = globalPaddingValues,
+                                localPaddingValues = localPaddingValues
+                            )
+                        }
+                    }
                 }
-            } else {
-                item {
-                    ShowLoadingScreen()
+
+                is Resource.Error -> {
+                    item {
+                        NoResultsFoundOrErrorDuringSearch(
+                            globalPaddingValues = globalPaddingValues,
+                            localPaddingValues = localPaddingValues,
+                            message = articlesResponse.error?.message ?: "Unable To Get Articles"
+                        )
+                    }
                 }
+
+                else -> {}
             }
         }
     }

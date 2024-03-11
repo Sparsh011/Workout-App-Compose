@@ -432,9 +432,9 @@ fun GlassesIncrementOrDecrementRow(
     onDecrementClick: () -> Unit
 ) {
 
-    Row (
+    Row(
         verticalAlignment = CenterVertically
-    ){
+    ) {
         Icon(
             imageVector = Icons.Default.KeyboardArrowDown,
             contentDescription = null,

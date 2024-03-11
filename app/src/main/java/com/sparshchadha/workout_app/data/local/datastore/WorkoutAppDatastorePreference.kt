@@ -103,6 +103,7 @@ class WorkoutAppDatastorePreference @Inject constructor(
         get() = dataStorePreference.data.map { pref ->
             null ?: pref[IMAGE_URI_KEY]
         }
+
     suspend fun setDarkMode(setTo: String) {
         dataStorePreference.edit { pref ->
             pref[DARK_MODE_THEME_key] = setTo
@@ -124,6 +125,7 @@ class WorkoutAppDatastorePreference @Inject constructor(
         get() = dataStorePreference.data.map { pref ->
             null ?: pref[WATER_GLASSES_GOAL_KEY]
         }
+
     companion object {
         val CALORIES_GOAL_KEY = stringPreferencesKey("CALORIES_GOAL_KEY")
         val WEIGHT_GOAL_KEY = stringPreferencesKey("WEIGHT_GOAL_KEY")

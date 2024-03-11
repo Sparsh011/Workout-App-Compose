@@ -90,32 +90,32 @@ sealed class UtilityScreenRoutes(
         title = "Exercise Details"
     )
 
-    object SavedItemsScreen: UtilityScreenRoutes(
+    object SavedItemsScreen : UtilityScreenRoutes(
         route = "SavedItemsScreen/{category}",
         title = "Saved Items Screen"
     )
 
-    object PersonalRecordsScreen: UtilityScreenRoutes(
+    object PersonalRecordsScreen : UtilityScreenRoutes(
         route = "PersonalRecordsScreen",
         title = "Personal Records Screen"
     )
 
-    object GymActivityScreen: UtilityScreenRoutes(
+    object GymActivityScreen : UtilityScreenRoutes(
         route = "GymActivityScreen",
         title = "GymActivityScreen"
     )
 
-    object YogaActivityScreen: UtilityScreenRoutes(
+    object YogaActivityScreen : UtilityScreenRoutes(
         route = "YogaActivityScreen",
         title = "YogaActivityScreen"
     )
 
-    object NewsArticlesScreen: UtilityScreenRoutes(
+    object NewsArticlesScreen : UtilityScreenRoutes(
         route = "NewsArticlesScreen",
         title = "News Articles Screen"
     )
 
-    object ArticleWebViewScreen: UtilityScreenRoutes(
+    object ArticleWebViewScreen : UtilityScreenRoutes(
         route = "ArticleWebViewScreen",
         title = "Article WebView Screen"
     )

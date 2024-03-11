@@ -39,7 +39,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
-import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
@@ -54,6 +53,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
+import com.sparshchadha.workout_app.util.Resource
 import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
@@ -66,13 +66,9 @@ fun SearchScreen(
     onCloseClicked: () -> Unit,
     searchFor: String?,
     workoutViewModel: WorkoutViewModel,
-    dishes: NutritionalValueDto?,
-    exercises: GymExercisesDto?,
-    workoutUIStateEvent: WorkoutViewModel.UIEvent?,
     foodUIStateEvent: WorkoutViewModel.UIEvent?,
-    saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
-    saveExercise: (GymExercisesEntity) -> Unit,
     navController: NavController,
+    foodAndWaterViewModel: FoodAndWaterViewModel,
 ) {
     var searchBarQuery by remember {
         mutableStateOf("")
@@ -105,22 +101,26 @@ fun SearchScreen(
                 },
                 onCloseClicked = onCloseClicked
             )
-        }
+        },
+        modifier = Modifier.fillMaxSize()
     ) { localPaddingValues ->
         when (searchFor) {
             "food" -> {
+                val dishes = foodAndWaterViewModel.foodItemsFromApi.value
                 HandleFoodSearch(
                     foodUIStateEvent = foodUIStateEvent,
                     paddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
                     dishes = dishes,
-                    saveFoodItemWithQuantity = saveFoodItemWithQuantity
+                    saveFoodItemWithQuantity = {
+                        foodAndWaterViewModel.saveFoodItem(foodItemEntity = it)
+                    }
                 )
             }
 
             "exercises" -> {
+                val exercises = workoutViewModel.searchExercisesResult.value
                 HandleExercisesSearch(
-                    workoutUIStateEvent = workoutUIStateEvent,
                     paddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
                     exercises = exercises,
@@ -186,39 +186,38 @@ fun HandleFoodSearch(
 
 @Composable
 fun HandleExercisesSearch(
-    workoutUIStateEvent: WorkoutViewModel.UIEvent?,
     paddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
-    exercises: GymExercisesDto?,
+    exercises: Resource<GymExercisesDto>?,
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
 ) {
-    workoutUIStateEvent?.let { event ->
-        when (event) {
-            is WorkoutViewModel.UIEvent.ShowLoader -> {
-                ShowLoadingScreen()
-            }
-
-            is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
-                ExerciseSearchResults(
-                    paddingValues = paddingValues,
-                    exercises = exercises,
-                    localPaddingValues = localPaddingValues,
-                    updateExercise = {
-                        workoutViewModel.updateExerciseDetails(it)
-                    },
-                    navController = navController
-                )
-            }
-
-            is WorkoutViewModel.UIEvent.ShowError -> {
-                NoResultsFoundOrErrorDuringSearch(
-                    globalPaddingValues = paddingValues,
-                    localPaddingValues = localPaddingValues,
-                    message = event.errorMessage
-                )
-            }
+    when (exercises) {
+        is Resource.Loading -> {
+            ShowLoadingScreen()
         }
+
+        is Resource.Success -> {
+            ExerciseSearchResults(
+                paddingValues = paddingValues,
+                exercises = exercises.data,
+                localPaddingValues = localPaddingValues,
+                updateExercise = {
+                    workoutViewModel.updateExerciseDetails(it)
+                },
+                navController = navController
+            )
+        }
+
+        is Resource.Error -> {
+            NoResultsFoundOrErrorDuringSearch(
+                globalPaddingValues = paddingValues,
+                localPaddingValues = localPaddingValues,
+                message = exercises.error?.message ?: "Unable To Get Exercises"
+            )
+        }
+
+        else -> {}
     }
 }
 

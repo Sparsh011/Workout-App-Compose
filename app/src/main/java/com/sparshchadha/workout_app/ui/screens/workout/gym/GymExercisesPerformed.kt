@@ -25,13 +25,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +34,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
+import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
@@ -61,7 +58,7 @@ fun GymExercisesPerformed(
     globalPaddingValues: PaddingValues,
     workoutViewModel: WorkoutViewModel
 ) {
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = Unit) {
         workoutViewModel.getGymExercisesPerformed()
     }
 
@@ -84,6 +81,10 @@ fun GymExercisesPerformed(
             },
             removeExercise = {
                 workoutViewModel.removeExerciseFromDB(it)
+            },
+            navigateToExerciseDetailsScreen = {
+                workoutViewModel.updateExerciseDetails(it)
+                navController.navigate(UtilityScreenRoutes.ExerciseDetailScreen.route)
             }
         )
     }
@@ -99,6 +100,7 @@ fun HandleUIEventsForExercisesPerformedToday(
     selectedDateAndMonth: Pair<Int, String>?,
     getExercisesPerformedOn: (Pair<Int, String>) -> Unit,
     removeExercise: (GymExercisesEntity) -> Unit,
+    navigateToExerciseDetailsScreen: (GymExercisesDtoItem?) -> Unit
 ) {
     when (event) {
         is WorkoutViewModel.UIEvent.ShowLoader -> {
@@ -117,7 +119,8 @@ fun HandleUIEventsForExercisesPerformedToday(
                 },
                 selectedDateAndMonth = selectedDateAndMonth,
                 getExercisesPerformedOn = getExercisesPerformedOn,
-                removeExercise = removeExercise
+                removeExercise = removeExercise,
+                navigateToExerciseDetailsScreen = navigateToExerciseDetailsScreen
             )
         }
 
@@ -137,6 +140,7 @@ fun PopulatePerformedExercises(
     getExercisesPerformedOn: (Pair<Int, String>) -> Unit,
     selectedDateAndMonth: Pair<Int, String>?,
     removeExercise: (GymExercisesEntity) -> Unit,
+    navigateToExerciseDetailsScreen: (GymExercisesDtoItem?) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -145,7 +149,7 @@ fun PopulatePerformedExercises(
                 onBackButtonPressed = onBackButtonPressed
             )
         },
-        containerColor = Color.White
+        containerColor = scaffoldBackgroundColor
     ) { localPaddingValues ->
 
         LazyColumn(
@@ -177,7 +181,8 @@ fun PopulatePerformedExercises(
                 items(exercisesPerformed) {
                     ExerciseEntity(
                         exerciseEntity = it,
-                        removeExercise = removeExercise
+                        removeExercise = removeExercise,
+                        navigateToExerciseDetailsScreen = navigateToExerciseDetailsScreen
                     )
                 }
             }
@@ -191,16 +196,15 @@ fun PopulatePerformedExercises(
 fun ExerciseEntity(
     exerciseEntity: GymExercisesEntity,
     removeExercise: (GymExercisesEntity) -> Unit,
+    navigateToExerciseDetailsScreen: (GymExercisesDtoItem?) -> Unit
 ) {
-    var shouldShowExerciseDetailsBottomSheet by remember {
-        mutableStateOf(false)
-    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = Dimensions.MEDIUM_PADDING, vertical = SMALL_PADDING),
         onClick = {
-            shouldShowExerciseDetailsBottomSheet = true
+            navigateToExerciseDetailsScreen(exerciseEntity.exerciseDetails)
         },
         colors = CardDefaults.cardColors(
             containerColor = ColorsUtil.cardBackgroundColor
@@ -262,18 +266,6 @@ fun ExerciseEntity(
                     .clickable {
                         removeExercise(exerciseEntity)
                     }
-            )
-        }
-    }
-
-    // TODO - add navigation here instead of bottom sheet. do same for yoga poses perf screen
-    if (shouldShowExerciseDetailsBottomSheet) {
-        exerciseEntity.exerciseDetails?.let {
-            ExerciseDetailsModalBottomSheet(
-                exercise = it,
-                hideBottomSheet = {
-                    shouldShowExerciseDetailsBottomSheet = false
-                }
             )
         }
     }

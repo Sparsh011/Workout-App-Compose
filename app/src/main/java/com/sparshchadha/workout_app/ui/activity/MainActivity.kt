@@ -59,7 +59,8 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             WorkoutAppTheme {
-                requestPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                requestPermissionLauncher =
+                    rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
                         if (isGranted) {
 
                         } else {
@@ -71,6 +72,7 @@ class MainActivity : ComponentActivity() {
                     true -> {
 
                     }
+
                     false -> {
 
                     }

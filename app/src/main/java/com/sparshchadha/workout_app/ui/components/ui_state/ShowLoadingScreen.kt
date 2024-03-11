@@ -35,7 +35,10 @@ fun ShowLoadingScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
-        val animProgress by animateLottieCompositionAsState(composition = lottieComposition, iterations = LottieConstants.IterateForever)
+        val animProgress by animateLottieCompositionAsState(
+            composition = lottieComposition,
+            iterations = LottieConstants.IterateForever
+        )
         LottieAnimation(
             composition = lottieComposition,
             progress = { animProgress },

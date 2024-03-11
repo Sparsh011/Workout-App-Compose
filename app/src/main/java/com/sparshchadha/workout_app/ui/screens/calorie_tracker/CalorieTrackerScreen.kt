@@ -75,7 +75,8 @@ fun CalorieTrackerScreen(
 ) {
     val caloriesGoal = profileViewModel.caloriesGoal.collectAsState().value
     val caloriesConsumed = foodAndWaterViewModel.caloriesConsumed.value ?: "0"
-    val selectedDateAndMonth = foodAndWaterViewModel.selectedDateAndMonthForFoodItems.collectAsState().value
+    val selectedDateAndMonth =
+        foodAndWaterViewModel.selectedDateAndMonthForFoodItems.collectAsState().value
     val waterGlassesGoal = profileViewModel.waterGlassesGoal.collectAsState().value
 
     val currentDate = HelperFunctions.getCurrentDateAndMonth().first
@@ -89,7 +90,13 @@ fun CalorieTrackerScreen(
                 selectedDateAndMonth?.first ?: 1,
                 selectedDateAndMonth?.second ?: "Jan"
             )
-            foodAndWaterViewModel.getWaterGlassesConsumedOn(date = (selectedDateAndMonth?.first ?: HelperFunctions.getCurrentDateAndMonth().first).toString(), month = selectedDateAndMonth?.second ?: HelperFunctions.getCurrentDateAndMonth().second, year = "2024")
+            foodAndWaterViewModel.getWaterGlassesConsumedOn(
+                date = (selectedDateAndMonth?.first
+                    ?: HelperFunctions.getCurrentDateAndMonth().first).toString(),
+                month = selectedDateAndMonth?.second
+                    ?: HelperFunctions.getCurrentDateAndMonth().second,
+                year = "2024"
+            )
         }
     }
 
@@ -169,7 +176,8 @@ fun CalorieTrackerScreen(
                                     caloriesConsumed = caloriesConsumed,
                                     progressIndicatorColor = noAchievementColor,
                                     waterGlassesGoal = waterGlassesGoal,
-                                    waterGlassesConsumed = waterGlassesConsumed?.glassesConsumed ?: 0,
+                                    waterGlassesConsumed = waterGlassesConsumed?.glassesConsumed
+                                        ?: 0,
                                     setWaterGlassesGoal = {
                                         profileViewModel.setWaterGlassesGoal(it)
                                     },
@@ -177,8 +185,10 @@ fun CalorieTrackerScreen(
                                         foodAndWaterViewModel.updateWaterGlassesEntity(
                                             WaterEntity(
                                                 glassesConsumed = it,
-                                                date = waterGlassesConsumed?.date ?: HelperFunctions.getCurrentDateAndMonth().first.toString(),
-                                                month = waterGlassesConsumed?.month ?: HelperFunctions.getCurrentDateAndMonth().second,
+                                                date = waterGlassesConsumed?.date
+                                                    ?: HelperFunctions.getCurrentDateAndMonth().first.toString(),
+                                                month = waterGlassesConsumed?.month
+                                                    ?: HelperFunctions.getCurrentDateAndMonth().second,
                                                 year = waterGlassesConsumed?.year ?: "2024",
                                                 id = waterGlassesConsumed?.id
                                             )
@@ -207,7 +217,11 @@ fun CalorieTrackerScreen(
                 CalendarRow(
                     getResultsForDateAndMonth = {
                         foodAndWaterViewModel.getFoodItemsConsumedOn(it.first.toString(), it.second)
-                        foodAndWaterViewModel.getWaterGlassesConsumedOn(it.first.toString(), it.second, "2024")
+                        foodAndWaterViewModel.getWaterGlassesConsumedOn(
+                            it.first.toString(),
+                            it.second,
+                            "2024"
+                        )
                     },
                     selectedMonth = selectedDayPair.value.first,
                     selectedDay = selectedDayPair.value.second,

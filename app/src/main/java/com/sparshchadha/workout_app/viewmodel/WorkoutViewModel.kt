@@ -36,17 +36,16 @@ class WorkoutViewModel @Inject constructor(
 ) : ViewModel() {
     private var _difficultyForYoga = mutableStateOf(DifficultyLevel.BEGINNER)
 
-    private var _yogaPosesFromApi = mutableStateOf<YogaPosesDto?>(null)
+    private var _yogaPosesFromApi = mutableStateOf<Resource<YogaPosesDto>?>(null)
     val yogaPosesFromApi = _yogaPosesFromApi
 
-    private var _gymExercisesFromApi = mutableStateOf<GymExercisesDto?>(null)
+    private var _gymExercisesFromApi = mutableStateOf<Resource<GymExercisesDto>?>(null)
     val gymExercisesFromApi = _gymExercisesFromApi
 
+    private var _searchExercisesResult = mutableStateOf<Resource<GymExercisesDto>?>(null)
+    val searchExercisesResult = _searchExercisesResult
+
     private var _selectedCategoryForGymExercise = mutableStateOf(CategoryType.WORKOUT_TYPE)
-
-
-    private val _uiEventState = MutableStateFlow<UIEvent?>(value = null)
-    val uiEventStateFlow = _uiEventState.asStateFlow()
 
     private var _yogaPosesPerformed = mutableStateOf<List<YogaEntity>?>(null)
     val yogaPosesPerformed = _yogaPosesPerformed
@@ -60,8 +59,7 @@ class WorkoutViewModel @Inject constructor(
     private val _selectedDateAndMonthForYogaPoses = MutableStateFlow<Pair<Int, String>?>(null)
     val selectedDateAndMonthForYogaPoses = _selectedDateAndMonthForYogaPoses.asStateFlow()
 
-    private val _gymExercisesPerformedOnUIEventState =
-        MutableStateFlow<UIEvent?>(UIEvent.ShowLoader)
+    private val _gymExercisesPerformedOnUIEventState = MutableStateFlow<UIEvent?>(UIEvent.ShowLoader)
     val gymExercisesPerformedOnUIEventState = _gymExercisesPerformedOnUIEventState.asStateFlow()
 
     private val _selectedDateAndMonthForGymExercises = MutableStateFlow<Pair<Int, String>?>(null)
@@ -91,7 +89,7 @@ class WorkoutViewModel @Inject constructor(
     private val _allYogaPosesPerformed = MutableStateFlow<List<YogaEntity>?>(null)
     val allYogaPosesPerformed = _allYogaPosesPerformed.asStateFlow()
 
-    private val _newsArticles = mutableStateOf<NewsArticlesDto?>(null)
+    private val _newsArticles = mutableStateOf<Resource<NewsArticlesDto>?>(null)
     val newsArticles = _newsArticles
 
     private val _articleToLoadUrl = MutableStateFlow("")
@@ -102,30 +100,20 @@ class WorkoutViewModel @Inject constructor(
 
     fun getYogaPosesFromApi() {
         viewModelScope.launch {
-            val poses =
-                workoutRepository.getYogaPosesByDifficultyFromApi(difficulty = _difficultyForYoga.value)
+            val poses = workoutRepository.getYogaPosesByDifficultyFromApi(difficulty = _difficultyForYoga.value)
 
             poses.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        _yogaPosesFromApi.value = response.data
-                        _uiEventState.emit(
-                            UIEvent.HideLoaderAndShowResponse
-                        )
+                        _yogaPosesFromApi.value = response
                     }
 
                     is Resource.Loading -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowLoader
-                        )
+                        _yogaPosesFromApi.value = Resource.Loading()
                     }
 
                     is Resource.Error -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowError(
-                                errorMessage = "Error - ${response.error?.message}"
-                            )
-                        )
+                        _yogaPosesFromApi.value = Resource.Error(error = response.error!!)
                     }
                 }
             }
@@ -139,24 +127,15 @@ class WorkoutViewModel @Inject constructor(
             exercises.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        _gymExercisesFromApi.value = response.data
-                        _uiEventState.emit(
-                            UIEvent.HideLoaderAndShowResponse
-                        )
+                        _gymExercisesFromApi.value = response
                     }
 
                     is Resource.Loading -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowLoader
-                        )
+                        _gymExercisesFromApi.value = Resource.Loading()
                     }
 
                     is Resource.Error -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowError(
-                                errorMessage = "Error - ${response.error?.message}"
-                            )
-                        )
+                       _gymExercisesFromApi.value = Resource.Error(error = response.error!!)
                     }
                 }
             }
@@ -171,24 +150,15 @@ class WorkoutViewModel @Inject constructor(
             exercises.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        _gymExercisesFromApi.value = response.data
-                        _uiEventState.emit(
-                            UIEvent.HideLoaderAndShowResponse
-                        )
+                        _gymExercisesFromApi.value = response
                     }
 
                     is Resource.Loading -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowLoader
-                        )
+                        _gymExercisesFromApi.value = Resource.Loading()
                     }
 
                     is Resource.Error -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowError(
-                                errorMessage = "Error - ${response.error?.message}"
-                            )
-                        )
+                        _gymExercisesFromApi.value = Resource.Error(error = response.error!!)
                     }
                 }
             }
@@ -203,24 +173,15 @@ class WorkoutViewModel @Inject constructor(
             exercises.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        _gymExercisesFromApi.value = response.data
-                        _uiEventState.emit(
-                            UIEvent.HideLoaderAndShowResponse
-                        )
+                        _gymExercisesFromApi.value = response
                     }
 
                     is Resource.Loading -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowLoader
-                        )
+                        _gymExercisesFromApi.value = Resource.Loading()
                     }
 
                     is Resource.Error -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowError(
-                                errorMessage = "Error - ${response.error?.message}"
-                            )
-                        )
+                        _gymExercisesFromApi.value = Resource.Error(error = response.error!!)
                     }
                 }
             }
@@ -234,24 +195,15 @@ class WorkoutViewModel @Inject constructor(
             exercises.collect { response ->
                 when (response) {
                     is Resource.Success -> {
-                        _gymExercisesFromApi.value = response.data
-                        _uiEventState.emit(
-                            UIEvent.HideLoaderAndShowResponse
-                        )
+                        _searchExercisesResult.value = response
                     }
 
                     is Resource.Loading -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowLoader
-                        )
+                        _searchExercisesResult.value = Resource.Loading()
                     }
 
                     is Resource.Error -> {
-                        _uiEventState.emit(
-                            UIEvent.ShowError(
-                                errorMessage = "Error - ${response.error?.message}"
-                            )
-                        )
+                        _searchExercisesResult.value = Resource.Error(error = response.error!!)
                     }
                 }
             }
@@ -322,25 +274,25 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun updateExerciseDetails(exercisesDtoItem: GymExercisesDtoItem) {
+    fun updateExerciseDetails(exercisesDtoItem: GymExercisesDtoItem?) {
         _exerciseDetails.value = exercisesDtoItem
     }
 
     fun removeYogaPoseFromDB(yogaEntity: YogaEntity) {
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             workoutRepository.removeYogaPose(yogaEntity)
         }
     }
 
     fun removeExerciseFromDB(exercisesEntity: GymExercisesEntity) {
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             workoutRepository.removeGymExercise(exercisesEntity)
         }
     }
 
     fun saveExerciseToDB(exercisesEntity: GymExercisesEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            workoutRepository.saveExerciseToDB(exercisesEntity =  exercisesEntity)
+            workoutRepository.saveExerciseToDB(exercisesEntity = exercisesEntity)
         }
     }
 
@@ -411,8 +363,9 @@ class WorkoutViewModel @Inject constructor(
 
     fun getNewsArticles(forQuery: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val articles = newsRepository.getNewsArticlesFor(searchQuery = forQuery)
-            _newsArticles.value = articles
+            newsRepository.getNewsArticlesFor(searchQuery = forQuery).collect {
+                _newsArticles.value = it
+            }
         }
     }
 

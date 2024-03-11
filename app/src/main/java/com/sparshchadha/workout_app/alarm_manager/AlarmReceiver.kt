@@ -13,8 +13,8 @@ import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.sparshchadha.workout_app.ui.activity.MainActivity
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.activity.MainActivity
 import com.sparshchadha.workout_app.util.Constants.REMINDER_DESCRIPTION_KEY
 import dagger.hilt.android.AndroidEntryPoint
 

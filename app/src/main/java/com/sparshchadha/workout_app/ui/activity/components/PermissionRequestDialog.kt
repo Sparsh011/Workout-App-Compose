@@ -34,11 +34,11 @@ fun PermissionRequestDialog(
             context.startActivity(intent)
         },
         title = {
-                DialogText(
-                    text = "Need Permission",
-                    fontSize = 20.nonScaledSp,
-                    fontWeight = FontWeight.Bold
-                )
+            DialogText(
+                text = "Need Permission",
+                fontSize = 20.nonScaledSp,
+                fontWeight = FontWeight.Bold
+            )
         },
         text = {
             DialogText(

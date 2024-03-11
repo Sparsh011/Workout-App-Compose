@@ -37,8 +37,9 @@ fun YogaActivityScreen(
     LaunchedEffect(key1 = Unit) {
         workoutViewModel.getAllYogaPosesPerformed()
     }
-    Column (
-        modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
             .padding(bottom = globalPaddingValues.calculateBottomPadding())
     ) {
         ScaffoldTopBar(
@@ -52,10 +53,11 @@ fun YogaActivityScreen(
 
         if (!performedYogaPoses.isNullOrEmpty()) {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth()
-                .padding(Dimensions.SMALL_PADDING)
-                .clip(RoundedCornerShape(Dimensions.MEDIUM_PADDING))
-                .background(ColorsUtil.bottomBarColor)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Dimensions.SMALL_PADDING)
+                    .clip(RoundedCornerShape(Dimensions.MEDIUM_PADDING))
+                    .background(ColorsUtil.bottomBarColor)
             ) {
                 items(performedYogaPoses ?: emptyList()) {
                     PosePerformed(

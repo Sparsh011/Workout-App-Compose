@@ -4,8 +4,6 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -40,9 +38,6 @@ fun NavGraphBuilder.gymExercisesComposable(
             navController = navController,
             category = backStackEntry.arguments?.getString("category"),
             globalPaddingValues = globalPaddingValues,
-            saveExercise = { gymExerciseEntity ->
-                workoutViewModel.addGymExerciseToWorkout(gymExercisesEntity = gymExerciseEntity)
-            },
             workoutViewModel = workoutViewModel
         )
     }

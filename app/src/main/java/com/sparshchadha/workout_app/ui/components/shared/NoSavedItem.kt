@@ -24,7 +24,7 @@ import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 fun NoSavedItem(
     text: String = "No Saved Item"
 ) {
-    Column (
+    Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()

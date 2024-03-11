@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class WaterEntity (
+data class WaterEntity(
     val glassesConsumed: Int,
     val date: String,
     val month: String,

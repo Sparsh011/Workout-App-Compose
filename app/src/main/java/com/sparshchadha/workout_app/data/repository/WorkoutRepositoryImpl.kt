@@ -49,7 +49,9 @@ class WorkoutRepositoryImpl(
                     difficulty = difficulty.lowercase(),
                     apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
                 )
-                emit(Resource.Success(remoteExercises))
+                if (remoteExercises.isSuccessful) {
+                    emit(Resource.Success(remoteExercises.body()))
+                }
             } catch (e: Exception) {
                 emit(
                     Resource.Error(error = e)
@@ -66,7 +68,9 @@ class WorkoutRepositoryImpl(
                     muscle = muscleType.lowercase(),
                     apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
                 )
-                emit(Resource.Success(remoteExercises))
+                if (remoteExercises.isSuccessful) {
+                    emit(Resource.Success(remoteExercises.body()))
+                }
             } catch (e: Exception) {
                 emit(
                     Resource.Error(error = e)
@@ -74,8 +78,7 @@ class WorkoutRepositoryImpl(
             }
         }
 
-    override fun getExercisesByWorkoutTypeFromApi(workoutType: String): Flow<Resource<GymExercisesDto>> =
-        flow {
+    override fun getExercisesByWorkoutTypeFromApi(workoutType: String): Flow<Resource<GymExercisesDto>> = flow {
             emit(Resource.Loading())
 
             try {
@@ -83,7 +86,9 @@ class WorkoutRepositoryImpl(
                     workoutType = workoutType.lowercase(),
                     apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
                 )
-                emit(Resource.Success(remoteExercises))
+                if (remoteExercises.isSuccessful) {
+                    emit(Resource.Success(remoteExercises.body()))
+                }
             } catch (e: Exception) {
                 emit(
                     Resource.Error(error = e)
@@ -99,7 +104,9 @@ class WorkoutRepositoryImpl(
                 name = name.lowercase(),
                 apiKey = BuildConfig.GYM_WORKOUTS_API_KEY
             )
-            emit(Resource.Success(remoteExercises))
+            if (remoteExercises.isSuccessful) {
+                emit(Resource.Success(remoteExercises.body()))
+            }
         } catch (e: Exception) {
             emit(
                 Resource.Error(error = e)
