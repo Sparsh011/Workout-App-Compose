@@ -35,7 +35,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
-import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
@@ -112,10 +111,7 @@ fun HandleUIEventsForExercisesPerformedToday(
                 globalPaddingValues = globalPaddingValues,
                 exercisesPerformed = exercisesPerformed,
                 onBackButtonPressed = {
-                    navController.popBackStack(
-                        route = ScreenRoutes.WorkoutScreen.route,
-                        inclusive = false
-                    )
+                    navController.popBackStack()
                 },
                 selectedDateAndMonth = selectedDateAndMonth,
                 getExercisesPerformedOn = getExercisesPerformedOn,

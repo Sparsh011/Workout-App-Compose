@@ -181,10 +181,10 @@ fun Exercise(
             modifier = Modifier.weight(4f)
         ) {
             ExerciseSubTitlesAndDescription(
-                subTitle = exercise.name,
+                title = exercise.name,
                 description = "Requires " + exercise.equipment,
-                showSubtitle = true,
-                subTitleColor = targetAchievedColor
+                showDescription = true,
+                descriptionColor = targetAchievedColor
             )
         }
 
@@ -199,14 +199,14 @@ fun Exercise(
 
 @Composable
 fun ExerciseSubTitlesAndDescription(
-    subTitle: String,
+    title: String,
     description: String,
-    showSubtitle: Boolean = true,
-    subTitleColor: Color = primaryTextColor
+    showDescription: Boolean = true,
+    descriptionColor: Color = primaryTextColor
 ) {
-    if (showSubtitle) {
+    if (showDescription) {
         Text(
-            text = subTitle, // already capitalized when passed as argument
+            text = title, // already capitalized when passed as argument
             fontWeight = FontWeight.Bold,
             fontSize = 20.nonScaledSp,
             color = primaryTextColor,
@@ -216,15 +216,15 @@ fun ExerciseSubTitlesAndDescription(
         Text(
             text = description.capitalize(),
             modifier = Modifier.padding(horizontal = MEDIUM_PADDING),
-            color = subTitleColor,
+            color = descriptionColor,
             fontSize = 14.nonScaledSp
         )
     } else {
         Text(
-            text = description.capitalize(),
+            text = title,
             modifier = Modifier.padding(horizontal = MEDIUM_PADDING, vertical = SMALL_PADDING),
             color = primaryTextColor,
-            fontSize = 18.nonScaledSp
+            fontSize = 20.nonScaledSp
         )
     }
 }

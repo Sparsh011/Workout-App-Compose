@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
-import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
@@ -48,7 +47,7 @@ fun LandingPage(
                 .background(statusBarColor)
                 .padding(MEDIUM_PADDING),
             fontSize = 20.nonScaledSp,
-            color = primaryTextColor
+            color = White
         )
 
         var ageStr by remember {

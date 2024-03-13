@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.ui.screens.shared
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
@@ -17,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -24,11 +27,16 @@ import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
 import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.NoSavedItem
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.screens.workout.gym.ExerciseSubTitlesAndDescription
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
+import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
@@ -55,13 +63,11 @@ fun SavedItemsScreen(
                 exercises = workoutViewModel.savedExercises.collectAsStateWithLifecycle().value
                     ?: emptyList(),
                 navigateToExerciseDetailsScreen = { forExercise ->
-
+                    workoutViewModel.updateSelectedExercise(forExercise.exerciseDetails)
+                    navController.navigate(UtilityScreenRoutes.ExerciseDetailScreen.route)
                 },
                 removeFromSaved = {
                     workoutViewModel.removeExerciseFromDB(it)
-                },
-                updateExerciseToShowDetails = {
-                    workoutViewModel.updateSelectedExercise(it.exerciseDetails)
                 },
                 globalPaddingValues = globalPaddingValues,
                 navController = navController
@@ -160,9 +166,8 @@ fun SavedFoodItem(
 @Composable
 fun SavedGymExercises(
     exercises: List<GymExercisesEntity>,
-    navigateToExerciseDetailsScreen: (String) -> Unit,
+    navigateToExerciseDetailsScreen: (GymExercisesEntity) -> Unit,
     removeFromSaved: (GymExercisesEntity) -> Unit,
-    updateExerciseToShowDetails: (GymExercisesEntity) -> Unit,
     globalPaddingValues: PaddingValues,
     navController: NavController
 ) {
@@ -180,16 +185,16 @@ fun SavedGymExercises(
 
         if (exercises.isNotEmpty()) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth()
+                    .padding(MEDIUM_PADDING)
+                    .clip(RoundedCornerShape(MEDIUM_PADDING))
+                    .background(bottomBarColor)
             ) {
                 items(exercises) {
                     SavedExercise(
                         exercise = it,
                         removeFromSaved = removeFromSaved,
-                        navigateToScreen = { route ->
-                            updateExerciseToShowDetails(it)
-                            navigateToExerciseDetailsScreen(route)
-                        }
+                        navigateToScreen = navigateToExerciseDetailsScreen
                     )
                 }
             }
@@ -203,26 +208,29 @@ fun SavedGymExercises(
 fun SavedExercise(
     exercise: GymExercisesEntity,
     removeFromSaved: (GymExercisesEntity) -> Unit,
-    navigateToScreen: (String) -> Unit
+    navigateToScreen: (GymExercisesEntity) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(SMALL_PADDING)
             .clickable {
-
+                navigateToScreen(exercise)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = exercise.exerciseDetails?.name ?: "Unable To Get Name",
-            fontSize = 20.nonScaledSp,
-            textAlign = TextAlign.Start,
+        Column(
             modifier = Modifier
                 .padding(SMALL_PADDING)
                 .weight(4f),
-            color = primaryTextColor
-        )
+        ) {
+            ExerciseSubTitlesAndDescription(
+                title = exercise.exerciseDetails?.name ?: "Unable To Get Name",
+                description = ("Requires " + exercise.exerciseDetails?.equipment),
+                showDescription = true,
+                descriptionColor = targetAchievedColor
+            )
+        }
 
         Icon(
             imageVector = Icons.Default.Delete,
@@ -233,8 +241,6 @@ fun SavedExercise(
             tint = ColorsUtil.noAchievementColor
         )
     }
-
-    CustomDivider()
 }
 
 @Composable

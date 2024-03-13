@@ -407,7 +407,7 @@ fun ConsumedFoodItem(
                     color = primaryTextColor,
                     modifier = Modifier
                         .padding(SMALL_PADDING)
-                        .weight(4f),
+                        .weight(3.75f),
                     fontSize = 16.nonScaledSp,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis
@@ -419,7 +419,7 @@ fun ConsumedFoodItem(
                 color = ColorsUtil.targetAchievedColor,
                 modifier = Modifier
                     .padding(SMALL_PADDING)
-                    .weight(1f),
+                    .weight(1.25f),
                 fontSize = 16.nonScaledSp,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis
