@@ -46,9 +46,7 @@ fun ExerciseDetailsScreen(
     globalPaddingValues: PaddingValues,
 ) {
     val exercise = workoutViewModel.exerciseDetails.value
-    var exerciseToShare by remember {
-        mutableStateOf<GymExercisesEntity?>(null)
-    }
+    val selectedExercise = workoutViewModel.selectedExercise.value
     var shouldShowQuantityOrSetsPicker by remember {
         mutableStateOf(false)
     }
@@ -56,7 +54,7 @@ fun ExerciseDetailsScreen(
     Scaffold(
         topBar = {
             ScaffoldTopBar(
-                topBarDescription = exercise?.name ?: "Unable To Get Exercise Name",
+                topBarDescription = exercise?.name ?: selectedExercise?.name ?: "Unable To Get Name!",
                 onBackButtonPressed = {
                     navController.popBackStack()
                 },
@@ -67,7 +65,7 @@ fun ExerciseDetailsScreen(
         modifier = Modifier.padding(bottom = globalPaddingValues.calculateBottomPadding()),
         floatingActionButtonPosition = FabPosition.Center
     ) { localPaddingValues ->
-        exercise?.let {
+        if (exercise != null) {
 
             Column(
                 modifier = Modifier
@@ -143,7 +141,7 @@ fun ExerciseDetailsScreen(
                                         date = "",
                                         month = "",
                                         setsPerformed = -1,
-                                        exerciseDetails = it,
+                                        exerciseDetails = exercise,
                                         hour = -1,
                                         minutes = -1,
                                         seconds = -1,
@@ -175,6 +173,39 @@ fun ExerciseDetailsScreen(
                     },
                     title = "Sets"
                 )
+            }
+        } else if (selectedExercise != null) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(
+                        top = localPaddingValues.calculateTopPadding(),
+                        bottom = globalPaddingValues.calculateBottomPadding(),
+                        start = MEDIUM_PADDING,
+                        end = MEDIUM_PADDING,
+                    )
+            ) {
+                ExerciseSubTitlesAndDescription(
+                    title = "Difficulty",
+                    description = selectedExercise.difficulty,
+                )
+
+                ExerciseSubTitlesAndDescription(
+                    title = "Targets",
+                    description = selectedExercise.muscle,
+                )
+
+                ExerciseSubTitlesAndDescription(
+                    title = "Equipment Required",
+                    description = selectedExercise.equipment,
+                )
+
+                ExerciseSubTitlesAndDescription(
+                    title = "Instructions",
+                    description = selectedExercise.instructions,
+                )
+
+                Spacer(modifier = Modifier.height(MEDIUM_PADDING))
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.sparshchadha.workout_app.ui.screens.calorie_tracker
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -48,6 +49,8 @@ import com.sparshchadha.workout_app.data.local.room_db.entities.WaterEntity
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
+import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
+import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
@@ -59,6 +62,7 @@ import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
+import com.sparshchadha.workout_app.util.Resource
 import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 
@@ -238,31 +242,54 @@ fun CalorieTrackerScreen(
                         .fillMaxWidth()
                 )
 
-                if (foodItemsConsumed.isNullOrEmpty()) {
-                    NoWorkoutPerformedOrFoodConsumed(
-                        text = "No Food Items Consumed",
-                        textSize = 20.nonScaledSp,
-                        iconSize = Dimensions.PIE_CHART_SIZE
-                    )
-                } else {
-                    Column(
-                        modifier = Modifier
-                            .padding(SMALL_PADDING)
-                            .clip(RoundedCornerShape(MEDIUM_PADDING))
-                            .background(bottomBarColor)
-                    ) {
-                        for (index in foodItemsConsumed.indices) {
-                            ConsumedFoodItem(
-                                consumedFoodItem = foodItemsConsumed[index],
-                                showFoodItemDetails = {
-                                    navController.navigate(route = "FoodItemDetails/${foodItemsConsumed[index].id}")
-                                },
-                                removeFoodItem = {
-                                    foodAndWaterViewModel.removeFoodItem(foodItem = it)
-                                },
-                                showDivider = false
+                when (foodItemsConsumed) {
+                    is Resource.Error -> {
+                        Log.e(
+                            TAG,
+                            "CalorieTrackerScreen: Error - ${foodItemsConsumed.error?.message}",
                             )
+                        ErrorDuringFetch(
+                            errorMessage = foodItemsConsumed.error?.message
+                                ?: "Something Went Wrong!"
+                        )
+                    }
+
+                    is Resource.Loading -> {
+                        ShowLoadingScreen()
+                    }
+
+                    is Resource.Success -> {
+                        if (foodItemsConsumed.data.isNullOrEmpty()) {
+                            NoWorkoutPerformedOrFoodConsumed(
+                                text = "No Food Items Consumed",
+                                textSize = 20.nonScaledSp,
+                                iconSize = Dimensions.PIE_CHART_SIZE
+                            )
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .padding(SMALL_PADDING)
+                                    .clip(RoundedCornerShape(MEDIUM_PADDING))
+                                    .background(bottomBarColor)
+                            ) {
+                                for (index in foodItemsConsumed.data.indices) {
+                                    ConsumedFoodItem(
+                                        consumedFoodItem = foodItemsConsumed.data[index],
+                                        showFoodItemDetails = {
+                                            navController.navigate(route = "FoodItemDetails/${foodItemsConsumed.data[index].id}")
+                                        },
+                                        removeFoodItem = {
+                                            foodAndWaterViewModel.removeFoodItem(foodItem = it)
+                                        },
+                                        showDivider = false
+                                    )
+                                }
+                            }
                         }
+                    }
+
+                    else -> {
+
                     }
                 }
             }

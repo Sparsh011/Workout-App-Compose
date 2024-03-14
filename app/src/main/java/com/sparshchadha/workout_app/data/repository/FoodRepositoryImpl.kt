@@ -29,7 +29,7 @@ class FoodRepositoryImpl(
                 emit(Resource.Success(remoteDishes))
 
             } catch (e: Exception) {
-                throw e
+                emit(Resource.Error(error = e))
             }
         }
 

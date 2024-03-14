@@ -2,6 +2,7 @@ package com.sparshchadha.workout_app.viewmodel
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -34,31 +35,28 @@ class FoodAndWaterViewModel @Inject constructor(
     private val waterRepository: WaterRepository,
     private val newsRepository: NewsRepository
 ) : ViewModel() {
-    private val _foodItemsFromApi = mutableStateOf<NutritionalValueDto?>(null)
+    private val _foodItemsFromApi = mutableStateOf<Resource<NutritionalValueDto>?>(null)
     val foodItemsFromApi = _foodItemsFromApi
 
     private val _searchQuery = mutableStateOf("")
 
-    private val _uiEventState = MutableStateFlow<WorkoutViewModel.UIEvent?>(value = null)
-    val uiEventStateFlow = _uiEventState.asStateFlow()
-
-    private val _consumedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
+    private val _consumedFoodItems = MutableStateFlow<Resource<List<FoodItemEntity>>?>(null)
     val consumedFoodItems = _consumedFoodItems
 
     private val _caloriesConsumed: MutableState<String?> = mutableStateOf(null)
-    val caloriesConsumed = _caloriesConsumed
+    val caloriesConsumed: State<String?> = _caloriesConsumed
 
     private val _nutrientsConsumed: MutableMap<String, Double> = mutableStateMapOf()
-    val nutrientsConsumed = _nutrientsConsumed
+    val nutrientsConsumed: Map<String, Double> = _nutrientsConsumed
 
     private val _selectedDateAndMonthForFoodItems = MutableStateFlow<Pair<Int, String>?>(null)
     val selectedDateAndMonthForFoodItems = _selectedDateAndMonthForFoodItems.asStateFlow()
 
     private val _foodItemEntity = mutableStateOf<FoodItemEntity?>(null)
-    val foodItemEntity = _foodItemEntity
+    val foodItemEntity: State<FoodItemEntity?> = _foodItemEntity
 
     private val _selectedFoodItem = mutableStateOf<FoodItem?>(null)
-    val selectedFoodItem = _selectedFoodItem
+    val selectedFoodItem: State<FoodItem?> = _selectedFoodItem
 
     private val _savedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
     val savedFoodItems = _savedFoodItems.asStateFlow()
@@ -72,7 +70,11 @@ class FoodAndWaterViewModel @Inject constructor(
             HelperFunctions.getCurrentDateAndMonth().first
         )
     )
-    val selectedDayPosition = _selectedDayPair
+    val selectedDayPosition: State<Pair<String, Int>> = _selectedDayPair
+
+    init {
+        getFoodItemsConsumedOn()
+    }
 
     fun getFoodItemsFromApi() {
         viewModelScope.launch {
@@ -82,31 +84,22 @@ class FoodAndWaterViewModel @Inject constructor(
                 nutritionalValues.collect { result ->
                     when (result) {
                         is Resource.Success -> {
-                            Log.e(TAG, "getFoodItems: response - ${result.data}")
-                            _foodItemsFromApi.value = result.data
-                            _uiEventState.emit(
-                                WorkoutViewModel.UIEvent.HideLoaderAndShowResponse
-                            )
+                            _foodItemsFromApi.value = Resource.Success(result.data)
                         }
 
                         is Resource.Loading -> {
-                            _uiEventState.emit(
-                                WorkoutViewModel.UIEvent.ShowLoader
-                            )
+                            _foodItemsFromApi.value = Resource.Loading()
                         }
 
                         is Resource.Error -> {
-//                        _uiEventState.emit(
-//                            WorkoutViewModel.UIEvent.ShowError(errorMessage = result.error?.message.toString())
-//                        )
-
+                            _foodItemsFromApi.value = Resource.Error(error = result.error!!)
                         }
                     }
                 }
-            } catch (_: Exception) {
-                _uiEventState.emit(
-                    WorkoutViewModel.UIEvent.ShowError(errorMessage = "Something Went Wrong!")
-                )
+            } catch (e: Exception) {
+                _foodItemsFromApi.value =
+                    Resource.Error(error = e)
+
             }
 
         }
@@ -126,17 +119,21 @@ class FoodAndWaterViewModel @Inject constructor(
         date: String = HelperFunctions.getCurrentDateAndMonth().first.toString(),
         month: String = HelperFunctions.getCurrentDateAndMonth().second,
     ) {
+        _consumedFoodItems.value = Resource.Loading()
         viewModelScope.launch(Dispatchers.IO) {
-            val foodItems = foodItemsRepository.getFoodItemsConsumedOn(date, month)
-            foodItems.collect { response ->
-                _consumedFoodItems.emit(response)
-                withContext(Dispatchers.Main) {
-                    getTotalCaloriesConsumed(foodItemsConsumed = response)
-                    getNutrientsConsumed(foodItemsConsumed = response)
+            try {
+                val foodItems = foodItemsRepository.getFoodItemsConsumedOn(date, month)
+                foodItems.collect { response ->
+                    withContext(Dispatchers.Main) {
+                        _consumedFoodItems.value = Resource.Success(response)
+                        getTotalCaloriesConsumed(foodItemsConsumed = response)
+                        getNutrientsConsumed(foodItemsConsumed = response)
+                        _selectedDateAndMonthForFoodItems.value = (Pair(date.toInt(), month))
+                        _selectedDayPair.value = Pair(month, date.toInt())
+                    }
                 }
-                _uiEventState.emit(WorkoutViewModel.UIEvent.HideLoaderAndShowResponse)
-                _selectedDateAndMonthForFoodItems.emit(Pair(date.toInt(), month))
-                _selectedDayPair.value = Pair(month, date.toInt())
+            } catch (e: Exception) {
+                _consumedFoodItems.value = Resource.Error(error = e)
             }
         }
     }

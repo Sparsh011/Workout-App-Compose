@@ -66,7 +66,6 @@ fun SearchScreen(
     onCloseClicked: () -> Unit,
     searchFor: String?,
     workoutViewModel: WorkoutViewModel,
-    foodUIStateEvent: WorkoutViewModel.UIEvent?,
     navController: NavController,
     foodAndWaterViewModel: FoodAndWaterViewModel,
 ) {
@@ -108,14 +107,12 @@ fun SearchScreen(
             "food" -> {
                 val dishes = foodAndWaterViewModel.foodItemsFromApi.value
                 HandleFoodSearch(
-                    foodUIStateEvent = foodUIStateEvent,
                     paddingValues = paddingValues,
                     localPaddingValues = localPaddingValues,
-                    dishes = dishes,
-                    saveFoodItemWithQuantity = {
-                        foodAndWaterViewModel.saveFoodItem(foodItemEntity = it)
-                    }
-                )
+                    dishes = dishes
+                ) {
+                    foodAndWaterViewModel.saveFoodItem(foodItemEntity = it)
+                }
             }
 
             "exercises" -> {
@@ -152,35 +149,34 @@ fun handleSearchFor(
 
 @Composable
 fun HandleFoodSearch(
-    foodUIStateEvent: WorkoutViewModel.UIEvent?,
     paddingValues: PaddingValues,
     localPaddingValues: PaddingValues,
-    dishes: NutritionalValueDto?,
+    dishes: Resource<NutritionalValueDto>?,
     saveFoodItemWithQuantity: (FoodItemEntity) -> Unit,
 ) {
-    foodUIStateEvent?.let { event ->
-        when (event) {
-            is WorkoutViewModel.UIEvent.ShowLoader -> {
-                ShowLoadingScreen()
-            }
-
-            is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
-                FoodSearchResults(
-                    paddingValues = paddingValues,
-                    dishes = dishes,
-                    localPaddingValues = localPaddingValues,
-                    saveFoodItemWithQuantity = saveFoodItemWithQuantity
-                )
-            }
-
-            is WorkoutViewModel.UIEvent.ShowError -> {
-                NoResultsFoundOrErrorDuringSearch(
-                    globalPaddingValues = paddingValues,
-                    localPaddingValues = localPaddingValues,
-                    message = event.errorMessage
-                )
-            }
+    when (dishes) {
+        is Resource.Loading -> {
+            ShowLoadingScreen()
         }
+
+        is Resource.Success -> {
+            FoodSearchResults(
+                paddingValues = paddingValues,
+                dishes = dishes.data,
+                localPaddingValues = localPaddingValues,
+                saveFoodItemWithQuantity = saveFoodItemWithQuantity
+            )
+        }
+
+        is Resource.Error -> {
+            NoResultsFoundOrErrorDuringSearch(
+                globalPaddingValues = paddingValues,
+                localPaddingValues = localPaddingValues,
+                message = dishes.error?.message ?: "Something Went Wrong!"
+            )
+        }
+
+        else -> {}
     }
 }
 

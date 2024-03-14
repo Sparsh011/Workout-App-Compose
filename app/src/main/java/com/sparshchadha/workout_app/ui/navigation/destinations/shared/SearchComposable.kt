@@ -4,7 +4,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -34,14 +33,6 @@ fun NavGraphBuilder.searchComposable(
         }
     ) { backStackEntry ->
         val searchFor = backStackEntry.arguments?.getString("searchFor")
-        var foodUIStateEvent: WorkoutViewModel.UIEvent? = null
-
-        when (searchFor) {
-            "food" -> {
-                foodUIStateEvent =
-                    foodAndWaterViewModel.uiEventStateFlow.collectAsStateWithLifecycle().value
-            }
-        }
 
         SearchScreen(
             searchFoodViewModel = foodAndWaterViewModel,
@@ -51,7 +42,6 @@ fun NavGraphBuilder.searchComposable(
             },
             searchFor = searchFor,
             workoutViewModel = workoutViewModel,
-            foodUIStateEvent = foodUIStateEvent,
             navController = navController,
             foodAndWaterViewModel = foodAndWaterViewModel
         )

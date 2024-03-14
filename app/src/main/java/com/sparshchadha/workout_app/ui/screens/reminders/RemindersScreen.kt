@@ -76,6 +76,7 @@ import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.data.local.room_db.entities.ReminderEntity
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
@@ -363,7 +364,7 @@ fun BottomSheetToAddReminder(
         },
         sheetState = rememberModalBottomSheetState(),
         windowInsets = WindowInsets(0, 0, 0, 0),
-        containerColor = White
+        containerColor = bottomBarColor
     ) {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState())
@@ -412,7 +413,7 @@ fun BottomSheetToAddReminder(
                     )
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = primaryTextColor
+                    containerColor = primaryPurple
                 ),
                 modifier = Modifier
                     .padding(LARGE_PADDING)
@@ -452,18 +453,12 @@ fun ShowNewDatePicker(
 
     val dateDialogState = rememberMaterialDialogState()
     dateDialogState.show()
-    val context = LocalContext.current
 
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
             positiveButton(text = "Ok") {
                 hideDatePicker()
-                Toast.makeText(
-                    context,
-                    "Clicked ok with picked date $pickedDate",
-                    Toast.LENGTH_LONG
-                ).show()
             }
             negativeButton(text = "Cancel") {
                 hideDatePicker()
@@ -498,18 +493,12 @@ fun ShowNewTimePicker(
 
     val timeDialogState = rememberMaterialDialogState()
     timeDialogState.show()
-    val context = LocalContext.current
 
     MaterialDialog(
         dialogState = timeDialogState,
         buttons = {
             positiveButton(text = "Ok") {
                 hideTimePicker()
-                Toast.makeText(
-                    context,
-                    "Clicked ok with $pickedTime",
-                    Toast.LENGTH_LONG
-                ).show()
             }
             negativeButton(text = "Cancel") {
                 hideTimePicker()
@@ -599,7 +588,7 @@ fun SelectReminderType(
         if (selectedReminderType == ReminderTypes.EXERCISE.name) {
             Text(
                 text = ReminderTypes.EXERCISE.name.lowercase().capitalize(),
-                color = White,
+                color = primaryTextColor,
                 fontSize = 16.nonScaledSp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -609,7 +598,7 @@ fun SelectReminderType(
                     }
                     .padding(LARGE_PADDING)
                     .clip(RoundedCornerShape(MEDIUM_PADDING))
-                    .background(primaryTextColor)
+                    .background(primaryPurple)
                     .padding(MEDIUM_PADDING),
 
                 textAlign = TextAlign.Center
@@ -617,7 +606,7 @@ fun SelectReminderType(
 
             Text(
                 text = ReminderTypes.FOOD.name.lowercase().capitalize(),
-                color = Black,
+                color = White,
                 fontSize = 16.nonScaledSp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -625,14 +614,13 @@ fun SelectReminderType(
                     .clickable {
                         updateSelectedReminderType(ReminderTypes.FOOD.name)
                     }
-                    .background(White)
                     .padding(MEDIUM_PADDING),
                 textAlign = TextAlign.Center
             )
         } else {
             Text(
                 text = ReminderTypes.EXERCISE.name.lowercase().capitalize(),
-                color = Black,
+                color = White,
                 fontSize = 16.nonScaledSp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -640,7 +628,6 @@ fun SelectReminderType(
                     .clickable {
                         updateSelectedReminderType(ReminderTypes.EXERCISE.name)
                     }
-                    .background(White)
                     .padding(MEDIUM_PADDING),
                 textAlign = TextAlign.Center
             )
@@ -657,7 +644,7 @@ fun SelectReminderType(
                     }
                     .padding(LARGE_PADDING)
                     .clip(RoundedCornerShape(MEDIUM_PADDING))
-                    .background(primaryTextColor)
+                    .background(primaryPurple)
                     .padding(MEDIUM_PADDING),
                 textAlign = TextAlign.Center
             )
@@ -682,7 +669,7 @@ fun ReminderDetailsTextField(
 
         },
         label = {
-            Text(text = "Reminder Description", color = primaryDarkGray)
+            Text(text = "Reminder Description", color = primaryTextColor)
         },
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
@@ -693,89 +680,6 @@ fun ReminderDetailsTextField(
             disabledPlaceholderColor = primaryDarkGray,
         )
     )
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun PagerHeadings(
-    pagerState: PagerState,
-    updatePagerState: (Int) -> Unit,
-) {
-
-    Row(
-        horizontalArrangement = Arrangement.Center
-    ) {
-
-        SelectedPagerHeading(
-            text = "Food",
-            modifier = Modifier
-                .width(
-                    LocalConfiguration.current.screenWidthDp.dp / 2
-                )
-                .clickable(
-                    indication = null,
-                    onClick = {
-                        if (pagerState.currentPage != 0) updatePagerState(0)
-                    },
-                    interactionSource = remember { MutableInteractionSource() }
-                ),
-            isSelected = pagerState.currentPage == 0,
-            dividerWidth = LocalConfiguration.current.screenWidthDp.dp / 2
-        )
-
-        SelectedPagerHeading(
-            text = "Exercise",
-            modifier = Modifier
-                .width(
-                    LocalConfiguration.current.screenWidthDp.dp / 2
-                )
-                .clickable(
-                    indication = null,
-                    onClick = {
-                        if (pagerState.currentPage != 1) updatePagerState(1)
-                    },
-                    interactionSource = remember { MutableInteractionSource() }
-                ),
-            isSelected = pagerState.currentPage == 1,
-            dividerWidth = LocalConfiguration.current.screenWidthDp.dp / 2
-        )
-    }
-}
-
-@Composable
-fun SelectedPagerHeading(
-    text: String,
-    modifier: Modifier,
-    isSelected: Boolean,
-    dividerWidth: Dp,
-) {
-    Column {
-        if (isSelected) {
-            Text(
-                text = text,
-                modifier = modifier,
-                textAlign = TextAlign.Center,
-                color = primaryTextColor,
-                fontSize = 20.nonScaledSp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Divider(
-                modifier = Modifier
-                    .width(dividerWidth)
-                    .padding(horizontal = LARGE_PADDING, vertical = MEDIUM_PADDING)
-            )
-        } else {
-            Text(
-                text = text,
-                modifier = modifier,
-                textAlign = TextAlign.Center,
-                color = unselectedBottomBarIconColor,
-                fontSize = 20.nonScaledSp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
