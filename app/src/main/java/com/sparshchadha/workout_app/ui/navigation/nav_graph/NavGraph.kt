@@ -6,6 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
+import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
+import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.foodItemDetailsComposable
@@ -25,10 +30,6 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComp
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaActivityComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaPosesPerformedTodayComposable
-import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
-import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
-import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -39,6 +40,7 @@ fun NavGraph(
     workoutViewModel: WorkoutViewModel,
     remindersViewModel: RemindersViewModel,
     profileViewModel: ProfileViewModel,
+    newsViewModel: NewsViewModel
 ) {
     NavHost(
         navController = navController,
@@ -48,7 +50,8 @@ fun NavGraph(
         bottomWorkoutComposable(
             workoutViewModel = workoutViewModel,
             navController = navController,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            newsViewModel = newsViewModel
         )
 
         // Calorie Tracker in Bottom Bar
@@ -162,14 +165,14 @@ fun NavGraph(
         // news articles screen
         newsArticlesComposable(
             navController = navController,
-            workoutViewModel = workoutViewModel,
+            newsViewModel = newsViewModel,
             globalPaddingValues = globalPaddingValues
         )
 
         // news article WebView
         articleWebViewScreen(
             navController = navController,
-            workoutViewModel = workoutViewModel,
+            newsViewModel = newsViewModel,
             globalPaddingValues = globalPaddingValues
         )
     }

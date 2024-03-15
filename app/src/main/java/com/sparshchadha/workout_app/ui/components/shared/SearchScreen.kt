@@ -38,24 +38,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
-import com.sparshchadha.workout_app.data.remote.dto.food_api.FoodItem
-import com.sparshchadha.workout_app.data.remote.dto.food_api.NutritionalValueDto
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDto
-import com.sparshchadha.workout_app.data.remote.dto.gym_workout.GymExercisesDtoItem
+import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
+import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.FoodItem
+import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.NutritionalValueDto
+import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDto
+import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDtoItem
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
-import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodCard
-import com.sparshchadha.workout_app.ui.screens.workout.gym.Exercise
+import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.FoodCard
+import com.sparshchadha.workout_app.features.gym.presentation.gym.Exercise
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Resource
-import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 private const val TAG = "SearchScreenTagg"
 

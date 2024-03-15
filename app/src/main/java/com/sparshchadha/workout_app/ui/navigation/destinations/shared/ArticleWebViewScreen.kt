@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.sparshchadha.workout_app.features.news.presentation.screens.ArticleWebViewScreen
+import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.screens.shared.ArticleWebViewScreen
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 fun NavGraphBuilder.articleWebViewScreen(
     navController: NavController,
-    workoutViewModel: WorkoutViewModel,
+    newsViewModel: NewsViewModel,
     globalPaddingValues: PaddingValues
 ) {
     composable(
@@ -32,7 +32,7 @@ fun NavGraphBuilder.articleWebViewScreen(
     ) {
         ArticleWebViewScreen(
             navController = navController,
-            workoutViewModel = workoutViewModel,
+            newsViewModel = newsViewModel,
             globalPaddingValues = globalPaddingValues
         )
     }

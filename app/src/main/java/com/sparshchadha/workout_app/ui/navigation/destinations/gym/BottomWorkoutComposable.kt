@@ -6,17 +6,19 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.sparshchadha.workout_app.features.gym.presentation.gym.util.GymWorkoutCategories
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.GymAndYogaWorkoutHomeScreen
-import com.sparshchadha.workout_app.ui.screens.workout.gym.util.GymWorkoutCategories
 import com.sparshchadha.workout_app.util.Extensions.capitalize
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 fun NavGraphBuilder.bottomWorkoutComposable(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
     globalPaddingValues: PaddingValues,
+    newsViewModel: NewsViewModel
 ) {
     composable(
         route = ScreenRoutes.WorkoutScreen.route,
@@ -41,7 +43,8 @@ fun NavGraphBuilder.bottomWorkoutComposable(
                 GymWorkoutCategories.PROGRAM.name.lowercase().capitalize(),
                 GymWorkoutCategories.SEARCH.name.lowercase().capitalize()
             ),
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            newsViewModel = newsViewModel
         )
     }
 }

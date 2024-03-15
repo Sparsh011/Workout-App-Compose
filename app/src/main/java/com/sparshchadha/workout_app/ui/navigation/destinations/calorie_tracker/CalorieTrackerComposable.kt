@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.CalorieTrackerScreen
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
-import com.sparshchadha.workout_app.ui.screens.calorie_tracker.CalorieTrackerScreen
-import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
-import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.calorieTrackerComposable(

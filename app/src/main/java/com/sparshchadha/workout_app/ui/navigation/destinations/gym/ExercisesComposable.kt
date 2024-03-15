@@ -10,8 +10,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.screens.workout.gym.ExercisesScreen
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
+import com.sparshchadha.workout_app.features.gym.presentation.gym.ExercisesScreen
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 fun NavGraphBuilder.gymExercisesComposable(
     navController: NavController,

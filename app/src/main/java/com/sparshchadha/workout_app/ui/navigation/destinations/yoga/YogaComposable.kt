@@ -4,14 +4,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.screens.workout.yoga.YogaPosesScreen
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
+import com.sparshchadha.workout_app.features.yoga.presentation.yoga.YogaPosesScreen
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 fun NavGraphBuilder.yogaComposable(
     workoutViewModel: WorkoutViewModel,

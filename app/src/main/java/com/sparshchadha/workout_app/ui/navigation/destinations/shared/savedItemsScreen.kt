@@ -8,8 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.shared.SavedItemsScreen
-import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 fun NavGraphBuilder.savedItemsScreenComposable(
     navController: NavHostController,

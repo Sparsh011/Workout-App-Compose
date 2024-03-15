@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.sparshchadha.workout_app.features.gym.presentation.gym.PersonalRecordsScreen
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.screens.workout.gym.PersonalRecordsScreen
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.personalRecordsScreen(

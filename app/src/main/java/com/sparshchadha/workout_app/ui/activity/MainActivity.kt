@@ -30,16 +30,17 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
+import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
+import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
 import com.sparshchadha.workout_app.ui.activity.components.LandingPage
 import com.sparshchadha.workout_app.ui.activity.components.PermissionRequestDialog
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.navigation.nav_graph.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
-import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
-import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
-import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -51,6 +52,7 @@ class MainActivity : ComponentActivity() {
     private val workoutViewModel: WorkoutViewModel by viewModels()
     private val remindersViewModel: RemindersViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
+    private val newsViewModel: NewsViewModel by viewModels()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -160,7 +162,8 @@ class MainActivity : ComponentActivity() {
                             foodItemsViewModel = foodItemsViewModel,
                             workoutViewModel = workoutViewModel,
                             remindersViewModel = remindersViewModel,
-                            profileViewModel = profileViewModel
+                            profileViewModel = profileViewModel,
+                            newsViewModel = newsViewModel
                         )
                     }
                 } else {

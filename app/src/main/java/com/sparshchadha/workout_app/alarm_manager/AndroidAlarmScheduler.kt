@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.sparshchadha.workout_app.domain.repository.RemindersRepository
+import com.sparshchadha.workout_app.features.reminders.domain.repository.RemindersRepository
 import com.sparshchadha.workout_app.util.Constants.REMINDER_DESCRIPTION_KEY
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

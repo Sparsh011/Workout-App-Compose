@@ -24,14 +24,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.data.local.room_db.entities.FoodItemEntity
-import com.sparshchadha.workout_app.data.local.room_db.entities.GymExercisesEntity
-import com.sparshchadha.workout_app.data.local.room_db.entities.YogaEntity
+import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.features.gym.domain.entities.GymExercisesEntity
+import com.sparshchadha.workout_app.features.gym.presentation.gym.ExerciseSubTitlesAndDescription
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.NoSavedItem
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
-import com.sparshchadha.workout_app.ui.screens.workout.gym.ExerciseSubTitlesAndDescription
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
@@ -39,8 +41,6 @@ import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
-import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 private const val TAG = "SavedItemsScreenTagggg"
 

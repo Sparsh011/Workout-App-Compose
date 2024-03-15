@@ -7,8 +7,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
-import com.sparshchadha.workout_app.ui.screens.reminders.RemindersScreen
-import com.sparshchadha.workout_app.viewmodel.RemindersViewModel
+import com.sparshchadha.workout_app.features.reminders.presentation.reminders.RemindersScreen
+import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
 
 fun NavGraphBuilder.remindersComposable(
     navController: NavHostController,

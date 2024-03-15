@@ -10,8 +10,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.screens.calorie_tracker.FoodItemDetails
-import com.sparshchadha.workout_app.viewmodel.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.FoodItemDetails
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 
 fun NavGraphBuilder.foodItemDetailsComposable(
     navController: NavHostController,

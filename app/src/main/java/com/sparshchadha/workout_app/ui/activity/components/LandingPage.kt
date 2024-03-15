@@ -21,13 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
-import com.sparshchadha.workout_app.viewmodel.ProfileViewModel
 
 @Composable
 fun LandingPage(

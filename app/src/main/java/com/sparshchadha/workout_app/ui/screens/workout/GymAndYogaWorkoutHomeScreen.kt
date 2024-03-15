@@ -29,11 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.features.gym.presentation.gym.CategoryItem
+import com.sparshchadha.workout_app.features.gym.presentation.gym.util.CategoryType
+import com.sparshchadha.workout_app.features.gym.presentation.gym.util.GymWorkoutCategories
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
-import com.sparshchadha.workout_app.ui.screens.workout.gym.CategoryItem
-import com.sparshchadha.workout_app.ui.screens.workout.gym.util.CategoryType
-import com.sparshchadha.workout_app.ui.screens.workout.gym.util.GymWorkoutCategories
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
@@ -45,7 +47,6 @@ import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -55,6 +56,7 @@ fun GymAndYogaWorkoutHomeScreen(
     navController: NavController,
     gymWorkoutCategories: List<String>,
     globalPaddingValues: PaddingValues,
+    newsViewModel: NewsViewModel
 ) {
     Column(
         modifier = Modifier
@@ -187,7 +189,7 @@ fun GymAndYogaWorkoutHomeScreen(
             NewsComposable(
                 text = "Stay updated with the latest trends & news in the world of fitness.",
                 onClick = {
-                    workoutViewModel.updateNewsSearchQuery("Gym news and exercises")
+                    newsViewModel.updateNewsSearchQuery("Gym news and exercises")
                     navController.navigate(UtilityScreenRoutes.NewsArticlesScreen.route)
                 },
                 icon = R.drawable.dumbbell_svg
@@ -196,7 +198,7 @@ fun GymAndYogaWorkoutHomeScreen(
             NewsComposable(
                 text = "Stay connected with the latest trends and news in the world of yoga and wellness.",
                 onClick = {
-                    workoutViewModel.updateNewsSearchQuery("Yoga poses")
+                    newsViewModel.updateNewsSearchQuery("Yoga poses")
                     navController.navigate(UtilityScreenRoutes.NewsArticlesScreen.route)
                 },
                 icon = R.drawable.yoga_svg,
