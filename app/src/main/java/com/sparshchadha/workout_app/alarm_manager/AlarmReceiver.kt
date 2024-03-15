@@ -10,30 +10,40 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.sparshchadha.workout_app.MainActivity
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.activity.MainActivity
 import com.sparshchadha.workout_app.util.Constants.REMINDER_DESCRIPTION_KEY
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+private const val TAG = "CurrentTagggggg"
 @AndroidEntryPoint
-class AlarmReceiver : BroadcastReceiver() {
+class AlarmReceiver: BroadcastReceiver() {
     private val CHANNEL_ID = "primary_id"
     private val NOTIFICATION_ID = 999
+    @Inject lateinit var alarmScheduler: AlarmScheduler
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        val message = intent?.getStringExtra(REMINDER_DESCRIPTION_KEY) ?: return
+        val message = intent?.getStringExtra(REMINDER_DESCRIPTION_KEY)
 
-        context?.let {
-            createNotificationChannel(it)
-            createNotification(
-                context = it,
-                notificationMessage = message.substringAfter(';'),
-                notificationTitle = "${message.substringBefore(';')} REMINDER!"
-            )
+        if (message != null) {
+            // received intent from AlarmManager
+            context?.let {
+                createNotificationChannel(it)
+                createNotification(
+                    context = it,
+                    notificationMessage = message.substringAfter(';'),
+                    notificationTitle = "${message.substringBefore(';')} REMINDER!"
+                )
+            }
+        } else if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
+            alarmScheduler.scheduleAlarmsPostReboot()
         }
     }
 
@@ -45,11 +55,12 @@ class AlarmReceiver : BroadcastReceiver() {
         val myIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(context, 0, myIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val builder =
             NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.drawable.reminders_svg)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationMessage)
                 .setContentIntent(pendingIntent)

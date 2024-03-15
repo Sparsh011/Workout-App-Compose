@@ -3,23 +3,29 @@ package com.sparshchadha.workout_app.ui.navigation.destinations.gym
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBarScreen
+import com.sparshchadha.workout_app.features.gym.presentation.gym.util.GymWorkoutCategories
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.ui.screens.workout.GymAndYogaWorkoutHomeScreen
-import com.sparshchadha.workout_app.ui.screens.workout.gym.util.GymWorkoutCategories
 import com.sparshchadha.workout_app.util.Extensions.capitalize
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
 
 fun NavGraphBuilder.bottomWorkoutComposable(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
     globalPaddingValues: PaddingValues,
+    newsViewModel: NewsViewModel,
+    yogaViewModel: YogaViewModel,
+    toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
-        route = BottomBarScreen.WorkoutScreen.route,
+        route = ScreenRoutes.WorkoutScreen.route,
         enterTransition = {
             EnterTransition.None
         },
@@ -27,6 +33,9 @@ fun NavGraphBuilder.bottomWorkoutComposable(
             ExitTransition.None
         }
     ) {
+        LaunchedEffect(key1 = Unit) {
+            toggleBottomBarVisibility(true)
+        }
         GymAndYogaWorkoutHomeScreen(
             difficultyLevels = listOf(
                 DifficultyLevel.BEGINNER,
@@ -41,7 +50,9 @@ fun NavGraphBuilder.bottomWorkoutComposable(
                 GymWorkoutCategories.PROGRAM.name.lowercase().capitalize(),
                 GymWorkoutCategories.SEARCH.name.lowercase().capitalize()
             ),
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            newsViewModel = newsViewModel,
+            yogaViewModel = yogaViewModel
         )
     }
 }

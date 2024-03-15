@@ -1,5 +1,7 @@
 package com.sparshchadha.workout_app.util
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -8,9 +10,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
+import androidx.core.app.ActivityCompat
+import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
+import com.sparshchadha.workout_app.features.yoga.data.remote.dto.Pose
+import com.sparshchadha.workout_app.features.gym.presentation.gym.util.MuscleType
+import com.sparshchadha.workout_app.features.gym.presentation.gym.util.WorkoutType
 import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
-import com.sparshchadha.workout_app.ui.screens.workout.gym.util.MuscleType
-import com.sparshchadha.workout_app.ui.screens.workout.gym.util.WorkoutType
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -18,6 +23,7 @@ import java.time.Year
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+
 
 object HelperFunctions {
     fun getDifficultyLevels(): List<String> {
@@ -37,7 +43,8 @@ object HelperFunctions {
             MuscleType.CALVES.name.lowercase().capitalize(),
             MuscleType.CHEST.name.lowercase().capitalize(),
             MuscleType.FOREARMS.name.lowercase().capitalize(),
-            MuscleType.GLUTES.name.lowercase().capitalize(), MuscleType.HAMSTRINGS.name.lowercase().capitalize(),
+            MuscleType.GLUTES.name.lowercase().capitalize(),
+            MuscleType.HAMSTRINGS.name.lowercase().capitalize(),
             MuscleType.LATS.name.lowercase().capitalize(),
             MuscleType.LOWER_BACK.name.lowercase().capitalize().replace('_', ' '),
             MuscleType.MIDDLE_BACK.name.lowercase().capitalize().replace('_', ' '),
@@ -295,5 +302,73 @@ object HelperFunctions {
             interactionSource = remember { MutableInteractionSource() }) {
             onClick()
         }
+    }
+
+    fun settingsForGym(): List<String> {
+        return listOf(
+            "Track Workouts",
+            "Activity",
+            "Personal Records",
+            "Goals",
+            "Saved Exercises"
+        )
+    }
+
+    fun settingsForYoga(): List<String> {
+        return listOf(
+            "Track Workouts",
+            "Activity",
+            "Goals",
+            "Saved Poses",
+        )
+    }
+
+    fun settingsForCalorieTracker(): List<String> {
+        return listOf(
+            "Track Food",
+            "Activity",
+            "Goals",
+            "Saved Food Items",
+        )
+    }
+
+    fun getPersonalInfoCategories(): List<String> {
+        return listOf(
+            "Height",
+            "Weight",
+            "Gender",
+            "BMI",
+            "Age",
+            "Weight Goal",
+            "Calories Goal"
+        )
+    }
+
+    fun getYogaPoseWithNegatives(pose: Pose): YogaEntity {
+        return YogaEntity(
+            date = "",
+            month = "",
+            setsPerformed = -1,
+            yogaPoseDetails = pose,
+            hour = -1,
+            minutes = -1,
+            seconds = -1,
+        )
+    }
+
+    fun hasPermissions(context: Context?, vararg permissions: String?): Boolean {
+        if (context != null) {
+            for (permission in permissions) {
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        permission!!
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    return false
+                }
+            }
+        }
+
+        return true
     }
 }

@@ -29,6 +29,7 @@ android {
         buildConfigField("String", "FOOD_API_KEY", "\"${properties["FOOD_API_KEY"]}\"")
         buildConfigField("String", "PEXELS_API_KEY", "\"${properties["PEXELS_API_KEY"]}\"")
         buildConfigField("String", "GYM_WORKOUTS_API_KEY", "\"${properties["GYM_WORKOUTS_API_KEY"]}\"")
+        buildConfigField("String", "NEWS_API_KEY", "\"${properties["NEWS_API_KEY"]}\"")
     }
 
     buildTypes {
@@ -136,5 +137,16 @@ dependencies {
 
     // region date and time picker
     implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
+    // endregion
+
+    // region CameraX
+    val cameraxVersion = "1.3.1"
+    implementation("androidx.camera:camera-core:${cameraxVersion}")
+    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
+    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
+    implementation("androidx.camera:camera-video:${cameraxVersion}")
+
+    implementation("androidx.camera:camera-view:${cameraxVersion}")
+    implementation("androidx.camera:camera-extensions:${cameraxVersion}")
     // endregion
 }

@@ -1,23 +1,25 @@
 package com.sparshchadha.workout_app.ui.navigation.destinations.gym
 
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreen
-import com.sparshchadha.workout_app.ui.screens.workout.gym.ExerciseDetailsScreen
-import com.sparshchadha.workout_app.viewmodel.WorkoutViewModel
+import com.sparshchadha.workout_app.features.gym.presentation.gym.ExerciseDetailsScreen
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 
 fun NavGraphBuilder.exerciseDetailsComposable(
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
     globalPaddingValues: PaddingValues,
+    toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
-        route = UtilityScreen.ExerciseDetailScreen.route,
+        route = UtilityScreenRoutes.ExerciseDetailScreen.route,
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
@@ -27,16 +29,12 @@ fun NavGraphBuilder.exerciseDetailsComposable(
             )
         },
         exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth ->
-                    fullWidth
-                },
-                animationSpec = tween(
-                    durationMillis = 300
-                )
-            )
+            ExitTransition.None
         }
     ) {
+        LaunchedEffect(key1 = Unit) {
+            toggleBottomBarVisibility(false)
+        }
         ExerciseDetailsScreen(
             navController = navController,
             workoutViewModel = workoutViewModel,

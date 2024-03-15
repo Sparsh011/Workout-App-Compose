@@ -9,5 +9,5 @@
     <dimen name="heading_size">@dimen/_30sdp</dimen>
     <dimen name="yoga_and_dumbbell_svg_size">@dimen/_20sdp</dimen>
     <dimen name="macronutrient_text_height">@dimen/_20sdp</dimen>
-    <dimen name="profile_picture_size">@dimen/_50sdp</dimen>
+    <dimen name="profile_picture_size">@dimen/_56sdp</dimen>
 </resources>

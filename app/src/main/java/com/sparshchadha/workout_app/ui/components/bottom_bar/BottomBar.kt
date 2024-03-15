@@ -1,5 +1,8 @@
 package com.sparshchadha.workout_app.ui.components.bottom_bar
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
@@ -16,33 +19,41 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
-import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldContentColor
 
 @Composable
-fun BottomBar(navHostController: NavHostController) {
-    val screens = listOf(
-        BottomBarScreen.CalorieTracker,
-        BottomBarScreen.WorkoutScreen,
-        BottomBarScreen.ProfileScreen
-    )
-
+fun BottomBar(
+    navHostController: NavHostController,
+    bottomBarState: Boolean
+) {
+    val screens = BottomBarScreens.getBottomBarScreens()
     val navBackStackEntry by navHostController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    BottomAppBar(
-        containerColor = scaffoldBackgroundColor,
-        contentColor = scaffoldContentColor
-    ) {
-        screens.forEach { screen ->
-            AddItem(screen = screen, currentDestination = currentDestination, navHostController = navHostController)
+    AnimatedVisibility(
+        visible = bottomBarState,
+        enter = slideInVertically(initialOffsetY = { it }),
+        exit = slideOutVertically(targetOffsetY = { it }),
+        content = {
+            BottomAppBar(
+                containerColor = ColorsUtil.bottomBarColor,
+                contentColor = ColorsUtil.scaffoldContentColor
+            ) {
+                screens.forEach { screen ->
+                    AddItem(
+                        screen = screen,
+                        currentDestination = currentDestination,
+                        navHostController = navHostController
+                    )
+                }
+            }
         }
-    }
+    )
+
 }
 
 @Composable
 fun RowScope.AddItem(
-    screen: BottomBarScreen,
+    screen: ScreenRoutes,
     currentDestination: NavDestination?,
     navHostController: NavHostController,
 ) {
@@ -53,9 +64,11 @@ fun RowScope.AddItem(
     NavigationBarItem(
         selected = selected,
         onClick = {
-            navHostController.navigate(screen.route) {
-                popUpTo(navHostController.graph.findStartDestination().id)
-                launchSingleTop = true
+            if (!selected) {
+                navHostController.navigate(screen.route) {
+                    popUpTo(navHostController.graph.findStartDestination().id)
+                    launchSingleTop = true
+                }
             }
         },
         icon = {
@@ -69,7 +82,8 @@ fun RowScope.AddItem(
             } else {
                 Icon(
                     imageVector = screen.unselectedIcon,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = ColorsUtil.unselectedBottomBarIconColor
                 )
             }
         },
@@ -77,7 +91,7 @@ fun RowScope.AddItem(
             if (selected) {
                 Text(
                     text = screen.title,
-                    color = Color.White
+                    color = primaryTextColor
                 )
             } else {
                 Text(
@@ -90,4 +104,15 @@ fun RowScope.AddItem(
             selectedIconColor = Color.White
         )
     )
+}
+
+object BottomBarScreens {
+    fun getBottomBarScreens(): List<ScreenRoutes> {
+        return listOf(
+            ScreenRoutes.CalorieTracker,
+            ScreenRoutes.WorkoutScreen,
+            ScreenRoutes.RemindersScreen,
+            ScreenRoutes.ProfileScreen,
+        )
+    }
 }

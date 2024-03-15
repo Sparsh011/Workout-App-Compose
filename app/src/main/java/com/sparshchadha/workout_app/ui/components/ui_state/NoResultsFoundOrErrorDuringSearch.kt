@@ -1,22 +1,24 @@
 package com.sparshchadha.workout_app.ui.components.ui_state
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
@@ -29,21 +31,24 @@ fun NoResultsFoundOrErrorDuringSearch(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = globalPaddingValues.calculateBottomPadding(), top = localPaddingValues.calculateTopPadding())
+            .padding(
+                bottom = globalPaddingValues.calculateBottomPadding(),
+                top = localPaddingValues.calculateTopPadding()
+            ),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.no_results_found_animation))
-        val progress by animateLottieCompositionAsState(composition)
-
-        LottieAnimation(
-            composition = composition,
-            progress = { progress },
-            modifier = Modifier.padding(Dimensions.LARGE_PADDING)
+        Icon(
+            painter = painterResource(id = R.drawable.no_result_found),
+            contentDescription = null,
+            tint = ColorsUtil.noAchievementColor,
+            modifier = Modifier.size(Dimensions.PIE_CHART_SIZE + Dimensions.LARGE_PADDING)
         )
 
         if (message.isNotEmpty()) {
             Text(
                 text = message,
-                color = Color.Black,
+                color = primaryTextColor,
                 modifier = Modifier
                     .padding(Dimensions.LARGE_PADDING)
                     .fillMaxWidth(),
@@ -54,13 +59,14 @@ fun NoResultsFoundOrErrorDuringSearch(
         } else {
             Text(
                 text = "No Results Found!",
-                color = Color.Black,
+                color = primaryTextColor,
                 modifier = Modifier
                     .padding(Dimensions.LARGE_PADDING)
                     .fillMaxWidth(),
-                fontSize = 30.nonScaledSp,
+                fontSize = 24.nonScaledSp,
                 textAlign = TextAlign.Center,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold
             )
         }
     }
