@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,11 +27,11 @@ import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 
 @Composable
-fun ShowLoadingScreen() {
+fun ShowLoadingScreen(backgroundColor: Color = scaffoldBackgroundColor) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(scaffoldBackgroundColor),
+            .background(backgroundColor),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

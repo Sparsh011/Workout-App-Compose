@@ -74,21 +74,19 @@ fun NewsArticles(
             .fillMaxSize(),
         containerColor = scaffoldBackgroundColor
     ) { localPaddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(top = localPaddingValues.calculateTopPadding())
-                .padding(vertical = MEDIUM_PADDING, horizontal = SMALL_PADDING)
-                .clip(RoundedCornerShape(MEDIUM_PADDING))
-                .background(bottomBarColor)
-        ) {
-            when (articlesResponse) {
-                is Resource.Loading -> {
-                    item {
-                        ShowLoadingScreen()
-                    }
-                }
+        when (articlesResponse) {
+            is Resource.Loading -> {
+                ShowLoadingScreen()
+            }
 
-                is Resource.Success -> {
+            is Resource.Success -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(top = localPaddingValues.calculateTopPadding())
+                        .padding(vertical = MEDIUM_PADDING, horizontal = SMALL_PADDING)
+                        .clip(RoundedCornerShape(MEDIUM_PADDING))
+                        .background(bottomBarColor)
+                ) {
                     val articles = articlesResponse.data?.articles ?: emptyList()
                     if (articles.isNotEmpty()) {
                         items(articles) {
@@ -111,19 +109,17 @@ fun NewsArticles(
                         }
                     }
                 }
-
-                is Resource.Error -> {
-                    item {
-                        NoResultsFoundOrErrorDuringSearch(
-                            globalPaddingValues = globalPaddingValues,
-                            localPaddingValues = localPaddingValues,
-                            message = articlesResponse.error?.message ?: "Unable To Get Articles"
-                        )
-                    }
-                }
-
-                else -> {}
             }
+
+            is Resource.Error -> {
+                NoResultsFoundOrErrorDuringSearch(
+                    globalPaddingValues = globalPaddingValues,
+                    localPaddingValues = localPaddingValues,
+                    message = articlesResponse.error?.message ?: "Unable To Get Articles"
+                )
+            }
+
+            else -> {}
         }
     }
 }
