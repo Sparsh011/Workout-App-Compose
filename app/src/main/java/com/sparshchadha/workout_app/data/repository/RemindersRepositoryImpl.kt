@@ -24,4 +24,8 @@ class RemindersRepositoryImpl(
     override suspend fun deleteReminder(reminderEntity: ReminderEntity) {
         remindersDao.deleteReminder(reminderEntity = reminderEntity)
     }
+
+    override suspend fun getAllReminders(): List<ReminderEntity> {
+        return remindersDao.getAllReminders()
+    }
 }

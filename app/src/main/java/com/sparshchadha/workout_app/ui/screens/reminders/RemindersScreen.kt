@@ -672,12 +672,12 @@ fun ReminderDetailsTextField(
             Text(text = "Reminder Description", color = primaryTextColor)
         },
         colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Black,
-            unfocusedTextColor = primaryDarkGray,
-            disabledLabelColor = primaryDarkGray,
-            focusedPlaceholderColor = primaryDarkGray,
-            unfocusedPlaceholderColor = primaryDarkGray,
-            disabledPlaceholderColor = primaryDarkGray,
+            focusedTextColor = primaryTextColor,
+            unfocusedTextColor = primaryTextColor,
+            disabledLabelColor = primaryTextColor,
+            focusedPlaceholderColor = primaryTextColor,
+            unfocusedPlaceholderColor = primaryTextColor,
+            disabledPlaceholderColor = primaryTextColor,
         )
     )
 }

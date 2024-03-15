@@ -22,4 +22,7 @@ interface RemindersDao {
 
     @Delete
     fun deleteReminder(reminderEntity: ReminderEntity)
+
+    @Query("SELECT * FROM ReminderEntity")
+    fun getAllReminders(): List<ReminderEntity>
 }

@@ -6,6 +6,7 @@ import androidx.annotation.RequiresExtension
 import androidx.room.Room
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson
+import com.sparshchadha.workout_app.alarm_manager.AlarmScheduler
 import com.sparshchadha.workout_app.alarm_manager.AndroidAlarmScheduler
 import com.sparshchadha.workout_app.data.local.datastore.WorkoutAppDatastorePreference
 import com.sparshchadha.workout_app.data.local.room_db.Converters
@@ -282,7 +283,8 @@ object SharedModule {
     @Provides
     fun provideAlarmManager(
         @ApplicationContext context: Context,
-    ): AndroidAlarmScheduler {
-        return AndroidAlarmScheduler(context)
+        remindersRepository: RemindersRepository
+    ): AlarmScheduler {
+        return AndroidAlarmScheduler(context, remindersRepository)
     }
 }

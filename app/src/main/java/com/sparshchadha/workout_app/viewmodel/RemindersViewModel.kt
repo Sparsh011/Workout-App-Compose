@@ -5,7 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sparshchadha.workout_app.alarm_manager.AlarmItem
-import com.sparshchadha.workout_app.alarm_manager.AndroidAlarmScheduler
+import com.sparshchadha.workout_app.alarm_manager.AlarmScheduler
 import com.sparshchadha.workout_app.data.local.room_db.entities.ReminderEntity
 import com.sparshchadha.workout_app.domain.repository.RemindersRepository
 import com.sparshchadha.workout_app.ui.screens.reminders.ReminderTypes
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RemindersViewModel @Inject constructor(
     private val remindersRepository: RemindersRepository,
-    private val alarmScheduler: AndroidAlarmScheduler,
+    private val alarmScheduler: AlarmScheduler,
 ) : ViewModel() {
 
     private val _foodReminders = MutableStateFlow<List<ReminderEntity>?>(null)
@@ -154,6 +154,12 @@ class RemindersViewModel @Inject constructor(
                         && reminderEntity.date.isNotBlank() && reminderEntity.reminderDescription.isNotBlank()
                         && reminderEntity.year.isNotBlank()
                 )
+    }
+
+    fun getAll(){
+        viewModelScope.launch {
+            remindersRepository
+        }
     }
 
     sealed class RemindersUIEvent {
