@@ -244,6 +244,7 @@ fun RemindersScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoodAndExerciseReminderPager(

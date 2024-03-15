@@ -4,19 +4,21 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.components.shared.SearchScreen
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
+import com.sparshchadha.workout_app.ui.components.shared.SearchScreen
 
 fun NavGraphBuilder.searchComposable(
     foodAndWaterViewModel: FoodAndWaterViewModel,
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
     globalPaddingValues: PaddingValues,
+    toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
         route = UtilityScreenRoutes.SearchScreen.route,
@@ -33,7 +35,9 @@ fun NavGraphBuilder.searchComposable(
         }
     ) { backStackEntry ->
         val searchFor = backStackEntry.arguments?.getString("searchFor")
-
+        LaunchedEffect(key1 = Unit) {
+            toggleBottomBarVisibility(false)
+        }
         SearchScreen(
             searchFoodViewModel = foodAndWaterViewModel,
             paddingValues = globalPaddingValues,

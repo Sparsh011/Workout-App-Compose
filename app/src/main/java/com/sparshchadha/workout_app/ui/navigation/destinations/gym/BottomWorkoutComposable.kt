@@ -3,6 +3,7 @@ package com.sparshchadha.workout_app.ui.navigation.destinations.gym
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -20,7 +21,8 @@ fun NavGraphBuilder.bottomWorkoutComposable(
     navController: NavController,
     globalPaddingValues: PaddingValues,
     newsViewModel: NewsViewModel,
-    yogaViewModel: YogaViewModel
+    yogaViewModel: YogaViewModel,
+    toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
         route = ScreenRoutes.WorkoutScreen.route,
@@ -31,6 +33,9 @@ fun NavGraphBuilder.bottomWorkoutComposable(
             ExitTransition.None
         }
     ) {
+        LaunchedEffect(key1 = Unit) {
+            toggleBottomBarVisibility(true)
+        }
         GymAndYogaWorkoutHomeScreen(
             difficultyLevels = listOf(
                 DifficultyLevel.BEGINNER,

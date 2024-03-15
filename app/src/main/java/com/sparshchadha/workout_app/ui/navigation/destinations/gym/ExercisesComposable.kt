@@ -4,19 +4,21 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.features.gym.presentation.gym.ExercisesScreen
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 
 fun NavGraphBuilder.gymExercisesComposable(
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
     globalPaddingValues: PaddingValues,
+    toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
         arguments = listOf(navArgument("category") { type = NavType.StringType }),
@@ -33,7 +35,9 @@ fun NavGraphBuilder.gymExercisesComposable(
             ExitTransition.None
         }
     ) { backStackEntry ->
-
+        LaunchedEffect(key1 = Unit) {
+            toggleBottomBarVisibility(false)
+        }
         ExercisesScreen(
             navController = navController,
             category = backStackEntry.arguments?.getString("category"),

@@ -28,7 +28,9 @@ class NewsViewModel @Inject constructor(
 
     fun getNewsArticles(forQuery: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            newsRepository.getNewsArticlesFor(searchQuery = forQuery)
+            newsRepository.getNewsArticlesFor(searchQuery = forQuery).collect {
+                _newsArticles.value = it
+            }
         }
     }
 

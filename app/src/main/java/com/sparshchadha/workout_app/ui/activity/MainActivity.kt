@@ -1,11 +1,9 @@
 package com.sparshchadha.workout_app.ui.activity
 
 import android.Manifest
-import android.app.Activity
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -25,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -122,12 +121,22 @@ class MainActivity : ComponentActivity() {
                 if (requestPermissions != null) {
                     if (requestPermissions?.size == 1) {
                         LaunchedEffect(key1 = Unit) {
-                            requestPermissionHandler(permission = requestPermissions!![0])
+                            val permission = requestPermissions!![0].first
+                            val minSdk = requestPermissions!![0].second
+                            if (minSdk != -1) {
+                                requestPermissionHandler(permission = permission, minSdk = minSdk)
+                            } else {
+                                requestPermissionHandler(permission = permission)
+                            }
                         }
 
                     } else {
                         LaunchedEffect(key1 = Unit) {
-                            requestMultiplePermissions(permissions = requestPermissions!!.toTypedArray())
+                            val permissions = mutableListOf<String>()
+                            requestPermissions?.forEach {
+                                permissions.add(it.first)
+                            }
+                            requestMultiplePermissions(permissions = permissions.toTypedArray())
                         }
                     }
                 }
@@ -146,15 +155,22 @@ class MainActivity : ComponentActivity() {
 
                     if (sharedPreferences.getBoolean("app_first_launch", true)) {
                         LaunchedEffect(key1 = Unit) {
-                            requestPermission(Manifest.permission.POST_NOTIFICATIONS)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                requestPermission(Manifest.permission.POST_NOTIFICATIONS)
+                            }
                         }
                     } else {
                         setupFirstAppLaunch()
                     }
 
+                    val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+
                     Scaffold(
                         bottomBar = {
-                            BottomBar(navHostController = navHostController)
+                            BottomBar(
+                                navHostController = navHostController,
+                                bottomBarState = bottomBarState.value
+                            )
                         },
                         containerColor = scaffoldBackgroundColor
                     ) {
@@ -166,7 +182,10 @@ class MainActivity : ComponentActivity() {
                             remindersViewModel = remindersViewModel,
                             profileViewModel = profileViewModel,
                             newsViewModel = newsViewModel,
-                            yogaViewModel = yogaViewModel
+                            yogaViewModel = yogaViewModel,
+                            toggleBottomBarVisibility = {
+                                bottomBarState.value = it
+                            }
                         )
                     }
                 } else {
@@ -202,11 +221,11 @@ class MainActivity : ComponentActivity() {
 
     private fun requestPermissionHandler(
         permission: String,
-        forAndroidVersion: Int = -1,
+        minSdk: Int = -1,
         fallbackPermission: String = ""
     ) {
-        if (forAndroidVersion != -1 && fallbackPermission.isNotBlank()) {
-            if (Build.VERSION.SDK_INT > forAndroidVersion) {
+        if (minSdk != -1 && fallbackPermission.isNotBlank()) {
+            if (Build.VERSION.SDK_INT > minSdk) {
                 requestPermission(permission = permission)
             } else {
                 requestPermission(fallbackPermission)
@@ -234,7 +253,6 @@ class MainActivity : ComponentActivity() {
 
     private fun requestMultiplePermissions(permissions: Array<String>) {
         ActivityCompat.requestPermissions(this, permissions, 123)
-
     }
 
     @Composable
@@ -254,11 +272,5 @@ class MainActivity : ComponentActivity() {
                 ImageDecoder.decodeBitmap(source)
             }
         }
-    }
-
-    fun Activity.getStatusBarHeight(): Int {
-        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-        return if (resourceId > 0) resources.getDimensionPixelSize(resourceId)
-        else Rect().apply { window.decorView.getWindowVisibleDisplayFrame(this) }.top
     }
 }

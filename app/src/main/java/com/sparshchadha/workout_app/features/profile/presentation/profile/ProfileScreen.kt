@@ -72,6 +72,7 @@ import com.sparshchadha.workout_app.util.Dimensions.PROFILE_PICTURE_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
+import com.sparshchadha.workout_app.util.Permissions
 
 private const val TAG = "ProfileScreenTagggg"
 
@@ -143,11 +144,7 @@ fun ProfileScreen(
             },
             requestCameraAndStoragePermission = {
                 profileViewModel.requestPermissions(
-                    listOf(
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.READ_MEDIA_IMAGES,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    )
+                    Permissions.getCameraAndStoragePermissions()
                 )
             },
             pickImage = {

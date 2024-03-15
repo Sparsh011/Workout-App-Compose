@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -14,11 +15,12 @@ import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.Prof
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.calorieTrackerComposable(
+fun NavGraphBuilder.bottomCalorieTrackerComposable(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
     foodItemsViewModel: FoodAndWaterViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
         route = ScreenRoutes.CalorieTracker.route,
@@ -30,6 +32,9 @@ fun NavGraphBuilder.calorieTrackerComposable(
         }
     ) {
 
+        LaunchedEffect(key1 = Unit) {
+            toggleBottomBarVisibility(true)
+        }
         CalorieTrackerScreen(
             navController = navController,
             globalPaddingValues = globalPaddingValues,

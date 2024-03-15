@@ -26,10 +26,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.features.gym.presentation.gym.util.CategoryType
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
-import com.sparshchadha.workout_app.features.gym.presentation.gym.util.CategoryType
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
@@ -38,7 +39,6 @@ import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
-import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 @Composable
 fun SelectExerciseCategory(
@@ -138,103 +138,11 @@ fun ExerciseCategoryItems(
         containerColor = scaffoldBackgroundColor
     ) { localPaddingValues ->
         if (topBarDescription == stringResource(id = R.string.select_body_part_heading)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(scaffoldBackgroundColor)
-                    .padding(
-                        top = localPaddingValues.calculateTopPadding(),
-                        bottom = globalPaddingValues.calculateBottomPadding()
-                    )
-                    .verticalScroll(rememberScrollState())
-            ) {
-
-                BodyPartStickyHeader(
-                    modifier = Modifier.fillMaxWidth(),
-                    bodyPart = "Chest, Neck & Shoulders"
-                )
-
-                Column(
-                    modifier = Modifier
-                        .padding(MEDIUM_PADDING)
-                        .clip(RoundedCornerShape(MEDIUM_PADDING))
-                        .background(bottomBarColor)
-                ) {
-                    for (categoryItem in HelperFunctions.getChestShouldersAndNeck().indices) {
-                        CategoryItem(
-                            categoryItem = HelperFunctions.getChestShouldersAndNeck()[categoryItem],
-                            onCategoryItemSelected = onCategoryItemSelected,
-                            categoryItemFontSize = 16,
-                            showDivider = false
-                        )
-                    }
-                }
-
-                BodyPartStickyHeader(
-                    modifier = Modifier.fillMaxWidth(),
-                    bodyPart = "Back"
-                )
-
-                Column(
-                    modifier = Modifier
-                        .padding(MEDIUM_PADDING)
-                        .clip(RoundedCornerShape(MEDIUM_PADDING))
-                        .background(bottomBarColor)
-                ) {
-                    for (categoryItem in HelperFunctions.getBack().indices) {
-                        CategoryItem(
-                            categoryItem = HelperFunctions.getBack()[categoryItem],
-                            onCategoryItemSelected = onCategoryItemSelected,
-                            categoryItemFontSize = 16,
-                            showDivider = false
-                        )
-                    }
-                }
-
-                BodyPartStickyHeader(
-                    modifier = Modifier.fillMaxWidth(),
-                    bodyPart = "Arms"
-                )
-
-
-                Column(
-                    modifier = Modifier
-                        .padding(MEDIUM_PADDING)
-                        .clip(RoundedCornerShape(MEDIUM_PADDING))
-                        .background(bottomBarColor)
-                ) {
-                    for (categoryItem in HelperFunctions.getArms().indices) {
-                        CategoryItem(
-                            categoryItem = HelperFunctions.getArms()[categoryItem],
-                            onCategoryItemSelected = onCategoryItemSelected,
-                            categoryItemFontSize = 16,
-                            showDivider = false
-                        )
-                    }
-                }
-
-                BodyPartStickyHeader(
-                    modifier = Modifier.fillMaxWidth(),
-                    bodyPart = "Legs"
-                )
-
-                Column(
-                    modifier = Modifier
-                        .padding(MEDIUM_PADDING)
-                        .clip(RoundedCornerShape(MEDIUM_PADDING))
-                        .background(bottomBarColor)
-                ) {
-                    for (categoryItem in HelperFunctions.getLegs().indices) {
-                        CategoryItem(
-                            categoryItem = HelperFunctions.getLegs()[categoryItem],
-                            onCategoryItemSelected = onCategoryItemSelected,
-                            categoryItemFontSize = 16,
-                            showDivider = false
-                        )
-                    }
-                }
-
-            }
+            SelectBodyPartExercises(
+                localPaddingValues = localPaddingValues,
+                globalPaddingValues = globalPaddingValues,
+                onCategoryItemSelected = onCategoryItemSelected
+            )
         } else {
             Column(
                 modifier = Modifier
@@ -247,6 +155,7 @@ fun ExerciseCategoryItems(
 
                 Column(
                     modifier = Modifier
+                        .padding(MEDIUM_PADDING)
                         .clip(RoundedCornerShape(MEDIUM_PADDING))
                         .background(bottomBarColor)
                 ) {
@@ -260,6 +169,111 @@ fun ExerciseCategoryItems(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SelectBodyPartExercises(
+    localPaddingValues: PaddingValues,
+    globalPaddingValues: PaddingValues,
+    onCategoryItemSelected: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(scaffoldBackgroundColor)
+            .padding(
+                top = localPaddingValues.calculateTopPadding(),
+                bottom = globalPaddingValues.calculateBottomPadding()
+            )
+            .verticalScroll(rememberScrollState())
+    ) {
+
+        BodyPartStickyHeader(
+            modifier = Modifier.fillMaxWidth(),
+            bodyPart = "Chest, Neck & Shoulders"
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(MEDIUM_PADDING)
+                .clip(RoundedCornerShape(MEDIUM_PADDING))
+                .background(bottomBarColor)
+        ) {
+            for (categoryItem in HelperFunctions.getChestShouldersAndNeck().indices) {
+                CategoryItem(
+                    categoryItem = HelperFunctions.getChestShouldersAndNeck()[categoryItem],
+                    onCategoryItemSelected = onCategoryItemSelected,
+                    categoryItemFontSize = 16,
+                    showDivider = false
+                )
+            }
+        }
+
+        BodyPartStickyHeader(
+            modifier = Modifier.fillMaxWidth(),
+            bodyPart = "Back"
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(MEDIUM_PADDING)
+                .clip(RoundedCornerShape(MEDIUM_PADDING))
+                .background(bottomBarColor)
+        ) {
+            for (categoryItem in HelperFunctions.getBack().indices) {
+                CategoryItem(
+                    categoryItem = HelperFunctions.getBack()[categoryItem],
+                    onCategoryItemSelected = onCategoryItemSelected,
+                    categoryItemFontSize = 16,
+                    showDivider = false
+                )
+            }
+        }
+
+        BodyPartStickyHeader(
+            modifier = Modifier.fillMaxWidth(),
+            bodyPart = "Arms"
+        )
+
+
+        Column(
+            modifier = Modifier
+                .padding(MEDIUM_PADDING)
+                .clip(RoundedCornerShape(MEDIUM_PADDING))
+                .background(bottomBarColor)
+        ) {
+            for (categoryItem in HelperFunctions.getArms().indices) {
+                CategoryItem(
+                    categoryItem = HelperFunctions.getArms()[categoryItem],
+                    onCategoryItemSelected = onCategoryItemSelected,
+                    categoryItemFontSize = 16,
+                    showDivider = false
+                )
+            }
+        }
+
+        BodyPartStickyHeader(
+            modifier = Modifier.fillMaxWidth(),
+            bodyPart = "Legs"
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(MEDIUM_PADDING)
+                .clip(RoundedCornerShape(MEDIUM_PADDING))
+                .background(bottomBarColor)
+        ) {
+            for (categoryItem in HelperFunctions.getLegs().indices) {
+                CategoryItem(
+                    categoryItem = HelperFunctions.getLegs()[categoryItem],
+                    onCategoryItemSelected = onCategoryItemSelected,
+                    categoryItemFontSize = 16,
+                    showDivider = false
+                )
+            }
+        }
+
     }
 }
 

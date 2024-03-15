@@ -54,7 +54,7 @@ fun NewsArticles(
     globalPaddingValues: PaddingValues
 ) {
     val searchQuery = newsViewModel.newsSearchQuery.collectAsState().value
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = searchQuery) {
         newsViewModel.getNewsArticles(forQuery = searchQuery)
     }
 

@@ -13,7 +13,7 @@ import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.Prof
 import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
 import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
-import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.bottomCalorieTrackerComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.foodItemDetailsComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.bottomWorkoutComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.exerciseDetailsComposable
@@ -21,11 +21,11 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymActivityCo
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.gymExercisesPerformedComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.gym.workoutCategoryComposable
+import com.sparshchadha.workout_app.ui.navigation.destinations.profile.bottomProfileScreen
 import com.sparshchadha.workout_app.ui.navigation.destinations.profile.personalRecordsScreen
-import com.sparshchadha.workout_app.ui.navigation.destinations.profile.profileComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.articleWebViewScreen
+import com.sparshchadha.workout_app.ui.navigation.destinations.shared.bottomRemindersComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.newsArticlesComposable
-import com.sparshchadha.workout_app.ui.navigation.destinations.shared.remindersComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.savedItemsScreenComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.shared.searchComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaActivityComposable
@@ -42,8 +42,10 @@ fun NavGraph(
     remindersViewModel: RemindersViewModel,
     profileViewModel: ProfileViewModel,
     newsViewModel: NewsViewModel,
-    yogaViewModel: YogaViewModel
+    yogaViewModel: YogaViewModel,
+    toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
+
     NavHost(
         navController = navController,
         startDestination = ScreenRoutes.CalorieTracker.route
@@ -54,15 +56,33 @@ fun NavGraph(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
             newsViewModel = newsViewModel,
-            yogaViewModel = yogaViewModel
+            yogaViewModel = yogaViewModel,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // Calorie Tracker in Bottom Bar
-        calorieTrackerComposable(
+        bottomCalorieTrackerComposable(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
             foodItemsViewModel = foodItemsViewModel,
-            profileViewModel = profileViewModel
+            profileViewModel = profileViewModel,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
+        )
+
+        // Profile Screen
+        bottomProfileScreen(
+            globalPaddingValues = globalPaddingValues,
+            navController = navController,
+            profileViewModel = profileViewModel,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
+        )
+
+        // Reminders Screen
+        bottomRemindersComposable(
+            navController = navController,
+            globalPaddingValues = globalPaddingValues,
+            remindersViewModel = remindersViewModel,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // Search Screen
@@ -70,70 +90,64 @@ fun NavGraph(
             foodAndWaterViewModel = foodItemsViewModel,
             workoutViewModel = workoutViewModel,
             navController = navController,
-            globalPaddingValues = globalPaddingValues
-        )
-
-        // Profile Screen
-        profileComposable(
             globalPaddingValues = globalPaddingValues,
-            navController = navController,
-            profileViewModel = profileViewModel
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // Yoga Screen
         yogaComposable(
             yogaViewModel = yogaViewModel,
             navController = navController,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // Selecting Workout Type
         workoutCategoryComposable(
             workoutViewModel = workoutViewModel,
             navController = navController,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // Exercises From Api
         gymExercisesComposable(
             navController = navController,
             workoutViewModel = workoutViewModel,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // Yoga poses performed today
         yogaPosesPerformedTodayComposable(
             yogaViewModel = yogaViewModel,
             navController = navController,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // Gym Exercises performed today
         gymExercisesPerformedComposable(
             workoutViewModel = workoutViewModel,
             navController = navController,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // Exercise Details screen
         exerciseDetailsComposable(
             navController = navController,
             workoutViewModel = workoutViewModel,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // Food Item Details
         foodItemDetailsComposable(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            foodItemsViewModel = foodItemsViewModel
-        )
-
-        // Reminders Screen
-        remindersComposable(
-            navController = navController,
-            globalPaddingValues = globalPaddingValues,
-            remindersViewModel = remindersViewModel
+            foodItemsViewModel = foodItemsViewModel,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // saved items (food, yoga and gym) screen
@@ -142,42 +156,48 @@ fun NavGraph(
             globalPaddingValues = globalPaddingValues,
             foodItemsViewModel = foodItemsViewModel,
             workoutViewModel = workoutViewModel,
-            yogaViewModel = yogaViewModel
+            yogaViewModel = yogaViewModel,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // personal records screen
         personalRecordsScreen(
             navController = navController,
             workoutViewModel = workoutViewModel,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // gym activity
         gymActivityComposable(
             navController = navController,
             workoutViewModel = workoutViewModel,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // yoga activity
         yogaActivityComposable(
             yogaViewModel = yogaViewModel,
             navController = navController,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // news articles screen
         newsArticlesComposable(
             navController = navController,
             newsViewModel = newsViewModel,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 
         // news article WebView
         articleWebViewScreen(
             navController = navController,
             newsViewModel = newsViewModel,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
         )
     }
 }

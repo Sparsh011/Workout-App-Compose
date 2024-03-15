@@ -290,7 +290,7 @@ fun PRModalBottomSheet(
             },
             isText = false,
             showErrorColor = weight.isBlank(),
-            label = "Weight Lifted"
+            label = "Weight Lifted (kg)"
         )
 
         PROutlinedTextField(

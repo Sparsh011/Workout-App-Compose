@@ -4,6 +4,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -15,6 +16,7 @@ fun NavGraphBuilder.yogaActivityComposable(
     navController: NavController,
     yogaViewModel: YogaViewModel,
     globalPaddingValues: PaddingValues,
+    toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
         route = UtilityScreenRoutes.YogaActivityScreen.route,
@@ -30,6 +32,9 @@ fun NavGraphBuilder.yogaActivityComposable(
             ExitTransition.None
         }
     ) {
+        LaunchedEffect(key1 = Unit) {
+            toggleBottomBarVisibility(false)
+        }
         YogaActivityScreen(
             navController = navController,
             yogaViewModel = yogaViewModel,

@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -18,6 +19,7 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
     yogaViewModel: YogaViewModel,
     navController: NavController,
     globalPaddingValues: PaddingValues,
+    toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
         route = UtilityScreenRoutes.YogaPosesPerformed.route,
@@ -40,7 +42,9 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
             )
         }
     ) {
-
+        LaunchedEffect(key1 = Unit) {
+            toggleBottomBarVisibility(false)
+        }
         GetYogaPosesPerformedOnParticularDay(
             navController = navController,
             globalPaddingValues = globalPaddingValues,

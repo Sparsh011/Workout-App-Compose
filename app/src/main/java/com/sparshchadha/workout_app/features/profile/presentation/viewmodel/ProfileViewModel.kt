@@ -53,6 +53,20 @@ class ProfileViewModel @Inject constructor(
 
     private lateinit var bitmapLruCache: LruCache<String, Bitmap>
 
+    private val _showPermissionDialog = MutableStateFlow<Boolean?>(null)
+    val showPermissionDialog = _showPermissionDialog.asStateFlow()
+
+    private val _requestPermissions = MutableStateFlow<List<Pair<String, Int>>?>(null)
+    val requestPermissions = _requestPermissions.asStateFlow()
+
+    private val _openCamera = MutableStateFlow<Boolean?>(null)
+    val openCamera = _openCamera.asStateFlow()
+
+    private val _openGallery = MutableStateFlow<Boolean?>(null)
+    val openGallery = _openGallery.asStateFlow()
+
+    private val _profileImageUri = MutableStateFlow<Bitmap?>(null)
+
     init {
         readAge()
         readGender()
@@ -170,20 +184,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private val _showPermissionDialog = MutableStateFlow<Boolean?>(null)
-    val showPermissionDialog = _showPermissionDialog.asStateFlow()
-
-    private val _requestPermissions = MutableStateFlow<List<String>?>(null)
-    val requestPermissions = _requestPermissions.asStateFlow()
-
-    private val _openCamera = MutableStateFlow<Boolean?>(null)
-    val openCamera = _openCamera.asStateFlow()
-
-    private val _openGallery = MutableStateFlow<Boolean?>(null)
-    val openGallery = _openGallery.asStateFlow()
-
-    private val _profileImageUri = MutableStateFlow<Bitmap?>(null)
-
     fun saveAge(age: String) {
         viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.saveAge(age)
@@ -266,7 +266,7 @@ class ProfileViewModel @Inject constructor(
         _showPermissionDialog.value = false
     }
 
-    fun requestPermissions(permissions: List<String>) {
+    fun requestPermissions(permissions: List<Pair<String, Int>>) {
         _requestPermissions.value = permissions
     }
 

@@ -25,10 +25,4 @@ class NewsRepositoryImpl(
             emit(Resource.Error(error = e))
         }
     }
-//    }
-//        return newsApi.getNewsFor(
-//            searchQuery = searchQuery,
-//            apiKey = BuildConfig.NEWS_API_KEY
-//        )
-//    }
 }
