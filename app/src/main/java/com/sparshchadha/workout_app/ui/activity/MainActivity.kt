@@ -35,6 +35,7 @@ import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.Workout
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.activity.components.LandingPage
 import com.sparshchadha.workout_app.ui.activity.components.PermissionRequestDialog
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
@@ -53,6 +54,7 @@ class MainActivity : ComponentActivity() {
     private val remindersViewModel: RemindersViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
     private val newsViewModel: NewsViewModel by viewModels()
+    private val yogaViewModel: YogaViewModel by viewModels()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -163,7 +165,8 @@ class MainActivity : ComponentActivity() {
                             workoutViewModel = workoutViewModel,
                             remindersViewModel = remindersViewModel,
                             profileViewModel = profileViewModel,
-                            newsViewModel = newsViewModel
+                            newsViewModel = newsViewModel,
+                            yogaViewModel = yogaViewModel
                         )
                     }
                 } else {

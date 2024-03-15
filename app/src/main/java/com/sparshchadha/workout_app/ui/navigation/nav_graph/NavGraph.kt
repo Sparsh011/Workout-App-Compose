@@ -11,6 +11,7 @@ import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.Workout
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.calorieTrackerComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.calorie_tracker.foodItemDetailsComposable
@@ -40,7 +41,8 @@ fun NavGraph(
     workoutViewModel: WorkoutViewModel,
     remindersViewModel: RemindersViewModel,
     profileViewModel: ProfileViewModel,
-    newsViewModel: NewsViewModel
+    newsViewModel: NewsViewModel,
+    yogaViewModel: YogaViewModel
 ) {
     NavHost(
         navController = navController,
@@ -51,7 +53,8 @@ fun NavGraph(
             workoutViewModel = workoutViewModel,
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            newsViewModel = newsViewModel
+            newsViewModel = newsViewModel,
+            yogaViewModel = yogaViewModel
         )
 
         // Calorie Tracker in Bottom Bar
@@ -79,7 +82,7 @@ fun NavGraph(
 
         // Yoga Screen
         yogaComposable(
-            workoutViewModel = workoutViewModel,
+            yogaViewModel = yogaViewModel,
             navController = navController,
             globalPaddingValues = globalPaddingValues
         )
@@ -100,7 +103,7 @@ fun NavGraph(
 
         // Yoga poses performed today
         yogaPosesPerformedTodayComposable(
-            workoutViewModel = workoutViewModel,
+            yogaViewModel = yogaViewModel,
             navController = navController,
             globalPaddingValues = globalPaddingValues
         )
@@ -138,7 +141,8 @@ fun NavGraph(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
             foodItemsViewModel = foodItemsViewModel,
-            workoutViewModel = workoutViewModel
+            workoutViewModel = workoutViewModel,
+            yogaViewModel = yogaViewModel
         )
 
         // personal records screen
@@ -157,8 +161,8 @@ fun NavGraph(
 
         // yoga activity
         yogaActivityComposable(
+            yogaViewModel = yogaViewModel,
             navController = navController,
-            workoutViewModel = workoutViewModel,
             globalPaddingValues = globalPaddingValues
         )
 

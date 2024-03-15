@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.features.yoga.presentation.yoga
+package com.sparshchadha.workout_app.features.yoga.presentation.screens
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -39,8 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
@@ -63,18 +63,18 @@ private const val TAG = "YogaPosesPerformedToday"
 fun GetYogaPosesPerformedOnParticularDay(
     navController: NavController,
     globalPaddingValues: PaddingValues,
-    workoutViewModel: WorkoutViewModel
+    yogaViewModel: YogaViewModel
 ) {
     LaunchedEffect(
         key1 = true,
         block = {
-            workoutViewModel.getYogaPosesPerformedOn()
+            yogaViewModel.getYogaPosesPerformedOn()
         }
     )
 
-    val yogaPosesPerformedToday = workoutViewModel.yogaPosesPerformed.value
+    val yogaPosesPerformedToday = yogaViewModel.yogaPosesPerformed.value
 
-    val selectedDayAndMonth = workoutViewModel.selectedDateAndMonthForYogaPoses.collectAsStateWithLifecycle().value
+    val selectedDayAndMonth = yogaViewModel.selectedDateAndMonthForYogaPoses.collectAsStateWithLifecycle().value
 
         HandleUIEventState(
             yogaPosesPerformedToday = yogaPosesPerformedToday,
@@ -82,13 +82,13 @@ fun GetYogaPosesPerformedOnParticularDay(
             selectedDay = selectedDayAndMonth?.first ?: 1,
             selectedMonth = selectedDayAndMonth?.second ?: "Jan",
             getYogaPosesPerformedOn = {
-                workoutViewModel.getYogaPosesPerformedOn(
+                yogaViewModel.getYogaPosesPerformedOn(
                     date = it.first.toString(),
                     month = it.second
                 )
             },
             removePose = {
-                workoutViewModel.removeYogaPoseFromDB(it)
+                yogaViewModel.removeYogaPoseFromDB(it)
             },
             onBackButtonPressed = {
                 navController.popBackStack(

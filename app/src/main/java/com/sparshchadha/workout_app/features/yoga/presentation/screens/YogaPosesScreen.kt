@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.features.yoga.presentation.yoga
+package com.sparshchadha.workout_app.features.yoga.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,10 +37,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
 import com.sparshchadha.workout_app.features.yoga.data.remote.dto.Pose
 import com.sparshchadha.workout_app.features.yoga.data.remote.dto.YogaPosesDto
-import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.PickNumberOfSetsOrQuantity
@@ -67,23 +67,23 @@ import com.sparshchadha.workout_app.util.Resource
 fun YogaPosesScreen(
     navController: NavController,
     globalPaddingValues: PaddingValues,
-    workoutViewModel: WorkoutViewModel
+    yogaViewModel: YogaViewModel
 ) {
-    val difficultyLevel = workoutViewModel.getCurrentYogaDifficultyLevel()
-    val yogaPoses by workoutViewModel.yogaPosesFromApi
+    val difficultyLevel = yogaViewModel.getCurrentYogaDifficultyLevel()
+    val yogaPoses by yogaViewModel.yogaPosesFromApi
 
     HandleYogaScreenUIEvents(
         yogaPoses = yogaPoses,
         navController = navController,
         difficultyLevel = difficultyLevel,
         savePerformedYogaPose = { yogaEntity ->
-            workoutViewModel.saveYogaPose(
+            yogaViewModel.saveYogaPose(
                 yogaEntity
             )
         },
         globalPaddingValues = globalPaddingValues
     ) {
-        workoutViewModel.addYogaPoseToSaved(
+        yogaViewModel.addYogaPoseToSaved(
             HelperFunctions.getYogaPoseWithNegatives(it)
         )
     }

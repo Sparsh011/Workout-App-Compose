@@ -8,37 +8,15 @@ import com.sparshchadha.workout_app.features.gym.data.remote.api.GymExercisesApi
 import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.features.gym.domain.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.features.gym.domain.repository.WorkoutRepository
-import com.sparshchadha.workout_app.features.yoga.data.local.room.dao.YogaDao
-import com.sparshchadha.workout_app.features.yoga.data.remote.api.YogaApi
-import com.sparshchadha.workout_app.features.yoga.data.remote.dto.YogaPosesDto
-import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
-import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class WorkoutRepositoryImpl(
-    val yogaApi: YogaApi,
     val gymExercisesApi: GymExercisesApi,
-    val yogaDao: YogaDao,
     val gymExercisesDao: GymExercisesDao,
 ) : WorkoutRepository {
-
-    override fun getYogaPosesByDifficultyFromApi(difficulty: DifficultyLevel): Flow<Resource<YogaPosesDto>> =
-        flow {
-            emit(Resource.Loading())
-
-            try {
-                val remoteYogaPoses =
-                    yogaApi.getYogaPosesByDifficulty(difficulty = difficulty.name.lowercase())
-                emit(Resource.Success(remoteYogaPoses))
-            } catch (e: Exception) {
-                emit(
-                    Resource.Error(error = e)
-                )
-            }
-        }
 
     override fun getExercisesByDifficultyLevelFromApi(difficulty: String): Flow<Resource<GymExercisesDto>> =
         flow {
@@ -78,7 +56,8 @@ class WorkoutRepositoryImpl(
             }
         }
 
-    override fun getExercisesByWorkoutTypeFromApi(workoutType: String): Flow<Resource<GymExercisesDto>> = flow {
+    override fun getExercisesByWorkoutTypeFromApi(workoutType: String): Flow<Resource<GymExercisesDto>> =
+        flow {
             emit(Resource.Loading())
 
             try {
@@ -114,21 +93,6 @@ class WorkoutRepositoryImpl(
         }
     }
 
-    override suspend fun getAllPoses(performed: Boolean): Flow<List<YogaEntity>> {
-        return if (performed) yogaDao.getAllPerformedYogaPoses()
-        else yogaDao.getSavedPoses()
-    }
-
-    override suspend fun getYogaPosesPerformedOn(
-        date: String,
-        month: String
-    ): Flow<List<YogaEntity>> {
-        return yogaDao.getYogaPosesPerformedOn(
-            date = date,
-            month = month
-        )
-    }
-
     override suspend fun getGymExercisesPerformedOn(
         date: String,
         month: String
@@ -144,24 +108,12 @@ class WorkoutRepositoryImpl(
         else gymExercisesDao.getSavedExercises()
     }
 
-    override suspend fun removeYogaPose(yogaPose: YogaEntity) {
-        yogaDao.removeYogaPose(yogaPose)
-    }
-
     override suspend fun removeGymExercise(exercisesEntity: GymExercisesEntity) {
         gymExercisesDao.removeGymExercise(exercisesEntity)
     }
 
     override suspend fun saveExerciseToDB(exercisesEntity: GymExercisesEntity) {
         gymExercisesDao.addGymExercise(exercisesEntity)
-    }
-
-    override suspend fun saveYogaPoseToDB(yogaPose: YogaEntity) {
-        yogaDao.addYogaPose(yogaPose)
-    }
-
-    override suspend fun getAllYogaPosesPerformed(): Flow<List<YogaEntity>> {
-        return yogaDao.getAllPerformedYogaPoses()
     }
 
     override suspend fun getAllGymExercisesPerformed(): Flow<List<GymExercisesEntity>> {

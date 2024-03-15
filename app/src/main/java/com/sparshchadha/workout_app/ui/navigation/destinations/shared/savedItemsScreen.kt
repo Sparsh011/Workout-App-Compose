@@ -6,16 +6,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.screens.shared.SavedItemsScreen
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
+import com.sparshchadha.workout_app.ui.screens.shared.SavedItemsScreen
 
 fun NavGraphBuilder.savedItemsScreenComposable(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
     foodItemsViewModel: FoodAndWaterViewModel,
-    workoutViewModel: WorkoutViewModel
+    workoutViewModel: WorkoutViewModel,
+    yogaViewModel: YogaViewModel
 ) {
     composable(
         route = UtilityScreenRoutes.SavedItemsScreen.route,
@@ -31,9 +33,10 @@ fun NavGraphBuilder.savedItemsScreenComposable(
         SavedItemsScreen(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            foodItemsViewModel = foodItemsViewModel,
+            foodAndWaterViewModel = foodItemsViewModel,
             workoutViewModel = workoutViewModel,
-            category = category ?: "Unable To Get Exercises"
+            category = category ?: "Unable To Get Exercises",
+            yogaViewModel = yogaViewModel
         )
     }
 }

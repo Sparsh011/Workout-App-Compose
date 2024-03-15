@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.sparshchadha.workout_app.features.yoga.presentation.screens.YogaPosesScreen
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.features.yoga.presentation.yoga.YogaPosesScreen
-import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 fun NavGraphBuilder.yogaComposable(
-    workoutViewModel: WorkoutViewModel,
+    yogaViewModel: YogaViewModel,
     navController: NavController,
     globalPaddingValues: PaddingValues,
 ) {
@@ -41,7 +41,7 @@ fun NavGraphBuilder.yogaComposable(
         YogaPosesScreen(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            workoutViewModel = workoutViewModel
+            yogaViewModel = yogaViewModel
         )
     }
 }

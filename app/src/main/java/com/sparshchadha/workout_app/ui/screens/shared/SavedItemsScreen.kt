@@ -30,6 +30,7 @@ import com.sparshchadha.workout_app.features.gym.domain.entities.GymExercisesEnt
 import com.sparshchadha.workout_app.features.gym.presentation.gym.ExerciseSubTitlesAndDescription
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.ui.components.shared.NoSavedItem
@@ -48,9 +49,10 @@ private const val TAG = "SavedItemsScreenTagggg"
 fun SavedItemsScreen(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
-    foodItemsViewModel: FoodAndWaterViewModel,
+    foodAndWaterViewModel: FoodAndWaterViewModel,
     workoutViewModel: WorkoutViewModel,
-    category: String
+    category: String,
+    yogaViewModel: YogaViewModel
 ) {
 
     when (category) {
@@ -76,21 +78,20 @@ fun SavedItemsScreen(
 
         "yoga" -> {
             LaunchedEffect(key1 = Unit) {
-                workoutViewModel.getSavedYogaPoses()
+                yogaViewModel.getSavedYogaPoses()
             }
 
             SavedYogaPoses(
-                poses = workoutViewModel.savedPoses.collectAsStateWithLifecycle().value
+                poses = yogaViewModel.savedPoses.collectAsStateWithLifecycle().value
                     ?: emptyList(),
                 navigateToYogaPoseDetailsScreen = { forPose ->
 
                 },
                 removeYogaPoseFromSaved = {
-                    workoutViewModel.removeYogaPoseFromDB(it)
-
+                    yogaViewModel.removeYogaPoseFromDB(it)
                 },
                 updateYogaEntityToShowDetails = {
-                    workoutViewModel.updateSelectedYogaPose(it.yogaPoseDetails)
+                    yogaViewModel.updateSelectedYogaPose(it.yogaPoseDetails)
                 },
                 globalPaddingValues = globalPaddingValues,
                 navController = navController
@@ -99,20 +100,20 @@ fun SavedItemsScreen(
 
         "calorieTracker" -> {
             LaunchedEffect(key1 = Unit) {
-                foodItemsViewModel.getSavedFoodItems()
+                foodAndWaterViewModel.getSavedFoodItems()
             }
 
             SavedFoodItem(
-                foodItems = foodItemsViewModel.savedFoodItems.collectAsStateWithLifecycle().value
+                foodItems = foodAndWaterViewModel.savedFoodItems.collectAsStateWithLifecycle().value
                     ?: emptyList(),
                 navigateToFoodItemDetailsScreen = { forItem ->
 
                 },
                 removeFoodItemFromSaved = {
-                    foodItemsViewModel.removeFoodItem(it)
+                    foodAndWaterViewModel.removeFoodItem(it)
                 },
                 updateFoodItemToShowDetails = {
-                    foodItemsViewModel.updateSelectedFoodItem(it.foodItemDetails)
+                    foodAndWaterViewModel.updateSelectedFoodItem(it.foodItemDetails)
                 },
                 globalPaddingValues = globalPaddingValues,
                 navController = navController

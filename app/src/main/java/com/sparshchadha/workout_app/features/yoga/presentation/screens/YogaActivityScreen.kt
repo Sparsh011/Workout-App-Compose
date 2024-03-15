@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.features.yoga.presentation.yoga
+package com.sparshchadha.workout_app.features.yoga.presentation.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,23 +19,23 @@ import androidx.compose.ui.draw.clip
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.components.shared.NoSavedItem
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
-import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 @Composable
 fun YogaActivityScreen(
     navController: NavController,
-    workoutViewModel: WorkoutViewModel,
+    yogaViewModel: YogaViewModel,
     globalPaddingValues: PaddingValues
 ) {
-    val performedYogaPoses by workoutViewModel.allYogaPosesPerformed.collectAsStateWithLifecycle()
+    val performedYogaPoses by yogaViewModel.allYogaPosesPerformed.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = Unit) {
-        workoutViewModel.getAllYogaPosesPerformed()
+        yogaViewModel.getAllYogaPosesPerformed()
     }
     Column(
         modifier = Modifier

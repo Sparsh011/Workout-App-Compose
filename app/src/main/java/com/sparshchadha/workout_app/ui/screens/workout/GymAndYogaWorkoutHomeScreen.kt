@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.ui.screens.workout
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -34,6 +33,7 @@ import com.sparshchadha.workout_app.features.gym.presentation.gym.util.CategoryT
 import com.sparshchadha.workout_app.features.gym.presentation.gym.util.GymWorkoutCategories
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.util.ColorsUtil
@@ -48,7 +48,6 @@ import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GymAndYogaWorkoutHomeScreen(
     difficultyLevels: List<DifficultyLevel>,
@@ -56,7 +55,8 @@ fun GymAndYogaWorkoutHomeScreen(
     navController: NavController,
     gymWorkoutCategories: List<String>,
     globalPaddingValues: PaddingValues,
-    newsViewModel: NewsViewModel
+    newsViewModel: NewsViewModel,
+    yogaViewModel: YogaViewModel
 ) {
     Column(
         modifier = Modifier
@@ -146,9 +146,9 @@ fun GymAndYogaWorkoutHomeScreen(
                     PopulateYogaDifficulty(
                         yogaDifficulty = difficultyLevels[it],
                         onYogaDifficultySelection = { difficultyLevel ->
-                            workoutViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
+                            yogaViewModel.updateYogaDifficultyLevel(difficultyLevel = difficultyLevel)
                             // navigate to yoga screen
-                            workoutViewModel.getYogaPosesFromApi()
+                            yogaViewModel.getYogaPosesFromApi()
                             navController.navigate(route = UtilityScreenRoutes.YogaPoses.route)
                         },
                         showDivider = false

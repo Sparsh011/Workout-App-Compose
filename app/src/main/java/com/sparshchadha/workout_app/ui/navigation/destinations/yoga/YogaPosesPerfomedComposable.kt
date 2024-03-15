@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.sparshchadha.workout_app.features.yoga.presentation.screens.GetYogaPosesPerformedOnParticularDay
+import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.features.yoga.presentation.yoga.GetYogaPosesPerformedOnParticularDay
-import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
-    workoutViewModel: WorkoutViewModel,
+    yogaViewModel: YogaViewModel,
     navController: NavController,
     globalPaddingValues: PaddingValues,
 ) {
@@ -44,7 +44,7 @@ fun NavGraphBuilder.yogaPosesPerformedTodayComposable(
         GetYogaPosesPerformedOnParticularDay(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            workoutViewModel = workoutViewModel
+            yogaViewModel = yogaViewModel
         )
     }
 }
