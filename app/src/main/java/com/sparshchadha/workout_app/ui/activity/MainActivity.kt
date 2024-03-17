@@ -20,21 +20,27 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
 import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
+import com.sparshchadha.workout_app.ui.activity.components.GoogleSignInLauncher
 import com.sparshchadha.workout_app.ui.activity.components.LandingPage
 import com.sparshchadha.workout_app.ui.activity.components.PermissionRequestDialog
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
@@ -55,6 +61,7 @@ class MainActivity : ComponentActivity() {
     private val newsViewModel: NewsViewModel by viewModels()
     private val yogaViewModel: YogaViewModel by viewModels()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var analytics: FirebaseAnalytics
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +69,9 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             WorkoutAppTheme {
+                analytics = Firebase.analytics
+                GoogleSignInLauncher(profileViewModel = profileViewModel)
+
                 requestPermissionLauncher =
                     rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
                         if (isGranted) {
@@ -101,6 +111,7 @@ class MainActivity : ComponentActivity() {
 
                 val showPermissionDialogFlow by profileViewModel.showPermissionDialog.collectAsStateWithLifecycle()
                 val requestPermissions by profileViewModel.requestPermissions.collectAsStateWithLifecycle()
+                val context = LocalContext.current
 
                 when (showPermissionDialogFlow) {
                     true -> {
@@ -141,26 +152,21 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                val sharedPreferences = getSharedPreferences("my_prefs", MODE_PRIVATE)
                 var navigateToHomeScreen by remember {
                     mutableStateOf(false)
                 }
+                val isFirstTimeAppOpen = profileViewModel.isFirstTimeAppOpen.collectAsState().value ?: "true"
 
-                if (sharedPreferences.getBoolean(
-                        "landing_page_shown",
-                        false
-                    ) || navigateToHomeScreen
-                ) {
+                if (isFirstTimeAppOpen == "false" || navigateToHomeScreen) {
                     val navHostController = rememberNavController()
 
-                    if (sharedPreferences.getBoolean("app_first_launch", true)) {
+                    if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                         LaunchedEffect(key1 = Unit) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 requestPermission(Manifest.permission.POST_NOTIFICATIONS)
                             }
                         }
-                    } else {
-                        setupFirstAppLaunch()
+                        profileViewModel.updateFirstTimeAppOpen("false")
                     }
 
                     val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
@@ -183,8 +189,8 @@ class MainActivity : ComponentActivity() {
                             profileViewModel = profileViewModel,
                             newsViewModel = newsViewModel,
                             yogaViewModel = yogaViewModel,
-                            toggleBottomBarVisibility = {
-                                bottomBarState.value = it
+                            toggleBottomBarVisibility = { bottomBarVisibility ->
+                                bottomBarState.value = bottomBarVisibility
                             }
                         )
                     }
@@ -192,31 +198,13 @@ class MainActivity : ComponentActivity() {
                     LandingPage(
                         profileViewModel,
                         navigateToHomeScreen = {
-                            landingPageShown {
-                                navigateToHomeScreen = true
-                            }
+                            navigateToHomeScreen = true
+                            profileViewModel.updateFirstTimeAppOpen("false")
                         }
                     )
                 }
             }
         }
-    }
-
-    private fun setupFirstAppLaunch() {
-        val sharedPreferences = getSharedPreferences("my_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("app_first_launch", false)
-        editor.apply()
-    }
-
-    private fun landingPageShown(
-        navigateToHomeScreen: () -> Unit
-    ) {
-        val sharedPreferences = getSharedPreferences("my_prefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("landing_page_shown", true)
-        editor.apply()
-        navigateToHomeScreen()
     }
 
     private fun requestPermissionHandler(

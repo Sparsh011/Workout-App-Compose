@@ -8,6 +8,7 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson
 import com.sparshchadha.workout_app.alarm_manager.AlarmScheduler
 import com.sparshchadha.workout_app.alarm_manager.AndroidAlarmScheduler
+import com.sparshchadha.workout_app.application.BaseRepository
 import com.sparshchadha.workout_app.features.food.data.local.room.dao.FoodItemsDao
 import com.sparshchadha.workout_app.features.food.data.local.room.dao.WaterDao
 import com.sparshchadha.workout_app.features.food.data.remote.api.FoodApi
@@ -296,5 +297,13 @@ object SharedModule {
         remindersRepository: RemindersRepository
     ): AlarmScheduler {
         return AndroidAlarmScheduler(context, remindersRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideBaseRepository(
+        workoutAppDatabase: WorkoutAppDatabase
+    ) : BaseRepository{
+        return BaseRepository(workoutAppDatabase = workoutAppDatabase)
     }
 }

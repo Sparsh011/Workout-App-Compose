@@ -18,79 +18,79 @@ class WorkoutAppDatastorePreference @Inject constructor(
 
     suspend fun saveCaloriesGoal(caloriesGoal: String?) {
         dataStorePreference.edit { pref ->
-            pref[CALORIES_GOAL_KEY] = caloriesGoal!!
+            pref[CALORIES_GOAL_KEY] = caloriesGoal ?: ""
         }
     }
 
     val readCaloriesGoal: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[CALORIES_GOAL_KEY]
+            pref[CALORIES_GOAL_KEY]
         }
 
     suspend fun saveHeight(height: String?) {
         dataStorePreference.edit { pref ->
-            pref[CURRENT_HEIGHT_KEY] = height!!
+            pref[CURRENT_HEIGHT_KEY] = height ?: ""
         }
     }
 
     val readHeight: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[CURRENT_HEIGHT_KEY]
+            pref[CURRENT_HEIGHT_KEY]
         }
 
     suspend fun saveWeightGoal(weightGoal: String?) {
         dataStorePreference.edit { pref ->
-            pref[WEIGHT_GOAL_KEY] = weightGoal!!
+            pref[WEIGHT_GOAL_KEY] = weightGoal ?: ""
         }
     }
 
     val readWeightGoal: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[WEIGHT_GOAL_KEY]
+            pref[WEIGHT_GOAL_KEY]
         }
 
     suspend fun saveCurrentWeight(weight: String?) {
         dataStorePreference.edit { pref ->
-            pref[CURRENT_WEIGHT_KEY] = weight!!
+            pref[CURRENT_WEIGHT_KEY] = weight ?: ""
         }
     }
 
     val readCurrentWeight: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[CURRENT_WEIGHT_KEY]
+            pref[CURRENT_WEIGHT_KEY]
         }
 
     suspend fun saveAge(age: String?) {
         dataStorePreference.edit { pref ->
-            pref[AGE_KEY] = age!!
+            pref[AGE_KEY] = age ?: ""
         }
     }
 
     val readAge: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[AGE_KEY]
+            pref[AGE_KEY]
         }
 
     suspend fun saveGender(gender: String?) {
         dataStorePreference.edit { pref ->
-            pref[GENDER_KEY] = gender!!
+            pref[GENDER_KEY] = gender ?: ""
         }
     }
 
     val readGender: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[GENDER_KEY]
+            pref[GENDER_KEY]
         }
 
     suspend fun saveName(name: String?) {
         dataStorePreference.edit { pref ->
-            pref[NAME_KEY] = name!!
+            pref[NAME_KEY] = name ?: ""
         }
     }
 
     val readName: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[NAME_KEY]
+            pref[NAME_KEY]
         }
 
     suspend fun saveBase64Image(imageStr: String?) {
@@ -101,7 +101,7 @@ class WorkoutAppDatastorePreference @Inject constructor(
 
     val readBase64ProfilePic: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[IMAGE_URI_KEY]
+            pref[IMAGE_URI_KEY]
         }
 
     suspend fun setDarkMode(setTo: String) {
@@ -112,7 +112,7 @@ class WorkoutAppDatastorePreference @Inject constructor(
 
     val readDarkMode: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[DARK_MODE_THEME_key]
+            pref[DARK_MODE_THEME_key]
         }
 
     suspend fun saveWaterGlassesGoal(goal: String) {
@@ -123,7 +123,29 @@ class WorkoutAppDatastorePreference @Inject constructor(
 
     val readWaterGlassesGoal: Flow<String?>
         get() = dataStorePreference.data.map { pref ->
-            null ?: pref[WATER_GLASSES_GOAL_KEY]
+            pref[WATER_GLASSES_GOAL_KEY]
+        }
+
+    suspend fun saveLoginToken(token: String?) {
+        dataStorePreference.edit { pref ->
+            pref[LOGIN_TOKEN] = token ?: ""
+        }
+    }
+
+    val readLoginToken: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            pref[LOGIN_TOKEN]
+        }
+
+    suspend fun saveFirstAppOpen(isFirstTimeOpened: String?) {
+        dataStorePreference.edit { pref ->
+            pref[IS_APP_FIRST_TIME_OPENED] = isFirstTimeOpened ?: "true"
+        }
+    }
+
+    val readFirstAppOpen: Flow<String?>
+        get() = dataStorePreference.data.map { pref ->
+            pref[IS_APP_FIRST_TIME_OPENED]
         }
 
     companion object {
@@ -137,6 +159,8 @@ class WorkoutAppDatastorePreference @Inject constructor(
         val IMAGE_URI_KEY = stringPreferencesKey("IMAGE_URI_KEY")
         val DARK_MODE_THEME_key = stringPreferencesKey("DARK_MODE_THEME_key")
         val WATER_GLASSES_GOAL_KEY = stringPreferencesKey("WATER_GLASSES_GOAL_KEY")
+        val LOGIN_TOKEN = stringPreferencesKey("LOGIN_TOKEN")
+        val IS_APP_FIRST_TIME_OPENED = stringPreferencesKey("IS_APP_FIRST_TIME_OPENED")
     }
 
 }

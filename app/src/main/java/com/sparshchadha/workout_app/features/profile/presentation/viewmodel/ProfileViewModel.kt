@@ -3,9 +3,11 @@ package com.sparshchadha.workout_app.features.profile.presentation.viewmodel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
 import android.util.LruCache
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sparshchadha.workout_app.application.BaseRepository
 import com.sparshchadha.workout_app.storage.datastore.WorkoutAppDatastorePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,9 +19,12 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
+private const val TAG = "ProfileViewModel"
+
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val datastorePreference: WorkoutAppDatastorePreference,
+    private val baseRepository: BaseRepository
 ) : ViewModel() {
     private val _age = MutableStateFlow("")
     val age: StateFlow<String> = _age
@@ -67,6 +72,18 @@ class ProfileViewModel @Inject constructor(
 
     private val _profileImageUri = MutableStateFlow<Bitmap?>(null)
 
+    private val _startGoogleSignIn = MutableStateFlow(false)
+    val startGoogleSignIn = _startGoogleSignIn.asStateFlow()
+
+    private val _loginResult = MutableStateFlow<Boolean?>(null)
+    val loginResult = _loginResult.asStateFlow()
+
+    private val _loginToken = MutableStateFlow("")
+    val loginToken = _loginToken.asStateFlow()
+
+    private val _isFirstTimeAppOpen = MutableStateFlow<String?>(null)
+    val isFirstTimeAppOpen = _isFirstTimeAppOpen.asStateFlow()
+
     init {
         readAge()
         readGender()
@@ -79,6 +96,26 @@ class ProfileViewModel @Inject constructor(
         setupLruCache()
         readDarkTheme()
         readWaterGlassesGoal()
+        readLoginToken()
+        readFirstTimeAppOpen()
+    }
+
+    private fun readFirstTimeAppOpen() {
+        viewModelScope.launch(Dispatchers.IO) {
+            datastorePreference.readFirstAppOpen.collect {
+                _isFirstTimeAppOpen.value = it ?: "true"
+            }
+        }
+    }
+
+    private fun readLoginToken() {
+        viewModelScope.launch(Dispatchers.IO) {
+            datastorePreference.readLoginToken.collect {
+                it?.let {
+                    _loginToken.value = it
+                }
+            }
+        }
     }
 
     private fun readWaterGlassesGoal() {
@@ -314,17 +351,86 @@ class ProfileViewModel @Inject constructor(
             datastorePreference.saveWaterGlassesGoal(goal.toString())
         }
     }
-}
 
-private object DbBitmapUtility {
-    fun encodeToBase64(image: Bitmap, compressFormat: Bitmap.CompressFormat?, quality: Int): String? {
-        val byteArrayOS = ByteArrayOutputStream()
-        image.compress(compressFormat!!, quality, byteArrayOS)
-        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT)
+    fun startGoogleSignIn() {
+        _startGoogleSignIn.value = true
     }
 
-    fun decodeBase64(input: String?): Bitmap? {
-        val decodedBytes = Base64.decode(input, 0)
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+    fun updateLoginResult(result: Boolean, token: String = "") {
+        _loginResult.value = result
+        Log.e(TAG, "updateLoginResult: $token")
+        if (token.isNotBlank()) {
+            // send token to server and save token in datastore
+            viewModelScope.launch(Dispatchers.IO) {
+                datastorePreference.saveLoginToken(token)
+            }
+        }
+        _startGoogleSignIn.value = false
+    }
+
+    fun signOutUser() {
+        resetValues()
+        updateFirstTimeAppOpen("true")
+    }
+
+    fun updateFirstTimeAppOpen(value: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            datastorePreference.saveFirstAppOpen(value)
+        }
+    }
+
+    private fun resetValues() {
+        viewModelScope.launch(Dispatchers.IO) {
+            async {
+                datastorePreference.saveAge(null)
+            }
+            async {
+                datastorePreference.saveHeight(null)
+            }
+            async {
+                datastorePreference.saveCurrentWeight(null)
+            }
+            async {
+                datastorePreference.saveGender(null)
+            }
+            async {
+                datastorePreference.saveWeightGoal(null)
+            }
+            async {
+                datastorePreference.saveCaloriesGoal(null)
+            }
+            async {
+                datastorePreference.saveLoginToken(null)
+            }
+            async {
+                datastorePreference.saveBase64Image(null)
+            }
+            async {
+                datastorePreference.saveName(null)
+            }
+            async {
+                datastorePreference.saveWaterGlassesGoal("8")
+            }
+            async {
+                baseRepository.clearWorkoutDatabase()
+            }
+        }
+    }
+
+    private object DbBitmapUtility {
+        fun encodeToBase64(
+            image: Bitmap,
+            compressFormat: Bitmap.CompressFormat?,
+            quality: Int
+        ): String? {
+            val byteArrayOS = ByteArrayOutputStream()
+            image.compress(compressFormat!!, quality, byteArrayOS)
+            return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT)
+        }
+
+        fun decodeBase64(input: String?): Bitmap? {
+            val decodedBytes = Base64.decode(input, 0)
+            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        }
     }
 }

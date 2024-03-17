@@ -66,6 +66,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
+import com.sparshchadha.workout_app.util.Constants
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PROFILE_PICTURE_SIZE
@@ -90,6 +91,7 @@ fun ProfileScreen(
     val caloriesGoal = profileViewModel.caloriesGoal.collectAsState().value
     val name = profileViewModel.name.collectAsState().value
     val profileBitmap = profileViewModel.profilePicBitmap.collectAsState().value
+    val loginToken = profileViewModel.loginToken.collectAsState().value
 
     var shouldShowDialogToUpdateValue by remember {
         mutableStateOf(false)
@@ -98,6 +100,8 @@ fun ProfileScreen(
     var showDialogToUpdateValueOf by remember {
         mutableStateOf("")
     }
+
+    val context = LocalContext.current
 
     if (shouldShowDialogToUpdateValue) {
         DialogToUpdate(
@@ -159,7 +163,17 @@ fun ProfileScreen(
             setDarkTheme = {
                 profileViewModel.enableDarkMode(it)
             },
-            isDarkTheme = profileViewModel.darkTheme.collectAsState().value
+            isDarkTheme = profileViewModel.darkTheme.collectAsState().value,
+            onAuthButtonClick = {
+                if (loginToken.isBlank()) {
+                    profileViewModel.startGoogleSignIn()
+                } else {
+                    context.deleteDatabase(Constants.DATABASE_NAME)
+                    profileViewModel.signOutUser()
+                    navController.popBackStack()
+                }
+            },
+            loginToken = loginToken
         )
 
         HeaderText(heading = "Personal Details")
@@ -265,7 +279,9 @@ fun ProfileScreen(
 @Composable
 fun AppSettings(
     setDarkTheme: (Boolean) -> Unit,
-    isDarkTheme: Boolean
+    isDarkTheme: Boolean,
+    onAuthButtonClick: () -> Unit,
+    loginToken: String,
 ) {
     Column(
         modifier = Modifier
@@ -274,22 +290,37 @@ fun AppSettings(
             .clip(RoundedCornerShape(SMALL_PADDING))
             .background(bottomBarColor)
     ) {
-        val list = listOf(
-            "Enable Dark Theme",
-            "Rate On Playstore",
-            "Login",
+
+        AppSettingCategory(
+            text = "Enable Dark Theme",
+            showToggleSwitch = true,
+            isDarkTheme = isDarkTheme,
+            setDarkTheme = setDarkTheme,
+            textColor = primaryTextColor,
+            fontWeight = FontWeight.Normal
         )
 
-        for (item in list) {
-            AppSettingCategory(
-                text = item,
-                showToggleSwitch = (item == "Enable Dark Theme"),
-                isDarkTheme = isDarkTheme,
-                setDarkTheme = setDarkTheme,
-                textColor = if (item == "Login") targetAchievedColor else primaryTextColor,
-                fontWeight = FontWeight.Normal
-            )
-        }
+        AppSettingCategory(
+            text = "Rate On Playstore",
+            showToggleSwitch = false,
+            isDarkTheme = isDarkTheme,
+            setDarkTheme = setDarkTheme,
+            textColor = primaryTextColor,
+            fontWeight = FontWeight.Normal,
+            onClick = {
+
+            }
+        )
+
+        AppSettingCategory(
+            text = if (loginToken.isNotBlank()) "Sign Out" else "Sign In",
+            showToggleSwitch = false,
+            isDarkTheme = isDarkTheme,
+            setDarkTheme = setDarkTheme,
+            textColor = if (loginToken.isNotBlank()) noAchievementColor else targetAchievedColor,
+            fontWeight = FontWeight.Normal,
+            onClick = onAuthButtonClick,
+        )
     }
 }
 
@@ -300,10 +331,15 @@ fun AppSettingCategory(
     isDarkTheme: Boolean,
     setDarkTheme: (Boolean) -> Unit,
     textColor: Color,
-    fontWeight: FontWeight
+    fontWeight: FontWeight,
+    onClick: () -> Unit = {}
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
