@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -44,10 +43,12 @@ import com.sparshchadha.workout_app.ui.activity.components.GoogleSignInLauncher
 import com.sparshchadha.workout_app.ui.activity.components.LandingPage
 import com.sparshchadha.workout_app.ui.activity.components.PermissionRequestDialog
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
+import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.navigation.nav_graph.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 
 private const val TAG = "MainActivityTaggg"
@@ -152,56 +153,65 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                var navigateToHomeScreen by remember {
-                    mutableStateOf(false)
-                }
-                val isFirstTimeAppOpen = profileViewModel.isFirstTimeAppOpen.collectAsState().value ?: "true"
-
-                if (isFirstTimeAppOpen == "false" || navigateToHomeScreen) {
-                    val navHostController = rememberNavController()
-
-                    if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                        LaunchedEffect(key1 = Unit) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                requestPermission(Manifest.permission.POST_NOTIFICATIONS)
-                            }
-                        }
-                        profileViewModel.updateFirstTimeAppOpen("false")
-                    }
-
-                    val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
-
-                    Scaffold(
-                        bottomBar = {
-                            BottomBar(
-                                navHostController = navHostController,
-                                bottomBarState = bottomBarState.value
-                            )
-                        },
-                        containerColor = scaffoldBackgroundColor
-                    ) {
-                        NavGraph(
-                            navController = navHostController,
-                            globalPaddingValues = it,
-                            foodItemsViewModel = foodItemsViewModel,
-                            workoutViewModel = workoutViewModel,
-                            remindersViewModel = remindersViewModel,
-                            profileViewModel = profileViewModel,
-                            newsViewModel = newsViewModel,
-                            yogaViewModel = yogaViewModel,
-                            toggleBottomBarVisibility = { bottomBarVisibility ->
-                                bottomBarState.value = bottomBarVisibility
+                when(profileViewModel.isFirstTimeAppOpen.collectAsState().value) {
+                    "true" -> {
+                        LandingPage(
+                            profileViewModel,
+                            navigateToHomeScreen = {
+                                profileViewModel.updateFirstTimeAppOpen("false")
                             }
                         )
                     }
-                } else {
-                    LandingPage(
-                        profileViewModel,
-                        navigateToHomeScreen = {
-                            navigateToHomeScreen = true
+                    "false" -> {
+                        val navHostController = rememberNavController()
+
+                        if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                            LaunchedEffect(key1 = Unit) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    requestPermission(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                            }
                             profileViewModel.updateFirstTimeAppOpen("false")
                         }
-                    )
+
+                        val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+
+                        Scaffold(
+                            bottomBar = {
+                                BottomBar(
+                                    navHostController = navHostController,
+                                    bottomBarState = bottomBarState.value
+                                )
+                            },
+                            containerColor = scaffoldBackgroundColor
+                        ) {
+                            NavGraph(
+                                navController = navHostController,
+                                globalPaddingValues = it,
+                                foodItemsViewModel = foodItemsViewModel,
+                                workoutViewModel = workoutViewModel,
+                                remindersViewModel = remindersViewModel,
+                                profileViewModel = profileViewModel,
+                                newsViewModel = newsViewModel,
+                                yogaViewModel = yogaViewModel,
+                                toggleBottomBarVisibility = { bottomBarVisibility ->
+                                    bottomBarState.value = bottomBarVisibility
+                                }
+                            )
+                        }
+                    }
+                    else -> {
+                        val loadingTimeElapsed = remember { mutableStateOf(false) }
+                        LaunchedEffect(Unit) {
+                            delay(2000)
+                            loadingTimeElapsed.value = true
+                        }
+                        if (loadingTimeElapsed.value) {
+                            profileViewModel.updateFirstTimeAppOpen("true")
+                        } else {
+                            ShowLoadingScreen()
+                        }
+                    }
                 }
             }
         }

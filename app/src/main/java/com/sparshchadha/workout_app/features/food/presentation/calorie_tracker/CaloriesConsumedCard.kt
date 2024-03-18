@@ -189,7 +189,8 @@ fun CaloriesConsumedAndLeft(
 
         Column(
             modifier = Modifier
-                .weight(1f)
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CaloriesLeftOrEatenColumn(
                 calories = caloriesConsumed,
@@ -210,9 +211,20 @@ fun CaloriesConsumedAndLeft(
                 )
 
                 Text(
-                    text = "$percentage% consumed",
+                    buildAnnotatedString {
+                        append("$percentage%, ")
+                        withStyle(
+                            style = SpanStyle(
+                                color = noAchievementColor,
+                                fontSize = 14.nonScaledSp,
+                            )
+                        ) {
+                            append("${100 - percentage.toDouble()}%")
+                        }
+                    },
                     fontSize = 14.nonScaledSp,
-                    color = if (caloriesConsumed.toDouble() < caloriesGoal.toDouble()) noAchievementColor else targetAchievedColor,
+                    fontWeight = FontWeight.Bold,
+                    color = targetAchievedColor,
                     textAlign = TextAlign.Start
                 )
             }
@@ -576,7 +588,7 @@ fun CenterCaloriesGoalBox(
 fun CaloriesLeftOrEatenColumn(calories: String, description: String, modifier: Modifier) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = description,

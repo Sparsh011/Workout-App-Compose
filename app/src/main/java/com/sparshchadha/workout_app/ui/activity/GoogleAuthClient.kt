@@ -27,8 +27,4 @@ class GoogleAuthClient(
 
         return GoogleSignIn.getClient(context as Activity, gso)
     }
-
-    fun signOut() {
-        getGoogleSignInClient().signOut()
-    }
 }

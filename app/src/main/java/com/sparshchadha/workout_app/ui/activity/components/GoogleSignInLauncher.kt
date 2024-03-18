@@ -1,7 +1,6 @@
 package com.sparshchadha.workout_app.ui.activity.components
 
 import android.content.Intent
-import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -27,17 +26,20 @@ fun GoogleSignInLauncher(
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
         onResult = {
-            val task: Task<GoogleSignInAccount> =
-                GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            val token = handleSignInResult(task)
-
-            if (token != null) {
-                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                profileViewModel.updateLoginResult(result = true, token = token)
-            } else {
-                Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
-                profileViewModel.updateLoginResult(result = false)
-            }
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            handleSignInResult(
+                completedTask = task,
+                getId = { idToken ->
+                    if (idToken != null) {
+                        profileViewModel.updateLoginResult(result = true, token = idToken)
+                    } else {
+                        profileViewModel.updateLoginResult(result = false)
+                    }
+                },
+                getAccessToken = {
+                    // send access token to backend to verify.
+                }
+            )
         }
     )
 
@@ -66,11 +68,21 @@ private fun observeLoginState(
 }
 
 
-private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>): String? {
-    return try {
+private fun handleSignInResult(
+    completedTask: Task<GoogleSignInAccount>,
+    getId: (String?) -> Unit,
+    getAccessToken: (String?) -> Unit
+) {
+    try {
         val account: GoogleSignInAccount = completedTask.getResult(ApiException::class.java)
-        account.idToken
+        getId(
+            account.id
+        )
+        getAccessToken(
+            account.idToken
+        )
     } catch (e: ApiException) {
-        null
+        getId(null)
+        getAccessToken(null)
     }
 }

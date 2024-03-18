@@ -84,7 +84,7 @@ class WorkoutAppDatastorePreference @Inject constructor(
 
     suspend fun saveName(name: String?) {
         dataStorePreference.edit { pref ->
-            pref[NAME_KEY] = name ?: ""
+            pref[NAME_KEY] = name ?: "Guest"
         }
     }
 

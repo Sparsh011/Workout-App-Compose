@@ -103,7 +103,7 @@ class ProfileViewModel @Inject constructor(
     private fun readFirstTimeAppOpen() {
         viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.readFirstAppOpen.collect {
-                _isFirstTimeAppOpen.value = it ?: "true"
+                _isFirstTimeAppOpen.value = it
             }
         }
     }
@@ -259,7 +259,7 @@ class ProfileViewModel @Inject constructor(
 
     fun saveName(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            datastorePreference.saveName(name)
+            datastorePreference.saveName(name.trim())
         }
     }
 
@@ -272,26 +272,12 @@ class ProfileViewModel @Inject constructor(
         caloriesGoal: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            async {
-                datastorePreference.saveAge(age)
-            }
-            async {
-                datastorePreference.saveHeight(height)
-            }
-            async {
-                datastorePreference.saveCurrentWeight(weight)
-            }
-            async {
-                datastorePreference.saveGender(gender)
-            }
-
-            async {
-                datastorePreference.saveWeightGoal(weightGoal)
-            }
-
-            async {
-                datastorePreference.saveCaloriesGoal(caloriesGoal)
-            }
+            datastorePreference.saveAge(age)
+            datastorePreference.saveHeight(height)
+            datastorePreference.saveCurrentWeight(weight)
+            datastorePreference.saveGender(gender)
+            datastorePreference.saveWeightGoal(weightGoal)
+            datastorePreference.saveCaloriesGoal(caloriesGoal)
         }
     }
 

@@ -66,7 +66,6 @@ import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
-import com.sparshchadha.workout_app.util.Constants
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PROFILE_PICTURE_SIZE
@@ -168,7 +167,6 @@ fun ProfileScreen(
                 if (loginToken.isBlank()) {
                     profileViewModel.startGoogleSignIn()
                 } else {
-                    context.deleteDatabase(Constants.DATABASE_NAME)
                     profileViewModel.signOutUser()
                     navController.popBackStack()
                 }
@@ -677,7 +675,7 @@ fun getBmi(height: String, currentWeight: String): String {
         return String.format("%.2f", bmi)
     }
 
-    return "25"
+    return "NA"
 }
 
 @Composable
