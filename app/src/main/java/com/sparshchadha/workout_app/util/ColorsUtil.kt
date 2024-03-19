@@ -11,7 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 
 object ColorsUtil {
-    val colorHelper = ColorHelper()
+    private val colorHelper = ColorHelper()
     private val primaryDarkColor = Color(37, 43, 54)
     val primaryBlue: Color = Color(79, 124, 214, 255)
     val primaryGreen: Color = Color(0, 255, 135)
@@ -61,12 +61,12 @@ object ColorsUtil {
     val progressTrackColor: Color
         @Composable
         get() = if (!colorHelper.isDarkTheme()) LightGray else DarkGray
-}
 
-class ColorHelper {
-    @Composable
-    fun isDarkTheme(): Boolean {
-        val profileVm : ProfileViewModel = hiltViewModel()
-        return profileVm.darkTheme.collectAsState().value
+    class ColorHelper {
+        @Composable
+        fun isDarkTheme(): Boolean {
+            val profileVm : ProfileViewModel = hiltViewModel()
+            return profileVm.darkTheme.collectAsState().value
+        }
     }
 }
