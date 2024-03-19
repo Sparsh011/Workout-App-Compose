@@ -39,7 +39,6 @@ import com.sparshchadha.workout_app.features.yoga.domain.repository.YogaReposito
 import com.sparshchadha.workout_app.storage.datastore.WorkoutAppDatastorePreference
 import com.sparshchadha.workout_app.storage.room_db.Converters
 import com.sparshchadha.workout_app.storage.room_db.WorkoutAppDatabase
-import com.sparshchadha.workout_app.storage.shared_preference.WorkoutAppSharedPref
 import com.sparshchadha.workout_app.util.Constants.DATABASE_NAME
 import com.sparshchadha.workout_app.util.GsonParser
 import dagger.Module
@@ -306,13 +305,5 @@ object SharedModule {
         workoutAppDatabase: WorkoutAppDatabase
     ) : BaseRepository{
         return BaseRepository(workoutAppDatabase = workoutAppDatabase)
-    }
-
-    @Singleton
-    @Provides
-    fun provideSharedPref(
-        @ApplicationContext context: Context
-    ) : WorkoutAppSharedPref {
-        return WorkoutAppSharedPref(context)
     }
 }
