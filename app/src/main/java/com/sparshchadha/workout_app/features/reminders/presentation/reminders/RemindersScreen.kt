@@ -69,8 +69,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.features.reminders.domain.entity.ReminderEntity
+import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
+import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryDarkGray
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
@@ -84,7 +86,6 @@ import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
-import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
@@ -162,7 +163,6 @@ fun RemindersScreen(
                 .background(scaffoldBackgroundColor)
                 .padding(
                     top = localPaddingValues.calculateTopPadding(),
-                    bottom = globalPaddingValues.calculateBottomPadding(),
                 )
         ) {
 
@@ -450,6 +450,9 @@ fun ShowNewDatePicker(
 
     MaterialDialog(
         dialogState = dateDialogState,
+        onCloseRequest = {
+            hideDatePicker()
+        },
         buttons = {
             positiveButton(text = "Ok") {
                 hideDatePicker()
@@ -705,7 +708,8 @@ fun Reminders(
         }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize(),
             verticalArrangement = verticalArrangement
         ) {
 
@@ -817,7 +821,7 @@ fun Reminder(
             .fillMaxWidth()
             .padding(MEDIUM_PADDING)
             .clip(RoundedCornerShape(MEDIUM_PADDING))
-            .background(scaffoldBackgroundColor),
+            .background(cardBackgroundColor),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
@@ -833,7 +837,7 @@ fun Reminder(
                 maxLines = 2,
                 color = primaryTextColor,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(MEDIUM_PADDING)
+                modifier = Modifier.padding(vertical = SMALL_PADDING, horizontal = MEDIUM_PADDING)
             )
 
             val month by remember {

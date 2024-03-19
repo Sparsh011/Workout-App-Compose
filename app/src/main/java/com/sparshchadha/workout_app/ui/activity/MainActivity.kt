@@ -69,7 +69,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            WorkoutAppTheme {
+            WorkoutAppTheme (
+                darkTheme = profileViewModel.darkTheme.collectAsState().value
+            ){
                 analytics = Firebase.analytics
                 GoogleSignInLauncher(profileViewModel = profileViewModel)
 
@@ -82,15 +84,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                when (profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
-                    true -> {
-
-                    }
-
-                    false -> {
-
-                    }
-                }
 
                 val pickMedia =
                     rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
