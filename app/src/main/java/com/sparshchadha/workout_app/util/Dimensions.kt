@@ -1,5 +1,8 @@
 package com.sparshchadha.workout_app.util
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
@@ -58,4 +61,8 @@ object Dimensions {
     val PROFILE_PICTURE_SIZE: Dp
         @Composable
         get() = dimensionResource(id = R.dimen.profile_picture_size)
+
+    val BOTTOM_SHEET_BOTTOM_PADDING: Dp
+        @Composable
+        get() = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 }

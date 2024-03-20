@@ -71,7 +71,7 @@ private const val TAG = "CalorieTrackerScreen"
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CalorieTrackerScreen(
+fun FoodScreen(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
     foodAndWaterViewModel: FoodAndWaterViewModel,

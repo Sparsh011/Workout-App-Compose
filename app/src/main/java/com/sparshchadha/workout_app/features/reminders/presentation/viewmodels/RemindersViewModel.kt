@@ -26,6 +26,9 @@ class RemindersViewModel @Inject constructor(
     private val _foodReminders = MutableStateFlow<List<ReminderEntity>?>(null)
     val foodReminders = _foodReminders.asStateFlow()
 
+    private val _waterReminders = MutableStateFlow<List<ReminderEntity>?>(null)
+    val waterReminders = _waterReminders.asStateFlow()
+
     private val _workoutReminders = MutableStateFlow<List<ReminderEntity>?>(null)
     val workoutReminders = _workoutReminders.asStateFlow()
 
@@ -110,59 +113,61 @@ class RemindersViewModel @Inject constructor(
                 remindersRepository.getRemindersByReminderType(reminderType = reminderType)
 
             reminders.collect {
-                if (reminderType == ReminderTypes.FOOD.name) {
-                    _foodReminders.emit(it)
-                } else {
-                    _workoutReminders.emit(it)
+                when (reminderType) {
+                    ReminderTypes.FOOD.name -> {
+                        _foodReminders.emit(it)
+                    }
+
+                    ReminderTypes.EXERCISE.name -> {
+                        _workoutReminders.emit(it)
+                    }
+
+                    ReminderTypes.WATER.name -> {
+                        _waterReminders.emit(it)
+                    }
                 }
             }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun deleteReminder(reminderEntity: ReminderEntity) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                remindersRepository.deleteReminder(reminderEntity = reminderEntity)
-                _remindersUIEvent.emit(
-                    RemindersUIEvent.ShowToast(message = "Reminder Removed")
-                )
-                alarmScheduler.cancel(
-                    AlarmItem(
-                        description = reminderEntity.reminderType + " " + reminderEntity.reminderDescription,
-                        time = LocalDateTime.of(
-                            reminderEntity.year.toInt(),
-                            reminderEntity.month.toInt(),
-                            reminderEntity.date.toInt(),
-                            reminderEntity.hours,
-                            reminderEntity.minutes
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun deleteReminder(reminderEntity: ReminderEntity) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    remindersRepository.deleteReminder(reminderEntity = reminderEntity)
+                    _remindersUIEvent.emit(
+                        RemindersUIEvent.ShowToast(message = "Reminder Removed")
+                    )
+                    alarmScheduler.cancel(
+                        AlarmItem(
+                            description = reminderEntity.reminderType + " " + reminderEntity.reminderDescription,
+                            time = LocalDateTime.of(
+                                reminderEntity.year.toInt(),
+                                reminderEntity.month.toInt(),
+                                reminderEntity.date.toInt(),
+                                reminderEntity.hours,
+                                reminderEntity.minutes
+                            )
                         )
                     )
-                )
-            } catch (e: Exception) {
-                _remindersUIEvent.emit(
-                    RemindersUIEvent.ShowToast(message = "Error ${e.message}")
-                )
+                } catch (e: Exception) {
+                    _remindersUIEvent.emit(
+                        RemindersUIEvent.ShowToast(message = "Error ${e.message}")
+                    )
+                }
             }
         }
-    }
 
-    private fun isReminderValid(reminderEntity: ReminderEntity): Boolean {
-        return (
-                reminderEntity.month.isNotBlank()
-                        && reminderEntity.reminderType.isNotBlank()
-                        && reminderEntity.date.isNotBlank() && reminderEntity.reminderDescription.isNotBlank()
-                        && reminderEntity.year.isNotBlank()
-                )
-    }
+        private fun isReminderValid(reminderEntity: ReminderEntity): Boolean {
+            return (
+                    reminderEntity.month.isNotBlank()
+                            && reminderEntity.reminderType.isNotBlank()
+                            && reminderEntity.date.isNotBlank() && reminderEntity.reminderDescription.isNotBlank()
+                            && reminderEntity.year.isNotBlank()
+                    )
+        }
 
-    fun getAll(){
-        viewModelScope.launch {
-            remindersRepository
+        sealed class RemindersUIEvent {
+            data class ShowToast(val message: String) : RemindersUIEvent()
         }
     }
-
-    sealed class RemindersUIEvent {
-        data class ShowToast(val message: String) : RemindersUIEvent()
-    }
-}

@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.CalorieTrackerScreen
+import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.FoodScreen
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
@@ -35,7 +35,7 @@ fun NavGraphBuilder.bottomCalorieTrackerComposable(
         LaunchedEffect(key1 = Unit) {
             toggleBottomBarVisibility(true)
         }
-        CalorieTrackerScreen(
+        FoodScreen(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
             foodAndWaterViewModel = foodItemsViewModel,
