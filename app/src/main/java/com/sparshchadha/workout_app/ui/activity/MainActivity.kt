@@ -28,6 +28,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.Firebase
@@ -66,143 +67,150 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
 
-            WorkoutAppTheme (
-                darkTheme = profileViewModel.darkTheme.collectAsState().value
-            ){
-                analytics = Firebase.analytics
-                GoogleSignInLauncher(profileViewModel = profileViewModel)
-
-                requestPermissionLauncher =
-                    rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-                        if (isGranted) {
-
-                        } else {
-
-                        }
-                    }
-
-
-                val pickMedia =
-                    rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                        if (uri != null) {
-                            val bitmap = getCapturedImage(uri)
-                            profileViewModel.setImageBitmap(bitmap)
-                            profileViewModel.cacheBitmap(bitmap)
-                        } else {
-                            Log.d(TAG, "No media selected")
-                        }
-                        profileViewModel.galleryClosed()
-                    }
-
-                val openGallery by profileViewModel.openGallery.collectAsStateWithLifecycle()
-
-                if (openGallery == true) {
-                    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            when(profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
+                null -> {
+                    // show splash screen
                 }
+                else -> {
+                    WorkoutAppTheme (
+                        darkTheme = profileViewModel.darkTheme.collectAsState().value!!
+                    ){
+                        analytics = Firebase.analytics
+                        GoogleSignInLauncher(profileViewModel = profileViewModel)
 
-                val showPermissionDialogFlow by profileViewModel.showPermissionDialog.collectAsStateWithLifecycle()
-                val requestPermissions by profileViewModel.requestPermissions.collectAsStateWithLifecycle()
-                val context = LocalContext.current
+                        requestPermissionLauncher =
+                            rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                                if (isGranted) {
 
-                when (showPermissionDialogFlow) {
-                    true -> {
-                        PermissionRequestDialog(description = "Need Permission") {
-                            profileViewModel.hidePermissionDialog()
+                                } else {
+
+                                }
+                            }
+
+
+                        val pickMedia =
+                            rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                                if (uri != null) {
+                                    val bitmap = getCapturedImage(uri)
+                                    profileViewModel.setImageBitmap(bitmap)
+                                    profileViewModel.cacheBitmap(bitmap)
+                                } else {
+                                    Log.d(TAG, "No media selected")
+                                }
+                                profileViewModel.galleryClosed()
+                            }
+
+                        val openGallery by profileViewModel.openGallery.collectAsStateWithLifecycle()
+
+                        if (openGallery == true) {
+                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                         }
-                    }
 
-                    false -> {
+                        val showPermissionDialogFlow by profileViewModel.showPermissionDialog.collectAsStateWithLifecycle()
+                        val requestPermissions by profileViewModel.requestPermissions.collectAsStateWithLifecycle()
+                        val context = LocalContext.current
 
-                    }
+                        when (showPermissionDialogFlow) {
+                            true -> {
+                                PermissionRequestDialog(description = "Need Permission") {
+                                    profileViewModel.hidePermissionDialog()
+                                }
+                            }
 
-                    else -> {
-                        // ignore
-                    }
-                }
+                            false -> {
 
-                if (requestPermissions != null) {
-                    if (requestPermissions?.size == 1) {
-                        LaunchedEffect(key1 = Unit) {
-                            val permission = requestPermissions!![0].first
-                            val minSdk = requestPermissions!![0].second
-                            if (minSdk != -1) {
-                                requestPermissionHandler(permission = permission, minSdk = minSdk)
+                            }
+
+                            else -> {
+                                // ignore
+                            }
+                        }
+
+                        if (requestPermissions != null) {
+                            if (requestPermissions?.size == 1) {
+                                LaunchedEffect(key1 = Unit) {
+                                    val permission = requestPermissions!![0].first
+                                    val minSdk = requestPermissions!![0].second
+                                    if (minSdk != -1) {
+                                        requestPermissionHandler(permission = permission, minSdk = minSdk)
+                                    } else {
+                                        requestPermissionHandler(permission = permission)
+                                    }
+                                }
+
                             } else {
-                                requestPermissionHandler(permission = permission)
-                            }
-                        }
-
-                    } else {
-                        LaunchedEffect(key1 = Unit) {
-                            val permissions = mutableListOf<String>()
-                            requestPermissions?.forEach {
-                                permissions.add(it.first)
-                            }
-                            requestMultiplePermissions(permissions = permissions.toTypedArray())
-                        }
-                    }
-                }
-
-                when(profileViewModel.isFirstTimeAppOpen.collectAsState().value) {
-                    "true" -> {
-                        LandingPage(
-                            profileViewModel,
-                            navigateToHomeScreen = {
-                                profileViewModel.updateFirstTimeAppOpen("false")
-                            }
-                        )
-                    }
-                    "false" -> {
-                        val navHostController = rememberNavController()
-
-                        if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                            LaunchedEffect(key1 = Unit) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                    requestPermission(Manifest.permission.POST_NOTIFICATIONS)
+                                LaunchedEffect(key1 = Unit) {
+                                    val permissions = mutableListOf<String>()
+                                    requestPermissions?.forEach {
+                                        permissions.add(it.first)
+                                    }
+                                    requestMultiplePermissions(permissions = permissions.toTypedArray())
                                 }
                             }
-                            profileViewModel.updateFirstTimeAppOpen("false")
                         }
 
-                        val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
-
-                        Scaffold(
-                            bottomBar = {
-                                BottomBar(
-                                    navHostController = navHostController,
-                                    bottomBarState = bottomBarState.value
+                        when(profileViewModel.isFirstTimeAppOpen.collectAsState().value) {
+                            "true" -> {
+                                LandingPage(
+                                    profileViewModel,
+                                    navigateToHomeScreen = {
+                                        profileViewModel.updateFirstTimeAppOpen("false")
+                                    }
                                 )
-                            },
-                            containerColor = scaffoldBackgroundColor
-                        ) {
-                            NavGraph(
-                                navController = navHostController,
-                                globalPaddingValues = it,
-                                foodItemsViewModel = foodItemsViewModel,
-                                workoutViewModel = workoutViewModel,
-                                remindersViewModel = remindersViewModel,
-                                profileViewModel = profileViewModel,
-                                newsViewModel = newsViewModel,
-                                yogaViewModel = yogaViewModel,
-                                toggleBottomBarVisibility = { bottomBarVisibility ->
-                                    bottomBarState.value = bottomBarVisibility
+                            }
+                            "false" -> {
+                                val navHostController = rememberNavController()
+
+                                if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                    LaunchedEffect(key1 = Unit) {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            requestPermission(Manifest.permission.POST_NOTIFICATIONS)
+                                        }
+                                    }
+                                    profileViewModel.updateFirstTimeAppOpen("false")
                                 }
-                            )
-                        }
-                    }
-                    else -> {
-                        val loadingTimeElapsed = remember { mutableStateOf(false) }
-                        LaunchedEffect(Unit) {
-                            delay(2000)
-                            loadingTimeElapsed.value = true
-                        }
-                        if (loadingTimeElapsed.value) {
-                            profileViewModel.updateFirstTimeAppOpen("true")
-                        } else {
-                            ShowLoadingScreen()
+
+                                val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+
+                                Scaffold(
+                                    bottomBar = {
+                                        BottomBar(
+                                            navHostController = navHostController,
+                                            bottomBarState = bottomBarState.value
+                                        )
+                                    },
+                                    containerColor = scaffoldBackgroundColor
+                                ) {
+                                    NavGraph(
+                                        navController = navHostController,
+                                        globalPaddingValues = it,
+                                        foodItemsViewModel = foodItemsViewModel,
+                                        workoutViewModel = workoutViewModel,
+                                        remindersViewModel = remindersViewModel,
+                                        profileViewModel = profileViewModel,
+                                        newsViewModel = newsViewModel,
+                                        yogaViewModel = yogaViewModel,
+                                        toggleBottomBarVisibility = { bottomBarVisibility ->
+                                            bottomBarState.value = bottomBarVisibility
+                                        }
+                                    )
+                                }
+                            }
+                            else -> {
+                                ShowLoadingScreen()
+                                val loadingTimeElapsed = remember { mutableStateOf(false) }
+                                LaunchedEffect(Unit) {
+                                    delay(2000)
+                                    loadingTimeElapsed.value = true
+                                }
+                                if (loadingTimeElapsed.value) {
+                                    profileViewModel.updateFirstTimeAppOpen("true")
+                                }
+                            }
                         }
                     }
                 }

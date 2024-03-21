@@ -4,6 +4,7 @@ import android.Manifest
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -277,7 +278,7 @@ fun ProfileScreen(
 @Composable
 fun AppSettings(
     setDarkTheme: (Boolean) -> Unit,
-    isDarkTheme: Boolean,
+    isDarkTheme: Boolean?,
     onAuthButtonClick: () -> Unit,
     loginToken: String,
 ) {
@@ -326,7 +327,7 @@ fun AppSettings(
 fun AppSettingCategory(
     text: String,
     showToggleSwitch: Boolean,
-    isDarkTheme: Boolean,
+    isDarkTheme: Boolean?,
     setDarkTheme: (Boolean) -> Unit,
     textColor: Color,
     fontWeight: FontWeight,
@@ -352,7 +353,7 @@ fun AppSettingCategory(
 
         if (showToggleSwitch) {
             Switch(
-                checked = isDarkTheme,
+                checked = isDarkTheme ?: isSystemInDarkTheme(),
                 onCheckedChange = {
                     setDarkTheme(it)
                 },

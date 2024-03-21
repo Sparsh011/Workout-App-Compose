@@ -50,8 +50,8 @@ class ProfileViewModel @Inject constructor(
     private val _profilePicBitmap = MutableStateFlow<Bitmap?>(null)
     val profilePicBitmap = _profilePicBitmap
 
-    private val _darkTheme = MutableStateFlow(false)
-    val darkTheme: StateFlow<Boolean> = _darkTheme
+    private val _darkTheme = MutableStateFlow<Boolean?>(null)
+    val darkTheme: StateFlow<Boolean?> = _darkTheme
 
     private val _waterGlassesGoal = MutableStateFlow(0)
     val waterGlassesGoal: StateFlow<Int> = _waterGlassesGoal
@@ -129,7 +129,7 @@ class ProfileViewModel @Inject constructor(
     private fun readDarkTheme() {
         viewModelScope.launch {
             datastorePreference.readDarkMode.collect { isDarkTheme ->
-                _darkTheme.value = isDarkTheme.toBoolean()
+                _darkTheme.value = if (isDarkTheme.isNullOrBlank()) true else isDarkTheme.toBoolean()
             }
         }
     }

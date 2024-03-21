@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.util
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
@@ -66,7 +67,7 @@ object ColorsUtil {
         @Composable
         fun isDarkTheme(): Boolean {
             val profileVm : ProfileViewModel = hiltViewModel()
-            return profileVm.darkTheme.collectAsState().value
+            return profileVm.darkTheme.collectAsState().value ?: isSystemInDarkTheme()
         }
     }
 }
