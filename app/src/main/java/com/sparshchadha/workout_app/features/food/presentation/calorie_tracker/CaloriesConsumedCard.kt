@@ -80,7 +80,6 @@ fun CaloriesConsumedCard(
     waterGlassesConsumed: Int,
     setWaterGlassesGoal: (Int) -> Unit,
     setWaterGlassesConsumed: (Int) -> Unit,
-    glassesConsumed: Int
 ) {
     val configuration = LocalConfiguration.current;
     val caloriesConsumedCardWidth = configuration.screenWidthDp.dp
@@ -105,7 +104,6 @@ fun CaloriesConsumedCard(
             waterGlassesGoal = waterGlassesGoal,
             setWaterGlassesGoal = setWaterGlassesGoal,
             setWaterGlassesConsumed = setWaterGlassesConsumed,
-            glassesConsumed = glassesConsumed
         )
 
         CaloriesGoalText(showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet)
@@ -178,7 +176,6 @@ fun CaloriesConsumedAndLeft(
     waterGlassesGoal: Int,
     setWaterGlassesGoal: (Int) -> Unit,
     setWaterGlassesConsumed: (Int) -> Unit,
-    glassesConsumed: Int
 ) {
     Row(
         modifier = Modifier
@@ -252,8 +249,7 @@ fun CaloriesConsumedAndLeft(
                 waterGlassesConsumed = waterGlassesConsumed,
                 waterGlassesGoal = waterGlassesGoal,
                 setWaterGlassesGoal = setWaterGlassesGoal,
-                setWaterGlassesConsumed = setWaterGlassesConsumed,
-                glassesConsumed = glassesConsumed
+                setWaterGlassesConsumed = setWaterGlassesConsumed
             )
         }
     }
@@ -274,7 +270,6 @@ fun WaterTrackerColumn(
     waterGlassesGoal: Int,
     setWaterGlassesGoal: (Int) -> Unit,
     setWaterGlassesConsumed: (Int) -> Unit,
-    glassesConsumed: Int
 ) {
     var showDialogToUpdateWaterGlassesConsumed by remember {
         mutableStateOf(false)
@@ -308,7 +303,7 @@ fun WaterTrackerColumn(
 
     if (showDialogToUpdateWaterGlassesConsumed) {
         DialogToUpdateWaterGlasses(
-            glasses = glassesConsumed,
+            glasses = waterGlassesConsumed,
             setWaterGlassesConsumed = setWaterGlassesConsumed,
             isGoal = false,
             hideDialog = {

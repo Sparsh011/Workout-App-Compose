@@ -36,10 +36,10 @@ import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDtoItem
 import com.sparshchadha.workout_app.features.gym.domain.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
-import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
-import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
+import com.sparshchadha.workout_app.shared_ui.components.shared.CalendarRow
+import com.sparshchadha.workout_app.shared_ui.components.shared.NoWorkoutPerformedOrFoodConsumed
+import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions

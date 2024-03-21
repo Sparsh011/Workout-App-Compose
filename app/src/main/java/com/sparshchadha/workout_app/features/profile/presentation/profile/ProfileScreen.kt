@@ -54,11 +54,11 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
-import com.sparshchadha.workout_app.ui.activity.components.GenderIcon
-import com.sparshchadha.workout_app.ui.activity.components.LandingPageOutlinedTextField
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
-import com.sparshchadha.workout_app.ui.screens.workout.HeaderText
+import com.sparshchadha.workout_app.shared_ui.activity.components.GenderIcon
+import com.sparshchadha.workout_app.shared_ui.activity.components.LandingPageOutlinedTextField
+import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
+import com.sparshchadha.workout_app.shared_ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.shared_ui.screens.workout.HeaderText
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor

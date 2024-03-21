@@ -5,7 +5,7 @@ import com.sparshchadha.workout_app.features.yoga.data.remote.api.YogaApi
 import com.sparshchadha.workout_app.features.yoga.data.remote.dto.YogaPosesDto
 import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
 import com.sparshchadha.workout_app.features.yoga.domain.repository.YogaRepository
-import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
+import com.sparshchadha.workout_app.shared_ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

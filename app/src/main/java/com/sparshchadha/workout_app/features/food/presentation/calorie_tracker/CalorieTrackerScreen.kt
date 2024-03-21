@@ -1,12 +1,9 @@
 package com.sparshchadha.workout_app.features.food.presentation.calorie_tracker
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,10 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -33,9 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -44,32 +36,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
-import com.sparshchadha.workout_app.features.food.domain.entities.WaterEntity
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
-import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
-import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
-import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
-import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
-import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
+import com.sparshchadha.workout_app.shared_ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
-import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
-import com.sparshchadha.workout_app.util.Resource
 
 private const val TAG = "CalorieTrackerScreen"
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoodScreen(
     navController: NavHostController,
@@ -85,6 +67,15 @@ fun FoodScreen(
 
     val currentDate = HelperFunctions.getCurrentDateAndMonth().first
     val currentMonth = HelperFunctions.getCurrentDateAndMonth().second
+
+    val foodItemsConsumed = foodAndWaterViewModel.consumedFoodItems.collectAsState().value
+    val nutrientsConsumed = foodAndWaterViewModel.nutrientsConsumed
+    val selectedDayPair = foodAndWaterViewModel.selectedDayPosition
+    val waterGlassesConsumed = foodAndWaterViewModel.waterGlassesEntity.collectAsState().value
+
+    var showDialogToUpdateCalories by remember {
+        mutableStateOf(false)
+    }
 
 
     LaunchedEffect(key1 = Unit) {
@@ -102,15 +93,6 @@ fun FoodScreen(
                 year = "2024"
             )
         }
-    }
-
-    val foodItemsConsumed = foodAndWaterViewModel.consumedFoodItems.collectAsState().value
-    val nutrientsConsumed = foodAndWaterViewModel.nutrientsConsumed
-    val selectedDayPair = foodAndWaterViewModel.selectedDayPosition
-    val waterGlassesConsumed = foodAndWaterViewModel.waterGlassesEntity.collectAsState().value
-
-    var showDialogToUpdateCalories by remember {
-        mutableStateOf(false)
     }
 
     Scaffold(
@@ -146,76 +128,30 @@ fun FoodScreen(
                 }
             )
 
-            // Show Today's calories and nutrients -
-            val pagerState = rememberPagerState(
-                pageCount = {
-                    2
-                }
-            )
-
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(SMALL_PADDING)
-                ) {
-                    HorizontalPager(state = pagerState) { page ->
-                        when (page) {
-                            0 -> {
-                                CaloriesConsumedCard(
-                                    showDialogToUpdateCalories = showDialogToUpdateCalories,
-                                    caloriesGoal = caloriesGoal,
-                                    hideUpdateCaloriesDialog = {
-                                        showDialogToUpdateCalories = false
-                                    },
-                                    saveNewCaloriesGoal = {
-                                        profileViewModel.saveCaloriesGoal(it)
-                                    },
-                                    showCaloriesGoalBottomSheet = {
-                                        showDialogToUpdateCalories = true
-                                    },
-                                    caloriesConsumed = caloriesConsumed,
-                                    progressIndicatorColor = noAchievementColor,
-                                    waterGlassesGoal = waterGlassesGoal,
-                                    waterGlassesConsumed = waterGlassesConsumed?.glassesConsumed
-                                        ?: 0,
-                                    setWaterGlassesGoal = {
-                                        profileViewModel.setWaterGlassesGoal(it)
-                                    },
-                                    setWaterGlassesConsumed = {
-                                        foodAndWaterViewModel.updateWaterGlassesEntity(
-                                            WaterEntity(
-                                                glassesConsumed = it,
-                                                date = waterGlassesConsumed?.date
-                                                    ?: HelperFunctions.getCurrentDateAndMonth().first.toString(),
-                                                month = waterGlassesConsumed?.month
-                                                    ?: HelperFunctions.getCurrentDateAndMonth().second,
-                                                year = waterGlassesConsumed?.year ?: "2024",
-                                                id = waterGlassesConsumed?.id
-                                            )
-                                        )
-                                    },
-                                    glassesConsumed = waterGlassesConsumed?.glassesConsumed ?: 0
-                                )
-                            }
-
-                            1 -> {
-                                MacroNutrientsConsumed(
-                                    nutrientsConsumed = nutrientsConsumed,
-                                    caloriesGoal = caloriesGoal
-                                )
-                            }
-                        }
+                CalorieTrackerAndMacroNutrientsCardPager(
+                    showDialogToUpdateCalories = showDialogToUpdateCalories,
+                    toggleDialogToUpdateCalories = {
+                        showDialogToUpdateCalories = it
+                    },
+                    caloriesGoal = caloriesGoal,
+                    caloriesConsumed = caloriesConsumed,
+                    waterGlassesGoal = waterGlassesGoal,
+                    waterGlassesConsumedEntity = waterGlassesConsumed,
+                    setWaterGlassesGoal = {
+                        profileViewModel.setWaterGlassesGoal(it)
+                    },
+                    saveNewCaloriesGoal = {
+                        profileViewModel.saveCaloriesGoal(it)
+                    },
+                    nutrientsConsumed = nutrientsConsumed,
+                    updateWaterEntity = {
+                        foodAndWaterViewModel.updateWaterGlassesEntity(it)
                     }
-
-                    CurrentlySelectedCard(
-                        currentPage = pagerState.currentPage,
-                        indicatorColor = noAchievementColor
-                    )
-                }
+                )
 
                 // Select day to show that day's calories and dishes consumed
                 CalendarRow(
@@ -242,56 +178,13 @@ fun FoodScreen(
                         .fillMaxWidth()
                 )
 
-                when (foodItemsConsumed) {
-                    is Resource.Error -> {
-                        Log.e(
-                            TAG,
-                            "CalorieTrackerScreen: Error - ${foodItemsConsumed.error?.message}",
-                            )
-                        ErrorDuringFetch(
-                            errorMessage = foodItemsConsumed.error?.message
-                                ?: "Something Went Wrong!"
-                        )
+                FoodItemsConsumed(
+                    foodItemsConsumed,
+                    navController,
+                    removeFoodItem = {
+                        foodAndWaterViewModel.removeFoodItem(it)
                     }
-
-                    is Resource.Loading -> {
-                        ShowLoadingScreen()
-                    }
-
-                    is Resource.Success -> {
-                        if (foodItemsConsumed.data.isNullOrEmpty()) {
-                            NoWorkoutPerformedOrFoodConsumed(
-                                text = "No Food Items Consumed",
-                                textSize = 20.nonScaledSp,
-                                iconSize = Dimensions.PIE_CHART_SIZE
-                            )
-                        } else {
-                            Column(
-                                modifier = Modifier
-                                    .padding(SMALL_PADDING)
-                                    .clip(RoundedCornerShape(MEDIUM_PADDING))
-                                    .background(bottomBarColor)
-                            ) {
-                                for (index in foodItemsConsumed.data.indices) {
-                                    ConsumedFoodItem(
-                                        consumedFoodItem = foodItemsConsumed.data[index],
-                                        showFoodItemDetails = {
-                                            navController.navigate(route = "FoodItemDetails/${foodItemsConsumed.data[index].id}")
-                                        },
-                                        removeFoodItem = {
-                                            foodAndWaterViewModel.removeFoodItem(foodItem = it)
-                                        },
-                                        showDivider = false
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    else -> {
-
-                    }
-                }
+                )
             }
         }
     }
@@ -351,110 +244,6 @@ fun CurrentlySelectedCard(currentPage: Int, indicatorColor: Color) {
                 }
             }
 
-        }
-    }
-}
-
-@Composable
-fun FoodItemText(
-    modifier: Modifier = Modifier,
-    title: String = "Pasta",
-    macroNutrient: String = "",
-    quantityOfMacroNutrient: String = "",
-) {
-    if (macroNutrient.isBlank()) {
-        Text(
-            text = title,
-            modifier = modifier,
-            textAlign = TextAlign.Center,
-            fontSize = 24.nonScaledSp,
-            fontWeight = FontWeight.Bold,
-            color = primaryTextColor,
-            overflow = TextOverflow.Ellipsis
-        )
-    } else {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = macroNutrient,
-                textAlign = TextAlign.Start,
-                fontSize = 18.nonScaledSp,
-                modifier = Modifier
-                    .weight(2f)
-                    .padding(MEDIUM_PADDING),
-                fontWeight = FontWeight.Bold,
-                color = primaryTextColor,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Text(
-                text = quantityOfMacroNutrient,
-                textAlign = TextAlign.End,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(MEDIUM_PADDING),
-                fontSize = 16.nonScaledSp,
-                fontWeight = FontWeight.Normal,
-                color = primaryTextColor,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
-        CustomDivider()
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun ConsumedFoodItem(
-    consumedFoodItem: FoodItemEntity,
-    showFoodItemDetails: () -> Unit,
-    removeFoodItem: (FoodItemEntity) -> Unit,
-    showDivider: Boolean,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = SMALL_PADDING)
-            .clickable {
-                showFoodItemDetails()
-            }
-            .background(bottomBarColor)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(SMALL_PADDING)
-                .background(bottomBarColor)
-        ) {
-            consumedFoodItem.foodItemDetails?.name?.let { itemName ->
-                Text(
-                    text = "${itemName.capitalize()}, ${consumedFoodItem.servings} servings",
-                    color = primaryTextColor,
-                    modifier = Modifier
-                        .padding(SMALL_PADDING)
-                        .weight(3.75f),
-                    fontSize = 16.nonScaledSp,
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Text(
-                text = "${(consumedFoodItem.foodItemDetails?.calories ?: 0).toInt() * (consumedFoodItem.servings)} kcal",
-                color = ColorsUtil.targetAchievedColor,
-                modifier = Modifier
-                    .padding(SMALL_PADDING)
-                    .weight(1.25f),
-                fontSize = 16.nonScaledSp,
-                textAlign = TextAlign.Start,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (showDivider) {
-                CustomDivider()
-            }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.sparshchadha.workout_app.features.food.presentation.calorie_tracker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -17,14 +18,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
-import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
-import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.ScreenRoutes
+import com.sparshchadha.workout_app.shared_ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
-import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 
 @Composable
 fun FoodItemDetails(
@@ -168,5 +170,55 @@ fun FoodItemDetails(
         }
     } else {
         // TODO
+    }
+}
+
+@Composable
+fun FoodItemText(
+    modifier: Modifier = Modifier,
+    title: String = "Pasta",
+    macroNutrient: String = "",
+    quantityOfMacroNutrient: String = "",
+) {
+    if (macroNutrient.isBlank()) {
+        Text(
+            text = title,
+            modifier = modifier,
+            textAlign = TextAlign.Center,
+            fontSize = 24.nonScaledSp,
+            fontWeight = FontWeight.Bold,
+            color = primaryTextColor,
+            overflow = TextOverflow.Ellipsis
+        )
+    } else {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = macroNutrient,
+                textAlign = TextAlign.Start,
+                fontSize = 18.nonScaledSp,
+                modifier = Modifier
+                    .weight(2f)
+                    .padding(MEDIUM_PADDING),
+                fontWeight = FontWeight.Bold,
+                color = primaryTextColor,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = quantityOfMacroNutrient,
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(MEDIUM_PADDING),
+                fontSize = 16.nonScaledSp,
+                fontWeight = FontWeight.Normal,
+                color = primaryTextColor,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        CustomDivider()
     }
 }
