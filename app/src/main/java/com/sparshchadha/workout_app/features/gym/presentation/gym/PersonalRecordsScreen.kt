@@ -54,6 +54,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.Dimensions.BOTTOM_SHEET_BOTTOM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
@@ -337,7 +338,7 @@ fun PRModalBottomSheet(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(LARGE_PADDING + MEDIUM_PADDING),
+                .padding(start = LARGE_PADDING + MEDIUM_PADDING, bottom = BOTTOM_SHEET_BOTTOM_PADDING, end = LARGE_PADDING + MEDIUM_PADDING, top = LARGE_PADDING + MEDIUM_PADDING),
             colors = ButtonDefaults.buttonColors(
                 containerColor = primaryPurple
             )

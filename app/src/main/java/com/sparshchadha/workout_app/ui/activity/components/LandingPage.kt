@@ -85,7 +85,7 @@ fun LandingPage(
         )
 
         LandingPageOutlinedTextField(
-            label = "Height (CM)",
+            label = "Height (Cm)",
             value = heightStr,
             onValueChange = {
                 heightStr = it
@@ -101,7 +101,7 @@ fun LandingPage(
         )
 
         LandingPageOutlinedTextField(
-            label = "Calories Goal",
+            label = "Calories Goal (kcal)",
             value = caloriesGoalStr,
             onValueChange = {
                 caloriesGoalStr = it
@@ -109,7 +109,7 @@ fun LandingPage(
         )
 
         LandingPageOutlinedTextField(
-            label = "Weight Goal",
+            label = "Weight Goal (Kg)",
             value = weightGoalStr,
             onValueChange = {
                 weightGoalStr = it

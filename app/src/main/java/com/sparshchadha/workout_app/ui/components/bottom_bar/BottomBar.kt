@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -19,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 @Composable
 fun BottomBar(
@@ -91,12 +93,16 @@ fun RowScope.AddItem(
             if (selected) {
                 Text(
                     text = screen.title,
-                    color = primaryTextColor
+                    color = primaryTextColor,
+                    fontSize = 12.nonScaledSp
                 )
             } else {
                 Text(
                     text = screen.title,
-                    color = ColorsUtil.unselectedBottomBarIconColor
+                    color = ColorsUtil.unselectedBottomBarIconColor,
+                    fontSize = 12.nonScaledSp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         },

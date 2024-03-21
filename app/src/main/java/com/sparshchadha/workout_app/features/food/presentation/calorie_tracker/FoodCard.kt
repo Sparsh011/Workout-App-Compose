@@ -32,8 +32,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.FoodItem
+import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.ui.components.shared.PickNumberOfSetsOrQuantity
 import com.sparshchadha.workout_app.ui.components.shared.rememberPickerState
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
@@ -41,6 +41,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
+import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
@@ -258,8 +259,8 @@ fun ShowQuantityOrSetsPicker(
             ),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(horizontal = LARGE_PADDING)
-                .fillMaxWidth()
+                .padding(start = LARGE_PADDING, bottom = Dimensions.BOTTOM_SHEET_BOTTOM_PADDING, end = LARGE_PADDING, top = LARGE_PADDING)
+            .fillMaxWidth()
         ) {
             Text(text = "Add ${pickerState.selectedItem} $title", color = Color.White)
         }

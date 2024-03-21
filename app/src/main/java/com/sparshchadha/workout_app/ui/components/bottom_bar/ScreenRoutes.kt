@@ -19,7 +19,7 @@ sealed class ScreenRoutes(
 ) {
     object CalorieTracker : ScreenRoutes(
         route = "CalorieTrackerScreen",
-        title = "Track Calories",
+        title = "Food",
         selectedIcon = Icons.Default.Home,
         unselectedIcon = Icons.Outlined.Home
     )

@@ -51,6 +51,7 @@ import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.DESCRIPTION_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -345,8 +346,8 @@ fun ShowPickSetsBottomSheet(
             ),
             modifier = Modifier
                 .align(CenterHorizontally)
-                .padding(horizontal = LARGE_PADDING)
-                .fillMaxWidth()
+                .padding(start = LARGE_PADDING, bottom = Dimensions.BOTTOM_SHEET_BOTTOM_PADDING, end = LARGE_PADDING)
+            .fillMaxWidth()
         ) {
             if (valuesPickerState.selectedItem == "1") {
                 Text(text = "Add ${valuesPickerState.selectedItem} Set", color = Color.White)
@@ -373,7 +374,6 @@ fun ShowYogaPoseDetailsInModalBottomSheet(
         onDismissRequest = {
             toggleBottomSheetWithDetails(false)
         },
-        windowInsets = WindowInsets(0, 0, 0, 0),
         containerColor = scaffoldBackgroundColor
     ) {
 

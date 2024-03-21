@@ -2,7 +2,6 @@ package com.sparshchadha.workout_app.ui.theme
 
 import android.app.Activity
 import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -13,7 +12,10 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
+import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.activity.MainActivity
 import com.sparshchadha.workout_app.util.ColorsUtil.statusBarColor
 
 private val DarkColorScheme = darkColorScheme(
@@ -40,14 +42,20 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun WorkoutAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
+    val context = LocalContext.current
+    if (darkTheme) {
+        (context as MainActivity).window.navigationBarColor = ContextCompat.getColor(context, R.color.dark_gesture_navigation_color)
+    } else {
+        (context as MainActivity).window.navigationBarColor = ContextCompat.getColor(context, R.color.white)
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
