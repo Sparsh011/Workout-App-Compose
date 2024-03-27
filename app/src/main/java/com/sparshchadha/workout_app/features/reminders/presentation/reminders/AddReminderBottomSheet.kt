@@ -364,7 +364,7 @@ fun SelectReminderType(
     ) {
         Text(
             text = ReminderTypes.EXERCISE.name.lowercase().capitalize(),
-            color = (if(selectedReminderType == ReminderTypes.EXERCISE.name) Color.White else Color.Black),
+            color = (if(selectedReminderType == ReminderTypes.EXERCISE.name) Color.White else primaryTextColor),
             fontSize = 16.nonScaledSp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -382,7 +382,7 @@ fun SelectReminderType(
 
         Text(
             text = ReminderTypes.FOOD.name.lowercase().capitalize(),
-            color = (if(selectedReminderType == ReminderTypes.FOOD.name) Color.White else Color.Black),
+            color = (if(selectedReminderType == ReminderTypes.FOOD.name) Color.White else primaryTextColor),
             fontSize = 16.nonScaledSp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -399,7 +399,7 @@ fun SelectReminderType(
 
         Text(
             text = ReminderTypes.WATER.name.lowercase().capitalize(),
-            color = (if(selectedReminderType == ReminderTypes.WATER.name) Color.White else Color.Black),
+            color = (if(selectedReminderType == ReminderTypes.WATER.name) Color.White else primaryTextColor),
             fontSize = 16.nonScaledSp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier

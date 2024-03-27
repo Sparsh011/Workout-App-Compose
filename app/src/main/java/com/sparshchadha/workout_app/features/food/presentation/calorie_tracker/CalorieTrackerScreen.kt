@@ -77,6 +77,10 @@ fun FoodScreen(
         mutableStateOf(false)
     }
 
+    var showAddDishesOptionsBottomSheet by remember {
+        mutableStateOf(false)
+    }
+
 
     LaunchedEffect(key1 = Unit) {
         if (selectedDateAndMonth?.first != currentDate && selectedDateAndMonth?.second != currentMonth) {
@@ -95,11 +99,20 @@ fun FoodScreen(
         }
     }
 
+    if (showAddDishesOptionsBottomSheet) {
+        AddDishesOptionsBottomSheet (
+            
+            hideBottomSheet = {
+                showAddDishesOptionsBottomSheet = false
+            }
+        )
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-
+                    showAddDishesOptionsBottomSheet = true
                 },
                 containerColor = ColorsUtil.primaryBlue,
                 contentColor = Color.White
