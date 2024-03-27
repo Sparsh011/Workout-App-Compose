@@ -41,7 +41,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
 import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
-import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.shared_ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.shared_ui.components.shared.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
@@ -91,10 +90,7 @@ fun GetYogaPosesPerformedOnParticularDay(
                 yogaViewModel.removeYogaPoseFromDB(it)
             },
             onBackButtonPressed = {
-                navController.popBackStack(
-                    route = ScreenRoutes.WorkoutScreen.route,
-                    inclusive = false
-                )
+                navController.popBackStack()
             },
         )
     }
@@ -120,27 +116,6 @@ fun HandleUIEventState(
         selectedMonth = selectedMonth,
         removePose = removePose
     )
-//    when (event) {
-//        is WorkoutViewModel.UIEvent.ShowLoader -> {
-//            ShowLoadingScreen()
-//        }
-//
-//        is WorkoutViewModel.UIEvent.HideLoaderAndShowResponse -> {
-//            PopulatePerformedYogaPoses(
-//                yogaPosesPerformedToday = yogaPosesPerformedToday,
-//                globalPaddingValues = globalPaddingValues,
-//                onBackButtonPressed = onBackButtonPressed,
-//                getYogaPosesPerformedOn = getYogaPosesPerformedOn,
-//                selectedDay = selectedDay,
-//                selectedMonth = selectedMonth,
-//                removePose = removePose
-//            )
-//        }
-//
-//        is WorkoutViewModel.UIEvent.ShowError -> {
-//            ErrorDuringFetch(errorMessage = event.errorMessage)
-//        }
-//    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
