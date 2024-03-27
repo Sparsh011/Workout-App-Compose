@@ -2,13 +2,17 @@ package com.sparshchadha.workout_app.util
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 
 object ColorsUtil {
+    private val colorHelper = ColorHelper()
     private val primaryDarkColor = Color(37, 43, 54)
     val primaryBlue: Color = Color(79, 124, 214, 255)
     val primaryGreen: Color = Color(0, 255, 135)
@@ -29,34 +33,41 @@ object ColorsUtil {
 
     val primaryTextColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) Black else White
+        get() = if (!colorHelper.isDarkTheme()) Black else White
 
     val scaffoldContentColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) DarkGray else LightGray
+        get() = if (!colorHelper.isDarkTheme()) DarkGray else LightGray
 
     val scaffoldBackgroundColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) primaryLightGray else Black
+        get() = if (!colorHelper.isDarkTheme()) primaryLightGray else Black
 
     val cardBackgroundColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) White else statusBarColor
+        get() = if (!colorHelper.isDarkTheme()) White else statusBarColor
 
     val statusBarColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) primaryPurple else Color(0xFF19191D)
+        get() = if (!colorHelper.isDarkTheme()) primaryPurple else Color(0xFF19191D)
 
     val bottomBarColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) White else Color(0xFF19191D)
+        get() = if (!colorHelper.isDarkTheme()) White else Color(0xFF19191D)
 
     val dividerColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) Color(0xFFCACACE) else DarkGray
+        get() = if (!colorHelper.isDarkTheme()) Color(0xFFCACACE) else DarkGray
 
     val progressTrackColor: Color
         @Composable
-        get() = if (!isSystemInDarkTheme()) LightGray else DarkGray
+        get() = if (!colorHelper.isDarkTheme()) LightGray else DarkGray
 
+    class ColorHelper {
+        @Composable
+        fun isDarkTheme(): Boolean {
+            val profileVm : ProfileViewModel = hiltViewModel()
+            return profileVm.darkTheme.collectAsState().value ?: isSystemInDarkTheme()
+        }
+    }
 }

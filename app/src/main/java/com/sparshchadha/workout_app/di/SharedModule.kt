@@ -8,34 +8,37 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.gson.Gson
 import com.sparshchadha.workout_app.alarm_manager.AlarmScheduler
 import com.sparshchadha.workout_app.alarm_manager.AndroidAlarmScheduler
-import com.sparshchadha.workout_app.data.local.datastore.WorkoutAppDatastorePreference
-import com.sparshchadha.workout_app.data.local.room_db.Converters
-import com.sparshchadha.workout_app.data.local.room_db.WorkoutAppDatabase
-import com.sparshchadha.workout_app.data.local.room_db.dao.FoodItemsDao
-import com.sparshchadha.workout_app.data.local.room_db.dao.GymExercisesDao
-import com.sparshchadha.workout_app.data.local.room_db.dao.PRDao
-import com.sparshchadha.workout_app.data.local.room_db.dao.RemindersDao
-import com.sparshchadha.workout_app.data.local.room_db.dao.WaterDao
-import com.sparshchadha.workout_app.data.local.room_db.dao.YogaDao
-import com.sparshchadha.workout_app.data.remote.api.FoodApi
-import com.sparshchadha.workout_app.data.remote.api.GymExercisesApi
-import com.sparshchadha.workout_app.data.remote.api.NewsApi
-import com.sparshchadha.workout_app.data.remote.api.PexelsApi
-import com.sparshchadha.workout_app.data.remote.api.YogaApi
-import com.sparshchadha.workout_app.data.repository.FoodRepositoryImpl
-import com.sparshchadha.workout_app.data.repository.NewsRepositoryImpl
-import com.sparshchadha.workout_app.data.repository.PRRepositoryImpl
-import com.sparshchadha.workout_app.data.repository.PexelsRepositoryImpl
-import com.sparshchadha.workout_app.data.repository.RemindersRepositoryImpl
-import com.sparshchadha.workout_app.data.repository.WaterRepositoryImpl
-import com.sparshchadha.workout_app.data.repository.WorkoutRepositoryImpl
-import com.sparshchadha.workout_app.domain.repository.FoodItemsRepository
-import com.sparshchadha.workout_app.domain.repository.NewsRepository
-import com.sparshchadha.workout_app.domain.repository.PRRepository
-import com.sparshchadha.workout_app.domain.repository.PexelsRepository
-import com.sparshchadha.workout_app.domain.repository.RemindersRepository
-import com.sparshchadha.workout_app.domain.repository.WaterRepository
-import com.sparshchadha.workout_app.domain.repository.WorkoutRepository
+import com.sparshchadha.workout_app.application.BaseRepository
+import com.sparshchadha.workout_app.features.food.data.local.room.dao.FoodItemsDao
+import com.sparshchadha.workout_app.features.food.data.local.room.dao.WaterDao
+import com.sparshchadha.workout_app.features.food.data.remote.api.FoodApi
+import com.sparshchadha.workout_app.features.food.data.remote.api.PexelsApi
+import com.sparshchadha.workout_app.features.food.data.repository.FoodRepositoryImpl
+import com.sparshchadha.workout_app.features.food.data.repository.PexelsRepositoryImpl
+import com.sparshchadha.workout_app.features.food.data.repository.WaterRepositoryImpl
+import com.sparshchadha.workout_app.features.food.domain.repository.FoodItemsRepository
+import com.sparshchadha.workout_app.features.food.domain.repository.PexelsRepository
+import com.sparshchadha.workout_app.features.food.domain.repository.WaterRepository
+import com.sparshchadha.workout_app.features.gym.data.local.room.dao.GymExercisesDao
+import com.sparshchadha.workout_app.features.gym.data.local.room.dao.PRDao
+import com.sparshchadha.workout_app.features.gym.data.remote.api.GymExercisesApi
+import com.sparshchadha.workout_app.features.gym.data.repository.PRRepositoryImpl
+import com.sparshchadha.workout_app.features.gym.data.repository.WorkoutRepositoryImpl
+import com.sparshchadha.workout_app.features.gym.domain.repository.PRRepository
+import com.sparshchadha.workout_app.features.gym.domain.repository.WorkoutRepository
+import com.sparshchadha.workout_app.features.news.data.remote.api.NewsApi
+import com.sparshchadha.workout_app.features.news.data.repository.NewsRepositoryImpl
+import com.sparshchadha.workout_app.features.news.domain.repository.NewsRepository
+import com.sparshchadha.workout_app.features.reminders.data.local.room.dao.RemindersDao
+import com.sparshchadha.workout_app.features.reminders.data.repository.RemindersRepositoryImpl
+import com.sparshchadha.workout_app.features.reminders.domain.repository.RemindersRepository
+import com.sparshchadha.workout_app.features.yoga.data.local.room.dao.YogaDao
+import com.sparshchadha.workout_app.features.yoga.data.remote.api.YogaApi
+import com.sparshchadha.workout_app.features.yoga.data.repository.YogaRepositoryImpl
+import com.sparshchadha.workout_app.features.yoga.domain.repository.YogaRepository
+import com.sparshchadha.workout_app.storage.datastore.WorkoutAppDatastorePreference
+import com.sparshchadha.workout_app.storage.room_db.Converters
+import com.sparshchadha.workout_app.storage.room_db.WorkoutAppDatabase
 import com.sparshchadha.workout_app.util.Constants.DATABASE_NAME
 import com.sparshchadha.workout_app.util.GsonParser
 import dagger.Module
@@ -84,9 +87,9 @@ object SharedModule {
             .build()
 
         return OkHttpClient().newBuilder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(90, TimeUnit.SECONDS)
+            .readTimeout(90, TimeUnit.SECONDS)
+            .writeTimeout(90, TimeUnit.SECONDS)
             .dns(dns)
             .proxy(Proxy.NO_PROXY)
             .addInterceptor(ChuckerInterceptor(context))
@@ -191,16 +194,24 @@ object SharedModule {
     @Provides
     @Singleton
     fun provideWorkoutRepository(
-        yogaApi: YogaApi,
         gymExercisesApi: GymExercisesApi,
-        yogaDao: YogaDao,
         gymExercisesDao: GymExercisesDao,
     ): WorkoutRepository {
         return WorkoutRepositoryImpl(
-            yogaApi = yogaApi,
             gymExercisesApi = gymExercisesApi,
-            yogaDao = yogaDao,
             gymExercisesDao = gymExercisesDao
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideYogaRepository(
+        yogaApi: YogaApi,
+        yogaDao: YogaDao,
+    ): YogaRepository {
+        return YogaRepositoryImpl(
+            yogaDao = yogaDao,
+            yogaApi = yogaApi
         )
     }
 
@@ -286,5 +297,13 @@ object SharedModule {
         remindersRepository: RemindersRepository
     ): AlarmScheduler {
         return AndroidAlarmScheduler(context, remindersRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideBaseRepository(
+        workoutAppDatabase: WorkoutAppDatabase
+    ) : BaseRepository{
+        return BaseRepository(workoutAppDatabase = workoutAppDatabase)
     }
 }
