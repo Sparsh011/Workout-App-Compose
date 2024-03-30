@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.sparshchadha.workout_app.R
-import com.sparshchadha.workout_app.features.profile.presentation.profile.AlertDialogToUpdate
+import com.sparshchadha.workout_app.features.profile.presentation.profile.settings_categories.AlertDialogToUpdate
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor

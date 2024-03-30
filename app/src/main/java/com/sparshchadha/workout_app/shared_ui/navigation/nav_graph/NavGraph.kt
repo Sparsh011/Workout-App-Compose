@@ -48,7 +48,7 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = ScreenRoutes.CalorieTracker.route
+        startDestination = ScreenRoutes.ProfileScreen.route
     ) {
         // Workout Tracker in Bottom Bar
         bottomWorkoutComposable(

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -46,22 +45,26 @@ fun GymActivityScreen(
             .padding(bottom = globalPaddingValues.calculateBottomPadding())
     ) {
         ScaffoldTopBar(
-            topBarDescription = "All Exercises Performed",
+            topBarDescription = "Your Gym Activity",
             onBackButtonPressed = {
                 navController.popBackStack()
             }
         )
 
-        // Add graph here to show number of sets performed on each day
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(SMALL_PADDING)
+                .clip(RoundedCornerShape(MEDIUM_PADDING))
+                .background(ColorsUtil.bottomBarColor)
+        ) {
+            if (!performedExercises.isNullOrEmpty()) {
+                item {
+                    ActivityBarGraph()
+                }
+            }
 
-        if (!performedExercises.isNullOrEmpty()) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(SMALL_PADDING)
-                    .clip(RoundedCornerShape(MEDIUM_PADDING))
-                    .background(ColorsUtil.bottomBarColor)
-            ) {
+            if (!performedExercises.isNullOrEmpty()) {
                 items(performedExercises ?: emptyList()) {
                     ExercisePerformed(
                         exercise = it,
@@ -70,9 +73,11 @@ fun GymActivityScreen(
                         }
                     )
                 }
+            } else {
+                item {
+                    NoSavedItem(text = "No Activity")
+                }
             }
-        } else {
-            NoSavedItem()
         }
     }
 }
