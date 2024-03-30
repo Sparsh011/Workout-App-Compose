@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -38,6 +39,7 @@ import com.sparshchadha.workout_app.shared_ui.components.shared.PickNumberOfSets
 import com.sparshchadha.workout_app.shared_ui.components.shared.rememberPickerState
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
@@ -131,18 +133,45 @@ private fun FoodItemDetailsCard(
         ) {
             Text(
                 text = foodItemName,
-                modifier = Modifier.weight(0.7f),
+                modifier = Modifier
+                    .weight(0.7f)
+                    .fillMaxWidth(),
                 fontWeight = FontWeight.Bold,
                 fontSize = TITLE_SIZE,
                 color = primaryTextColor
             )
+
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
                 tint = primaryTextColor,
-                modifier = Modifier.clickable {
-                    showBottomSheetToSelectFoodItemQuantity = true
-                }
+                modifier = Modifier
+                    .clickable {
+                        showBottomSheetToSelectFoodItemQuantity = true
+                    }
+                    .weight(0.15f)
+            )
+
+            Icon(
+                imageVector = Icons.Default.FavoriteBorder,
+                contentDescription = null,
+                tint = noAchievementColor,
+                modifier = Modifier
+                    .clickable {
+                        saveFoodItemWithQuantity(
+                            FoodItemEntity(
+                                date = "",
+                                month = "",
+                                servings = -1,
+                                hour = -1,
+                                minutes = -1,
+                                seconds = -1,
+                                foodItemDetails = foodItem,
+                                isConsumed = false
+                            )
+                        )
+                    }
+                    .weight(0.15f)
             )
         }
 
@@ -259,8 +288,13 @@ fun ShowQuantityOrSetsPicker(
             ),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(start = LARGE_PADDING, bottom = Dimensions.BOTTOM_SHEET_BOTTOM_PADDING, end = LARGE_PADDING, top = LARGE_PADDING)
-            .fillMaxWidth()
+                .padding(
+                    start = LARGE_PADDING,
+                    bottom = Dimensions.BOTTOM_SHEET_BOTTOM_PADDING,
+                    end = LARGE_PADDING,
+                    top = LARGE_PADDING
+                )
+                .fillMaxWidth()
         ) {
             Text(text = "Add ${pickerState.selectedItem} $title", color = Color.White)
         }

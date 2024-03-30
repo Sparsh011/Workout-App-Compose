@@ -39,7 +39,7 @@ fun NavGraphBuilder.savedItemsScreenComposable(
             globalPaddingValues = globalPaddingValues,
             foodAndWaterViewModel = foodItemsViewModel,
             workoutViewModel = workoutViewModel,
-            category = category ?: "Unable To Get Exercises",
+            category = category ?: "Something Went Wrong!",
             yogaViewModel = yogaViewModel
         )
     }

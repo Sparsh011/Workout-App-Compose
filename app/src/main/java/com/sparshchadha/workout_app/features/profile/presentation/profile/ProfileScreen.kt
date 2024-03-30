@@ -164,13 +164,13 @@ fun ProfileScreen(
 
         SettingsCategoryHeader(text = "Yoga")
 
-        SettingsCategoryHeader(text = "Calories & Food")
-
         YogaSettingsCategory(
             navigateToRoute = {
                 navController.navigate(it)
             }
         )
+
+        SettingsCategoryHeader(text = "Calories & Food")
 
         FoodSettingsCategory(
             navigateToRoute = {
