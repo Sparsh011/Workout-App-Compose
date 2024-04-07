@@ -12,7 +12,7 @@ import com.sparshchadha.workout_app.features.news.presentation.screens.ArticleWe
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 
-fun NavGraphBuilder.articleWebViewScreen(
+fun NavGraphBuilder.articleWebViewComposable(
     navController: NavController,
     newsViewModel: NewsViewModel,
     globalPaddingValues: PaddingValues,

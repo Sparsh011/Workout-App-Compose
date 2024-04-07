@@ -101,9 +101,11 @@ fun FoodScreen(
 
     if (showAddDishesOptionsBottomSheet) {
         AddDishesOptionsBottomSheet (
-            
             hideBottomSheet = {
                 showAddDishesOptionsBottomSheet = false
+            },
+            navigateToScreen = {
+                navController.navigate(it)
             }
         )
     }

@@ -14,6 +14,7 @@ import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.R
 import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.calorie_tracker.bottomCalorieTrackerComposable
+import com.sparshchadha.workout_app.shared_ui.navigation.destinations.calorie_tracker.createDishComposable
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.calorie_tracker.foodItemDetailsComposable
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.gym.bottomWorkoutComposable
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.gym.exerciseDetailsComposable
@@ -21,9 +22,9 @@ import com.sparshchadha.workout_app.shared_ui.navigation.destinations.gym.gymAct
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.gym.gymExercisesComposable
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.gym.gymExercisesPerformedComposable
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.gym.workoutCategoryComposable
-import com.sparshchadha.workout_app.shared_ui.navigation.destinations.profile.bottomProfileScreen
-import com.sparshchadha.workout_app.shared_ui.navigation.destinations.profile.personalRecordsScreen
-import com.sparshchadha.workout_app.shared_ui.navigation.destinations.shared.articleWebViewScreen
+import com.sparshchadha.workout_app.shared_ui.navigation.destinations.profile.bottomProfileComposable
+import com.sparshchadha.workout_app.shared_ui.navigation.destinations.profile.personalRecordsComposable
+import com.sparshchadha.workout_app.shared_ui.navigation.destinations.shared.articleWebViewComposable
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.shared.bottomRemindersComposable
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.shared.newsArticlesComposable
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.shared.savedItemsScreenComposable
@@ -70,7 +71,7 @@ fun NavGraph(
         )
 
         // Profile Screen
-        bottomProfileScreen(
+        bottomProfileComposable(
             globalPaddingValues = globalPaddingValues,
             navController = navController,
             profileViewModel = profileViewModel,
@@ -161,7 +162,7 @@ fun NavGraph(
         )
 
         // personal records screen
-        personalRecordsScreen(
+        personalRecordsComposable(
             navController = navController,
             workoutViewModel = workoutViewModel,
             globalPaddingValues = globalPaddingValues,
@@ -193,10 +194,18 @@ fun NavGraph(
         )
 
         // news article WebView
-        articleWebViewScreen(
+        articleWebViewComposable(
             navController = navController,
             newsViewModel = newsViewModel,
             globalPaddingValues = globalPaddingValues,
+            toggleBottomBarVisibility = toggleBottomBarVisibility
+        )
+
+        // Create Dish screen
+        createDishComposable(
+            globalPaddingValues = globalPaddingValues,
+            foodItemsViewModel = foodItemsViewModel,
+            navController = navController,
             toggleBottomBarVisibility = toggleBottomBarVisibility
         )
     }

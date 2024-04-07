@@ -15,7 +15,7 @@ import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.Workout
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun NavGraphBuilder.personalRecordsScreen(
+fun NavGraphBuilder.personalRecordsComposable(
     workoutViewModel: WorkoutViewModel,
     globalPaddingValues: PaddingValues,
     navController: NavController,

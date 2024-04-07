@@ -119,4 +119,9 @@ sealed class UtilityScreenRoutes(
         route = "ArticleWebViewScreen",
         title = "Article WebView Screen"
     )
+
+    object CreateDishScreen : UtilityScreenRoutes(
+        route = "CreateDishScreen",
+        title = "Create Dish Screen"
+    )
 }

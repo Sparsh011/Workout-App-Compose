@@ -1,4 +1,4 @@
-package com.sparshchadha.workout_app.shared_ui.navigation.destinations.profile
+package com.sparshchadha.workout_app.shared_ui.navigation.destinations.calorie_tracker
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -7,18 +7,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.sparshchadha.workout_app.features.profile.presentation.profile.ProfileScreen
-import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
-import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.ScreenRoutes
+import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.CreateDishScreen
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 
-fun NavGraphBuilder.bottomProfileComposable(
+fun NavGraphBuilder.createDishComposable(
     globalPaddingValues: PaddingValues,
+    foodItemsViewModel: FoodAndWaterViewModel,
     navController: NavController,
-    profileViewModel: ProfileViewModel,
     toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
-        route = ScreenRoutes.ProfileScreen.route,
+        route = UtilityScreenRoutes.CreateDishScreen.route,
         enterTransition = {
             EnterTransition.None
         },
@@ -27,13 +27,13 @@ fun NavGraphBuilder.bottomProfileComposable(
         }
     ) {
         LaunchedEffect(key1 = Unit) {
-            toggleBottomBarVisibility(true)
+            toggleBottomBarVisibility(false)
         }
 
-        ProfileScreen(
+        CreateDishScreen(
             globalPaddingValues = globalPaddingValues,
-            navController = navController,
-            profileViewModel = profileViewModel
+            foodItemsViewModel = foodItemsViewModel,
+            navController = navController
         )
     }
 }
