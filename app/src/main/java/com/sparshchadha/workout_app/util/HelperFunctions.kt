@@ -329,6 +329,7 @@ object HelperFunctions {
             "Activity",
             "Goals",
             "Saved Food Items",
+            "Your Dishes"
         )
     }
 

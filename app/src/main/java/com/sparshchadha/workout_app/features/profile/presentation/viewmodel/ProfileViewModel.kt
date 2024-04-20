@@ -14,12 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
-private const val TAG = "ProfileViewModel"
+private const val TAG = "ProfileViewModelTaggg"
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
@@ -58,31 +57,7 @@ class ProfileViewModel @Inject constructor(
 
     private lateinit var bitmapLruCache: LruCache<String, Bitmap>
 
-    private val _showPermissionDialog = MutableStateFlow<Boolean?>(null)
-    val showPermissionDialog = _showPermissionDialog.asStateFlow()
-
-    private val _requestPermissions = MutableStateFlow<List<Pair<String, Int>>?>(null)
-    val requestPermissions = _requestPermissions.asStateFlow()
-
-    private val _openCamera = MutableStateFlow<Boolean?>(null)
-    val openCamera = _openCamera.asStateFlow()
-
-    private val _openGallery = MutableStateFlow<Boolean?>(null)
-    val openGallery = _openGallery.asStateFlow()
-
     private val _profileImageUri = MutableStateFlow<Bitmap?>(null)
-
-    private val _startGoogleSignIn = MutableStateFlow(false)
-    val startGoogleSignIn = _startGoogleSignIn.asStateFlow()
-
-    private val _loginResult = MutableStateFlow<Boolean?>(null)
-    val loginResult = _loginResult.asStateFlow()
-
-    private val _loginToken = MutableStateFlow("")
-    val loginToken = _loginToken.asStateFlow()
-
-    private val _isFirstTimeAppOpen = MutableStateFlow<String?>(null)
-    val isFirstTimeAppOpen = _isFirstTimeAppOpen.asStateFlow()
 
     init {
         readAge()
@@ -93,27 +68,23 @@ class ProfileViewModel @Inject constructor(
         readCaloriesGoal()
         readName()
         readBase64ProfilePic()
-        setupLruCache()
         readDarkTheme()
         readWaterGlassesGoal()
-        readLoginToken()
-        readFirstTimeAppOpen()
+        setupLruCache()
     }
 
-    private fun readFirstTimeAppOpen() {
-        viewModelScope.launch(Dispatchers.IO) {
-            datastorePreference.readFirstAppOpen.collect {
-                _isFirstTimeAppOpen.value = it
-            }
-        }
-    }
+    private fun setupLruCache() {
+        val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
 
-    private fun readLoginToken() {
-        viewModelScope.launch(Dispatchers.IO) {
-            datastorePreference.readLoginToken.collect {
-                it?.let {
-                    _loginToken.value = it
-                }
+        // Use 1/8th of the available memory for this memory cache.
+        val cacheSize = maxMemory / 8
+
+        bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
+
+            override fun sizeOf(key: String, bitmap: Bitmap): Int {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return bitmap.byteCount / 1024
             }
         }
     }
@@ -130,22 +101,6 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             datastorePreference.readDarkMode.collect { isDarkTheme ->
                 _darkTheme.value = if (isDarkTheme.isNullOrBlank()) true else isDarkTheme.toBoolean()
-            }
-        }
-    }
-
-    private fun setupLruCache() {
-        val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
-
-        // Use 1/8th of the available memory for this memory cache.
-        val cacheSize = maxMemory / 8
-
-        bitmapLruCache = object : LruCache<String, Bitmap>(cacheSize) {
-
-            override fun sizeOf(key: String, bitmap: Bitmap): Int {
-                // The cache size will be measured in kilobytes rather than
-                // number of items.
-                return bitmap.byteCount / 1024
             }
         }
     }
@@ -210,12 +165,14 @@ class ProfileViewModel @Inject constructor(
         try {
             if (bitmapLruCache.get("profileKey") != null) {
                 _profilePicBitmap.value = bitmapLruCache.get("profileKey")
+                return
             }
         } catch (_: Exception) {
 
         }
         viewModelScope.launch {
             datastorePreference.readBase64ProfilePic.collect { profilePic ->
+                Log.e(TAG, "readBase64ProfilePic: $profilePic")
                 _profilePicBitmap.value = DbBitmapUtility.decodeBase64(profilePic ?: "")
             }
         }
@@ -281,34 +238,6 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun showPermissionDialog() {
-        _showPermissionDialog.value = true
-    }
-
-    fun hidePermissionDialog() {
-        _showPermissionDialog.value = false
-    }
-
-    fun requestPermissions(permissions: List<Pair<String, Int>>) {
-        _requestPermissions.value = permissions
-    }
-
-    fun openGallery() {
-        _openGallery.value = true
-    }
-
-    fun galleryClosed() {
-        _openGallery.value = false
-    }
-
-    fun openCamera() {
-        _openCamera.value = true
-    }
-
-    fun cameraClosed() {
-        _openCamera.value = false
-    }
-
     fun setImageBitmap(imgBitmap: Bitmap) {
         _profileImageUri.value = imgBitmap
         val base64Image = DbBitmapUtility.encodeToBase64(imgBitmap, Bitmap.CompressFormat.JPEG, 50)
@@ -336,22 +265,6 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             datastorePreference.saveWaterGlassesGoal(goal.toString())
         }
-    }
-
-    fun startGoogleSignIn() {
-        _startGoogleSignIn.value = true
-    }
-
-    fun updateLoginResult(result: Boolean, token: String = "") {
-        _loginResult.value = result
-        Log.e(TAG, "updateLoginResult: $token")
-        if (token.isNotBlank()) {
-            // send token to server and save token in datastore
-            viewModelScope.launch(Dispatchers.IO) {
-                datastorePreference.saveLoginToken(token)
-            }
-        }
-        _startGoogleSignIn.value = false
     }
 
     fun signOutUser() {
@@ -402,21 +315,21 @@ class ProfileViewModel @Inject constructor(
             }
         }
     }
+}
 
-    private object DbBitmapUtility {
-        fun encodeToBase64(
-            image: Bitmap,
-            compressFormat: Bitmap.CompressFormat?,
-            quality: Int
-        ): String? {
-            val byteArrayOS = ByteArrayOutputStream()
-            image.compress(compressFormat!!, quality, byteArrayOS)
-            return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT)
-        }
+object DbBitmapUtility {
+    fun encodeToBase64(
+        image: Bitmap,
+        compressFormat: Bitmap.CompressFormat?,
+        quality: Int
+    ): String? {
+        val byteArrayOS = ByteArrayOutputStream()
+        image.compress(compressFormat!!, quality, byteArrayOS)
+        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT)
+    }
 
-        fun decodeBase64(input: String?): Bitmap? {
-            val decodedBytes = Base64.decode(input, 0)
-            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-        }
+    fun decodeBase64(input: String?): Bitmap? {
+        val decodedBytes = Base64.decode(input, 0)
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
     }
 }

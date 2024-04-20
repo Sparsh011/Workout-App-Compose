@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.shared_ui.screens.shared
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.gym.domain.entities.GymExercisesEntity
@@ -101,11 +103,13 @@ fun SavedItemsScreen(
         "calorieTracker" -> {
             LaunchedEffect(key1 = Unit) {
                 foodAndWaterViewModel.getSavedFoodItems()
+                foodAndWaterViewModel.getCreatedItems()
             }
 
             SavedFoodItem(
-                foodItems = foodAndWaterViewModel.savedFoodItems.collectAsStateWithLifecycle().value
+                savedItems = foodAndWaterViewModel.savedFoodItems.collectAsStateWithLifecycle().value
                     ?: emptyList(),
+                createdItems = foodAndWaterViewModel.createdItems.collectAsStateWithLifecycle().value,
                 navigateToFoodItemDetailsScreen = { forItem ->
 
                 },
@@ -122,14 +126,16 @@ fun SavedItemsScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SavedFoodItem(
-    foodItems: List<FoodItemEntity>,
+    savedItems: List<FoodItemEntity>,
     navigateToFoodItemDetailsScreen: (String) -> Unit,
     removeFoodItemFromSaved: (FoodItemEntity) -> Unit,
     updateFoodItemToShowDetails: (FoodItemEntity) -> Unit,
     globalPaddingValues: PaddingValues,
-    navController: NavController
+    navController: NavController,
+    createdItems: List<FoodItemEntity?>?
 ) {
     Column(
         modifier = Modifier
@@ -143,11 +149,14 @@ fun SavedFoodItem(
             }
         )
 
-        if (foodItems.isNotEmpty()) {
+//        if (savedItems.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(foodItems) {
+                stickyHeader {
+                    Text(text = "Saved Items")
+                }
+                items(savedItems) {
                     SavedFoodItem(
                         foodItem = it,
                         removeFromSaved = removeFoodItemFromSaved,
@@ -157,10 +166,30 @@ fun SavedFoodItem(
                         }
                     )
                 }
+
+                stickyHeader {
+                    Text(text = "Created Items")
+                }
+
+                createdItems?.let {
+                    items(createdItems) {
+                        it?.let {
+                            SavedFoodItem(
+                                foodItem = it,
+                                removeFromSaved = removeFoodItemFromSaved,
+                                navigateToScreen = { route ->
+                                    updateFoodItemToShowDetails(it)
+                                    navigateToFoodItemDetailsScreen(route)
+                                }
+                            )
+                        }
+                    }
+                }
+
             }
-        } else {
-            NoSavedItem()
-        }
+//        } else {
+//            NoSavedItem()
+//        }
     }
 }
 
@@ -186,7 +215,8 @@ fun SavedGymExercises(
 
         if (exercises.isNotEmpty()) {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(MEDIUM_PADDING)
                     .clip(RoundedCornerShape(MEDIUM_PADDING))
                     .background(bottomBarColor)
@@ -297,6 +327,9 @@ fun SavedFoodItem(
     removeFromSaved: (FoodItemEntity) -> Unit,
     navigateToScreen: (String) -> Unit
 ) {
+    if (!foodItem.imageStr.isNullOrBlank()) {
+        AsyncImage(model = foodItem.imageStr, contentDescription = null)
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()

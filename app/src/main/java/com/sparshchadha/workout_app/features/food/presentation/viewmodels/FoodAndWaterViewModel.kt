@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sparshchadha.workout_app.features.news.domain.repository.NewsRepository
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
@@ -14,6 +13,7 @@ import com.sparshchadha.workout_app.features.food.domain.entities.WaterEntity
 import com.sparshchadha.workout_app.features.food.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.features.food.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.features.food.domain.repository.WaterRepository
+import com.sparshchadha.workout_app.features.news.domain.repository.NewsRepository
 import com.sparshchadha.workout_app.util.Constants
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.Resource
@@ -58,6 +58,9 @@ class FoodAndWaterViewModel @Inject constructor(
 
     private val _savedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
     val savedFoodItems = _savedFoodItems.asStateFlow()
+
+    private val _createdItems = MutableStateFlow<List<FoodItemEntity?>?>(null)
+    val createdItems = _createdItems.asStateFlow()
 
     private val _waterGlassesEntity = MutableStateFlow<WaterEntity?>(null)
     val waterGlassesEntity = _waterGlassesEntity.asStateFlow()
@@ -261,6 +264,14 @@ class FoodAndWaterViewModel @Inject constructor(
                 waterRepository.updateGlassesConsumed(waterEntity)
             } else {
                 waterRepository.insertGlassesConsumed(waterEntity)
+            }
+        }
+    }
+
+    fun getCreatedItems() {
+        viewModelScope.launch(Dispatchers.IO) {
+            foodItemsRepository.getCreatedItems().collect {
+                _createdItems.value = it
             }
         }
     }

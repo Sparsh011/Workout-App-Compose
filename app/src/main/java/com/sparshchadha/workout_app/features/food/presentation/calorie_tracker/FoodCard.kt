@@ -160,6 +160,7 @@ private fun FoodItemDetailsCard(
                     .clickable {
                         saveFoodItemWithQuantity(
                             FoodItemEntity(
+                                imageStr = null,
                                 date = "",
                                 month = "",
                                 servings = -1,
@@ -219,7 +220,8 @@ private fun FoodItemDetailsCard(
                             date = HelperFunctions.getCurrentDateAndMonth().first.toString(),
                             month = HelperFunctions.getCurrentDateAndMonth().second,
                             servings = quantity,
-                            foodItemDetails = foodItem
+                            foodItemDetails = foodItem,
+                            imageStr = null
                         )
                     )
                 },

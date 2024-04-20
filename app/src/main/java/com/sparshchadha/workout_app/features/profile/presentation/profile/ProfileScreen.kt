@@ -25,6 +25,8 @@ import com.sparshchadha.workout_app.features.profile.presentation.profile.settin
 import com.sparshchadha.workout_app.features.profile.presentation.profile.settings_categories.yoga.YogaSettingsCategory
 import com.sparshchadha.workout_app.features.profile.presentation.profile.shared.SettingsCategoryHeader
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.ImageSelectors
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.shared_ui.screens.workout.HeaderText
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
@@ -40,7 +42,8 @@ private const val TAG = "ProfileScreenTagggg"
 fun ProfileScreen(
     globalPaddingValues: PaddingValues,
     navController: NavController,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    sharedViewModel: SharedViewModel
 ) {
     val height = profileViewModel.height.collectAsState().value
     val weightGoal = profileViewModel.weightGoal.collectAsState().value
@@ -50,7 +53,7 @@ fun ProfileScreen(
     val caloriesGoal = profileViewModel.caloriesGoal.collectAsState().value
     val name = profileViewModel.name.collectAsState().value
     val profileBitmap = profileViewModel.profilePicBitmap.collectAsState().value
-    val loginToken = profileViewModel.loginToken.collectAsState().value
+    val loginToken = sharedViewModel.loginToken.collectAsState().value
 
     var shouldShowDialogToUpdateValue by remember {
         mutableStateOf(false)
@@ -106,12 +109,12 @@ fun ProfileScreen(
                 profileViewModel.saveName(newName)
             },
             requestCameraAndStoragePermission = {
-                profileViewModel.requestPermissions(
+                sharedViewModel.requestPermissions(
                     Permissions.getCameraAndStoragePermissions()
                 )
             },
             pickImage = {
-                profileViewModel.openGallery()
+                sharedViewModel.openGallery(imageSelector = ImageSelectors.PROFILE_PIC)
             },
             imageBitmap = profileBitmap
         )
@@ -125,7 +128,7 @@ fun ProfileScreen(
             isDarkTheme = profileViewModel.darkTheme.collectAsState().value,
             onAuthButtonClick = {
                 if (loginToken.isBlank()) {
-                    profileViewModel.startGoogleSignIn()
+                    sharedViewModel.startGoogleSignIn()
                 } else {
                     profileViewModel.signOutUser()
                     navController.popBackStack()

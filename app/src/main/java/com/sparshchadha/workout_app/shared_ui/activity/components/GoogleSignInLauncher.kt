@@ -12,15 +12,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.shared_ui.activity.GoogleAuthClient
 
 @Composable
 fun GoogleSignInLauncher(
-    profileViewModel: ProfileViewModel
+    sharedViewModel: SharedViewModel
 ) {
     val context = LocalContext.current
-    val startLogin = profileViewModel.startGoogleSignIn.collectAsStateWithLifecycle().value
+    val startLogin = sharedViewModel.startGoogleSignIn.collectAsStateWithLifecycle().value
     val googleAuthClient = GoogleAuthClient(context)
 
     val googleSignInLauncher = rememberLauncherForActivityResult(
@@ -31,9 +31,9 @@ fun GoogleSignInLauncher(
                 completedTask = task,
                 getId = { idToken ->
                     if (idToken != null) {
-                        profileViewModel.updateLoginResult(result = true, token = idToken)
+                        sharedViewModel.updateLoginResult(result = true, token = idToken)
                     } else {
-                        profileViewModel.updateLoginResult(result = false)
+                        sharedViewModel.updateLoginResult(result = false)
                     }
                 },
                 getAccessToken = {

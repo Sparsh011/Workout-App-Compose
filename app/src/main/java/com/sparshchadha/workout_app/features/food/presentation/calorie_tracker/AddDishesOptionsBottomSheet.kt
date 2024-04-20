@@ -2,6 +2,7 @@ package com.sparshchadha.workout_app.features.food.presentation.calorie_tracker
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,22 +20,23 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.util.ColorsUtil
-import com.sparshchadha.workout_app.util.Dimensions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddDishesOptionsBottomSheet(
     hideBottomSheet: () -> Unit,
-    navigateToScreen: (String) -> Unit
+    navigateToScreen: (String) -> Unit,
+    globalPaddingValues: PaddingValues
 ) {
     ModalBottomSheet(
         onDismissRequest = {
             hideBottomSheet()
-        }
+        },
+        containerColor = ColorsUtil.bottomBarColor
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
-                .padding(bottom = Dimensions.MEDIUM_PADDING + Dimensions.BOTTOM_SHEET_BOTTOM_PADDING)
+                .padding(bottom = globalPaddingValues.calculateBottomPadding())
         ) {
             BottomSheetItem(
                 icon = Icons.Default.Search,

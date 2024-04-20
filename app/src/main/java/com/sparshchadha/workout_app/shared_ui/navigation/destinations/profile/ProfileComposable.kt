@@ -9,13 +9,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.features.profile.presentation.profile.ProfileScreen
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.ScreenRoutes
 
 fun NavGraphBuilder.bottomProfileComposable(
     globalPaddingValues: PaddingValues,
     navController: NavController,
     profileViewModel: ProfileViewModel,
-    toggleBottomBarVisibility: (Boolean) -> Unit
+    toggleBottomBarVisibility: (Boolean) -> Unit,
+    sharedViewModel: SharedViewModel
 ) {
     composable(
         route = ScreenRoutes.ProfileScreen.route,
@@ -33,7 +35,8 @@ fun NavGraphBuilder.bottomProfileComposable(
         ProfileScreen(
             globalPaddingValues = globalPaddingValues,
             navController = navController,
-            profileViewModel = profileViewModel
+            profileViewModel = profileViewModel,
+            sharedViewModel = sharedViewModel
         )
     }
 }

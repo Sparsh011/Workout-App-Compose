@@ -11,6 +11,7 @@ import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.Workout
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.shared_ui.navigation.destinations.calorie_tracker.bottomCalorieTrackerComposable
@@ -44,7 +45,8 @@ fun NavGraph(
     profileViewModel: ProfileViewModel,
     newsViewModel: NewsViewModel,
     yogaViewModel: YogaViewModel,
-    toggleBottomBarVisibility: (Boolean) -> Unit
+    toggleBottomBarVisibility: (Boolean) -> Unit,
+    sharedViewModel: SharedViewModel
 ) {
 
     NavHost(
@@ -75,7 +77,8 @@ fun NavGraph(
             globalPaddingValues = globalPaddingValues,
             navController = navController,
             profileViewModel = profileViewModel,
-            toggleBottomBarVisibility = toggleBottomBarVisibility
+            toggleBottomBarVisibility = toggleBottomBarVisibility,
+            sharedViewModel = sharedViewModel
         )
 
         // Reminders Screen
@@ -206,7 +209,8 @@ fun NavGraph(
             globalPaddingValues = globalPaddingValues,
             foodItemsViewModel = foodItemsViewModel,
             navController = navController,
-            toggleBottomBarVisibility = toggleBottomBarVisibility
+            toggleBottomBarVisibility = toggleBottomBarVisibility,
+            sharedViewModel = sharedViewModel
         )
     }
 }

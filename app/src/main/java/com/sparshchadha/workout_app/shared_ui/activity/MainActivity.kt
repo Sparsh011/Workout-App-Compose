@@ -1,6 +1,8 @@
 package com.sparshchadha.workout_app.shared_ui.activity
 
 import android.Manifest
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -28,17 +30,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
+import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.features.reminders.presentation.viewmodels.RemindersViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.ImageSelectors
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.shared_ui.activity.components.GoogleSignInLauncher
 import com.sparshchadha.workout_app.shared_ui.activity.components.LandingPage
@@ -50,6 +56,11 @@ import com.sparshchadha.workout_app.shared_ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.util.UUID
 
 
 private const val TAG = "MainActivityTaggg"
@@ -62,6 +73,7 @@ class MainActivity : ComponentActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private val newsViewModel: NewsViewModel by viewModels()
     private val yogaViewModel: YogaViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by viewModels()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var analytics: FirebaseAnalytics
 
@@ -71,16 +83,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            when(profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
+            when (profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
                 null -> {
                     // show splash screen
                 }
+
                 else -> {
-                    WorkoutAppTheme (
+                    WorkoutAppTheme(
                         darkTheme = profileViewModel.darkTheme.collectAsState().value!!
-                    ){
+                    ) {
                         analytics = Firebase.analytics
-                        GoogleSignInLauncher(profileViewModel = profileViewModel)
+                        GoogleSignInLauncher(sharedViewModel = sharedViewModel)
 
                         requestPermissionLauncher =
                             rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -91,33 +104,32 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
 
+                        val imageSelector = sharedViewModel.mImageSelector.collectAsState().value
 
                         val pickMedia =
                             rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                                 if (uri != null) {
-                                    val bitmap = getCapturedImage(uri)
-                                    profileViewModel.setImageBitmap(bitmap)
-                                    profileViewModel.cacheBitmap(bitmap)
+                                    handleImageSelection(uri, imageSelector)
                                 } else {
                                     Log.d(TAG, "No media selected")
                                 }
-                                profileViewModel.galleryClosed()
+                                sharedViewModel.galleryClosed()
                             }
 
-                        val openGallery by profileViewModel.openGallery.collectAsStateWithLifecycle()
+                        val openGallery by sharedViewModel.openGallery.collectAsStateWithLifecycle()
 
                         if (openGallery == true) {
                             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                         }
 
-                        val showPermissionDialogFlow by profileViewModel.showPermissionDialog.collectAsStateWithLifecycle()
-                        val requestPermissions by profileViewModel.requestPermissions.collectAsStateWithLifecycle()
+                        val showPermissionDialogFlow by sharedViewModel.showPermissionDialog.collectAsStateWithLifecycle()
+                        val requestPermissions by sharedViewModel.requestPermissions.collectAsStateWithLifecycle()
                         val context = LocalContext.current
 
                         when (showPermissionDialogFlow) {
                             true -> {
                                 PermissionRequestDialog(description = "Need Permission") {
-                                    profileViewModel.hidePermissionDialog()
+                                    sharedViewModel.hidePermissionDialog()
                                 }
                             }
 
@@ -136,7 +148,10 @@ class MainActivity : ComponentActivity() {
                                     val permission = requestPermissions!![0].first
                                     val minSdk = requestPermissions!![0].second
                                     if (minSdk != -1) {
-                                        requestPermissionHandler(permission = permission, minSdk = minSdk)
+                                        requestPermissionHandler(
+                                            permission = permission,
+                                            minSdk = minSdk
+                                        )
                                     } else {
                                         requestPermissionHandler(permission = permission)
                                     }
@@ -153,7 +168,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        when(profileViewModel.isFirstTimeAppOpen.collectAsState().value) {
+                        when (sharedViewModel.isFirstTimeAppOpen.collectAsState().value) {
                             "true" -> {
                                 LandingPage(
                                     profileViewModel,
@@ -162,6 +177,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             }
+
                             "false" -> {
                                 val navHostController = rememberNavController()
 
@@ -196,10 +212,12 @@ class MainActivity : ComponentActivity() {
                                         yogaViewModel = yogaViewModel,
                                         toggleBottomBarVisibility = { bottomBarVisibility ->
                                             bottomBarState.value = bottomBarVisibility
-                                        }
+                                        },
+                                        sharedViewModel = sharedViewModel
                                     )
                                 }
                             }
+
                             else -> {
                                 ShowLoadingScreen()
                                 val loadingTimeElapsed = remember { mutableStateOf(false) }
@@ -214,6 +232,30 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun handleImageSelection(uri: Uri, imageSelector: ImageSelectors) {
+        val bitmap = getCapturedImageBitmap(uri)
+        when (imageSelector) {
+            ImageSelectors.NONE -> {
+
+            }
+
+            ImageSelectors.PROFILE_PIC -> {
+                profileViewModel.setImageBitmap(bitmap)
+                profileViewModel.cacheBitmap(bitmap)
+            }
+
+            ImageSelectors.DISH -> {
+                val imagePath = saveImageToInternalStorage(bitmap)
+                sharedViewModel.setSelectedImageUri(uri)
+                sharedViewModel.setImagePath(imagePath)
+            }
+
+            ImageSelectors.BODY_PROGRESS -> {
+
             }
         }
     }
@@ -259,7 +301,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    private fun getCapturedImage(selectedPhotoUri: Uri): Bitmap {
+    private fun getCapturedImageBitmap(selectedPhotoUri: Uri): Bitmap {
         return when {
             Build.VERSION.SDK_INT < 28 -> MediaStore.Images.Media.getBitmap(
                 this.contentResolver,
@@ -267,9 +309,39 @@ class MainActivity : ComponentActivity() {
             )
 
             else -> {
-                val source = ImageDecoder.createSource(this.contentResolver, selectedPhotoUri)
-                ImageDecoder.decodeBitmap(source)
+                try {
+                    val source = ImageDecoder.createSource(this.contentResolver, selectedPhotoUri)
+                    ImageDecoder.decodeBitmap(source)
+                } catch (e: Exception) {
+                    Log.e(TAG, "getCapturedImageBitmap: ${e.localizedMessage}")
+                    resources.getDrawable(R.drawable.baseline_image_24).toBitmap()
+                }
             }
         }
+    }
+
+    private fun saveImageToInternalStorage(bitmap: Bitmap): String {
+        val wrapper =
+            ContextWrapper(applicationContext) // This wrapper will tell which application wants to save image to gallery.
+
+        var file = wrapper.getDir(
+            "NutriWorkoutCompanion",
+            Context.MODE_PRIVATE
+        ) //the default mode, where the created file can only be accessed by the calling application (or all applications sharing the same user ID).
+
+        file = File(file, "${UUID.randomUUID()}.jpg")
+
+//        creating bitmap of the image -
+        try {
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+//            Note - early all stream instances do not actually need to be closed after use. Generally, only streams whose source is an IO channel (such as those returned by Files.lines(Path, Charset)) will require closing. Closing the stream for resource management.
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return file.absolutePath // Returns the directory where the file exists as well as the name of the file.
     }
 }

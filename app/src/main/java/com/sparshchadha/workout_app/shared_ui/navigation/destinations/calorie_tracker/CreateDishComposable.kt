@@ -9,13 +9,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.CreateDishScreen
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 
 fun NavGraphBuilder.createDishComposable(
     globalPaddingValues: PaddingValues,
     foodItemsViewModel: FoodAndWaterViewModel,
     navController: NavController,
-    toggleBottomBarVisibility: (Boolean) -> Unit
+    toggleBottomBarVisibility: (Boolean) -> Unit,
+    sharedViewModel: SharedViewModel
 ) {
     composable(
         route = UtilityScreenRoutes.CreateDishScreen.route,
@@ -33,7 +35,8 @@ fun NavGraphBuilder.createDishComposable(
         CreateDishScreen(
             globalPaddingValues = globalPaddingValues,
             foodItemsViewModel = foodItemsViewModel,
-            navController = navController
+            navController = navController,
+            sharedViewModel = sharedViewModel
         )
     }
 }

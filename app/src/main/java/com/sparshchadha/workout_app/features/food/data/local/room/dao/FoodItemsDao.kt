@@ -27,4 +27,7 @@ interface FoodItemsDao {
 
     @Query("SELECT * FROM FoodItemEntity WHERE servings = -1")
     fun getSavedFoodItems(): Flow<List<FoodItemEntity>>
+
+    @Query("SELECT * FROM FoodItemEntity WHERE isCreated = true")
+    fun getCreatedItems(): Flow<List<FoodItemEntity?>>
 }

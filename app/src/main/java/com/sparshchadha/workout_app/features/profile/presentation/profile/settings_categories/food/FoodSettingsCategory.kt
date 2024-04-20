@@ -62,5 +62,9 @@ fun handleCaloriesTrackerItemClick(
         "Saved Food Items" -> {
             navigateToScreen("SavedItemsScreen/calorieTracker")
         }
+
+        "Your Dishes" -> {
+            navigateToScreen("SavedItemsScreen/calorieTracker")
+        }
     }
 }

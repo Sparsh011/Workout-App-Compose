@@ -106,7 +106,8 @@ fun FoodScreen(
             },
             navigateToScreen = {
                 navController.navigate(it)
-            }
+            },
+            globalPaddingValues = globalPaddingValues
         )
     }
 
