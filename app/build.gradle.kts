@@ -166,4 +166,8 @@ dependencies {
     // region MPCharts
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     // endregion
+
+    // region firebase performance monitoring
+    implementation("com.google.firebase:firebase-perf-ktx:20.5.2")
+    // endregion
 }
