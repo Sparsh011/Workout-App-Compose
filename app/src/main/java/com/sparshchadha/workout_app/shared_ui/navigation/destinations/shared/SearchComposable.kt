@@ -10,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.shared_ui.components.shared.SearchScreen
 
@@ -18,7 +19,8 @@ fun NavGraphBuilder.searchComposable(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
     globalPaddingValues: PaddingValues,
-    toggleBottomBarVisibility: (Boolean) -> Unit
+    toggleBottomBarVisibility: (Boolean) -> Unit,
+    sharedViewModel: SharedViewModel
 ) {
     composable(
         route = UtilityScreenRoutes.SearchScreen.route,
@@ -47,7 +49,8 @@ fun NavGraphBuilder.searchComposable(
             searchFor = searchFor,
             workoutViewModel = workoutViewModel,
             navController = navController,
-            foodAndWaterViewModel = foodAndWaterViewModel
+            foodAndWaterViewModel = foodAndWaterViewModel,
+            sharedViewModel = sharedViewModel
         )
     }
 }

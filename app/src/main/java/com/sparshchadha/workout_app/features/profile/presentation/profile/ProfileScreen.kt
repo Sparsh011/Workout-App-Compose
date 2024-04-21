@@ -189,5 +189,5 @@ fun getBmi(height: String, currentWeight: String): String {
         return String.format("%.2f", bmi)
     }
 
-    return "NA"
+    return "0"
 }

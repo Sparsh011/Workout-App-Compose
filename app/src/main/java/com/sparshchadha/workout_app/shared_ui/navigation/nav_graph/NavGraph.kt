@@ -95,7 +95,8 @@ fun NavGraph(
             workoutViewModel = workoutViewModel,
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            toggleBottomBarVisibility = toggleBottomBarVisibility
+            toggleBottomBarVisibility = toggleBottomBarVisibility,
+            sharedViewModel = sharedViewModel
         )
 
         // Yoga Screen

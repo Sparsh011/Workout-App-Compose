@@ -1,11 +1,16 @@
 package com.sparshchadha.workout_app.shared_ui.activity.components
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -22,6 +27,10 @@ fun GoogleSignInLauncher(
     val context = LocalContext.current
     val startLogin = sharedViewModel.startGoogleSignIn.collectAsStateWithLifecycle().value
     val googleAuthClient = GoogleAuthClient(context)
+    val isConnectedToInternet = sharedViewModel.connectedToInternet.collectAsStateWithLifecycle().value ?: false
+    var showNoInternetToast by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     val googleSignInLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -46,19 +55,34 @@ fun GoogleSignInLauncher(
     observeLoginState(
         startLogin = startLogin,
         googleAuthClient = googleAuthClient,
-        signInLauncher = googleSignInLauncher
+        signInLauncher = googleSignInLauncher,
+        isConnectedToInternet = isConnectedToInternet,
+        showNoInternetToast = {
+            showNoInternetToast = true
+        }
     )
+
+    if (showNoInternetToast) {
+        Toast.makeText(context, "Please Check Your Internet Connection and Try Again!", Toast.LENGTH_SHORT).show()
+        showNoInternetToast = false
+    }
 }
 
 private fun observeLoginState(
     startLogin: Boolean,
     googleAuthClient: GoogleAuthClient,
-    signInLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
+    signInLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    isConnectedToInternet: Boolean,
+    showNoInternetToast: () -> Unit
 ) {
     when (startLogin) {
         true -> {
-            val signInIntent = googleAuthClient.getSignInIntent()
-            signInLauncher.launch(signInIntent)
+            if (isConnectedToInternet) {
+                val signInIntent = googleAuthClient.getSignInIntent()
+                signInLauncher.launch(signInIntent)
+            } else {
+                showNoInternetToast()
+            }
         }
 
         false -> {

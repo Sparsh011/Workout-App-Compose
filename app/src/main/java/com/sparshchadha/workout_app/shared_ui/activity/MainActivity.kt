@@ -6,6 +6,8 @@ import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.ConnectivityManager
+import android.net.Network
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -54,6 +56,7 @@ import com.sparshchadha.workout_app.shared_ui.components.ui_state.ShowLoadingScr
 import com.sparshchadha.workout_app.shared_ui.navigation.nav_graph.NavGraph
 import com.sparshchadha.workout_app.shared_ui.theme.WorkoutAppTheme
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import java.io.File
@@ -82,6 +85,8 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
+
+            observeInternetConnection()
 
             when (profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
                 null -> {
@@ -234,6 +239,28 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun observeInternetConnection() {
+        if (NetworkManager.checkInternet(this)) {
+            sharedViewModel.updateInternetStatus(true)
+        } else {
+            sharedViewModel.updateInternetStatus(false)
+        }
+        val networkCallback: ConnectivityManager.NetworkCallback =
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    sharedViewModel.updateInternetStatus(true)
+                }
+
+                override fun onLost(network: Network) {
+                    sharedViewModel.updateInternetStatus(false)
+                }
+            }
+
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        connectivityManager.registerDefaultNetworkCallback(networkCallback)
     }
 
     private fun handleImageSelection(uri: Uri, imageSelector: ImageSelectors) {

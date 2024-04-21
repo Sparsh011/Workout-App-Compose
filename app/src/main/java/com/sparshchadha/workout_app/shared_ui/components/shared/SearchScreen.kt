@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.shared_ui.components.shared
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,29 +35,32 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.NutritionalValueDto
+import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
+import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.FoodCard
+import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDtoItem
+import com.sparshchadha.workout_app.features.gym.presentation.gym.Exercise
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.shared_ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
 import com.sparshchadha.workout_app.shared_ui.components.ui_state.ShowLoadingScreen
-import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.FoodCard
-import com.sparshchadha.workout_app.features.gym.presentation.gym.Exercise
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Resource
-import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
-import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 private const val TAG = "SearchScreenTagg"
 
@@ -68,6 +73,7 @@ fun SearchScreen(
     workoutViewModel: WorkoutViewModel,
     navController: NavController,
     foodAndWaterViewModel: FoodAndWaterViewModel,
+    sharedViewModel: SharedViewModel
 ) {
     var searchBarQuery by remember {
         mutableStateOf("")
@@ -78,6 +84,16 @@ fun SearchScreen(
     LaunchedEffect(key1 = Unit, block = {
         focusRequester.requestFocus()
     })
+    val connectedToInternet = sharedViewModel.connectedToInternet.collectAsStateWithLifecycle().value ?: false
+    var showNoInternetToast by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val context = LocalContext.current
+
+    if (showNoInternetToast) {
+        Toast.makeText(context, "Please Check Your Internet Connection and Try Again!", Toast.LENGTH_SHORT).show()
+        showNoInternetToast = false
+    }
 
     Scaffold(
         containerColor = scaffoldBackgroundColor,
@@ -91,12 +107,16 @@ fun SearchScreen(
                     searchBarQuery = it
                 },
                 searchDish = {
-                    handleSearchFor(
-                        searchFor = searchFor,
-                        searchBarQuery = searchBarQuery,
-                        searchFoodViewModel = searchFoodViewModel,
-                        workoutViewModel = workoutViewModel
-                    )
+                    if (connectedToInternet) {
+                        handleSearchFor(
+                            searchFor = searchFor,
+                            searchBarQuery = searchBarQuery,
+                            searchFoodViewModel = searchFoodViewModel,
+                            workoutViewModel = workoutViewModel
+                        )
+                    } else {
+                        showNoInternetToast = true
+                    }
                 },
                 onCloseClicked = onCloseClicked
             )

@@ -51,6 +51,9 @@ class SharedViewModel @Inject constructor(
     private val _selectedImagePath = MutableStateFlow<String?>(null)
     val selectedImagePath = _selectedImagePath.asStateFlow()
 
+    private val _isConnectedToInternet = MutableStateFlow<Boolean?>(null)
+    val connectedToInternet = _isConnectedToInternet.asStateFlow()
+
     init {
         readLoginToken()
         readFirstTimeAppOpen()
@@ -125,6 +128,10 @@ class SharedViewModel @Inject constructor(
 
     fun setImagePath(imagePath: String) {
         _selectedImagePath.value = imagePath
+    }
+
+    fun updateInternetStatus(status: Boolean) {
+        _isConnectedToInternet.value = status
     }
 }
 
