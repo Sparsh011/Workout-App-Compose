@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.shared_ui.components.shared
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,7 +34,6 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,11 +51,13 @@ import com.sparshchadha.workout_app.features.gym.presentation.gym.Exercise
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
+import com.sparshchadha.workout_app.shared_ui.components.ui_state.NoInternetScreen
 import com.sparshchadha.workout_app.shared_ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
 import com.sparshchadha.workout_app.shared_ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Resource
@@ -84,15 +84,10 @@ fun SearchScreen(
     LaunchedEffect(key1 = Unit, block = {
         focusRequester.requestFocus()
     })
-    val connectedToInternet = sharedViewModel.connectedToInternet.collectAsStateWithLifecycle().value ?: false
-    var showNoInternetToast by rememberSaveable {
+    val connectedToInternet =
+        sharedViewModel.connectedToInternet.collectAsStateWithLifecycle().value ?: false
+    var firstSearchDone by rememberSaveable {
         mutableStateOf(false)
-    }
-    val context = LocalContext.current
-
-    if (showNoInternetToast) {
-        Toast.makeText(context, "Please Check Your Internet Connection and Try Again!", Toast.LENGTH_SHORT).show()
-        showNoInternetToast = false
     }
 
     Scaffold(
@@ -102,20 +97,19 @@ fun SearchScreen(
                 searchBarQuery = searchBarQuery,
                 focusManager = focusManager,
                 focusRequester = focusRequester,
-
                 updateSearchQuery = {
                     searchBarQuery = it
                 },
                 searchDish = {
-                    if (connectedToInternet) {
+                    if(connectedToInternet) {
                         handleSearchFor(
                             searchFor = searchFor,
                             searchBarQuery = searchBarQuery,
                             searchFoodViewModel = searchFoodViewModel,
                             workoutViewModel = workoutViewModel
-                        )
-                    } else {
-                        showNoInternetToast = true
+                        ) {
+                            firstSearchDone = true
+                        }
                     }
                 },
                 onCloseClicked = onCloseClicked
@@ -123,28 +117,41 @@ fun SearchScreen(
         },
         modifier = Modifier.fillMaxSize()
     ) { localPaddingValues ->
-        when (searchFor) {
-            "food" -> {
-                val dishes = foodAndWaterViewModel.foodItemsFromApi.value
-                HandleFoodSearch(
-                    paddingValues = paddingValues,
-                    localPaddingValues = localPaddingValues,
-                    dishes = dishes
-                ) {
-                    foodAndWaterViewModel.saveFoodItem(foodItemEntity = it)
+        if (connectedToInternet) {
+            when (searchFor) {
+                "food" -> {
+                    val dishes = foodAndWaterViewModel.foodItemsFromApi.value
+                    HandleFoodSearch(
+                        paddingValues = paddingValues,
+                        localPaddingValues = localPaddingValues,
+                        dishes = dishes
+                    ) {
+                        foodAndWaterViewModel.saveFoodItem(foodItemEntity = it)
+                    }
+                }
+
+                "exercises" -> {
+                    val exercises = workoutViewModel.searchExercisesResult.value
+                    HandleExercisesSearch(
+                        paddingValues = paddingValues,
+                        localPaddingValues = localPaddingValues,
+                        exercises = exercises,
+                        workoutViewModel = workoutViewModel,
+                        navController = navController
+                    )
                 }
             }
-
-            "exercises" -> {
-                val exercises = workoutViewModel.searchExercisesResult.value
-                HandleExercisesSearch(
-                    paddingValues = paddingValues,
-                    localPaddingValues = localPaddingValues,
-                    exercises = exercises,
-                    workoutViewModel = workoutViewModel,
-                    navController = navController
-                )
-            }
+        } else {
+            NoInternetScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        bottom = paddingValues.calculateBottomPadding(),
+                        top = localPaddingValues.calculateTopPadding(),
+                        start = Dimensions.LARGE_PADDING,
+                        end = Dimensions.LARGE_PADDING
+                    )
+            )
         }
     }
 }
@@ -154,15 +161,18 @@ fun handleSearchFor(
     searchBarQuery: String,
     searchFoodViewModel: FoodAndWaterViewModel,
     workoutViewModel: WorkoutViewModel,
-) {
+    updateFirstSearchDone: () -> Unit
+    ) {
     when (searchFor) {
         "food" -> {
             searchFoodViewModel.updateSearchQuery(searchQuery = searchBarQuery)
             searchFoodViewModel.getFoodItemsFromApi()
+            updateFirstSearchDone()
         }
 
         "exercises" -> {
             workoutViewModel.getExercisesByNameFromApi(searchQuery = searchBarQuery)
+            updateFirstSearchDone()
         }
     }
 }
