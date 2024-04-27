@@ -6,6 +6,7 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -30,6 +31,7 @@ android {
         buildConfigField("String", "PEXELS_API_KEY", "\"${properties["PEXELS_API_KEY"]}\"")
         buildConfigField("String", "GYM_WORKOUTS_API_KEY", "\"${properties["GYM_WORKOUTS_API_KEY"]}\"")
         buildConfigField("String", "NEWS_API_KEY", "\"${properties["NEWS_API_KEY"]}\"")
+        buildConfigField("String", "GOOGLE_WEB_SERVER_CLIENT_ID", "\"${properties["GOOGLE_WEB_SERVER_CLIENT_ID"]}\"")
     }
 
     buildTypes {
@@ -65,11 +67,12 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2023.10.01"))
+    implementation(platform("androidx.compose:compose-bom:2024.04.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("com.google.firebase:firebase-analytics:21.5.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -90,6 +93,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     // endregion
 
     // region Retrofit
@@ -148,5 +152,22 @@ dependencies {
 
     implementation("androidx.camera:camera-view:${cameraxVersion}")
     implementation("androidx.camera:camera-extensions:${cameraxVersion}")
+    // endregion
+
+    // region firebase auth
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    // endregion
+
+    // region splash screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
+    // endregion
+
+    // region MPCharts
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    // endregion
+
+    // region firebase performance monitoring
+    implementation("com.google.firebase:firebase-perf-ktx:20.5.2")
     // endregion
 }

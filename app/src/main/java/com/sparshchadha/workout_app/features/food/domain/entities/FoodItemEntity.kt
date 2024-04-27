@@ -7,6 +7,7 @@ import java.time.LocalTime
 
 @Entity
 data class FoodItemEntity(
+    val imageStr: String?,
     val date: String,
     val month: String,
     val servings: Int,
@@ -15,6 +16,7 @@ data class FoodItemEntity(
     val seconds: Int = LocalTime.now().second,
     val foodItemDetails: FoodItem?,
     val isConsumed: Boolean = true,
+    val isCreated: Boolean = false,
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
 )

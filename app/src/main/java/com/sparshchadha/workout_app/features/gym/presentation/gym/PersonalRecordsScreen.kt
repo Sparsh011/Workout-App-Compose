@@ -46,14 +46,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.gym.domain.entities.PersonalRecordsEntity
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
-import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
-import com.sparshchadha.workout_app.ui.components.shared.NoSavedItem
-import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.shared_ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.shared_ui.components.shared.NoSavedItem
+import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.Dimensions.BOTTOM_SHEET_BOTTOM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
@@ -337,7 +338,7 @@ fun PRModalBottomSheet(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(LARGE_PADDING + MEDIUM_PADDING),
+                .padding(start = LARGE_PADDING + MEDIUM_PADDING, bottom = BOTTOM_SHEET_BOTTOM_PADDING, end = LARGE_PADDING + MEDIUM_PADDING, top = LARGE_PADDING + MEDIUM_PADDING),
             colors = ButtonDefaults.buttonColors(
                 containerColor = primaryPurple
             )

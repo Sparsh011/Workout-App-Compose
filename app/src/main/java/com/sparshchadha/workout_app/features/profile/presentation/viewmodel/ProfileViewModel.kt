@@ -3,23 +3,27 @@ package com.sparshchadha.workout_app.features.profile.presentation.viewmodel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import android.util.Log
 import android.util.LruCache
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sparshchadha.workout_app.application.BaseRepository
 import com.sparshchadha.workout_app.storage.datastore.WorkoutAppDatastorePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
+private const val TAG = "ProfileViewModelTaggg"
+
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val datastorePreference: WorkoutAppDatastorePreference,
+    private val baseRepository: BaseRepository
 ) : ViewModel() {
     private val _age = MutableStateFlow("")
     val age: StateFlow<String> = _age
@@ -45,25 +49,13 @@ class ProfileViewModel @Inject constructor(
     private val _profilePicBitmap = MutableStateFlow<Bitmap?>(null)
     val profilePicBitmap = _profilePicBitmap
 
-    private val _darkTheme = MutableStateFlow(false)
-    val darkTheme: StateFlow<Boolean> = _darkTheme
+    private val _darkTheme = MutableStateFlow<Boolean?>(null)
+    val darkTheme: StateFlow<Boolean?> = _darkTheme
 
     private val _waterGlassesGoal = MutableStateFlow(0)
     val waterGlassesGoal: StateFlow<Int> = _waterGlassesGoal
 
     private lateinit var bitmapLruCache: LruCache<String, Bitmap>
-
-    private val _showPermissionDialog = MutableStateFlow<Boolean?>(null)
-    val showPermissionDialog = _showPermissionDialog.asStateFlow()
-
-    private val _requestPermissions = MutableStateFlow<List<Pair<String, Int>>?>(null)
-    val requestPermissions = _requestPermissions.asStateFlow()
-
-    private val _openCamera = MutableStateFlow<Boolean?>(null)
-    val openCamera = _openCamera.asStateFlow()
-
-    private val _openGallery = MutableStateFlow<Boolean?>(null)
-    val openGallery = _openGallery.asStateFlow()
 
     private val _profileImageUri = MutableStateFlow<Bitmap?>(null)
 
@@ -76,25 +68,9 @@ class ProfileViewModel @Inject constructor(
         readCaloriesGoal()
         readName()
         readBase64ProfilePic()
-        setupLruCache()
         readDarkTheme()
         readWaterGlassesGoal()
-    }
-
-    private fun readWaterGlassesGoal() {
-        viewModelScope.launch {
-            datastorePreference.readWaterGlassesGoal.collect { goal ->
-                _waterGlassesGoal.value = goal?.toInt() ?: 8
-            }
-        }
-    }
-
-    private fun readDarkTheme() {
-        viewModelScope.launch {
-            datastorePreference.readDarkMode.collect { isDarkTheme ->
-                _darkTheme.value = isDarkTheme.toBoolean()
-            }
-        }
+        setupLruCache()
     }
 
     private fun setupLruCache() {
@@ -109,6 +85,22 @@ class ProfileViewModel @Inject constructor(
                 // The cache size will be measured in kilobytes rather than
                 // number of items.
                 return bitmap.byteCount / 1024
+            }
+        }
+    }
+
+    private fun readWaterGlassesGoal() {
+        viewModelScope.launch {
+            datastorePreference.readWaterGlassesGoal.collect { goal ->
+                _waterGlassesGoal.value = goal?.toInt() ?: 8
+            }
+        }
+    }
+
+    private fun readDarkTheme() {
+        viewModelScope.launch {
+            datastorePreference.readDarkMode.collect { isDarkTheme ->
+                _darkTheme.value = if (isDarkTheme.isNullOrBlank()) true else isDarkTheme.toBoolean()
             }
         }
     }
@@ -173,12 +165,14 @@ class ProfileViewModel @Inject constructor(
         try {
             if (bitmapLruCache.get("profileKey") != null) {
                 _profilePicBitmap.value = bitmapLruCache.get("profileKey")
+                return
             }
         } catch (_: Exception) {
 
         }
         viewModelScope.launch {
             datastorePreference.readBase64ProfilePic.collect { profilePic ->
+                Log.e(TAG, "readBase64ProfilePic: $profilePic")
                 _profilePicBitmap.value = DbBitmapUtility.decodeBase64(profilePic ?: "")
             }
         }
@@ -222,7 +216,7 @@ class ProfileViewModel @Inject constructor(
 
     fun saveName(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            datastorePreference.saveName(name)
+            datastorePreference.saveName(name.trim())
         }
     }
 
@@ -235,55 +229,13 @@ class ProfileViewModel @Inject constructor(
         caloriesGoal: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            async {
-                datastorePreference.saveAge(age)
-            }
-            async {
-                datastorePreference.saveHeight(height)
-            }
-            async {
-                datastorePreference.saveCurrentWeight(weight)
-            }
-            async {
-                datastorePreference.saveGender(gender)
-            }
-
-            async {
-                datastorePreference.saveWeightGoal(weightGoal)
-            }
-
-            async {
-                datastorePreference.saveCaloriesGoal(caloriesGoal)
-            }
+            datastorePreference.saveAge(age)
+            datastorePreference.saveHeight(height)
+            datastorePreference.saveCurrentWeight(weight)
+            datastorePreference.saveGender(gender)
+            datastorePreference.saveWeightGoal(weightGoal)
+            datastorePreference.saveCaloriesGoal(caloriesGoal)
         }
-    }
-
-    fun showPermissionDialog() {
-        _showPermissionDialog.value = true
-    }
-
-    fun hidePermissionDialog() {
-        _showPermissionDialog.value = false
-    }
-
-    fun requestPermissions(permissions: List<Pair<String, Int>>) {
-        _requestPermissions.value = permissions
-    }
-
-    fun openGallery() {
-        _openGallery.value = true
-    }
-
-    fun galleryClosed() {
-        _openGallery.value = false
-    }
-
-    fun openCamera() {
-        _openCamera.value = true
-    }
-
-    fun cameraClosed() {
-        _openCamera.value = false
     }
 
     fun setImageBitmap(imgBitmap: Bitmap) {
@@ -314,10 +266,63 @@ class ProfileViewModel @Inject constructor(
             datastorePreference.saveWaterGlassesGoal(goal.toString())
         }
     }
+
+    fun signOutUser() {
+        resetValues()
+        updateFirstTimeAppOpen("true")
+    }
+
+    fun updateFirstTimeAppOpen(value: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            datastorePreference.saveFirstAppOpen(value)
+        }
+    }
+
+    private fun resetValues() {
+        viewModelScope.launch(Dispatchers.IO) {
+            async {
+                datastorePreference.saveAge(null)
+            }
+            async {
+                datastorePreference.saveHeight(null)
+            }
+            async {
+                datastorePreference.saveCurrentWeight(null)
+            }
+            async {
+                datastorePreference.saveGender(null)
+            }
+            async {
+                datastorePreference.saveWeightGoal(null)
+            }
+            async {
+                datastorePreference.saveCaloriesGoal(null)
+            }
+            async {
+                datastorePreference.saveLoginToken(null)
+            }
+            async {
+                datastorePreference.saveBase64Image(null)
+            }
+            async {
+                datastorePreference.saveName(null)
+            }
+            async {
+                datastorePreference.saveWaterGlassesGoal("8")
+            }
+            async {
+                baseRepository.clearWorkoutDatabase()
+            }
+        }
+    }
 }
 
-private object DbBitmapUtility {
-    fun encodeToBase64(image: Bitmap, compressFormat: Bitmap.CompressFormat?, quality: Int): String? {
+object DbBitmapUtility {
+    fun encodeToBase64(
+        image: Bitmap,
+        compressFormat: Bitmap.CompressFormat?,
+        quality: Int
+    ): String? {
         val byteArrayOS = ByteArrayOutputStream()
         image.compress(compressFormat!!, quality, byteArrayOS)
         return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT)

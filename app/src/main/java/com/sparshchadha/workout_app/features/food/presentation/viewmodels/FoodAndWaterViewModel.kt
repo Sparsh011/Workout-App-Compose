@@ -1,12 +1,12 @@
 package com.sparshchadha.workout_app.features.food.presentation.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sparshchadha.workout_app.features.news.domain.repository.NewsRepository
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.NutritionalValueDto
 import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
@@ -14,6 +14,7 @@ import com.sparshchadha.workout_app.features.food.domain.entities.WaterEntity
 import com.sparshchadha.workout_app.features.food.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.features.food.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.features.food.domain.repository.WaterRepository
+import com.sparshchadha.workout_app.features.news.domain.repository.NewsRepository
 import com.sparshchadha.workout_app.util.Constants
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.Resource
@@ -47,7 +48,7 @@ class FoodAndWaterViewModel @Inject constructor(
     private val _nutrientsConsumed: MutableMap<String, Double> = mutableStateMapOf()
     val nutrientsConsumed: Map<String, Double> = _nutrientsConsumed
 
-    private val _selectedDateAndMonthForFoodItems = MutableStateFlow<Pair<Int, String>?>(null)
+    private val _selectedDateAndMonthForFoodItems = MutableStateFlow(HelperFunctions.getCurrentDateAndMonth())
     val selectedDateAndMonthForFoodItems = _selectedDateAndMonthForFoodItems.asStateFlow()
 
     private val _foodItemEntity = mutableStateOf<FoodItemEntity?>(null)
@@ -59,16 +60,11 @@ class FoodAndWaterViewModel @Inject constructor(
     private val _savedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
     val savedFoodItems = _savedFoodItems.asStateFlow()
 
+    private val _createdItems = MutableStateFlow<List<FoodItemEntity?>?>(null)
+    val createdItems = _createdItems.asStateFlow()
+
     private val _waterGlassesEntity = MutableStateFlow<WaterEntity?>(null)
     val waterGlassesEntity = _waterGlassesEntity.asStateFlow()
-
-    private val _selectedDayPair = mutableStateOf(
-        Pair(
-            HelperFunctions.getCurrentDateAndMonth().second,
-            HelperFunctions.getCurrentDateAndMonth().first
-        )
-    )
-    val selectedDayPosition: State<Pair<String, Int>> = _selectedDayPair
 
     init {
         getFoodItemsConsumedOn()
@@ -95,11 +91,8 @@ class FoodAndWaterViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _foodItemsFromApi.value =
-                    Resource.Error(error = e)
-
+                _foodItemsFromApi.value = Resource.Error(error = e)
             }
-
         }
     }
 
@@ -127,7 +120,6 @@ class FoodAndWaterViewModel @Inject constructor(
                         getTotalCaloriesConsumed(foodItemsConsumed = response)
                         getNutrientsConsumed(foodItemsConsumed = response)
                         _selectedDateAndMonthForFoodItems.value = (Pair(date.toInt(), month))
-                        _selectedDayPair.value = Pair(month, date.toInt())
                     }
                 }
             } catch (e: Exception) {
@@ -220,10 +212,6 @@ class FoodAndWaterViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedDay(date: Int, month: String) {
-        _selectedDayPair.value = Pair(month, date)
-    }
-
     fun getSavedFoodItems() {
         viewModelScope.launch(Dispatchers.IO) {
             foodItemsRepository.getAllFoodItems(isConsumed = false).collect {
@@ -236,17 +224,16 @@ class FoodAndWaterViewModel @Inject constructor(
         _selectedFoodItem.value = foodItem
     }
 
+    private val TAG = "FoodAndWaterViewModel"
+
     fun getWaterGlassesConsumedOn(
-        date: String,
-        month: String,
-        year: String
+        date: String, month: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             waterRepository.getGlassesConsumedOn(
-                date = date,
-                month = month,
-                year = year
+                date = date, month = month, year = "2024"
             ).collect {
+                Log.d(TAG, "getWaterGlassesConsumedOn: $it")
                 _waterGlassesEntity.value = it
             }
         }
@@ -256,11 +243,19 @@ class FoodAndWaterViewModel @Inject constructor(
         waterEntity: WaterEntity
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val isUpdatable = waterRepository.doesRowExist(waterEntity.id ?: -1)
-            if (isUpdatable) {
+            val isUpdatable = waterRepository.doesRowExist(waterEntity.date, waterEntity.month, waterEntity.year)
+            if (isUpdatable == 1) {
                 waterRepository.updateGlassesConsumed(waterEntity)
             } else {
                 waterRepository.insertGlassesConsumed(waterEntity)
+            }
+        }
+    }
+
+    fun getCreatedItems() {
+        viewModelScope.launch(Dispatchers.IO) {
+            foodItemsRepository.getCreatedItems().collect {
+                _createdItems.value = it
             }
         }
     }

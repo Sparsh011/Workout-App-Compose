@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -32,15 +33,17 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.FoodItem
-import com.sparshchadha.workout_app.ui.components.shared.PickNumberOfSetsOrQuantity
-import com.sparshchadha.workout_app.ui.components.shared.rememberPickerState
+import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
+import com.sparshchadha.workout_app.shared_ui.components.shared.PickNumberOfSetsOrQuantity
+import com.sparshchadha.workout_app.shared_ui.components.shared.rememberPickerState
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
+import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
@@ -130,18 +133,46 @@ private fun FoodItemDetailsCard(
         ) {
             Text(
                 text = foodItemName,
-                modifier = Modifier.weight(0.7f),
+                modifier = Modifier
+                    .weight(0.7f)
+                    .fillMaxWidth(),
                 fontWeight = FontWeight.Bold,
                 fontSize = TITLE_SIZE,
                 color = primaryTextColor
             )
+
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = null,
                 tint = primaryTextColor,
-                modifier = Modifier.clickable {
-                    showBottomSheetToSelectFoodItemQuantity = true
-                }
+                modifier = Modifier
+                    .clickable {
+                        showBottomSheetToSelectFoodItemQuantity = true
+                    }
+                    .weight(0.15f)
+            )
+
+            Icon(
+                imageVector = Icons.Default.FavoriteBorder,
+                contentDescription = null,
+                tint = noAchievementColor,
+                modifier = Modifier
+                    .clickable {
+                        saveFoodItemWithQuantity(
+                            FoodItemEntity(
+                                imageStr = null,
+                                date = "",
+                                month = "",
+                                servings = -1,
+                                hour = -1,
+                                minutes = -1,
+                                seconds = -1,
+                                foodItemDetails = foodItem,
+                                isConsumed = false
+                            )
+                        )
+                    }
+                    .weight(0.15f)
             )
         }
 
@@ -189,7 +220,8 @@ private fun FoodItemDetailsCard(
                             date = HelperFunctions.getCurrentDateAndMonth().first.toString(),
                             month = HelperFunctions.getCurrentDateAndMonth().second,
                             servings = quantity,
-                            foodItemDetails = foodItem
+                            foodItemDetails = foodItem,
+                            imageStr = null
                         )
                     )
                 },
@@ -258,7 +290,12 @@ fun ShowQuantityOrSetsPicker(
             ),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(horizontal = LARGE_PADDING)
+                .padding(
+                    start = LARGE_PADDING,
+                    bottom = Dimensions.BOTTOM_SHEET_BOTTOM_PADDING,
+                    end = LARGE_PADDING,
+                    top = LARGE_PADDING
+                )
                 .fillMaxWidth()
         ) {
             Text(text = "Add ${pickerState.selectedItem} $title", color = Color.White)

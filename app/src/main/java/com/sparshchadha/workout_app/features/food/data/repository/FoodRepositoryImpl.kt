@@ -1,12 +1,12 @@
 package com.sparshchadha.workout_app.features.food.data.repository
 
 import com.sparshchadha.workout_app.BuildConfig
-import com.sparshchadha.workout_app.storage.datastore.WorkoutAppDatastorePreference
 import com.sparshchadha.workout_app.features.food.data.local.room.dao.FoodItemsDao
-import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.features.food.data.remote.api.FoodApi
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.NutritionalValueDto
+import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.features.food.domain.repository.FoodItemsRepository
+import com.sparshchadha.workout_app.storage.datastore.WorkoutAppDatastorePreference
 import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -63,5 +63,9 @@ class FoodRepositoryImpl(
 
     override suspend fun getFoodItemById(id: Int): Flow<FoodItemEntity?> {
         return foodItemsDao.getFoodItemById(id)
+    }
+
+    override suspend fun getCreatedItems(): Flow<List<FoodItemEntity?>> {
+        return foodItemsDao.getCreatedItems()
     }
 }

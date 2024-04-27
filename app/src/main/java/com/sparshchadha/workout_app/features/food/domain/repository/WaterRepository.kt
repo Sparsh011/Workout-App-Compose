@@ -7,5 +7,5 @@ interface WaterRepository {
     suspend fun getGlassesConsumedOn(date: String, month: String, year: String): Flow<WaterEntity>
     suspend fun updateGlassesConsumed(waterEntity: WaterEntity): Int
     suspend fun insertGlassesConsumed(waterEntity: WaterEntity)
-    suspend fun doesRowExist(id: Int): Boolean
+    suspend fun doesRowExist(date: String, month: String, year: String): Int
 }

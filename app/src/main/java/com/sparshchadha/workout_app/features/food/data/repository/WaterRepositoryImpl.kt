@@ -24,7 +24,7 @@ class WaterRepositoryImpl(
         waterDao.insertGlassesConsumed(waterEntity)
     }
 
-    override suspend fun doesRowExist(id: Int): Boolean {
-        return waterDao.doesRowExist(id)
+    override suspend fun doesRowExist(date: String, month: String, year: String): Int {
+        return waterDao.doesRowExist(date, month, year)
     }
 }

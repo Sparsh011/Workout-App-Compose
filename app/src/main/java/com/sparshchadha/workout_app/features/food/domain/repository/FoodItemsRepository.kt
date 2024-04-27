@@ -1,7 +1,7 @@
 package com.sparshchadha.workout_app.features.food.domain.repository
 
-import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.NutritionalValueDto
+import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -21,5 +21,7 @@ interface FoodItemsRepository {
     suspend fun removeFoodItem(foodItem: FoodItemEntity)
 
     suspend fun getFoodItemById(id: Int): Flow<FoodItemEntity?>
+
+    suspend fun getCreatedItems(): Flow<List<FoodItemEntity?>>
 
 }

@@ -11,16 +11,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,13 +34,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.sparshchadha.workout_app.features.news.data.remote.dto.NewsArticlesDto
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
-import com.sparshchadha.workout_app.ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
-import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
+import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
+import com.sparshchadha.workout_app.shared_ui.components.shared.PullToRefreshLazyColumn
+import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.shared_ui.components.ui_state.NoInternetScreen
+import com.sparshchadha.workout_app.shared_ui.components.ui_state.NoResultsFoundOrErrorDuringSearch
+import com.sparshchadha.workout_app.shared_ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
@@ -47,18 +57,31 @@ import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.Resource
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsArticles(
     navController: NavController,
     newsViewModel: NewsViewModel,
-    globalPaddingValues: PaddingValues
+    globalPaddingValues: PaddingValues,
+    sharedViewModel: SharedViewModel
 ) {
     val searchQuery = newsViewModel.newsSearchQuery.collectAsState().value
-    LaunchedEffect(key1 = searchQuery) {
+    val isConnectedToInternet =
+        sharedViewModel.connectedToInternet.collectAsStateWithLifecycle().value ?: false
+    val articlesResponse = newsViewModel.newsArticles.value
+
+    if (isConnectedToInternet && articlesResponse == null) {
         newsViewModel.getNewsArticles(forQuery = searchQuery)
     }
+    var isRefreshing by remember {
+        mutableStateOf(false)
+    }
 
-    val articlesResponse = newsViewModel.newsArticles.value
+    LaunchedEffect(key1 = articlesResponse) {
+        if (isRefreshing) {
+            isRefreshing = false
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -74,58 +97,104 @@ fun NewsArticles(
             .fillMaxSize(),
         containerColor = scaffoldBackgroundColor
     ) { localPaddingValues ->
-        when (articlesResponse) {
-            is Resource.Loading -> {
-                ShowLoadingScreen()
-            }
+        if (isConnectedToInternet || articlesResponse != null) {
+            val listState = rememberLazyListState()
 
-            is Resource.Success -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(top = localPaddingValues.calculateTopPadding())
-                        .padding(vertical = MEDIUM_PADDING, horizontal = SMALL_PADDING)
-                        .clip(RoundedCornerShape(MEDIUM_PADDING))
-                        .background(bottomBarColor)
-                ) {
-                    val articles = articlesResponse.data?.articles ?: emptyList()
-                    if (articles.isNotEmpty()) {
-                        items(articles) {
-                            NewsArticle(
-                                title = it.title ?: "NA",
-                                urlToImage = it.urlToImage ?: "NA",
-                                source = it.source?.name ?: "NA",
-                                onClick = {
-                                    newsViewModel.updateArticleToLoad(url = it.url ?: "")
-                                    navController.navigate(UtilityScreenRoutes.ArticleWebViewScreen.route)
-                                }
-                            )
-                        }
-                    } else {
-                        item {
-                            NoResultsFoundOrErrorDuringSearch(
-                                globalPaddingValues = globalPaddingValues,
-                                localPaddingValues = localPaddingValues
-                            )
-                        }
-                    }
-                }
-            }
-
-            is Resource.Error -> {
-                NoResultsFoundOrErrorDuringSearch(
-                    globalPaddingValues = globalPaddingValues,
-                    localPaddingValues = localPaddingValues,
-                    message = articlesResponse.error?.message ?: "Unable To Get Articles"
-                )
-            }
-
-            else -> {}
+            HandleNewsArticlesState(
+                articlesResponse = articlesResponse,
+                localPaddingValues = localPaddingValues,
+                updateArticleToLoadUrl = { url ->
+                    newsViewModel.updateArticleToLoad(url = url)
+                },
+                navigateToWebView = {
+                    navController.navigate(UtilityScreenRoutes.ArticleWebViewScreen.route)
+                },
+                globalPaddingValues = globalPaddingValues,
+                listState = listState,
+                onRefresh = {
+                    isRefreshing = true
+                    newsViewModel.getNewsArticles(forQuery = searchQuery)
+                },
+                isRefreshing = isRefreshing
+            )
+        } else {
+            NoInternetScreen(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = localPaddingValues.calculateTopPadding(),
+                        bottom = globalPaddingValues.calculateBottomPadding(),
+                        start = Dimensions.LARGE_PADDING,
+                        end = Dimensions.LARGE_PADDING
+                    )
+            )
         }
     }
 }
 
 @Composable
-fun NewsArticle(
+fun HandleNewsArticlesState(
+    articlesResponse: Resource<NewsArticlesDto>?,
+    localPaddingValues: PaddingValues,
+    updateArticleToLoadUrl: (String) -> Unit,
+    navigateToWebView: () -> Unit,
+    globalPaddingValues: PaddingValues,
+    listState: LazyListState,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean
+) {
+
+    when (articlesResponse) {
+        is Resource.Loading -> {
+            ShowLoadingScreen()
+        }
+
+        is Resource.Success -> {
+            val articles = articlesResponse.data?.articles ?: emptyList()
+            if (articles.isNotEmpty()) {
+                PullToRefreshLazyColumn(
+                    items = articles,
+                    content = {
+                        NewsArticle(
+                            title = it.title ?: "NA",
+                            urlToImage = it.urlToImage ?: "NA",
+                            source = it.source?.name ?: "NA",
+                            onClick = {
+                                updateArticleToLoadUrl(it.url ?: "")
+                                navigateToWebView()
+                            }
+                        )
+                    },
+                    isRefreshing = isRefreshing,
+                    onRefresh = onRefresh,
+                    lazyColumnModifier = Modifier
+                        .padding(top = localPaddingValues.calculateTopPadding())
+                        .padding(vertical = MEDIUM_PADDING, horizontal = SMALL_PADDING)
+                        .clip(RoundedCornerShape(MEDIUM_PADDING))
+                        .background(bottomBarColor)
+                )
+            } else {
+                NoResultsFoundOrErrorDuringSearch(
+                    globalPaddingValues = globalPaddingValues,
+                    localPaddingValues = localPaddingValues
+                )
+            }
+        }
+
+        is Resource.Error -> {
+            NoResultsFoundOrErrorDuringSearch(
+                globalPaddingValues = globalPaddingValues,
+                localPaddingValues = localPaddingValues,
+                message = articlesResponse.error?.message ?: "Unable To Get Articles"
+            )
+        }
+
+        else -> {}
+    }
+}
+
+@Composable
+private fun NewsArticle(
     title: String,
     urlToImage: String,
     source: String,
@@ -191,3 +260,5 @@ fun NewsArticle(
         }
     }
 }
+
+

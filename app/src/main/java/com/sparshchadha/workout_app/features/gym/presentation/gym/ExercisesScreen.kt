@@ -17,12 +17,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
@@ -32,21 +37,24 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDtoItem
-import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
-import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
-import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
-import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
+import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
+import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
+import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.shared_ui.components.ui_state.ErrorDuringFetch
+import com.sparshchadha.workout_app.shared_ui.components.ui_state.NoInternetScreen
+import com.sparshchadha.workout_app.shared_ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
+import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.Resource
-import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
 
 @Composable
 fun ExercisesScreen(
@@ -54,9 +62,22 @@ fun ExercisesScreen(
     category: String?,
     globalPaddingValues: PaddingValues,
     workoutViewModel: WorkoutViewModel,
+    sharedViewModel: SharedViewModel
 ) {
 
     val exercises by workoutViewModel.gymExercisesFromApi
+    val isConnectedToInternet =
+        sharedViewModel.connectedToInternet.collectAsStateWithLifecycle().value ?: false
+
+    var isRefreshing by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(key1 = exercises) {
+        if (isRefreshing) {
+            isRefreshing = false
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -78,14 +99,30 @@ fun ExercisesScreen(
             .fillMaxSize(),
         containerColor = scaffoldBackgroundColor
     ) { localPaddingValues ->
-        HandleExercises(
-            navController = navController,
-            exercises = exercises,
-            workoutViewModel = workoutViewModel,
-            localPaddingValues = localPaddingValues
-        )
-    }
+        when (isConnectedToInternet) {
+            true -> {
+                HandleExercises(
+                    navController = navController,
+                    exercises = exercises,
+                    workoutViewModel = workoutViewModel,
+                    localPaddingValues = localPaddingValues,
+                )
+            }
 
+            false -> {
+                NoInternetScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = localPaddingValues.calculateTopPadding(),
+                            bottom = globalPaddingValues.calculateBottomPadding(),
+                            start = LARGE_PADDING,
+                            end = LARGE_PADDING
+                        )
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -106,12 +143,12 @@ fun HandleExercises(
             ShowExercises(
                 navController = navController,
                 exercises = exercises.data,
-                composition = composition,
-                progress = progress,
                 updateExerciseDetails = {
                     workoutViewModel.updateExerciseDetails(it)
                 },
-                localPaddingValues = localPaddingValues
+                localPaddingValues = localPaddingValues,
+                composition = composition,
+                progress = progress
             )
         }
 
@@ -127,10 +164,10 @@ fun HandleExercises(
 fun ShowExercises(
     navController: NavController,
     exercises: GymExercisesDto?,
-    composition: LottieComposition?,
-    progress: Float,
     updateExerciseDetails: (GymExercisesDtoItem) -> Unit,
     localPaddingValues: PaddingValues,
+    composition: LottieComposition?,
+    progress: Float
 ) {
 
     LazyColumn(
