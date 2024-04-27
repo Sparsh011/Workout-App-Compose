@@ -66,7 +66,6 @@ fun FoodScreen(
 
     val foodItemsConsumed = foodAndWaterViewModel.consumedFoodItems.collectAsState().value
     val nutrientsConsumed = foodAndWaterViewModel.nutrientsConsumed
-    val selectedDayPair = foodAndWaterViewModel.selectedDayPosition
     val waterGlassesConsumed = foodAndWaterViewModel.waterGlassesEntity.collectAsState().value
 
     var showDialogToUpdateCalories by remember {
@@ -86,8 +85,7 @@ fun FoodScreen(
 
         foodAndWaterViewModel.getWaterGlassesConsumedOn(
             selectedDateAndMonth.first.toString(),
-            selectedDateAndMonth.second,
-            "2024"
+            selectedDateAndMonth.second
         )
     }
 
@@ -166,16 +164,12 @@ fun FoodScreen(
                         foodAndWaterViewModel.getFoodItemsConsumedOn(it.first.toString(), it.second)
                         foodAndWaterViewModel.getWaterGlassesConsumedOn(
                             it.first.toString(),
-                            it.second,
-                            "2024"
+                            it.second
                         )
                     },
-                    selectedMonth = selectedDayPair.value.first,
-                    selectedDay = selectedDayPair.value.second,
+                    selectedMonth = selectedDateAndMonth.second,
+                    selectedDay = selectedDateAndMonth.first,
                     indicatorColor = noAchievementColor,
-                    updateSelectedDayPair = {
-                        foodAndWaterViewModel.updateSelectedDay(it.first, it.second)
-                    }
                 )
 
                 // Dishes consumed on header

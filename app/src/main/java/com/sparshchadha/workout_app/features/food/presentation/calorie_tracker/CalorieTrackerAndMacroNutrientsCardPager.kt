@@ -45,11 +45,11 @@ fun CalorieTrackerAndMacroNutrientsCardPager(
                         caloriesGoal = caloriesGoal,
                         hideUpdateCaloriesDialog = {
 //                            showDialogToUpdateCalories = false
-                                                   toggleDialogToUpdateCalories(false)
+                            toggleDialogToUpdateCalories(false)
                         },
                         saveNewCaloriesGoal = {
 //                            profileViewModel.saveCaloriesGoal(it)
-                                              saveNewCaloriesGoal(it)
+                            saveNewCaloriesGoal(it)
                         },
                         showCaloriesGoalBottomSheet = {
                             toggleDialogToUpdateCalories(true)
@@ -60,7 +60,7 @@ fun CalorieTrackerAndMacroNutrientsCardPager(
                         waterGlassesConsumed = waterGlassesConsumedEntity?.glassesConsumed ?: 0,
                         setWaterGlassesGoal = {
 //                            profileViewModel.setWaterGlassesGoal(it)
-                                              setWaterGlassesGoal(it)
+                            setWaterGlassesGoal(it)
                         },
                         setWaterGlassesConsumed = {
                             updateWaterEntity(

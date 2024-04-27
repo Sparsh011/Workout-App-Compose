@@ -86,10 +86,9 @@ fun ProfileScreen(
             .fillMaxSize()
             .padding(bottom = globalPaddingValues.calculateBottomPadding())
             .background(scaffoldBackgroundColor)
-            .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "Your Profile",
+            text = "App Settings",
             fontSize = 20.nonScaledSp,
             color = Color.White,
             modifier = Modifier
@@ -103,83 +102,88 @@ fun ProfileScreen(
                 ),
         )
 
-        ProfilePictureAndUserName(
-            name = name,
-            onNameChange = { newName ->
-                profileViewModel.saveName(newName)
-            },
-            requestCameraAndStoragePermission = {
-                sharedViewModel.requestPermissions(
-                    Permissions.getCameraAndStoragePermissions()
-                )
-            },
-            pickImage = {
-                sharedViewModel.openGallery(imageSelector = ImageSelectors.PROFILE_PIC)
-            },
-            imageBitmap = profileBitmap
-        )
+        Column (
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
 
-        HeaderText(heading = "Settings")
+            ProfilePictureAndUserName(
+                name = name,
+                onNameChange = { newName ->
+                    profileViewModel.saveName(newName)
+                },
+                requestCameraAndStoragePermission = {
+                    sharedViewModel.requestPermissions(
+                        Permissions.getCameraAndStoragePermissions()
+                    )
+                },
+                pickImage = {
+                    sharedViewModel.openGallery(imageSelector = ImageSelectors.PROFILE_PIC)
+                },
+                imageBitmap = profileBitmap
+            )
 
-        AppSettings(
-            setDarkTheme = {
-                profileViewModel.enableDarkMode(it)
-            },
-            isDarkTheme = profileViewModel.darkTheme.collectAsState().value,
-            onAuthButtonClick = {
-                if (loginToken.isBlank()) {
-                    sharedViewModel.startGoogleSignIn()
-                } else {
-                    profileViewModel.signOutUser()
-                    navController.popBackStack()
-                }
-            },
-            loginToken = loginToken
-        )
+            HeaderText(heading = "Settings")
 
-        HeaderText(heading = "Personal Details")
+            AppSettings(
+                setDarkTheme = {
+                    profileViewModel.enableDarkMode(it)
+                },
+                isDarkTheme = profileViewModel.darkTheme.collectAsState().value,
+                onAuthButtonClick = {
+                    if (loginToken.isBlank()) {
+                        sharedViewModel.startGoogleSignIn()
+                    } else {
+                        profileViewModel.signOutUser()
+                        navController.popBackStack()
+                    }
+                },
+                loginToken = loginToken
+            )
 
-        PersonalInformation(
-            height = height,
-            weight = currentWeight,
-            bmi = getBmi(height, currentWeight),
-            gender = gender,
-            age = age,
-            weightGoal = weightGoal,
-            caloriesGoal = caloriesGoal,
-            onItemClick = { item ->
-                HelperFunctions.getPersonalInfoCategories().forEach {
-                    if (item == it) {
-                        shouldShowDialogToUpdateValue = true
-                        showDialogToUpdateValueOf = item
+            HeaderText(heading = "Personal Details")
+
+            PersonalInformation(
+                height = height,
+                weight = currentWeight,
+                bmi = getBmi(height, currentWeight),
+                gender = gender,
+                age = age,
+                weightGoal = weightGoal,
+                caloriesGoal = caloriesGoal,
+                onItemClick = { item ->
+                    HelperFunctions.getPersonalInfoCategories().forEach {
+                        if (item == it) {
+                            shouldShowDialogToUpdateValue = true
+                            showDialogToUpdateValueOf = item
+                        }
                     }
                 }
-            }
-        )
+            )
 
-        SettingsCategoryHeader(text = "Gym Workouts")
+            SettingsCategoryHeader(text = "Gym Workouts")
 
-        GymSettingsCategories(
-            navigateToRoute = {
-                navController.navigate(it)
-            }
-        )
+            GymSettingsCategories(
+                navigateToRoute = {
+                    navController.navigate(it)
+                }
+            )
 
-        SettingsCategoryHeader(text = "Yoga")
+            SettingsCategoryHeader(text = "Yoga")
 
-        YogaSettingsCategory(
-            navigateToRoute = {
-                navController.navigate(it)
-            }
-        )
+            YogaSettingsCategory(
+                navigateToRoute = {
+                    navController.navigate(it)
+                }
+            )
 
-        SettingsCategoryHeader(text = "Calories & Food")
+            SettingsCategoryHeader(text = "Calories & Food")
 
-        FoodSettingsCategory(
-            navigateToRoute = {
-                navController.navigate(it)
-            }
-        )
+            FoodSettingsCategory(
+                navigateToRoute = {
+                    navController.navigate(it)
+                }
+            )
+        }
     }
 }
 

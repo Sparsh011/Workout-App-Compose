@@ -66,14 +66,6 @@ class FoodAndWaterViewModel @Inject constructor(
     private val _waterGlassesEntity = MutableStateFlow<WaterEntity?>(null)
     val waterGlassesEntity = _waterGlassesEntity.asStateFlow()
 
-    private val _selectedDayPair = mutableStateOf(
-        Pair(
-            HelperFunctions.getCurrentDateAndMonth().second,
-            HelperFunctions.getCurrentDateAndMonth().first
-        )
-    )
-    val selectedDayPosition: State<Pair<String, Int>> = _selectedDayPair
-
     init {
         getFoodItemsConsumedOn()
     }
@@ -128,7 +120,6 @@ class FoodAndWaterViewModel @Inject constructor(
                         getTotalCaloriesConsumed(foodItemsConsumed = response)
                         getNutrientsConsumed(foodItemsConsumed = response)
                         _selectedDateAndMonthForFoodItems.value = (Pair(date.toInt(), month))
-                        _selectedDayPair.value = Pair(month, date.toInt())
                     }
                 }
             } catch (e: Exception) {
@@ -221,10 +212,6 @@ class FoodAndWaterViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedDay(date: Int, month: String) {
-        _selectedDayPair.value = Pair(month, date)
-    }
-
     fun getSavedFoodItems() {
         viewModelScope.launch(Dispatchers.IO) {
             foodItemsRepository.getAllFoodItems(isConsumed = false).collect {
@@ -240,11 +227,11 @@ class FoodAndWaterViewModel @Inject constructor(
     private val TAG = "FoodAndWaterViewModel"
 
     fun getWaterGlassesConsumedOn(
-        date: String, month: String, year: String
+        date: String, month: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             waterRepository.getGlassesConsumedOn(
-                date = date, month = month, year = year
+                date = date, month = month, year = "2024"
             ).collect {
                 Log.d(TAG, "getWaterGlassesConsumedOn: $it")
                 _waterGlassesEntity.value = it

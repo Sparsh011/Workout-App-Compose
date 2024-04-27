@@ -74,8 +74,10 @@ fun CalendarRow(
                         month = it.second.substring(0..2),
                         modifier = Modifier
                             .clickable {
-                                updateSelectedDayPair(Pair(it.first, it.second))
-                                getResultsForDateAndMonth(Pair(it.first, it.second))
+                                if (it.first != selectedDay && it.second != selectedMonth) {
+                                    updateSelectedDayPair(Pair(it.first, it.second))
+                                    getResultsForDateAndMonth(Pair(it.first, it.second))
+                                }
                             }
                             .width(width),
                         indicatorColor = indicatorColor
