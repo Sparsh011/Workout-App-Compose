@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -66,6 +67,7 @@ fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>, caloriesGoal:
         modifier = Modifier
             .width(macroNutrientsCardWidth)
             .height(macroNutrientsCardHeight)
+            .fillMaxHeight(1f)
             .padding(SMALL_PADDING)
             .clip(RoundedCornerShape(10.dp))
             .background(cardBackgroundColor)
@@ -152,10 +154,10 @@ fun MacroNutrientProgress(
         )
 
         LinearProgressIndicator(
-            progress = progress,
+            progress = { progress },
             color = color,
-            strokeCap = StrokeCap.Round,
             trackColor = progressTrackColor,
+            strokeCap = StrokeCap.Round,
         )
     }
 }

@@ -104,7 +104,8 @@ fun NavGraph(
             yogaViewModel = yogaViewModel,
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            toggleBottomBarVisibility = toggleBottomBarVisibility
+            toggleBottomBarVisibility = toggleBottomBarVisibility,
+            sharedViewModel = sharedViewModel
         )
 
         // Selecting Workout Type
@@ -120,7 +121,8 @@ fun NavGraph(
             navController = navController,
             workoutViewModel = workoutViewModel,
             globalPaddingValues = globalPaddingValues,
-            toggleBottomBarVisibility = toggleBottomBarVisibility
+            toggleBottomBarVisibility = toggleBottomBarVisibility,
+            sharedViewModel = sharedViewModel
         )
 
         // Yoga poses performed today
@@ -194,7 +196,8 @@ fun NavGraph(
             navController = navController,
             newsViewModel = newsViewModel,
             globalPaddingValues = globalPaddingValues,
-            toggleBottomBarVisibility = toggleBottomBarVisibility
+            toggleBottomBarVisibility = toggleBottomBarVisibility,
+            sharedViewModel = sharedViewModel
         )
 
         // news article WebView
@@ -202,7 +205,8 @@ fun NavGraph(
             navController = navController,
             newsViewModel = newsViewModel,
             globalPaddingValues = globalPaddingValues,
-            toggleBottomBarVisibility = toggleBottomBarVisibility
+            toggleBottomBarVisibility = toggleBottomBarVisibility,
+            sharedViewModel = sharedViewModel
         )
 
         // Create Dish screen

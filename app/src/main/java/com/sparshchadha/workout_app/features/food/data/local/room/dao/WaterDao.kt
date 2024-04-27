@@ -16,9 +16,9 @@ interface WaterDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGlassesConsumed(waterEntity: WaterEntity)
 
-    @Query("SELECT * FROM WaterEntity WHERE date = :date AND month = :month AND year = :year")
+    @Query("SELECT * FROM WaterEntity WHERE date = :date AND month = :month AND year = :year LIMIT 1")
     fun getGlassesConsumedOn(date: String, month: String, year: String): Flow<WaterEntity>
 
-    @Query("SELECT EXISTS(SELECT * FROM WaterEntity WHERE id = :id)")
-    fun doesRowExist(id: Int): Boolean
+    @Query("SELECT EXISTS(SELECT * FROM WaterEntity WHERE date = :date AND month = :month AND year = :year)")
+    fun doesRowExist(date: String, month: String, year: String): Int
 }

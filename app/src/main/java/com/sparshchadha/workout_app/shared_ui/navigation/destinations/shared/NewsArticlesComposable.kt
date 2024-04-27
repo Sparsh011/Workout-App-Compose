@@ -10,13 +10,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.sparshchadha.workout_app.features.news.presentation.screens.NewsArticles
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 
 fun NavGraphBuilder.newsArticlesComposable(
     navController: NavController,
     newsViewModel: NewsViewModel,
     globalPaddingValues: PaddingValues,
-    toggleBottomBarVisibility: (Boolean) -> Unit
+    toggleBottomBarVisibility: (Boolean) -> Unit,
+    sharedViewModel: SharedViewModel
 ) {
     composable(
         route = UtilityScreenRoutes.NewsArticlesScreen.route,
@@ -38,7 +40,8 @@ fun NavGraphBuilder.newsArticlesComposable(
         NewsArticles(
             navController = navController,
             newsViewModel = newsViewModel,
-            globalPaddingValues = globalPaddingValues
+            globalPaddingValues = globalPaddingValues,
+            sharedViewModel = sharedViewModel
         )
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.features.yoga.presentation.screens.YogaPosesScreen
 import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
@@ -16,7 +17,8 @@ fun NavGraphBuilder.yogaComposable(
     yogaViewModel: YogaViewModel,
     navController: NavController,
     globalPaddingValues: PaddingValues,
-    toggleBottomBarVisibility: (Boolean) -> Unit
+    toggleBottomBarVisibility: (Boolean) -> Unit,
+    sharedViewModel: SharedViewModel
 ) {
     composable(
         route = UtilityScreenRoutes.YogaPoses.route,
@@ -46,7 +48,8 @@ fun NavGraphBuilder.yogaComposable(
         YogaPosesScreen(
             navController = navController,
             globalPaddingValues = globalPaddingValues,
-            yogaViewModel = yogaViewModel
+            yogaViewModel = yogaViewModel,
+            sharedViewModel = sharedViewModel
         )
     }
 }

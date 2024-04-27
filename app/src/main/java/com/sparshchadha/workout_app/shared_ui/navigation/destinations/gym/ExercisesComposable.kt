@@ -12,13 +12,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sparshchadha.workout_app.features.gym.presentation.gym.ExercisesScreen
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 
 fun NavGraphBuilder.gymExercisesComposable(
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
     globalPaddingValues: PaddingValues,
-    toggleBottomBarVisibility: (Boolean) -> Unit
+    toggleBottomBarVisibility: (Boolean) -> Unit,
+    sharedViewModel: SharedViewModel,
 ) {
     composable(
         arguments = listOf(navArgument("category") { type = NavType.StringType }),
@@ -42,7 +44,8 @@ fun NavGraphBuilder.gymExercisesComposable(
             navController = navController,
             category = backStackEntry.arguments?.getString("category"),
             globalPaddingValues = globalPaddingValues,
-            workoutViewModel = workoutViewModel
+            workoutViewModel = workoutViewModel,
+            sharedViewModel = sharedViewModel
         )
     }
 }

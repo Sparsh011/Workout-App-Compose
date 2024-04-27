@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -63,7 +64,7 @@ fun CreateDishScreen(
     var sodium by remember { mutableStateOf("") }
     var sugar by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val imageSize = LocalConfiguration.current.screenHeightDp / 2
+    val imageSize = LocalConfiguration.current.screenHeightDp / 3
     val selectedImageUri = sharedViewModel.selectedImageUri.collectAsStateWithLifecycle().value
     val imagePath = sharedViewModel.selectedImagePath.collectAsStateWithLifecycle().value ?: ""
 
@@ -85,7 +86,8 @@ fun CreateDishScreen(
                     start = Dimensions.MEDIUM_PADDING,
                     end = Dimensions.MEDIUM_PADDING
                 )
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             selectedImageUri?.let {

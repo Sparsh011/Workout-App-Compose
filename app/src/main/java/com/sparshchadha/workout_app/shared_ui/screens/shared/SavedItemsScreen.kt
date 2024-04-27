@@ -151,7 +151,7 @@ fun SavedFoodItem(
 
 //        if (savedItems.isNotEmpty()) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 stickyHeader {
                     Text(text = "Saved Items")

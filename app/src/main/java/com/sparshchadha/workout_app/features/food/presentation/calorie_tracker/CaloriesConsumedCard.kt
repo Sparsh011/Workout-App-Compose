@@ -1,5 +1,7 @@
 package com.sparshchadha.workout_app.features.food.presentation.calorie_tracker
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,15 +20,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,6 +63,7 @@ import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
+import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
@@ -83,12 +89,10 @@ fun CaloriesConsumedCard(
 ) {
     val configuration = LocalConfiguration.current;
     val caloriesConsumedCardWidth = configuration.screenWidthDp.dp
-    val caloriesConsumedCardHeight = configuration.screenHeightDp.dp / 3
 
     Column(
         modifier = Modifier
             .width(caloriesConsumedCardWidth)
-            .height(caloriesConsumedCardHeight)
             .padding(SMALL_PADDING)
             .clip(RoundedCornerShape(10.dp))
             .background(cardBackgroundColor)
@@ -106,7 +110,10 @@ fun CaloriesConsumedCard(
             setWaterGlassesConsumed = setWaterGlassesConsumed,
         )
 
-        CaloriesGoalText(showCaloriesGoalBottomSheet = showCaloriesGoalBottomSheet)
+        WaterProgressBar(
+            waterGlassesConsumed = waterGlassesConsumed,
+            waterGlassesGoal = waterGlassesGoal
+        )
     }
 
     if (showDialogToUpdateCalories) {
@@ -123,18 +130,34 @@ fun CaloriesConsumedCard(
 }
 
 @Composable
-fun CaloriesGoalText(showCaloriesGoalBottomSheet: () -> Unit) {
-    Text(
-        text = "Calories Goal",
+fun WaterProgressBar(
+    waterGlassesConsumed: Int,
+    waterGlassesGoal: Int
+) {
+    var progress by remember { mutableFloatStateOf(0F) }
+    val progressAnimDuration = 1_000
+    val progressAnimation by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(progressAnimDuration), label = "",
+    )
+    LaunchedEffect(key1 = waterGlassesConsumed) {
+        progress = (waterGlassesConsumed.toFloat() / waterGlassesGoal.toFloat())
+    }
+    LinearProgressIndicator(
+        progress = {
+            progressAnimation
+        },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(MEDIUM_PADDING)
-            .clickable {
-                showCaloriesGoalBottomSheet()
-            },
-        color = primaryTextColor,
-        fontSize = 15.nonScaledSp,
-        textAlign = TextAlign.Center
+            .padding(
+                start = Dimensions.LARGE_PADDING,
+                end = LARGE_PADDING,
+                top = Dimensions.SMALL_PADDING,
+                bottom = LARGE_PADDING
+            ),
+        color = ColorsUtil.primaryBlue,
+        trackColor = ColorsUtil.progressTrackColor,
+        strokeCap = StrokeCap.Round
     )
 }
 
@@ -337,7 +360,7 @@ fun DialogToUpdateWaterGlasses(
         mutableStateOf(glasses.toString())
     }
 
-    AlertDialog(
+    BasicAlertDialog(
         onDismissRequest = {
             hideDialog()
         }
@@ -564,14 +587,22 @@ fun CenterCaloriesGoalBox(
         )
 
         if (caloriesConsumed.isNotEmpty() && caloriesGoal.isNotEmpty()) {
-            val progress = caloriesConsumed.toFloat() / caloriesGoal.toFloat()
+            var progress by remember { mutableFloatStateOf(0F) }
+            val progressAnimDuration = 1_000
+            val progressAnimation by animateFloatAsState(
+                targetValue = progress,
+                animationSpec = tween(progressAnimDuration), label = "",
+            )
+            LaunchedEffect(key1 = caloriesConsumed) {
+                progress = (caloriesConsumed.toFloat() / caloriesGoal.toFloat())
+            }
 
             CircularProgressIndicator(
-                progress = progress,
+                progress = { progressAnimation },
                 modifier = Modifier.size(PIE_CHART_SIZE),
+                color = progressIndicatorColor,
                 strokeWidth = MEDIUM_PADDING,
                 trackColor = ColorsUtil.progressTrackColor,
-                color = progressIndicatorColor,
                 strokeCap = StrokeCap.Round,
             )
         }

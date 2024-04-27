@@ -1,48 +1,52 @@
 package com.sparshchadha.workout_app.features.food.presentation.calorie_tracker
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.Dimensions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddDishesOptionsBottomSheet(
-    hideBottomSheet: () -> Unit,
-    navigateToScreen: (String) -> Unit,
-    globalPaddingValues: PaddingValues
+fun AddDishesOptionsDialog(
+    hideDialog: () -> Unit,
+    navigateToScreen: (String) -> Unit
 ) {
-    ModalBottomSheet(
-        onDismissRequest = {
-            hideBottomSheet()
-        },
-        containerColor = ColorsUtil.bottomBarColor
+    BasicAlertDialog(
+        onDismissRequest = { hideDialog() },
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
-                .padding(bottom = globalPaddingValues.calculateBottomPadding())
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(Dimensions.MEDIUM_PADDING))
+                .background(ColorsUtil.bottomBarColor)
+                .padding(Dimensions.LARGE_PADDING),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             BottomSheetItem(
                 icon = Icons.Default.Search,
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .align(Alignment.CenterVertically),
                 onClick = {
                     navigateToScreen("SearchScreen/food")
                 },
@@ -53,7 +57,8 @@ fun AddDishesOptionsBottomSheet(
                 icon = Icons.Default.Add,
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .align(Alignment.CenterVertically),
                 onClick = {
                     navigateToScreen(UtilityScreenRoutes.CreateDishScreen.route)
                 },

@@ -47,7 +47,6 @@ import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
-import com.sparshchadha.workout_app.util.HelperFunctions
 
 private const val TAG = "CalorieTrackerScreen"
 
@@ -65,9 +64,6 @@ fun FoodScreen(
         foodAndWaterViewModel.selectedDateAndMonthForFoodItems.collectAsState().value
     val waterGlassesGoal = profileViewModel.waterGlassesGoal.collectAsState().value
 
-    val currentDate = HelperFunctions.getCurrentDateAndMonth().first
-    val currentMonth = HelperFunctions.getCurrentDateAndMonth().second
-
     val foodItemsConsumed = foodAndWaterViewModel.consumedFoodItems.collectAsState().value
     val nutrientsConsumed = foodAndWaterViewModel.nutrientsConsumed
     val selectedDayPair = foodAndWaterViewModel.selectedDayPosition
@@ -77,37 +73,32 @@ fun FoodScreen(
         mutableStateOf(false)
     }
 
-    var showAddDishesOptionsBottomSheet by remember {
+    var showAddDishesOptionsDialog by remember {
         mutableStateOf(false)
     }
 
-
     LaunchedEffect(key1 = Unit) {
-        if (selectedDateAndMonth?.first != currentDate && selectedDateAndMonth?.second != currentMonth) {
-            foodAndWaterViewModel.getFoodItemsConsumedOn()
-            foodAndWaterViewModel.updateSelectedDay(
-                selectedDateAndMonth?.first ?: 1,
-                selectedDateAndMonth?.second ?: "Jan"
-            )
-            foodAndWaterViewModel.getWaterGlassesConsumedOn(
-                date = (selectedDateAndMonth?.first
-                    ?: HelperFunctions.getCurrentDateAndMonth().first).toString(),
-                month = selectedDateAndMonth?.second
-                    ?: HelperFunctions.getCurrentDateAndMonth().second,
-                year = "2024"
-            )
-        }
+
+        foodAndWaterViewModel.getFoodItemsConsumedOn(
+            selectedDateAndMonth.first.toString(),
+            selectedDateAndMonth.second
+        )
+
+        foodAndWaterViewModel.getWaterGlassesConsumedOn(
+            selectedDateAndMonth.first.toString(),
+            selectedDateAndMonth.second,
+            "2024"
+        )
     }
 
-    if (showAddDishesOptionsBottomSheet) {
-        AddDishesOptionsBottomSheet (
-            hideBottomSheet = {
-                showAddDishesOptionsBottomSheet = false
+    if (showAddDishesOptionsDialog) {
+        AddDishesOptionsDialog (
+            hideDialog = {
+                showAddDishesOptionsDialog = false
             },
             navigateToScreen = {
                 navController.navigate(it)
-            },
-            globalPaddingValues = globalPaddingValues
+            }
         )
     }
 
@@ -115,7 +106,7 @@ fun FoodScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    showAddDishesOptionsBottomSheet = true
+                    showAddDishesOptionsDialog = true
                 },
                 containerColor = ColorsUtil.primaryBlue,
                 contentColor = Color.White

@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.features.food.presentation.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateMapOf
@@ -47,7 +48,7 @@ class FoodAndWaterViewModel @Inject constructor(
     private val _nutrientsConsumed: MutableMap<String, Double> = mutableStateMapOf()
     val nutrientsConsumed: Map<String, Double> = _nutrientsConsumed
 
-    private val _selectedDateAndMonthForFoodItems = MutableStateFlow<Pair<Int, String>?>(null)
+    private val _selectedDateAndMonthForFoodItems = MutableStateFlow(HelperFunctions.getCurrentDateAndMonth())
     val selectedDateAndMonthForFoodItems = _selectedDateAndMonthForFoodItems.asStateFlow()
 
     private val _foodItemEntity = mutableStateOf<FoodItemEntity?>(null)
@@ -98,11 +99,8 @@ class FoodAndWaterViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _foodItemsFromApi.value =
-                    Resource.Error(error = e)
-
+                _foodItemsFromApi.value = Resource.Error(error = e)
             }
-
         }
     }
 
@@ -239,17 +237,16 @@ class FoodAndWaterViewModel @Inject constructor(
         _selectedFoodItem.value = foodItem
     }
 
+    private val TAG = "FoodAndWaterViewModel"
+
     fun getWaterGlassesConsumedOn(
-        date: String,
-        month: String,
-        year: String
+        date: String, month: String, year: String
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             waterRepository.getGlassesConsumedOn(
-                date = date,
-                month = month,
-                year = year
+                date = date, month = month, year = year
             ).collect {
+                Log.d(TAG, "getWaterGlassesConsumedOn: $it")
                 _waterGlassesEntity.value = it
             }
         }
@@ -259,8 +256,8 @@ class FoodAndWaterViewModel @Inject constructor(
         waterEntity: WaterEntity
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val isUpdatable = waterRepository.doesRowExist(waterEntity.id ?: -1)
-            if (isUpdatable) {
+            val isUpdatable = waterRepository.doesRowExist(waterEntity.date, waterEntity.month, waterEntity.year)
+            if (isUpdatable == 1) {
                 waterRepository.updateGlassesConsumed(waterEntity)
             } else {
                 waterRepository.insertGlassesConsumed(waterEntity)

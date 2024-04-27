@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -22,6 +22,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,8 +36,10 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.features.yoga.data.remote.dto.Pose
 import com.sparshchadha.workout_app.features.yoga.data.remote.dto.YogaPosesDto
 import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
@@ -44,9 +47,11 @@ import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaVi
 import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.shared_ui.components.shared.CustomDivider
 import com.sparshchadha.workout_app.shared_ui.components.shared.PickNumberOfSetsOrQuantity
+import com.sparshchadha.workout_app.shared_ui.components.shared.PullToRefreshLazyColumn
 import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.shared_ui.components.shared.rememberPickerState
 import com.sparshchadha.workout_app.shared_ui.components.ui_state.ErrorDuringFetch
+import com.sparshchadha.workout_app.shared_ui.components.ui_state.NoInternetScreen
 import com.sparshchadha.workout_app.shared_ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
@@ -68,48 +73,99 @@ import com.sparshchadha.workout_app.util.Resource
 fun YogaPosesScreen(
     navController: NavController,
     globalPaddingValues: PaddingValues,
-    yogaViewModel: YogaViewModel
+    yogaViewModel: YogaViewModel,
+    sharedViewModel: SharedViewModel
 ) {
     val difficultyLevel = yogaViewModel.getCurrentYogaDifficultyLevel()
     val yogaPoses by yogaViewModel.yogaPosesFromApi
+    var isRefreshing by remember {
+        mutableStateOf(false)
+    }
 
-    HandleYogaScreenUIEvents(
-        yogaPoses = yogaPoses,
-        navController = navController,
-        difficultyLevel = difficultyLevel,
-        savePerformedYogaPose = { yogaEntity ->
-            yogaViewModel.saveYogaPose(
-                yogaEntity
+    val isConnectedToInternet =
+        sharedViewModel.connectedToInternet.collectAsStateWithLifecycle().value ?: false
+
+    LaunchedEffect(key1 = yogaPoses) {
+        if (isRefreshing) {
+            isRefreshing = false
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            ScaffoldTopBar(
+                topBarDescription = "${difficultyLevel.lowercase().capitalize()} Yoga Poses",
+                onBackButtonPressed = {
+                    navController.popBackStack(
+                        route = ScreenRoutes.WorkoutScreen.route,
+                        inclusive = false
+                    )
+                }
             )
-        },
-        globalPaddingValues = globalPaddingValues
-    ) {
-        yogaViewModel.addYogaPoseToSaved(
-            HelperFunctions.getYogaPoseWithNegatives(it)
-        )
+        }
+    ) { localPaddingValues ->
+        when (isConnectedToInternet) {
+            true -> {
+                HandleYogaScreenUIEvents(
+                    yogaPoses = yogaPoses,
+                    savePerformedYogaPose = { yogaEntity ->
+                        yogaViewModel.saveYogaPose(
+                            yogaEntity
+                        )
+                    },
+                    globalPaddingValues = globalPaddingValues,
+                    saveYogaPose = {
+                        yogaViewModel.addYogaPoseToSaved(
+                            HelperFunctions.getYogaPoseWithNegatives(it)
+                        )
+                    },
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        isRefreshing = true
+                        yogaViewModel.getYogaPosesFromApi()
+                    },
+                    localPaddingValues = localPaddingValues
+                )
+            }
+
+            false -> {
+                if (yogaPoses == null || yogaPoses!!.data == null || yogaPoses!!.data!!.poses.isEmpty())
+                NoInternetScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = localPaddingValues.calculateTopPadding(),
+                            bottom = globalPaddingValues.calculateBottomPadding(),
+                            start = LARGE_PADDING,
+                            end = LARGE_PADDING
+                        )
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun HandleYogaScreenUIEvents(
     yogaPoses: Resource<YogaPosesDto>?,
-    navController: NavController,
-    difficultyLevel: String,
     savePerformedYogaPose: (YogaEntity) -> Unit,
     globalPaddingValues: PaddingValues,
-    saveYogaPose: (Pose) -> Unit
+    saveYogaPose: (Pose) -> Unit,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean,
+    localPaddingValues: PaddingValues
 ) {
     when (yogaPoses) {
         is Resource.Loading -> {
             PopulateYogaPoses(
-                yogaPoses = YogaPosesDto(difficultyLevel, -1, emptyList()),
-                navController = navController,
-                difficultyLevel = difficultyLevel,
+                yogaPoses = null,
                 savePerformedYogaPose = savePerformedYogaPose,
                 globalPaddingValues = globalPaddingValues,
                 isLoading = true,
-                topBarDescription = "",
-                saveYogaPose = {}
+                saveYogaPose = {},
+                onRefresh = onRefresh,
+                isRefreshing = isRefreshing,
+                localPaddingValues = localPaddingValues
             )
         }
 
@@ -117,11 +173,12 @@ fun HandleYogaScreenUIEvents(
             if (yogaPoses.data != null) {
                 PopulateYogaPoses(
                     yogaPoses = yogaPoses.data,
-                    navController = navController,
-                    difficultyLevel = difficultyLevel,
                     savePerformedYogaPose = savePerformedYogaPose,
                     globalPaddingValues = globalPaddingValues,
-                    saveYogaPose = saveYogaPose
+                    saveYogaPose = saveYogaPose,
+                    isRefreshing = isRefreshing,
+                    onRefresh = onRefresh,
+                    localPaddingValues = localPaddingValues
                 )
             } else {
                 ErrorDuringFetch(errorMessage = "")
@@ -139,42 +196,23 @@ fun HandleYogaScreenUIEvents(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PopulateYogaPoses(
-    yogaPoses: YogaPosesDto,
-    navController: NavController,
-    difficultyLevel: String,
+    yogaPoses: YogaPosesDto?,
     savePerformedYogaPose: (YogaEntity) -> Unit,
     globalPaddingValues: PaddingValues,
     isLoading: Boolean = false,
-    topBarDescription: String = "${difficultyLevel.lowercase().capitalize()} Yoga Poses",
-    saveYogaPose: (Pose) -> Unit
+    saveYogaPose: (Pose) -> Unit,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    localPaddingValues: PaddingValues
 ) {
-    Scaffold(
-        topBar = {
-            ScaffoldTopBar(
-                topBarDescription = topBarDescription,
-                onBackButtonPressed = {
-                    navController.popBackStack(
-                        route = ScreenRoutes.WorkoutScreen.route,
-                        inclusive = false
-                    )
-                }
-            )
-        }
-    ) { localPaddingValues ->
-        if (isLoading) {
-            ShowLoadingScreen()
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .background(scaffoldBackgroundColor)
-                    .padding(
-                        top = localPaddingValues.calculateTopPadding(),
-                        bottom = globalPaddingValues.calculateBottomPadding()
-                    ),
-                horizontalAlignment = CenterHorizontally
-            ) {
 
-                items(yogaPoses.poses.size) { index ->
+    if (isLoading) {
+        ShowLoadingScreen()
+    } else {
+        yogaPoses?.poses?.let {
+            PullToRefreshLazyColumn(
+                items = it,
+                content = { pose ->
                     var showBottomSheetWithAllDetails by remember {
                         mutableStateOf(false)
                     }
@@ -182,18 +220,25 @@ fun PopulateYogaPoses(
                     val sheetState = rememberModalBottomSheetState()
 
                     YogaPose(
-                        pose = yogaPoses.poses[index],
+                        pose = pose,
                         shouldShowBottomSheetWithDetails = showBottomSheetWithAllDetails,
                         toggleBottomSheetWithDetails = { toggle ->
                             showBottomSheetWithAllDetails = toggle
                         },
                         sheetState = sheetState,
                         savePerformedYogaPose = savePerformedYogaPose,
-                        showDivider = index != yogaPoses.poses.size - 1,
                         saveYogaPose = saveYogaPose
                     )
-                }
-            }
+                },
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
+                lazyColumnModifier = Modifier
+                    .background(scaffoldBackgroundColor)
+                    .padding(
+                        top = localPaddingValues.calculateTopPadding(),
+                        bottom = globalPaddingValues.calculateBottomPadding()
+                    ),
+            )
         }
     }
 }
@@ -206,7 +251,7 @@ fun YogaPose(
     toggleBottomSheetWithDetails: (Boolean) -> Unit,
     sheetState: SheetState,
     savePerformedYogaPose: (YogaEntity) -> Unit,
-    showDivider: Boolean,
+    showDivider: Boolean = false,
     saveYogaPose: (Pose) -> Unit
 ) {
 
@@ -346,8 +391,12 @@ fun ShowPickSetsBottomSheet(
             ),
             modifier = Modifier
                 .align(CenterHorizontally)
-                .padding(start = LARGE_PADDING, bottom = Dimensions.BOTTOM_SHEET_BOTTOM_PADDING, end = LARGE_PADDING)
-            .fillMaxWidth()
+                .padding(
+                    start = LARGE_PADDING,
+                    bottom = Dimensions.BOTTOM_SHEET_BOTTOM_PADDING,
+                    end = LARGE_PADDING
+                )
+                .fillMaxWidth()
         ) {
             if (valuesPickerState.selectedItem == "1") {
                 Text(text = "Add ${valuesPickerState.selectedItem} Set", color = Color.White)
