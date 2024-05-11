@@ -50,7 +50,7 @@ object Dimensions {
         @Composable
         get() = dimensionResource(id = R.dimen.macronutrient_text_height)
 
-    val CIRCLE_STRIPE_WIDTH: Dp
+    val BOTTOM_BAR_ICON_SIZE: Dp
         @Composable
         get() = dimensionResource(id = R.dimen.macronutrient_text_height)
 

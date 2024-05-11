@@ -1,48 +1,34 @@
 package com.sparshchadha.workout_app.shared_ui.components.bottom_bar
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.ui.graphics.vector.ImageVector
+import com.sparshchadha.workout_app.R
 
 sealed class ScreenRoutes(
     val route: String,
     val title: String,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector,
+    val icon: Int,
 ) {
     object CalorieTracker : ScreenRoutes(
         route = "CalorieTrackerScreen",
         title = "Food",
-        selectedIcon = Icons.Default.Home,
-        unselectedIcon = Icons.Outlined.Home
+        icon = R.drawable.food_bottom_bar_icon
     )
 
     object WorkoutScreen : ScreenRoutes(
         route = "WorkoutScreen",
         title = "Workout",
-        selectedIcon = Icons.Default.List,
-        unselectedIcon = Icons.Outlined.List
+        icon = R.drawable.exercise_bottom_bar_icon,
     )
 
     object RemindersScreen : ScreenRoutes(
         route = "RemindersScreen",
         title = "Reminders",
-        selectedIcon = Icons.Default.DateRange,
-        unselectedIcon = Icons.Outlined.DateRange
+        icon = R.drawable.reminder_bottom_bar_icon,
     )
 
     object ProfileScreen : ScreenRoutes(
         route = "ProfileScreen",
         title = "Profile",
-        selectedIcon = Icons.Default.AccountCircle,
-        unselectedIcon = Icons.Outlined.AccountCircle
+        icon = R.drawable.profile_bottom_bar_icon,
     )
 }
 

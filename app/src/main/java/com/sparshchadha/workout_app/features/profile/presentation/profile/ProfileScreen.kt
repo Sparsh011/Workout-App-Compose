@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.profile.presentation.profile.settings_categories.DialogToUpdateValue
 import com.sparshchadha.workout_app.features.profile.presentation.profile.settings_categories.food.FoodSettingsCategory
@@ -66,8 +65,6 @@ fun ProfileScreen(
     var shouldShowImageSelectionOptions by remember {
         mutableStateOf(false)
     }
-
-    val context = LocalContext.current
 
     if (shouldShowDialogToUpdateValue) {
         DialogToUpdateValue(

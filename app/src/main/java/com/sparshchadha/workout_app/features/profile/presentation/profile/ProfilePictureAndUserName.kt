@@ -24,13 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.AsyncImage
 import com.sparshchadha.workout_app.features.profile.presentation.profile.settings_categories.AlertDialogToUpdate
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PROFILE_PICTURE_SIZE
@@ -47,7 +45,6 @@ fun ProfilePictureAndUserName(
     var shouldShowNameChangeDialog by remember {
         mutableStateOf(false)
     }
-    val context = LocalContext.current
 
     if (shouldShowNameChangeDialog) {
         AlertDialogToUpdate(
@@ -89,7 +86,7 @@ fun ProfilePictureAndUserName(
             Icon(
                 imageVector = Icons.Filled.Person,
                 contentDescription = null,
-                tint = targetAchievedColor,
+                tint = primaryTextColor,
                 modifier = Modifier
                     .size(PROFILE_PICTURE_SIZE)
                     .padding(MEDIUM_PADDING)

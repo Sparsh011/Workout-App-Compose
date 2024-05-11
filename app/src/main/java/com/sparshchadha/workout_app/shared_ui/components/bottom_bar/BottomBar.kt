@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -11,7 +12,9 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -20,6 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
+import com.sparshchadha.workout_app.util.Dimensions.BOTTOM_BAR_ICON_SIZE
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 @Composable
@@ -74,20 +78,12 @@ fun RowScope.AddItem(
             }
         },
         icon = {
-            if (selected) {
-                Icon(
-                    imageVector = screen.selectedIcon,
-                    contentDescription = null,
-                    tint = primaryTextColor
-                )
-
-            } else {
-                Icon(
-                    imageVector = screen.unselectedIcon,
-                    contentDescription = null,
-                    tint = ColorsUtil.unselectedBottomBarIconColor
-                )
-            }
+            Icon(
+                painter = painterResource(id = screen.icon),
+                contentDescription = null,
+                tint = if (selected) primaryTextColor else ColorsUtil.unselectedBottomBarIconColor,
+                modifier = Modifier.size(BOTTOM_BAR_ICON_SIZE)
+            )
         },
         label = {
             if (selected) {
