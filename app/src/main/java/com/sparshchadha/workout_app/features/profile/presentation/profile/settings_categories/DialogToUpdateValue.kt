@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,9 +41,9 @@ import com.sparshchadha.workout_app.util.HelperFunctions
 
 @Composable
 fun DialogToUpdateValue(
-    showDialogToUpdateValueOf: String,
+    updateValueOf: String,
     profileViewModel: ProfileViewModel,
-    hideDialog: () -> Unit,
+    onDismiss: () -> Unit,
     height: String,
     weightGoal: String,
     currentWeight: String,
@@ -51,11 +51,11 @@ fun DialogToUpdateValue(
     gender: String,
     caloriesGoal: String
 ) {
-    when (showDialogToUpdateValueOf) {
+    when (updateValueOf) {
         HelperFunctions.getPersonalInfoCategories()[0] -> {
             // Height
             AlertDialogToUpdate(
-                hideDialog = hideDialog,
+                hideDialog = onDismiss,
                 value = height,
                 onConfirmClick = {
                     profileViewModel.saveHeight(it)
@@ -68,7 +68,7 @@ fun DialogToUpdateValue(
         HelperFunctions.getPersonalInfoCategories()[1] -> {
             // "Weight",
             AlertDialogToUpdate(
-                hideDialog = hideDialog,
+                hideDialog = onDismiss,
                 value = currentWeight,
                 onConfirmClick = {
                     profileViewModel.saveCurrentWeight(it)
@@ -81,7 +81,7 @@ fun DialogToUpdateValue(
         HelperFunctions.getPersonalInfoCategories()[2] -> {
             //  "Gender",
             AlertDialogToUpdate(
-                hideDialog = hideDialog,
+                hideDialog = onDismiss,
                 value = gender,
                 onConfirmClick = {
                     profileViewModel.saveGender(it)
@@ -100,7 +100,7 @@ fun DialogToUpdateValue(
         HelperFunctions.getPersonalInfoCategories()[4] -> {
             //  "Age",
             AlertDialogToUpdate(
-                hideDialog = hideDialog,
+                hideDialog = onDismiss,
                 value = age,
                 onConfirmClick = {
                     profileViewModel.saveAge(it)
@@ -113,7 +113,7 @@ fun DialogToUpdateValue(
         HelperFunctions.getPersonalInfoCategories()[5] -> {
             //  "Weight Goal",
             AlertDialogToUpdate(
-                hideDialog = hideDialog,
+                hideDialog = onDismiss,
                 value = weightGoal,
                 onConfirmClick = {
                     profileViewModel.saveWeightGoal(it)
@@ -126,7 +126,7 @@ fun DialogToUpdateValue(
         HelperFunctions.getPersonalInfoCategories()[6] -> {
             //  "Calories Goal"
             AlertDialogToUpdate(
-                hideDialog = hideDialog,
+                hideDialog = onDismiss,
                 value = caloriesGoal,
                 onConfirmClick = {
                     profileViewModel.saveCaloriesGoal(it)
@@ -149,10 +149,9 @@ fun AlertDialogToUpdate(
     keyboardOptions: KeyboardOptions,
     isText: Boolean = false
 ) {
-    AlertDialog(
-        onDismissRequest = {
-            hideDialog()
-        }
+    BasicAlertDialog(onDismissRequest = {
+        hideDialog()
+    }
     ) {
         if (!isGender) {
             var newValue by remember {

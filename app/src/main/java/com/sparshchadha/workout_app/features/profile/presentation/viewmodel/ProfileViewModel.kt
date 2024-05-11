@@ -3,7 +3,6 @@ package com.sparshchadha.workout_app.features.profile.presentation.viewmodel
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
-import android.util.Log
 import android.util.LruCache
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -172,7 +171,6 @@ class ProfileViewModel @Inject constructor(
         }
         viewModelScope.launch {
             datastorePreference.readBase64ProfilePic.collect { profilePic ->
-                Log.e(TAG, "readBase64ProfilePic: $profilePic")
                 _profilePicBitmap.value = DbBitmapUtility.decodeBase64(profilePic ?: "")
             }
         }

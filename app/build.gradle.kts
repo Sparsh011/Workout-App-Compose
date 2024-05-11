@@ -170,4 +170,8 @@ dependencies {
     // region firebase performance monitoring
     implementation("com.google.firebase:firebase-perf-ktx:20.5.2")
     // endregion
+
+    // region accompanist for permissions
+    implementation ("com.google.accompanist:accompanist-permissions:0.23.1")
+    // endregion
 }
