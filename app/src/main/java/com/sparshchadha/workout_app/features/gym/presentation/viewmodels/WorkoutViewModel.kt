@@ -192,7 +192,9 @@ class WorkoutViewModel @Inject constructor(
 
     fun getAllPR(category: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            prRepository.getAllPR(category = category)
+            prRepository.getAllPR(category = category).collect {
+                _personalRecords.value = it
+            }
         }
     }
 

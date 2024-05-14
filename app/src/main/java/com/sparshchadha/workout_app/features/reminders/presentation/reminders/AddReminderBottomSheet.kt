@@ -21,7 +21,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.sparshchadha.workout_app.features.reminders.domain.entity.ReminderEntity
+import com.sparshchadha.workout_app.shared_ui.components.shared.NewDatePicker
+import com.sparshchadha.workout_app.shared_ui.components.shared.NewTimePicker
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
@@ -43,13 +44,6 @@ import com.sparshchadha.workout_app.util.Dimensions.LARGE_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions.noRippleClickable
-import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.datetime.date.datepicker
-import com.vanpra.composematerialdialogs.datetime.time.timepicker
-import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,7 +89,7 @@ fun BottomSheetToAddReminder(
     }
 
     if (showDatePicker) {
-        ShowNewDatePicker(
+        NewDatePicker(
             hideDatePicker = {
                 showDatePicker = false
             },
@@ -112,7 +106,7 @@ fun BottomSheetToAddReminder(
     }
 
     if (showTimePicker) {
-        ShowNewTimePicker(
+        NewTimePicker(
             hideTimePicker = {
                 showTimePicker = false
             },
@@ -199,98 +193,6 @@ fun BottomSheetToAddReminder(
             }
         }
     }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun ShowNewDatePicker(
-    hideDatePicker: () -> Unit,
-    updateDay: (Int) -> Unit,
-    updateMonth: (Int) -> Unit,
-    updateYear: (Int) -> Unit,
-) {
-    var pickedDate by remember {
-        mutableStateOf(LocalDate.now())
-    }
-
-    val formattedDate by remember {
-        derivedStateOf {
-            DateTimeFormatter
-                .ofPattern("dd MM yyyy")
-                .format(pickedDate)
-        }
-    }
-
-
-    val dateDialogState = rememberMaterialDialogState()
-    dateDialogState.show()
-
-    MaterialDialog(
-        dialogState = dateDialogState,
-        onCloseRequest = {
-            hideDatePicker()
-        },
-        buttons = {
-            positiveButton(text = "Ok") {
-                hideDatePicker()
-            }
-            negativeButton(text = "Cancel") {
-                hideDatePicker()
-            }
-        }
-    ) {
-        datepicker(
-            initialDate = LocalDate.now(),
-            title = "Pick a date",
-            allowedDateValidator = {
-                it.dayOfMonth >= LocalDate.now().dayOfMonth && it.monthValue >= LocalDate.now().monthValue
-            }
-        ) {
-            updateDay(it.dayOfMonth)
-            updateMonth(it.monthValue)
-            updateYear(it.year)
-            pickedDate = it
-        }
-    }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun ShowNewTimePicker(
-    hideTimePicker: () -> Unit,
-    updateHour: (Int) -> Unit,
-    updateMinutes: (Int) -> Unit,
-) {
-    var pickedTime by remember {
-        mutableStateOf(LocalTime.NOON)
-    }
-
-    val timeDialogState = rememberMaterialDialogState()
-    timeDialogState.show()
-
-    MaterialDialog(
-        dialogState = timeDialogState,
-        buttons = {
-            positiveButton(text = "Ok") {
-                hideTimePicker()
-            }
-            negativeButton(text = "Cancel") {
-                hideTimePicker()
-            }
-        }
-    ) {
-        timepicker(
-            initialTime = LocalTime.now(),
-            title = "Pick a time"
-        ) {
-            updateMinutes(it.minute)
-            updateHour(it.hour)
-            pickedTime = it
-        }
-    }
-
 }
 
 
