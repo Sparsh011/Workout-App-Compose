@@ -3,7 +3,6 @@ package com.sparshchadha.workout_app.features.gym.presentation.gym
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,8 +24,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -33,10 +36,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,7 +73,6 @@ import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -179,48 +178,19 @@ fun PersonalRecordsScreen(
                     .background(scaffoldBackgroundColor)
             ) {
                 items(prList!!) {
-                    val state = rememberSwipeToDismissBoxState(
-                        confirmValueChange = { state ->
-                            if (state == SwipeToDismissBoxValue.EndToStart) {
-                                coroutineScope.launch {
-                                    workoutViewModel.deletePR()
-                                }
-                                true
-                            } else {
-                                false
+                    Column {
+                        PR(
+                            record = it,
+                            onEditClick = {
+                                showBottomSheetToAddPR = true
+                                updatePr = true
+                                prId = it.id ?: -1
+                                prToUpdate = it
+                            },
+                            onDeleteClick = {
+                                workoutViewModel.deletePR(it)
                             }
-                        }
-                    )
-
-                    SwipeToDismissBox(state = state, backgroundContent = {
-                        val backgroundColor by animateColorAsState(
-                            targetValue = when (state.currentValue) {
-                                SwipeToDismissBoxValue.StartToEnd -> targetAchievedColor
-                                SwipeToDismissBoxValue.EndToStart -> noAchievementColor
-                                SwipeToDismissBoxValue.Settled -> scaffoldBackgroundColor
-                            }, label = ""
                         )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(backgroundColor)
-                        )
-                    }) {
-                        Column {
-                            PR(
-                                record = it,
-                                onEditClick = {
-                                    showBottomSheetToAddPR = true
-                                    updatePr = true
-                                    prId = it.id ?: -1
-                                    prToUpdate = it
-                                },
-                                onDeleteClick = {
-                                    workoutViewModel.deletePR(it)
-                                }
-                            )
-                        }
-
                     }
                 }
             }
@@ -254,6 +224,10 @@ fun PR(
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
+    var showEditOrDeleteOptions by remember {
+        mutableStateOf(false)
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -270,17 +244,68 @@ fun PR(
             color = primaryTextColor
         )
 
-        Icon(
-            imageVector = Icons.Default.Edit,
-            contentDescription = null,
-            tint = primaryTextColor,
-            modifier = Modifier
-                .clickable {
-                    onEditClick()
-                }
-                .weight(0.7f)
-                .padding(vertical = SMALL_PADDING)
-        )
+//        Icon(
+//            imageVector = Icons.Default.Edit,
+//            contentDescription = null,
+//            tint = primaryTextColor,
+//            modifier = Modifier
+//                .clickable {
+//                    onEditClick()
+//                }
+//                .weight(0.7f)
+//                .padding(vertical = SMALL_PADDING)
+//        )
+        Box (
+            modifier = Modifier.weight(0.7f)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = null,
+                tint = primaryTextColor,
+                modifier = Modifier
+                    .clickable {
+                        showEditOrDeleteOptions = true
+                    }
+                    .padding(vertical = SMALL_PADDING)
+            )
+            DropdownMenu(
+                expanded = showEditOrDeleteOptions,
+                onDismissRequest = { showEditOrDeleteOptions = false },
+                modifier = Modifier
+            ) {
+                DropdownMenuItem(
+                    text = {
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically
+                        ){
+                            Icon(imageVector = Icons.Filled.Edit, contentDescription = null, tint = targetAchievedColor)
+                            Spacer(modifier = Modifier.width(MEDIUM_PADDING))
+                            Text(text = "Edit")
+                        }
+                    },
+                    onClick = {
+                        onEditClick()
+                        showEditOrDeleteOptions = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = {
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically
+
+                        ) {
+                            Icon(imageVector = Icons.Filled.Delete, contentDescription = null, tint = noAchievementColor)
+                            Spacer(modifier = Modifier.width(MEDIUM_PADDING))
+                            Text(text = "Delete")
+                        }
+                    },
+                    onClick = {
+                        onDeleteClick()
+                        showEditOrDeleteOptions = false
+                    }
+                )
+            }
+        }
     }
 
     Spacer(modifier = Modifier.height(SMALL_PADDING))
@@ -317,6 +342,9 @@ fun PR(
 
     Spacer(modifier = Modifier.height(MEDIUM_PADDING))
     CustomDivider()
+
+
+
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

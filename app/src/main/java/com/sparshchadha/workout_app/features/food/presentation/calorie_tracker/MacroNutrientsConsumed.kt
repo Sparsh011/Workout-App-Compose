@@ -16,6 +16,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -38,7 +43,6 @@ import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.progressTrackColor
-import com.sparshchadha.workout_app.util.ColorsUtil.unselectedBottomBarIconColor
 import com.sparshchadha.workout_app.util.Constants.CARBOHYDRATES_TOTAL_G
 import com.sparshchadha.workout_app.util.Constants.COLOR_TO_NUTRIENT_MAP
 import com.sparshchadha.workout_app.util.Constants.FAT_TOTAL_G
@@ -48,6 +52,7 @@ import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Dimensions.HEADING_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.MACRONUTRIENT_TEXT_HEIGHT
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
+import com.sparshchadha.workout_app.util.Dimensions.PIE_CHART_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
@@ -57,7 +62,6 @@ private const val TAG = "MacroNutrientsConsumed"
 fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>, caloriesGoal: String) {
     val configuration = LocalConfiguration.current
     val macroNutrientsCardWidth = configuration.screenWidthDp.dp
-    val macroNutrientsCardHeight = configuration.screenHeightDp.dp / 3
 
     val carbsGoal: Float = ((caloriesGoal.toFloat() * 0.55) / 4).toFloat()
     val proteinGoal: Float = ((caloriesGoal.toFloat() * 0.20) / 4).toFloat()
@@ -66,7 +70,6 @@ fun MacroNutrientsConsumed(nutrientsConsumed: Map<String, Double>, caloriesGoal:
     Column(
         modifier = Modifier
             .width(macroNutrientsCardWidth)
-            .height(macroNutrientsCardHeight)
             .fillMaxHeight(1f)
             .padding(SMALL_PADDING)
             .clip(RoundedCornerShape(10.dp))
@@ -195,12 +198,17 @@ fun MacroNutrientsPieChart(
     modifier: Modifier,
     nutrientsConsumed: Map<String, Double>,
 ) {
+    var percentage by remember {
+        mutableFloatStateOf(0f)
+    }
+    val pieCharEntries = remember {
+        mutableStateListOf<PieChartEntry>()
+    }
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         nutrientsConsumed[TOTAL_NUTRIENTS_G]?.let { total ->
-            val pieCharEntries = mutableListOf<PieChartEntry>()
             nutrientsConsumed[PROTEIN_G]?.let { protein ->
                 COLOR_TO_NUTRIENT_MAP[PROTEIN_G]?.let {
                     PieChartEntry(
@@ -221,6 +229,7 @@ fun MacroNutrientsPieChart(
                         percentage = (carbs / total).toFloat()
                     )
                 }?.let {
+                    percentage += it.percentage
                     pieCharEntries.add(
                         it
                     )
@@ -234,21 +243,21 @@ fun MacroNutrientsPieChart(
                         percentage = (fats / total).toFloat()
                     )
                 }?.let {
+                    percentage += it.percentage
                     pieCharEntries.add(
                         it
                     )
                 }
             }
-            if (pieCharEntries.size == 0) {
-                pieCharEntries.add(
-                    PieChartEntry(color = unselectedBottomBarIconColor, 1f)
-                )
-            }
-            PieChart(
-                entries = pieCharEntries,
-                size = dimensionResource(id = R.dimen.pie_chart_size)
-            )
         }
+
+        if (pieCharEntries.size == 0) {
+            pieCharEntries.add(PieChartEntry(Color.DarkGray, 1f))
+        }
+        PieChart(
+            entries = pieCharEntries.toList(),
+            size = PIE_CHART_SIZE
+        )
     }
 }
 
