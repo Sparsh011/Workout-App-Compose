@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.profile.presentation.profile.settings_categories.DialogToUpdateValue
 import com.sparshchadha.workout_app.features.profile.presentation.profile.settings_categories.food.FoodSettingsCategory
@@ -27,6 +26,7 @@ import com.sparshchadha.workout_app.features.profile.presentation.profile.shared
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.features.shared.viewmodels.ImageSelectors
 import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
+import com.sparshchadha.workout_app.shared_ui.components.shared.ImageSelectionOptions
 import com.sparshchadha.workout_app.shared_ui.screens.workout.HeaderText
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
@@ -34,7 +34,6 @@ import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 import com.sparshchadha.workout_app.util.HelperFunctions
-import com.sparshchadha.workout_app.util.Permissions
 
 private const val TAG = "ProfileScreenTagggg"
 
@@ -59,17 +58,19 @@ fun ProfileScreen(
         mutableStateOf(false)
     }
 
-    var showDialogToUpdateValueOf by remember {
+    var currentValue by remember {
         mutableStateOf("")
     }
 
-    val context = LocalContext.current
+    var shouldShowImageSelectionOptions by remember {
+        mutableStateOf(false)
+    }
 
     if (shouldShowDialogToUpdateValue) {
         DialogToUpdateValue(
-            showDialogToUpdateValueOf = showDialogToUpdateValueOf,
+            updateValueOf = currentValue,
             profileViewModel = profileViewModel,
-            hideDialog = {
+            onDismiss = {
                 shouldShowDialogToUpdateValue = false
             },
             height = height,
@@ -78,6 +79,24 @@ fun ProfileScreen(
             age = age,
             gender = gender,
             caloriesGoal = caloriesGoal
+        )
+    }
+
+    if (shouldShowImageSelectionOptions) {
+        ImageSelectionOptions(
+            onDismiss = {
+                shouldShowImageSelectionOptions = false
+            },
+            selectedOption = { it ->
+                when (it) {
+                    "CAMERA" -> {
+                        sharedViewModel.openCamera()
+                    }
+                    "GALLERY" -> {
+                        sharedViewModel.openGallery(imageSelector = ImageSelectors.PROFILE_PIC)
+                    }
+                }
+            }
         )
     }
 
@@ -111,15 +130,10 @@ fun ProfileScreen(
                 onNameChange = { newName ->
                     profileViewModel.saveName(newName)
                 },
-                requestCameraAndStoragePermission = {
-                    sharedViewModel.requestPermissions(
-                        Permissions.getCameraAndStoragePermissions()
-                    )
-                },
-                pickImage = {
-                    sharedViewModel.openGallery(imageSelector = ImageSelectors.PROFILE_PIC)
-                },
-                imageBitmap = profileBitmap
+                imageBitmap = profileBitmap,
+                showImageSelectionOptions = {
+                    shouldShowImageSelectionOptions = true
+                }
             )
 
             HeaderText(heading = "Settings")
@@ -154,7 +168,7 @@ fun ProfileScreen(
                     HelperFunctions.getPersonalInfoCategories().forEach {
                         if (item == it) {
                             shouldShowDialogToUpdateValue = true
-                            showDialogToUpdateValueOf = item
+                            currentValue = item
                         }
                     }
                 }

@@ -94,7 +94,7 @@ class SharedViewModel @Inject constructor(
         _imageSelector.value = imageSelector
     }
 
-    fun galleryClosed() {
+    fun dismissGallery() {
         _openGallery.value = false
     }
 
@@ -102,7 +102,7 @@ class SharedViewModel @Inject constructor(
         _openCamera.value = true
     }
 
-    fun cameraClosed() {
+    fun dismissCamera() {
         _openCamera.value = false
     }
 

@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.features.profile.presentation.profile
 
-import android.Manifest
 import android.graphics.Bitmap
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -13,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import coil.compose.AsyncImage
@@ -35,20 +34,17 @@ import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.PROFILE_PICTURE_SIZE
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
-import com.sparshchadha.workout_app.util.HelperFunctions
 
 @Composable
 fun ProfilePictureAndUserName(
     name: String,
     onNameChange: (String) -> Unit,
-    requestCameraAndStoragePermission: () -> Unit,
-    pickImage: () -> Unit,
-    imageBitmap: Bitmap?
+    imageBitmap: Bitmap?,
+    showImageSelectionOptions: () -> Unit
 ) {
     var shouldShowNameChangeDialog by remember {
         mutableStateOf(false)
     }
-    val context = LocalContext.current
 
     if (shouldShowNameChangeDialog) {
         AlertDialogToUpdate(
@@ -74,26 +70,32 @@ fun ProfilePictureAndUserName(
             .padding(MEDIUM_PADDING),
         verticalAlignment = Alignment.Top
     ) {
-        AsyncImage(
-            model = imageBitmap,
-            contentDescription = "Profile Picture",
-            modifier = Modifier
-                .size(PROFILE_PICTURE_SIZE)
-                .clickable {
-                    if (!HelperFunctions.hasPermissions(
-                            context,
-                            Manifest.permission.CAMERA,
-                            Manifest.permission.READ_MEDIA_IMAGES
-                        )
-                    ) {
-                        requestCameraAndStoragePermission()
-                    } else {
-                        pickImage()
+        imageBitmap?.let {
+            AsyncImage(
+                model = imageBitmap,
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+                    .size(PROFILE_PICTURE_SIZE)
+                    .clickable {
+                        showImageSelectionOptions()
                     }
-                }
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        } ?: run {
+            Icon(
+                imageVector = Icons.Filled.Person,
+                contentDescription = null,
+                tint = primaryTextColor,
+                modifier = Modifier
+                    .size(PROFILE_PICTURE_SIZE)
+                    .padding(MEDIUM_PADDING)
+                    .clickable {
+                        showImageSelectionOptions()
+                    }
+                    .clip(CircleShape),
+            )
+        }
 
         Row(
             modifier = Modifier

@@ -2,6 +2,6 @@
 <resources>
 
     <style name="Theme.WorkoutApp" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/dumbbell_svg</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_screen_icon</item>
     </style>
 </resources>

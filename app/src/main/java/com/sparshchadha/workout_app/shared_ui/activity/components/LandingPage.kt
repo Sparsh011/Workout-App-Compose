@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
+import com.sparshchadha.workout_app.BuildConfig
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
@@ -75,6 +76,27 @@ fun LandingPage(
         }
 
         val context = LocalContext.current
+
+        if (BuildConfig.BUILD_TYPE == "debug") {
+            Button(
+                onClick = {
+                    profileViewModel.saveAllDetails(
+                        height = "178",
+                        age = "22",
+                        weight = "95",
+                        gender = "M",
+                        weightGoal = "90",
+                        caloriesGoal = "3500"
+                    )
+                    navigateToHomeScreen()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(MEDIUM_PADDING)
+            ) {
+                Text(text = "Use debug values")
+            }
+        }
 
         LandingPageOutlinedTextField(
             label = "Age",
