@@ -15,7 +15,7 @@ import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
 import com.sparshchadha.workout_app.features.yoga.data.remote.dto.Pose
 import com.sparshchadha.workout_app.features.gym.presentation.gym.util.MuscleType
 import com.sparshchadha.workout_app.features.gym.presentation.gym.util.WorkoutType
-import com.sparshchadha.workout_app.shared_ui.screens.workout.DifficultyLevel
+import com.sparshchadha.workout_app.ui.screens.workout.DifficultyLevel
 import com.sparshchadha.workout_app.util.Extensions.capitalize
 import java.text.SimpleDateFormat
 import java.time.LocalDate

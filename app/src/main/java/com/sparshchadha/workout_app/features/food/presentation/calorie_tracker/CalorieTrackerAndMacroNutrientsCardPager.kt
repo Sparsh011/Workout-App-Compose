@@ -25,7 +25,8 @@ fun CalorieTrackerAndMacroNutrientsCardPager(
     setWaterGlassesGoal: (Int) -> Unit,
     saveNewCaloriesGoal: (String) -> Unit,
     nutrientsConsumed: Map<String, Double>,
-    updateWaterEntity: (WaterEntity) -> Unit
+    updateWaterEntity: (WaterEntity) -> Unit,
+    progressAnimation: Float
 ) {
     val pagerState = rememberPagerState(
         pageCount = {
@@ -44,11 +45,9 @@ fun CalorieTrackerAndMacroNutrientsCardPager(
                         showDialogToUpdateCalories = showDialogToUpdateCalories,
                         caloriesGoal = caloriesGoal,
                         hideUpdateCaloriesDialog = {
-//                            showDialogToUpdateCalories = false
                             toggleDialogToUpdateCalories(false)
                         },
                         saveNewCaloriesGoal = {
-//                            profileViewModel.saveCaloriesGoal(it)
                             saveNewCaloriesGoal(it)
                         },
                         showCaloriesGoalBottomSheet = {
@@ -59,7 +58,6 @@ fun CalorieTrackerAndMacroNutrientsCardPager(
                         waterGlassesGoal = waterGlassesGoal,
                         waterGlassesConsumed = waterGlassesConsumedEntity?.glassesConsumed ?: 0,
                         setWaterGlassesGoal = {
-//                            profileViewModel.setWaterGlassesGoal(it)
                             setWaterGlassesGoal(it)
                         },
                         setWaterGlassesConsumed = {
@@ -75,6 +73,7 @@ fun CalorieTrackerAndMacroNutrientsCardPager(
                                 )
                             )
                         },
+                        progressAnimation = progressAnimation
                     )
                 }
 

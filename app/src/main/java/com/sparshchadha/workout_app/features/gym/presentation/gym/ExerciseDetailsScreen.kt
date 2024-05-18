@@ -30,7 +30,7 @@ import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.food.presentation.calorie_tracker.ShowQuantityOrSetsPicker
 import com.sparshchadha.workout_app.features.gym.domain.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
-import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor

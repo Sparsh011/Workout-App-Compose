@@ -86,6 +86,7 @@ fun CaloriesConsumedCard(
     waterGlassesConsumed: Int,
     setWaterGlassesGoal: (Int) -> Unit,
     setWaterGlassesConsumed: (Int) -> Unit,
+    progressAnimation: Float
 ) {
     val configuration = LocalConfiguration.current;
     val caloriesConsumedCardWidth = configuration.screenWidthDp.dp
@@ -108,6 +109,7 @@ fun CaloriesConsumedCard(
             waterGlassesGoal = waterGlassesGoal,
             setWaterGlassesGoal = setWaterGlassesGoal,
             setWaterGlassesConsumed = setWaterGlassesConsumed,
+            progressAnimation = progressAnimation
         )
 
         WaterProgressBar(
@@ -199,6 +201,7 @@ fun CaloriesConsumedAndLeft(
     waterGlassesGoal: Int,
     setWaterGlassesGoal: (Int) -> Unit,
     setWaterGlassesConsumed: (Int) -> Unit,
+    progressAnimation: Float
 ) {
     Row(
         modifier = Modifier
@@ -262,7 +265,8 @@ fun CaloriesConsumedAndLeft(
                     showCaloriesGoalBottomSheet()
                 },
             caloriesConsumed = caloriesConsumed,
-            progressIndicatorColor = getProgressIndicatorColor(caloriesConsumed, caloriesGoal)
+            progressIndicatorColor = getProgressIndicatorColor(caloriesConsumed, caloriesGoal),
+            progressAnimation = progressAnimation
         )
 
         Column(
@@ -562,6 +566,7 @@ fun CenterCaloriesGoalBox(
     caloriesGoal: String,
     caloriesConsumed: String,
     progressIndicatorColor: Color,
+    progressAnimation: Float
 ) {
     Box(
         modifier = modifier,
@@ -587,15 +592,7 @@ fun CenterCaloriesGoalBox(
         )
 
         if (caloriesConsumed.isNotEmpty() && caloriesGoal.isNotEmpty()) {
-            var progress by remember { mutableFloatStateOf(0F) }
-            val progressAnimDuration = 1_000
-            val progressAnimation by animateFloatAsState(
-                targetValue = progress,
-                animationSpec = tween(progressAnimDuration), label = "",
-            )
-            LaunchedEffect(key1 = caloriesConsumed) {
-                progress = (caloriesConsumed.toFloat() / caloriesGoal.toFloat())
-            }
+
 
             CircularProgressIndicator(
                 progress = { progressAnimation },

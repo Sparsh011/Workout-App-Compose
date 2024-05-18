@@ -19,9 +19,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
-import com.sparshchadha.workout_app.shared_ui.components.bottom_bar.ScreenRoutes
-import com.sparshchadha.workout_app.shared_ui.components.shared.CustomDivider
-import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
+import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING

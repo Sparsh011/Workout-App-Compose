@@ -56,10 +56,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.gym.domain.entities.PersonalRecordsEntity
 import com.sparshchadha.workout_app.features.gym.presentation.viewmodels.WorkoutViewModel
-import com.sparshchadha.workout_app.shared_ui.components.shared.CustomDivider
-import com.sparshchadha.workout_app.shared_ui.components.shared.NewDatePicker
-import com.sparshchadha.workout_app.shared_ui.components.shared.NoSavedItem
-import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.ui.components.shared.NewDatePicker
+import com.sparshchadha.workout_app.ui.components.shared.NoSavedItem
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryPurple

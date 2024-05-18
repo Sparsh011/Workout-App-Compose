@@ -2,6 +2,8 @@ package com.sparshchadha.workout_app.features.food.presentation.calorie_tracker
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,7 +41,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
-import com.sparshchadha.workout_app.shared_ui.components.shared.CalendarRow
+import com.sparshchadha.workout_app.ui.components.shared.CalendarRow
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
@@ -59,7 +62,7 @@ fun FoodScreen(
     profileViewModel: ProfileViewModel
 ) {
     val caloriesGoal = profileViewModel.caloriesGoal.collectAsState().value
-    val caloriesConsumed = foodAndWaterViewModel.caloriesConsumed.value ?: "0"
+    val caloriesConsumed = foodAndWaterViewModel.caloriesConsumed.collectAsState().value ?: "0"
     val selectedDateAndMonth =
         foodAndWaterViewModel.selectedDateAndMonthForFoodItems.collectAsState().value
     val waterGlassesGoal = profileViewModel.waterGlassesGoal.collectAsState().value
@@ -74,6 +77,16 @@ fun FoodScreen(
 
     var showAddDishesOptionsDialog by remember {
         mutableStateOf(false)
+    }
+
+    var progress by remember { mutableFloatStateOf(0F) }
+    val progressAnimDuration = 1_000
+    val progressAnimation by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(progressAnimDuration), label = "",
+    )
+    LaunchedEffect(key1 = caloriesConsumed) {
+        progress = (caloriesConsumed.toFloat() / caloriesGoal.toFloat())
     }
 
     LaunchedEffect(key1 = Unit) {
@@ -155,7 +168,8 @@ fun FoodScreen(
                     nutrientsConsumed = nutrientsConsumed,
                     updateWaterEntity = {
                         foodAndWaterViewModel.updateWaterGlassesEntity(it)
-                    }
+                    },
+                    progressAnimation = progressAnimation
                 )
 
                 // Select day to show that day's calories and dishes consumed

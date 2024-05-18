@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.sparshchadha.workout_app.R
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
-import com.sparshchadha.workout_app.shared_ui.activity.components.GenderIcon
-import com.sparshchadha.workout_app.shared_ui.activity.components.LandingPageOutlinedTextField
+import com.sparshchadha.workout_app.ui.activity.components.GenderIcon
+import com.sparshchadha.workout_app.ui.activity.components.LandingPageOutlinedTextField
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor

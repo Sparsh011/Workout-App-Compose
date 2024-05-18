@@ -12,9 +12,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.news.presentation.viewmodels.NewsViewModel
 import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
-import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
-import com.sparshchadha.workout_app.shared_ui.components.ui_state.NoInternetScreen
-import com.sparshchadha.workout_app.shared_ui.components.ui_state.ShowLoadingScreen
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.ui_state.NoInternetScreen
+import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.Dimensions
 
 @Composable

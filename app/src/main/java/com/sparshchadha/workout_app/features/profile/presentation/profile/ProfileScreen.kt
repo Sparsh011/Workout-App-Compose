@@ -26,8 +26,8 @@ import com.sparshchadha.workout_app.features.profile.presentation.profile.shared
 import com.sparshchadha.workout_app.features.profile.presentation.viewmodel.ProfileViewModel
 import com.sparshchadha.workout_app.features.shared.viewmodels.ImageSelectors
 import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
-import com.sparshchadha.workout_app.shared_ui.components.shared.ImageSelectionOptions
-import com.sparshchadha.workout_app.shared_ui.screens.workout.HeaderText
+import com.sparshchadha.workout_app.ui.components.shared.ImageSelectionOptions
+import com.sparshchadha.workout_app.ui.screens.workout.HeaderText
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING

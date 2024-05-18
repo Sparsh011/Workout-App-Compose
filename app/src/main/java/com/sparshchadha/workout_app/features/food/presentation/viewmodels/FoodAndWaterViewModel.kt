@@ -1,7 +1,6 @@
 package com.sparshchadha.workout_app.features.food.presentation.viewmodels
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,8 +41,8 @@ class FoodAndWaterViewModel @Inject constructor(
     private val _consumedFoodItems = MutableStateFlow<Resource<List<FoodItemEntity>>?>(null)
     val consumedFoodItems = _consumedFoodItems
 
-    private val _caloriesConsumed: MutableState<String?> = mutableStateOf(null)
-    val caloriesConsumed: State<String?> = _caloriesConsumed
+    private val _caloriesConsumed = MutableStateFlow<String?>(null)
+    val caloriesConsumed = _caloriesConsumed.asStateFlow()
 
     private val _nutrientsConsumed: MutableMap<String, Double> = mutableStateMapOf()
     val nutrientsConsumed: Map<String, Double> = _nutrientsConsumed
