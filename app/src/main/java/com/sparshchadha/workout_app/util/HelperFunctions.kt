@@ -318,7 +318,6 @@ object HelperFunctions {
         return listOf(
             "Track Workouts",
             "Activity",
-            "Goals",
             "Saved Poses",
         )
     }
@@ -327,7 +326,6 @@ object HelperFunctions {
         return listOf(
             "Track Food",
             "Activity",
-            "Goals",
             "Saved Food Items",
             "Your Dishes"
         )

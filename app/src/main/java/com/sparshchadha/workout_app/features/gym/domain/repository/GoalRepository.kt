@@ -11,4 +11,6 @@ interface GoalRepository {
     fun getAllGoals(): Flow<List<GoalEntity>>
 
     fun updateGoal(goalEntity: GoalEntity)
+
+    fun deleteGoal(goal: GoalEntity)
 }

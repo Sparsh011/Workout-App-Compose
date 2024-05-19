@@ -267,4 +267,10 @@ class WorkoutViewModel @Inject constructor(
             goalsRepository.updateGoal(goal)
         }
     }
+
+    fun deleteGoal(goal: GoalEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            goalsRepository.deleteGoal(goal)
+        }
+    }
 }

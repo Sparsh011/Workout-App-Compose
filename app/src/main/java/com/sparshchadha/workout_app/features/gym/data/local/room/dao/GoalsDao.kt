@@ -1,6 +1,7 @@
 package com.sparshchadha.workout_app.features.gym.data.local.room.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -21,4 +22,7 @@ interface GoalsDao {
 
     @Update
     fun updateGoal(goalEntity: GoalEntity)
+
+    @Delete
+    fun deleteGoal(goal: GoalEntity)
 }

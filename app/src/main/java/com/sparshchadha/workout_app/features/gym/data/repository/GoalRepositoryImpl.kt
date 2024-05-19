@@ -23,4 +23,8 @@ class GoalRepositoryImpl(
     override fun updateGoal(goalEntity: GoalEntity) {
         goalsDao.updateGoal(goalEntity)
     }
+
+    override fun deleteGoal(goal: GoalEntity) {
+        goalsDao.deleteGoal(goal)
+    }
 }

@@ -147,6 +147,9 @@ fun GymGoalsScreen(
                             goals = goals,
                             updateGoal = { goal ->
                                 workoutViewModel.updateGoal(goal)
+                            },
+                            deleteGoal = { goal ->
+                                workoutViewModel.deleteGoal(goal)
                             }
                         )
                     }
