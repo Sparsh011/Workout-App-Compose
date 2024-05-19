@@ -370,4 +370,24 @@ object HelperFunctions {
 
         return true
     }
+
+    fun getColorFromPriority(priority: String): Color {
+        return when (priority.lowercase()) {
+            "high" -> {
+                ColorsUtil.noAchievementColor
+            }
+
+            "medium" -> {
+                ColorsUtil.partialTargetAchievedColor
+            }
+
+            "low" -> {
+                ColorsUtil.targetAchievedColor
+            }
+
+            else -> {
+                Color.LightGray
+            }
+        }
+    }
 }

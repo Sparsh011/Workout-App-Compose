@@ -62,7 +62,9 @@ import com.sparshchadha.workout_app.util.HelperFunctions
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SetGoals(
-    saveGoal: (GoalEntity) -> Unit
+    goalEntity: GoalEntity?,
+    showAnim: Boolean,
+    saveGoal: (GoalEntity) -> Unit,
 ) {
     var showExtraFields by rememberSaveable {
         mutableStateOf(false)
@@ -73,16 +75,16 @@ fun SetGoals(
         iterations = 5
     )
     var goalDescription by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf(goalEntity?.description ?: "")
     }
     var deadlineDay by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf(goalEntity?.deadlineDay ?: "")
     }
     var deadlineMonth by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf(goalEntity?.deadlineMonth ?: "")
     }
     var deadlineYear by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf(goalEntity?.deadlineYear ?: "")
     }
     var showCalendarView by rememberSaveable {
         mutableStateOf(false)
@@ -97,19 +99,19 @@ fun SetGoals(
         mutableStateOf(false)
     }
     var reps by rememberSaveable {
-        mutableIntStateOf(0)
+        mutableIntStateOf(goalEntity?.reps ?: 0)
     }
     var weight by rememberSaveable {
-        mutableDoubleStateOf(0.0)
+        mutableDoubleStateOf(goalEntity?.targetWeight ?: 0.0)
     }
     var selectedWeightUnit by rememberSaveable {
-        mutableStateOf("kg")
+        mutableStateOf(goalEntity?.weightUnit ?: "kg")
     }
     var priority by rememberSaveable {
-        mutableStateOf("Undefined")
+        mutableStateOf(goalEntity?.priority ?: "Undefined")
     }
     var priorityColor by remember {
-        mutableStateOf(Color.LightGray)
+        mutableStateOf(HelperFunctions.getColorFromPriority(priority))
     }
     var showSuccessTickAnim by rememberSaveable {
         mutableStateOf(false)
@@ -126,15 +128,17 @@ fun SetGoals(
     ) {
 
         Column {
-            LottieAnimation(
-                composition = lottieComposition,
-                progress = { animProgress },
-                modifier = Modifier
-                    .size(Dimensions.PIE_CHART_SIZE + Dimensions.MEDIUM_PADDING)
-                    .align(Alignment.CenterHorizontally),
-            )
+            if (showAnim) {
+                LottieAnimation(
+                    composition = lottieComposition,
+                    progress = { animProgress },
+                    modifier = Modifier
+                        .size(Dimensions.PIE_CHART_SIZE + Dimensions.MEDIUM_PADDING)
+                        .align(Alignment.CenterHorizontally),
+                )
 
-            Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
+                Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
+            }
 
             OutlinedTextField(
                 value = goalDescription,
