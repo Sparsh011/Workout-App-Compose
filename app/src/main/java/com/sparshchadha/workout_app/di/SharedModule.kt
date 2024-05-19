@@ -19,11 +19,14 @@ import com.sparshchadha.workout_app.features.food.data.repository.WaterRepositor
 import com.sparshchadha.workout_app.features.food.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.features.food.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.features.food.domain.repository.WaterRepository
+import com.sparshchadha.workout_app.features.gym.data.local.room.dao.GoalsDao
 import com.sparshchadha.workout_app.features.gym.data.local.room.dao.GymExercisesDao
 import com.sparshchadha.workout_app.features.gym.data.local.room.dao.PRDao
 import com.sparshchadha.workout_app.features.gym.data.remote.api.GymExercisesApi
+import com.sparshchadha.workout_app.features.gym.data.repository.GoalRepositoryImpl
 import com.sparshchadha.workout_app.features.gym.data.repository.PRRepositoryImpl
 import com.sparshchadha.workout_app.features.gym.data.repository.WorkoutRepositoryImpl
+import com.sparshchadha.workout_app.features.gym.domain.repository.GoalRepository
 import com.sparshchadha.workout_app.features.gym.domain.repository.PRRepository
 import com.sparshchadha.workout_app.features.gym.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.features.news.data.remote.api.NewsApi
@@ -268,6 +271,12 @@ object SharedModule {
 
     @Singleton
     @Provides
+    fun provideGoalsDao(database: WorkoutAppDatabase): GoalsDao {
+        return database.goalsDao()
+    }
+
+    @Singleton
+    @Provides
     fun provideRemindersRepository(remindersDao: RemindersDao): RemindersRepository {
         return RemindersRepositoryImpl(remindersDao = remindersDao)
     }
@@ -305,5 +314,11 @@ object SharedModule {
         workoutAppDatabase: WorkoutAppDatabase
     ) : BaseRepository{
         return BaseRepository(workoutAppDatabase = workoutAppDatabase)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGoalsRepository(goalsDao: GoalsDao): GoalRepository {
+        return GoalRepositoryImpl(goalsDao)
     }
 }

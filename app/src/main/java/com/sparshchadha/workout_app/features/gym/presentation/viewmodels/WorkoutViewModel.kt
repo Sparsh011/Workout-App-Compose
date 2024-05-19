@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDto
 import com.sparshchadha.workout_app.features.gym.data.remote.dto.gym_workout.GymExercisesDtoItem
+import com.sparshchadha.workout_app.features.gym.domain.entities.GoalEntity
 import com.sparshchadha.workout_app.features.gym.domain.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.features.gym.domain.entities.PersonalRecordsEntity
+import com.sparshchadha.workout_app.features.gym.domain.repository.GoalRepository
 import com.sparshchadha.workout_app.features.gym.domain.repository.PRRepository
 import com.sparshchadha.workout_app.features.gym.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.features.gym.presentation.gym.util.CategoryType
@@ -23,14 +25,15 @@ import javax.inject.Inject
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
     private val workoutRepository: WorkoutRepository,
-    private val prRepository: PRRepository
+    private val prRepository: PRRepository,
+    private val goalsRepository: GoalRepository
 ) : ViewModel() {
 
-    private var _gymExercisesFromApi = mutableStateOf<Resource<GymExercisesDto>?>(null)
-    val gymExercisesFromApi = _gymExercisesFromApi
+    private var _gymExercisesFromApi = MutableStateFlow<Resource<GymExercisesDto>?>(null)
+    val gymExercisesFromApi = _gymExercisesFromApi.asStateFlow()
 
-    private var _searchExercisesResult = mutableStateOf<Resource<GymExercisesDto>?>(null)
-    val searchExercisesResult = _searchExercisesResult
+    private var _searchExercisesResult = MutableStateFlow<Resource<GymExercisesDto>?>(null)
+    val searchExercisesResult = _searchExercisesResult.asStateFlow()
 
     private var _selectedCategoryForGymExercise = mutableStateOf(CategoryType.WORKOUT_TYPE)
 
@@ -54,6 +57,9 @@ class WorkoutViewModel @Inject constructor(
 
     private val _allExercisesPerformed = MutableStateFlow<List<GymExercisesEntity>?>(null)
     val allExercisesPerformed = _allExercisesPerformed.asStateFlow()
+
+    private val _goalsSaved = MutableStateFlow<List<GoalEntity>>(emptyList())
+    val goalsSaved = _goalsSaved.asStateFlow()
 
     fun getExercisesByMuscleFromApi(muscleType: String) {
         viewModelScope.launch {
@@ -234,4 +240,37 @@ class WorkoutViewModel @Inject constructor(
         _selectedExercise.value = selectedExercise
     }
 
+    fun getAllSavedGoals() {
+        viewModelScope.launch(Dispatchers.IO) {
+            goalsRepository.getAllGoals().collect {
+                _goalsSaved.value = it
+            }
+        }
+    }
+
+    fun getGoalsByFilter(priority: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            goalsRepository.getGoalsByFilter(priority = priority).collect {
+                _goalsSaved.value = it
+            }
+        }
+    }
+
+    fun saveGoal(goalEntity: GoalEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            goalsRepository.saveGoal(goalEntity)
+        }
+    }
+
+    fun updateGoal(goal: GoalEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            goalsRepository.updateGoal(goal)
+        }
+    }
+
+    fun deleteGoal(goal: GoalEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            goalsRepository.deleteGoal(goal)
+        }
+    }
 }

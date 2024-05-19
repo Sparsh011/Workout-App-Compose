@@ -51,7 +51,7 @@ import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.features.shared.viewmodels.ImageSelectors
 import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
-import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp

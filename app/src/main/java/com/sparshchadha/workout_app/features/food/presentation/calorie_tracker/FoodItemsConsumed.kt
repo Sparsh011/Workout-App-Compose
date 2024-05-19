@@ -17,10 +17,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
-import com.sparshchadha.workout_app.shared_ui.components.shared.CustomDivider
-import com.sparshchadha.workout_app.shared_ui.components.shared.NoWorkoutPerformedOrFoodConsumed
-import com.sparshchadha.workout_app.shared_ui.components.ui_state.ErrorDuringFetch
-import com.sparshchadha.workout_app.shared_ui.components.ui_state.ShowLoadingScreen
+import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
+import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
+import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.capitalize

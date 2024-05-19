@@ -20,8 +20,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.yoga.domain.entities.YogaEntity
 import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
-import com.sparshchadha.workout_app.shared_ui.components.shared.NoSavedItem
-import com.sparshchadha.workout_app.shared_ui.components.shared.ScaffoldTopBar
+import com.sparshchadha.workout_app.ui.components.shared.NoSavedItem
+import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp

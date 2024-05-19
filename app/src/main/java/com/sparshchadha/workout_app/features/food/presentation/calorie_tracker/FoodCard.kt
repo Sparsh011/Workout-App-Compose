@@ -35,8 +35,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import com.sparshchadha.workout_app.features.food.data.remote.dto.food_api.FoodItem
 import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
-import com.sparshchadha.workout_app.shared_ui.components.shared.PickNumberOfSetsOrQuantity
-import com.sparshchadha.workout_app.shared_ui.components.shared.rememberPickerState
+import com.sparshchadha.workout_app.ui.components.shared.PickNumberOfSetsOrQuantity
+import com.sparshchadha.workout_app.ui.components.shared.rememberPickerState
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
