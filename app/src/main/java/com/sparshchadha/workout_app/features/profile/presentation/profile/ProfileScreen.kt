@@ -1,5 +1,8 @@
 package com.sparshchadha.workout_app.features.profile.presentation.profile
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,10 +13,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,6 +70,16 @@ fun ProfileScreen(
     var shouldShowImageSelectionOptions by remember {
         mutableStateOf(false)
     }
+    var showGymSettings by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var showYogaSettings by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var showFoodSettings by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val scrollState = rememberScrollState()
 
     if (shouldShowDialogToUpdateValue) {
         DialogToUpdateValue(
@@ -92,6 +107,7 @@ fun ProfileScreen(
                     "CAMERA" -> {
                         sharedViewModel.openCamera()
                     }
+
                     "GALLERY" -> {
                         sharedViewModel.openGallery(imageSelector = ImageSelectors.PROFILE_PIC)
                     }
@@ -121,8 +137,8 @@ fun ProfileScreen(
                 ),
         )
 
-        Column (
-            modifier = Modifier.verticalScroll(rememberScrollState())
+        Column(
+            modifier = Modifier.verticalScroll(scrollState)
         ) {
 
             ProfilePictureAndUserName(
@@ -174,29 +190,68 @@ fun ProfileScreen(
                 }
             )
 
-            SettingsCategoryHeader(text = "Gym Workouts")
-
-            GymSettingsCategories(
-                navigateToRoute = {
-                    navController.navigate(it)
-                }
+            SettingsCategoryHeader(
+                text = "Gym Workouts",
+                onClick = { showGymSettings = !showGymSettings },
+                isVisible = showGymSettings
             )
 
-            SettingsCategoryHeader(text = "Yoga")
+            AnimatedVisibility(
+                visible = showGymSettings,
+                enter = slideInVertically(
+                    animationSpec = tween()
+                ),
+            ) {
+                GymSettingsCategories(
+                    navigateToRoute = {
+                        navController.navigate(it)
+                    }
+                )
+            }
 
-            YogaSettingsCategory(
-                navigateToRoute = {
-                    navController.navigate(it)
-                }
+            SettingsCategoryHeader(
+                text = "Yoga",
+                onClick = { showYogaSettings = !showYogaSettings },
+                isVisible = showYogaSettings
             )
 
-            SettingsCategoryHeader(text = "Calories & Food")
+            AnimatedVisibility(
+                visible = showYogaSettings,
+                enter = slideInVertically(
+                    animationSpec = tween()
+                ),
+            ) {
+                YogaSettingsCategory(
+                    navigateToRoute = {
+                        navController.navigate(it)
+                    }
+                )
+            }
 
-            FoodSettingsCategory(
-                navigateToRoute = {
-                    navController.navigate(it)
-                }
+            SettingsCategoryHeader(
+                text = "Calories & Food",
+                onClick = { showFoodSettings = !showFoodSettings },
+                isVisible = showFoodSettings
             )
+
+            AnimatedVisibility(
+                visible = showFoodSettings,
+                enter = slideInVertically(
+                    animationSpec = tween()
+                ),
+            ) {
+                FoodSettingsCategory(
+                    navigateToRoute = {
+                        navController.navigate(it)
+                    }
+                )
+            }
+
+            LaunchedEffect(key1 = showFoodSettings) {
+                if (showFoodSettings) {
+                    scrollState.animateScrollTo(scrollState.maxValue)
+                }
+            }
         }
     }
 }

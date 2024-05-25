@@ -12,6 +12,7 @@ import com.sparshchadha.workout_app.features.gym.domain.repository.GoalRepositor
 import com.sparshchadha.workout_app.features.gym.domain.repository.PRRepository
 import com.sparshchadha.workout_app.features.gym.domain.repository.WorkoutRepository
 import com.sparshchadha.workout_app.features.gym.presentation.gym.util.CategoryType
+import com.sparshchadha.workout_app.features.gym.presentation.gym.util.DateRange
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,6 +61,9 @@ class WorkoutViewModel @Inject constructor(
 
     private val _goalsSaved = MutableStateFlow<List<GoalEntity>>(emptyList())
     val goalsSaved = _goalsSaved.asStateFlow()
+
+    private val _dateRange = MutableStateFlow(DateRange.LAST_7_DAYS)
+    val dateRange = _dateRange.asStateFlow()
 
     fun getExercisesByMuscleFromApi(muscleType: String) {
         viewModelScope.launch {
@@ -272,5 +276,9 @@ class WorkoutViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             goalsRepository.deleteGoal(goal)
         }
+    }
+
+    fun setDateRange(dateRange: DateRange) {
+        _dateRange.value = dateRange
     }
 }

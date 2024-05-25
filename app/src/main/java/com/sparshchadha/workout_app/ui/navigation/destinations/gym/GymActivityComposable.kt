@@ -1,9 +1,9 @@
 package com.sparshchadha.workout_app.ui.navigation.destinations.gym
 
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -15,7 +15,6 @@ import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 fun NavGraphBuilder.gymActivityComposable(
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
-    globalPaddingValues: PaddingValues,
     toggleBottomBarVisibility: (Boolean) -> Unit
 ) {
     composable(
@@ -24,7 +23,8 @@ fun NavGraphBuilder.gymActivityComposable(
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
                 animationSpec = tween(
-                    durationMillis = 300
+                    durationMillis = 100,
+                    easing = LinearEasing
                 )
             )
         },
@@ -37,8 +37,7 @@ fun NavGraphBuilder.gymActivityComposable(
         }
         GymActivityScreen(
             navController = navController,
-            workoutViewModel = workoutViewModel,
-            globalPaddingValues = globalPaddingValues
+            workoutViewModel = workoutViewModel
         )
     }
 }

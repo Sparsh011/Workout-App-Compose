@@ -20,7 +20,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -88,22 +87,38 @@ class MainActivity : ComponentActivity() {
     private lateinit var analytics: FirebaseAnalytics
 
     @OptIn(ExperimentalPermissionsApi::class)
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
 
             observeInternetConnection()
+//            workoutViewModel.addGymExerciseToWorkout(
+//                GymExercisesEntity(
+//                    date = "18",
+//                    month = "May",
+//                    setsPerformed = 9,
+//                    exerciseDetails = GymExercisesDtoItem("Hard", "", "", "", "dummy", type = "")
+//                )
+//            )
+//
+//            workoutViewModel.addGymExerciseToWorkout(
+//                GymExercisesEntity(
+//                    date = "18",
+//                    month = "May",
+//                    setsPerformed = 4,
+//                    exerciseDetails = GymExercisesDtoItem("Hard", "", "", "", "dummy", type = "")
+//                )
+//            )
 
-            when (profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
+            when (val darkTheme = profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
                 null -> {
                     // show splash screen
                 }
 
                 else -> {
                     WorkoutAppTheme(
-                        darkTheme = profileViewModel.darkTheme.collectAsState().value!!
+                        darkTheme = darkTheme
                     ) {
                         analytics = Firebase.analytics
                         GoogleSignInLauncher(sharedViewModel = sharedViewModel)
