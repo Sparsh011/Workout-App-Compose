@@ -180,7 +180,6 @@ fun NavGraph(
         gymActivityComposable(
             navController = navController,
             workoutViewModel = workoutViewModel,
-            globalPaddingValues = globalPaddingValues,
             toggleBottomBarVisibility = toggleBottomBarVisibility
         )
 

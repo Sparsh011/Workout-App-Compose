@@ -2,6 +2,7 @@ package com.sparshchadha.workout_app.ui.navigation.destinations.gym
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -27,7 +28,8 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
                 animationSpec = tween(
-                    durationMillis = 300
+                    durationMillis = 100,
+                    easing = LinearEasing
                 )
             )
         },
@@ -37,7 +39,8 @@ fun NavGraphBuilder.gymExercisesPerformedComposable(
                     fullWidth
                 },
                 animationSpec = tween(
-                    durationMillis = 300
+                    durationMillis = 100,
+                    easing = LinearEasing
                 )
             )
         }

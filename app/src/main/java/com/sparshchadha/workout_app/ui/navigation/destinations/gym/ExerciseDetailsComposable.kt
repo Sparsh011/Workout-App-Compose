@@ -1,6 +1,7 @@
 package com.sparshchadha.workout_app.ui.navigation.destinations.gym
 
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +25,8 @@ fun NavGraphBuilder.exerciseDetailsComposable(
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
                 animationSpec = tween(
-                    durationMillis = 300
+                    durationMillis = 100,
+                    easing = LinearEasing
                 )
             )
         },

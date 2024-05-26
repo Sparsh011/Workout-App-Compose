@@ -317,7 +317,6 @@ object HelperFunctions {
     fun settingsForYoga(): List<String> {
         return listOf(
             "Track Workouts",
-            "Activity",
             "Saved Poses",
         )
     }

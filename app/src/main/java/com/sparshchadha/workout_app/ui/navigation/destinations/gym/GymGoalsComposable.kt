@@ -24,7 +24,7 @@ fun NavGraphBuilder.gymGoalsComposable(
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
                 animationSpec = tween(
-                    durationMillis = 300
+                    durationMillis = 100
                 )
             )
         },
