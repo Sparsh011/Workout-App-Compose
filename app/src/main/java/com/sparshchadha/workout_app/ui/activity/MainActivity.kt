@@ -30,15 +30,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionRequired
-import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -55,12 +51,11 @@ import com.sparshchadha.workout_app.features.shared.viewmodels.SharedViewModel
 import com.sparshchadha.workout_app.features.yoga.presentation.viewmodels.YogaViewModel
 import com.sparshchadha.workout_app.ui.activity.components.GoogleSignInLauncher
 import com.sparshchadha.workout_app.ui.activity.components.LandingPage
-import com.sparshchadha.workout_app.ui.activity.components.PermissionRequestDialog
 import com.sparshchadha.workout_app.ui.components.bottom_bar.BottomBar
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.ui.navigation.nav_graph.NavGraph
 import com.sparshchadha.workout_app.ui.theme.WorkoutAppTheme
-import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
+import com.sparshchadha.workout_app.util.ColorsUtil
 import com.sparshchadha.workout_app.util.HelperFunctions
 import com.sparshchadha.workout_app.util.NetworkManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -85,127 +80,59 @@ class MainActivity : ComponentActivity() {
     private val sharedViewModel: SharedViewModel by viewModels()
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var analytics: FirebaseAnalytics
+    private lateinit var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>
 
     @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContent {
-
             observeInternetConnection()
-//            workoutViewModel.addGymExerciseToWorkout(
-//                GymExercisesEntity(
-//                    date = "18",
-//                    month = "April",
-//                    setsPerformed = 16,
-//                    exerciseDetails = GymExercisesDtoItem("Hard", "", "", "", "april dummy", type = "")
-//                )
-//            )
             when (val darkTheme = profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
-                null -> {
-                    // show splash screen
-                }
+                null -> {}
 
                 else -> {
                     WorkoutAppTheme(
                         darkTheme = darkTheme
                     ) {
-                        analytics = Firebase.analytics
+                        setupAnalytics()
                         GoogleSignInLauncher(sharedViewModel = sharedViewModel)
-
-                        requestPermissionLauncher =
-                            rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-                                if (isGranted) {
-
-                                } else {
-
-                                }
-                            }
-
                         val imageSelector = sharedViewModel.mImageSelector.collectAsState().value
-
-                        val pickMedia =
-                            rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                                if (uri != null) {
-                                    handleImageSelection(uri, imageSelector)
-                                } else {
-                                    Log.d(TAG, "No media selected")
-                                }
-                                sharedViewModel.dismissGallery()
-                            }
+                        SetupPhotoPickerLauncher(imageSelector)
 
                         val openGallery by sharedViewModel.openGallery.collectAsStateWithLifecycle()
                         val openCamera by sharedViewModel.openCamera.collectAsStateWithLifecycle()
-                        var showCameraPreviewScreen by remember {
-                            mutableStateOf(false)
-                        }
 
                         if (openGallery == true) {
                             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                         }
-
-                        if (openCamera == true) {
-                            if (HelperFunctions.hasPermissions(this, Manifest.permission.CAMERA)) {
-                                showCameraPreviewScreen = true
-                            } else {
-                                val permissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
-                                CameraPermission(permissionState = permissionState, showCameraPreviewScreen = {
-                                    showCameraPreviewScreen = true
-                                })
-                                LaunchedEffect(key1 = Unit) {
-                                    permissionState.launchPermissionRequest()
-                                }
-                            }
-                        }
-
-                        val showPermissionDialogFlow by sharedViewModel.showPermissionDialog.collectAsStateWithLifecycle()
-                        val requestPermissions by sharedViewModel.requestPermissions.collectAsStateWithLifecycle()
                         val context = LocalContext.current
 
-                        when (showPermissionDialogFlow) {
-                            true -> {
-                                PermissionRequestDialog(description = "Need Permission") {
-                                    sharedViewModel.hidePermissionDialog()
-                                }
-                            }
 
-                            false -> {
+                        if (openCamera == true) {
+                            if (!HelperFunctions.hasPermissions(this, Manifest.permission.CAMERA)) {
+                                val cameraPermissionState =
+                                    rememberPermissionState(permission = Manifest.permission.CAMERA)
+                                CameraPermission(
+                                    permissionState = cameraPermissionState,
+                                    showCameraPreviewScreen = {
 
-                            }
-
-                            else -> {
-                                // ignore
-                            }
-                        }
-
-                        if (requestPermissions != null) {
-                            if (requestPermissions?.size == 1) {
-                                LaunchedEffect(key1 = Unit) {
-                                    val permission = requestPermissions!![0].first
-                                    val minSdk = requestPermissions!![0].second
-                                    if (minSdk != -1) {
-                                        requestPermissionHandler(
-                                            permission = permission,
-                                            minSdk = minSdk
-                                        )
-                                    } else {
-                                        requestPermissionHandler(permission = permission)
                                     }
+                                )
+                                LaunchedEffect(key1 = Unit) {
+                                    cameraPermissionState.launchPermissionRequest()
                                 }
-
                             } else {
-                                LaunchedEffect(key1 = Unit) {
-                                    val permissions = mutableListOf<String>()
-                                    requestPermissions?.forEach {
-                                        permissions.add(it.first)
+                                CameraPreviewScreen(
+                                    hideCameraPreviewScreen = {
+                                        sharedViewModel.dismissCamera()
+                                    },
+                                    onImageCaptured = {
+                                        sharedViewModel.dismissCamera()
+                                        if (it != null) handleImageSelection(it, ImageSelectors.PROFILE_PIC)
                                     }
-                                    requestMultiplePermissions(permissions = permissions.toTypedArray())
-                                }
+                                )
                             }
-                        }
-
-                        if (showCameraPreviewScreen) {
-                            CameraPreviewScreen()
                         } else {
                             when (sharedViewModel.isFirstTimeAppOpen.collectAsState().value) {
                                 "true" -> {
@@ -218,43 +145,7 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 "false" -> {
-                                    val navHostController = rememberNavController()
-
-                                    if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                                        LaunchedEffect(key1 = Unit) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                                requestPermission(Manifest.permission.POST_NOTIFICATIONS)
-                                            }
-                                        }
-                                        profileViewModel.updateFirstTimeAppOpen("false")
-                                    }
-
-                                    val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
-
-                                    Scaffold(
-                                        bottomBar = {
-                                            BottomBar(
-                                                navHostController = navHostController,
-                                                bottomBarState = bottomBarState.value
-                                            )
-                                        },
-                                        containerColor = scaffoldBackgroundColor
-                                    ) {
-                                        NavGraph(
-                                            navController = navHostController,
-                                            globalPaddingValues = it,
-                                            foodItemsViewModel = foodItemsViewModel,
-                                            workoutViewModel = workoutViewModel,
-                                            remindersViewModel = remindersViewModel,
-                                            profileViewModel = profileViewModel,
-                                            newsViewModel = newsViewModel,
-                                            yogaViewModel = yogaViewModel,
-                                            toggleBottomBarVisibility = { bottomBarVisibility ->
-                                                bottomBarState.value = bottomBarVisibility
-                                            },
-                                            sharedViewModel = sharedViewModel
-                                        )
-                                    }
+                                    SetupLauncherScreen(context)
                                 }
 
                                 else -> {
@@ -274,6 +165,84 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class)
+    @Composable
+    private fun SetupLauncherScreen(
+        context: Context,
+    ) {
+        val navHostController = rememberNavController()
+        var askNotifPermission by rememberSaveable {
+            mutableStateOf(false)
+        }
+
+        if (askNotifPermission) {
+            val notificationPermissionState =
+                rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+            AskNotificationPermission(
+                permissionState = notificationPermissionState,
+                onNotificationPermissionGranted = {}
+            )
+            LaunchedEffect(key1 = Unit) {
+                notificationPermissionState.launchPermissionRequest()
+            }
+        }
+
+        if (context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            LaunchedEffect(key1 = Unit) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    askNotifPermission = true
+                }
+            }
+            profileViewModel.updateFirstTimeAppOpen("false")
+        }
+
+        val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+
+        Scaffold(
+            bottomBar = {
+                BottomBar(
+                    navHostController = navHostController,
+                    bottomBarState = bottomBarState.value
+                )
+            },
+            containerColor = ColorsUtil.scaffoldBackgroundColor
+        ) {
+            NavGraph(
+                navController = navHostController,
+                globalPaddingValues = it,
+                foodItemsViewModel = foodItemsViewModel,
+                workoutViewModel = workoutViewModel,
+                remindersViewModel = remindersViewModel,
+                profileViewModel = profileViewModel,
+                newsViewModel = newsViewModel,
+                yogaViewModel = yogaViewModel,
+                toggleBottomBarVisibility = { bottomBarVisibility ->
+                    bottomBarState.value = bottomBarVisibility
+                },
+                sharedViewModel = sharedViewModel
+            )
+        }
+    }
+
+    @Composable
+    private fun SetupPhotoPickerLauncher(
+        imageSelector: ImageSelectors
+    ) {
+        pickMedia =
+            rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    handleImageSelection(uri, imageSelector)
+                } else {
+                    Log.d(TAG, "No media selected")
+                }
+                sharedViewModel.dismissGallery()
+            }
+    }
+
+    private fun setupAnalytics() {
+        analytics = Firebase.analytics
     }
 
     private fun observeInternetConnection() {
@@ -322,47 +291,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun requestPermissionHandler(
-        permission: String,
-        minSdk: Int = -1,
-        fallbackPermission: String = ""
-    ) {
-        if (minSdk != -1 && fallbackPermission.isNotBlank()) {
-            if (Build.VERSION.SDK_INT > minSdk) {
-                requestPermission(permission = permission)
-            } else {
-                requestPermission(fallbackPermission)
-            }
-        } else {
-            requestPermission(permission = permission)
-        }
-    }
-
-    private fun requestPermission(permission: String) {
-        when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(
-                this@MainActivity,
-                permission
-            ) -> {
-
-            }
-
-            else -> {
-                requestPermissionLauncher.launch(permission)
-                ActivityCompat.requestPermissions(this, arrayOf(permission), 123)
-            }
-        }
-    }
-
-    private fun requestMultiplePermissions(permissions: Array<String>) {
-        ActivityCompat.requestPermissions(this, permissions, 123)
-    }
-
-    @Composable
-    fun LaunchCamera() {
-
-    }
-
     private fun getCapturedImageBitmap(selectedPhotoUri: Uri): Bitmap {
         return when {
             Build.VERSION.SDK_INT < 28 -> MediaStore.Images.Media.getBitmap(
@@ -405,22 +333,5 @@ class MainActivity : ComponentActivity() {
         }
 
         return file.absolutePath // Returns the directory where the file exists as well as the name of the file.
-    }
-
-    @OptIn(ExperimentalPermissionsApi::class)
-    @Composable
-    fun CameraPermission(
-        permissionState: PermissionState,
-        showCameraPreviewScreen: () -> Unit
-    ) {
-        PermissionRequired(
-            permissionState = permissionState,
-            permissionNotGrantedContent = {
-
-            },
-            permissionNotAvailableContent = { /* ... */ }
-        ) {
-            showCameraPreviewScreen()
-        }
     }
 }
