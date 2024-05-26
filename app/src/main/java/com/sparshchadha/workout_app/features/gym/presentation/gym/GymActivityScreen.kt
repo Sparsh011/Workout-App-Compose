@@ -1,23 +1,30 @@
 package com.sparshchadha.workout_app.features.gym.presentation.gym
 
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,7 +64,8 @@ fun GymActivityScreen(
         topBar = {
             ScaffoldTopBar(
                 topBarDescription = "Gym Activity",
-                onBackButtonPressed = { navController.popBackStack() })
+                onBackButtonPressed = { navController.popBackStack() }
+            )
         }
     ) { innerPaddingValues ->
         if (performedExercises.isNullOrEmpty()) {
@@ -84,18 +92,14 @@ fun GymActivityScreen(
                     .clip(RoundedCornerShape(Dimensions.MEDIUM_PADDING))
                     .verticalScroll(rememberScrollState())
             ) {
-                DateRangeTabRow(
-                    currentDateRange = graphDateRange,
-                    setDateRange = { newDateRange ->
-                        workoutViewModel.setDateRange(newDateRange)
-                    }
-                )
                 if (!performedExercises.isNullOrEmpty()) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        ActivityBarGraph(graphDateRange, performedExercises)
-
-                    }
-
+                    DateRangeTabRow(
+                        currentDateRange = graphDateRange,
+                        setDateRange = { newDateRange ->
+                            workoutViewModel.setDateRange(newDateRange)
+                        }
+                    )
+                    ActivityBarGraph(graphDateRange, performedExercises)
                     ExerciseStats(performedExercises, graphDateRange)
                 }
             }
@@ -110,14 +114,46 @@ fun ExerciseStats(
 ) {
     if (performedExercises == null) return
 
-    val mostPerformedExercisePair by remember {
+    var mostPerformedExercisePair by remember {
         mutableStateOf(getMostPerformedExercise(performedExercises, dateRange))
     }
-    val leastPerformedExercisePair by remember {
+    var leastPerformedExercisePair by remember {
         mutableStateOf(getLeastPerformedExercise(performedExercises, dateRange))
     }
-    val mostActiveOn by remember {
-        mutableStateOf(getMostActiveOnDay(performedExercises, dateRange = dateRange))
+    var mostPerformedBodyPartPair by remember {
+        mutableStateOf(getMostPerformedBodyPartPair(performedExercises, dateRange))
+    }
+    var leastPerformedBodyPartPair by remember {
+        mutableStateOf(getLeastPerformedBodyPartPair(performedExercises, dateRange))
+    }
+    var mostActiveOn by remember {
+        mutableStateOf(getMostActiveOnDay(performedExercises, dateRange))
+    }
+
+    when (dateRange) {
+        DateRange.LAST_7_DAYS -> {
+            mostPerformedExercisePair = getMostPerformedExercise(performedExercises, dateRange)
+            leastPerformedExercisePair = getLeastPerformedExercise(performedExercises, dateRange)
+            mostActiveOn = getMostActiveOnDay(performedExercises, dateRange)
+            mostPerformedBodyPartPair = getMostPerformedBodyPartPair(performedExercises, dateRange)
+            leastPerformedBodyPartPair = getLeastPerformedBodyPartPair(performedExercises, dateRange)
+        }
+
+        DateRange.LAST_30_DAYS -> {
+            mostPerformedExercisePair = getMostPerformedExercise(performedExercises, dateRange)
+            leastPerformedExercisePair = getLeastPerformedExercise(performedExercises, dateRange)
+            mostActiveOn = getMostActiveOnDay(performedExercises, dateRange)
+            mostPerformedBodyPartPair = getMostPerformedBodyPartPair(performedExercises, dateRange)
+            leastPerformedBodyPartPair = getLeastPerformedBodyPartPair(performedExercises, dateRange)
+        }
+
+        DateRange.LAST_6_MONTHS -> {
+            mostPerformedExercisePair = getMostPerformedExercise(performedExercises, dateRange)
+            leastPerformedExercisePair = getLeastPerformedExercise(performedExercises, dateRange)
+            mostActiveOn = getMostActiveOnDay(performedExercises, dateRange)
+            mostPerformedBodyPartPair = getMostPerformedBodyPartPair(performedExercises, dateRange)
+            leastPerformedBodyPartPair = getLeastPerformedBodyPartPair(performedExercises, dateRange)
+        }
     }
 
     MostOrLeastPerformedExercise(
@@ -134,52 +170,96 @@ fun ExerciseStats(
         heading = "Least Performed Exercise"
     )
 
+    MostOrLeastPerformedExercise(
+        performedExercisePair = mostPerformedBodyPartPair,
+        dateRange = dateRange,
+        isMostPerformed = true,
+        heading = "Most Trained Muscle"
+    )
+
+    MostOrLeastPerformedExercise(
+        performedExercisePair = leastPerformedBodyPartPair,
+        dateRange = dateRange,
+        isMostPerformed = false,
+        heading = "Least Trained Muscle"
+    )
+
     MostActiveOn(
         heading = "Most active on",
-        dateRange = dateRange,
         mostActiveOn = mostActiveOn
     )
 }
 
-@Composable
-fun MostActiveOn(
-    heading: String,
-    dateRange: DateRange,
-    mostActiveOn: Pair<Pair<String, String>, Int>
-) {
-    Header(heading = heading)
+fun getLeastPerformedBodyPartPair(
+    performedExercises: List<GymExercisesEntity>,
+    dateRange: DateRange
+): Pair<String, Int> {
+    val now = LocalDate.now()
+    val startDate = when (dateRange) {
+        DateRange.LAST_7_DAYS -> now.minusDays(7)
+        DateRange.LAST_30_DAYS -> now.minusDays(30)
+        DateRange.LAST_6_MONTHS -> now.minusMonths(6)
+    }
+    var minSets = Int.MAX_VALUE
+    var result = Pair("", minSets)
+    val exercisesMap = hashMapOf<String, Int>()
+    val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
 
-    AnnotatedBody(
-        annotatedString = buildAnnotatedString {
-            append("Performed ")
-            withStyle(
-                style = SpanStyle(
-                    color = ColorsUtil.targetAchievedColor,
-                    fontWeight = FontWeight.Bold,
-                )
-            ) {
-                append("${mostActiveOn.second} ")
-            }
-            append("sets of ")
-            withStyle(
-                style = SpanStyle(
-                    color = ColorsUtil.targetAchievedColor,
-                    fontWeight = FontWeight.Bold,
-                )
-            ) {
-                append("${mostActiveOn.first.second} ")
-            }
-            append("on ")
-            withStyle(
-                style = SpanStyle(
-                    color = ColorsUtil.targetAchievedColor,
-                    fontWeight = FontWeight.Bold,
-                )
-            ) {
-                append("${mostActiveOn.first.first} ")
-            }
+    for (exercise in performedExercises) {
+        val dateString = "%02d-%02d-%04d".format(
+            exercise.date.toInt(),
+            HelperFunctions.getMonthIndexFromName(exercise.month),
+            now.year
+        )
+        val exerciseDate = LocalDate.parse(dateString, dateFormatter)
+        if (exerciseDate.isBefore(startDate)) continue
+
+        exercisesMap[exercise.exerciseDetails?.muscle ?: "Unknown name"] =
+            exercise.setsPerformed + (exercisesMap[exercise.exerciseDetails?.muscle] ?: 0)
+        if (minSets > (exercisesMap[exercise.exerciseDetails?.muscle] ?: 0)) {
+            minSets = exercisesMap[exercise.exerciseDetails?.muscle]!!
+            result = Pair(exercise.exerciseDetails?.muscle ?: "Unknown", minSets)
         }
-    )
+    }
+
+    return result
+}
+
+fun getMostPerformedBodyPartPair(
+    performedExercises: List<GymExercisesEntity>,
+    dateRange: DateRange
+): Pair<String, Int> {
+    val now = LocalDate.now()
+    val startDate = when (dateRange) {
+        DateRange.LAST_7_DAYS -> now.minusDays(7)
+        DateRange.LAST_30_DAYS -> now.minusDays(30)
+        DateRange.LAST_6_MONTHS -> now.minusMonths(6)
+    }
+
+    var maxSets = Int.MIN_VALUE
+    var result = Pair("", maxSets)
+    val exercisesMap = hashMapOf<String, Int>()
+    val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
+
+    for (exercise in performedExercises) {
+        val dateString = "%02d-%02d-%04d".format(
+            exercise.date.toInt(),
+            HelperFunctions.getMonthIndexFromName(exercise.month),
+            now.year
+        )
+        val exerciseDate = LocalDate.parse(dateString, dateFormatter)
+        if (exerciseDate.isBefore(startDate)) continue
+
+        val muscleTarget = exercise.exerciseDetails?.muscle ?: "Unknown name"
+        exercisesMap[muscleTarget] = exercise.setsPerformed + (exercisesMap[muscleTarget] ?: 0)
+
+        if (maxSets < exercisesMap[muscleTarget]!!) {
+            maxSets = exercisesMap[muscleTarget]!!
+            result = Pair(muscleTarget, maxSets)
+        }
+    }
+
+    return result
 }
 
 private fun getMostPerformedExercise(
@@ -199,7 +279,11 @@ private fun getMostPerformedExercise(
     val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
 
     for (exercise in performedExercises) {
-        val dateString = "%02d-%02d-%04d".format(exercise.date.toInt(), HelperFunctions.getMonthIndexFromName(exercise.month), now.year)
+        val dateString = "%02d-%02d-%04d".format(
+            exercise.date.toInt(),
+            HelperFunctions.getMonthIndexFromName(exercise.month),
+            now.year
+        )
         val exerciseDate = LocalDate.parse(dateString, dateFormatter)
         if (exerciseDate.isBefore(startDate)) continue
 
@@ -231,7 +315,11 @@ private fun getLeastPerformedExercise(
     val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
 
     for (exercise in performedExercises) {
-        val dateString = "%02d-%02d-%04d".format(exercise.date.toInt(), HelperFunctions.getMonthIndexFromName(exercise.month), now.year)
+        val dateString = "%02d-%02d-%04d".format(
+            exercise.date.toInt(),
+            HelperFunctions.getMonthIndexFromName(exercise.month),
+            now.year
+        )
         val exerciseDate = LocalDate.parse(dateString, dateFormatter)
         if (exerciseDate.isBefore(startDate)) continue
 
@@ -262,7 +350,11 @@ private fun getMostActiveOnDay(
     val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
 
     for (exercise in performedExercises) {
-        val dateString = "%02d-%02d-%04d".format(exercise.date.toInt(), HelperFunctions.getMonthIndexFromName(exercise.month), now.year)
+        val dateString = "%02d-%02d-%04d".format(
+            exercise.date.toInt(),
+            HelperFunctions.getMonthIndexFromName(exercise.month),
+            now.year
+        )
         val exerciseDate = LocalDate.parse(dateString, dateFormatter)
 
         if (exerciseDate.isBefore(startDate)) continue
@@ -296,6 +388,21 @@ fun DateRangeTabRow(
     TabRow(
         selectedTabIndex = selectedTab,
         containerColor = ColorsUtil.scaffoldBackgroundColor,
+        indicator = { tabPositions ->
+            if (selectedTab < tabPositions.size) {
+                TabRowDefaults.SecondaryIndicator(
+                    modifier = Modifier
+                        .tabIndicatorOffset(tabPositions[selectedTab])
+                        .clip(
+                            RoundedCornerShape(
+                                topEnd = Dimensions.LARGE_PADDING,
+                                topStart = Dimensions.LARGE_PADDING
+                            )
+                        ),
+                    color = ColorsUtil.primaryBlue
+                )
+            }
+        },
         tabs = {
             DateTab(
                 title = "Last 7 days",
@@ -317,6 +424,8 @@ fun DateRangeTabRow(
             }
         }
     )
+
+    Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
 }
 
 @Composable
@@ -349,22 +458,85 @@ private fun MostOrLeastPerformedExercise(
     isMostPerformed: Boolean,
     heading: String
 ) {
-    Header(heading)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(Dimensions.MEDIUM_PADDING),
+        colors = CardDefaults.cardColors(
+            containerColor = ColorsUtil.bottomBarColor
+        )
+    ) {
+        Header(heading)
 
-    AnnotatedBody(
-        buildAnnotatedString {
-            append("${performedExercisePair.first}, ")
-            withStyle(
-                style = SpanStyle(
-                    color = if (isMostPerformed) ColorsUtil.targetAchievedColor else ColorsUtil.noAchievementColor,
-                    fontWeight = FontWeight.Bold,
-                )
-            ) {
-                append("${performedExercisePair.second} sets")
+        AnnotatedBody(
+            buildAnnotatedString {
+                append("${performedExercisePair.first}, ")
+                withStyle(
+                    style = SpanStyle(
+                        color = if (isMostPerformed) ColorsUtil.targetAchievedColor else ColorsUtil.noAchievementColor,
+                        fontWeight = FontWeight.Bold,
+                    )
+                ) {
+                    append("${performedExercisePair.second} sets")
+                }
+                append(" performed in ${dateRange.name.lowercase().replace('_', ' ')}")
+            },
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
+    }
+}
+
+@Composable
+fun MostActiveOn(
+    heading: String,
+    mostActiveOn: Pair<Pair<String, String>, Int>
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(Dimensions.MEDIUM_PADDING),
+        colors = CardDefaults.cardColors(
+            containerColor = ColorsUtil.bottomBarColor
+        )
+    ) {
+        Header(heading = heading)
+
+        AnnotatedBody(
+            annotatedString = buildAnnotatedString {
+                append("Performed ")
+                withStyle(
+                    style = SpanStyle(
+                        color = ColorsUtil.targetAchievedColor,
+                        fontWeight = FontWeight.Bold,
+                    )
+                ) {
+                    append("${mostActiveOn.second} ")
+                }
+                append("sets of ")
+                withStyle(
+                    style = SpanStyle(
+                        color = ColorsUtil.targetAchievedColor,
+                        fontWeight = FontWeight.Bold,
+                    )
+                ) {
+                    append("${mostActiveOn.first.first} ")
+
+                }
+                append("on ")
+                withStyle(
+                    style = SpanStyle(
+                        color = ColorsUtil.targetAchievedColor,
+                        fontWeight = FontWeight.Bold,
+                    )
+                ) {
+                    append("${mostActiveOn.first.second} ")
+                }
             }
-            append(" performed in ${dateRange.name.lowercase().replace('_', ' ')}")
-        },
-    )
+        )
+
+        Spacer(modifier = Modifier.height(Dimensions.MEDIUM_PADDING))
+    }
 }
 
 @Composable

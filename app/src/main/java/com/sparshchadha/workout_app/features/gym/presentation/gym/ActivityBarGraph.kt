@@ -1,71 +1,117 @@
 package com.sparshchadha.workout_app.features.gym.presentation.gym
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.sparshchadha.workout_app.features.gym.domain.entities.GymExercisesEntity
 import com.sparshchadha.workout_app.features.gym.presentation.gym.util.DateRange
+import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
 import com.sparshchadha.workout_app.util.ColorsUtil
+import com.sparshchadha.workout_app.util.Dimensions
 import com.sparshchadha.workout_app.util.HelperFunctions
-import java.text.SimpleDateFormat
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import java.util.Date
 import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ActivityBarGraph(
     graphDateRange: DateRange,
-    exercises: List<GymExercisesEntity>?
+    exercises: List<GymExercisesEntity>?,
 ) {
-    val graphValueTextColor = ColorsUtil.primaryTextColor.toArgb()
-    val configuration = LocalConfiguration.current.screenHeightDp
-    AndroidView(
-        modifier = Modifier
-            .height((configuration / 2).dp)
-            .fillMaxWidth(),
-        factory = { context ->
-            val chart = BarChart(context)
-            val dataSet = BarDataSet(getBarEntries(exercises, graphDateRange), "Number Of Sets").apply {
-                color = ColorsUtil.primaryBlue.toArgb()
-                valueTextColor = graphValueTextColor
-            }
-            chart.description.isEnabled = false
-            val barDataSet = BarData(dataSet)
-            chart.data = barDataSet
 
-            chart.xAxis.valueFormatter = DateValueFormatter()
-            chart.axisLeft.axisMinimum = 0f
-            chart.axisLeft.axisMaximum = 10f
-            chart.xAxis.setDrawGridLines(false)
-            chart.xAxis.setDrawLabels(true)
-            chart.setTouchEnabled(false)
-            chart
+    var showGraph by remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        delay(1000L)
+        showGraph = true
+    }
+
+    if (showGraph) {
+        val modelProducer = remember { CartesianChartModelProducer.build() }
+
+        LaunchedEffect(graphDateRange) {
+            val dataSet = getBarEntries(exercises, graphDateRange)
+            modelProducer.tryRunTransaction {
+                columnSeries {
+                    series(y = dataSet)
+                }
+            }
         }
-    )
+
+        CartesianChartHost(
+            chart = rememberCartesianChart(
+                rememberColumnCartesianLayer(
+                    columnProvider = ColumnCartesianLayer.ColumnProvider.series(
+                        rememberLineComponent(
+                            ColorsUtil.primaryBlue,
+                            8f.dp,
+                            Shape.rounded(40),
+                        ),
+                    ),
+                ),
+                startAxis = rememberStartAxis(),
+                bottomAxis = rememberBottomAxis(),
+            ),
+            modelProducer = modelProducer,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimensions.MEDIUM_PADDING),
+        )
+    } else {
+        Column (
+            modifier = Modifier.padding(Dimensions.LARGE_PADDING + Dimensions.LARGE_PADDING)
+        ){
+            ShowLoadingScreen()
+        }
+    }
 }
 
-private fun getBarEntries(exercises: List<GymExercisesEntity>?, dateRange: DateRange): List<BarEntry> {
+private fun getBarEntries(
+    exercises: List<GymExercisesEntity>?,
+    dateRange: DateRange
+): Collection<Number> {
     if (exercises == null) return emptyList()
     val currentDate = LocalDate.now()
-    val startDate = when (dateRange) {
-        DateRange.LAST_7_DAYS -> currentDate.minusDays(7)
-        DateRange.LAST_30_DAYS -> currentDate.minusDays(30)
-        DateRange.LAST_6_MONTHS -> currentDate.minusMonths(6)
+    val startDate: LocalDate
+    val lineClusterThreshold: Int // Used to club 'lineClusterThreshold' number of days on X axis to prevent spillage of graph
+
+    when (dateRange) {
+        DateRange.LAST_7_DAYS -> {
+            startDate = currentDate.minusDays(6)
+            lineClusterThreshold = 1
+        }
+
+        DateRange.LAST_30_DAYS -> {
+            startDate = currentDate.minusDays(29)
+            lineClusterThreshold = 6
+        }
+
+        DateRange.LAST_6_MONTHS -> {
+            startDate = currentDate.minusMonths(5)
+            lineClusterThreshold = 30
+        }
     }
 
     val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy", Locale.getDefault())
@@ -96,16 +142,27 @@ private fun getBarEntries(exercises: List<GymExercisesEntity>?, dateRange: DateR
     }
 
     val barEntries = setsByDate.map { (date, sets) ->
-        BarEntry(date.toEpochDay().toFloat(), sets.toFloat())
+        sets
     }
 
-    return barEntries
+    return if (lineClusterThreshold == 1) barEntries
+    else getBarEntriesWithCluster(
+        lineClusterThreshold = lineClusterThreshold,
+        barEntries = barEntries
+    )
 }
 
-class DateValueFormatter : ValueFormatter() {
-    private val dateFormat = SimpleDateFormat("dd/MM", Locale.getDefault())
-
-    override fun getFormattedValue(value: Float): String {
-        return dateFormat.format(Date(value.toLong()))
+fun getBarEntriesWithCluster(lineClusterThreshold: Int, barEntries: List<Int>): Collection<Number> {
+    val newEntries = mutableListOf<Number>()
+    var i = barEntries.size - 1
+    while (i >= 0) {
+        var currentThreshold = lineClusterThreshold
+        var sum = 0
+        while (currentThreshold > 0 && i >= 0) {
+            sum += barEntries[i--]
+            currentThreshold--
+        }
+        newEntries.add(sum)
     }
+    return newEntries.reversed()
 }

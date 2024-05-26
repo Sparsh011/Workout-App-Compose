@@ -96,21 +96,11 @@ class MainActivity : ComponentActivity() {
 //            workoutViewModel.addGymExerciseToWorkout(
 //                GymExercisesEntity(
 //                    date = "18",
-//                    month = "May",
-//                    setsPerformed = 9,
-//                    exerciseDetails = GymExercisesDtoItem("Hard", "", "", "", "dummy", type = "")
+//                    month = "April",
+//                    setsPerformed = 16,
+//                    exerciseDetails = GymExercisesDtoItem("Hard", "", "", "", "april dummy", type = "")
 //                )
 //            )
-//
-//            workoutViewModel.addGymExerciseToWorkout(
-//                GymExercisesEntity(
-//                    date = "18",
-//                    month = "May",
-//                    setsPerformed = 4,
-//                    exerciseDetails = GymExercisesDtoItem("Hard", "", "", "", "dummy", type = "")
-//                )
-//            )
-
             when (val darkTheme = profileViewModel.darkTheme.collectAsStateWithLifecycle().value) {
                 null -> {
                     // show splash screen

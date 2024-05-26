@@ -163,15 +163,17 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
     // endregion
 
-    // region MPCharts
-    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    // endregion
-
     // region firebase performance monitoring
     implementation("com.google.firebase:firebase-perf-ktx:20.5.2")
     // endregion
 
     // region accompanist for permissions
     implementation ("com.google.accompanist:accompanist-permissions:0.23.1")
+    // endregion
+
+    // region Vico charts
+    implementation("com.patrykandpatrick.vico:compose:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.20")
+    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.20")
     // endregion
 }
