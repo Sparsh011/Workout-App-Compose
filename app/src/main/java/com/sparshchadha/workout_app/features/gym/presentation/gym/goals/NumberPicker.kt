@@ -74,7 +74,6 @@ fun NumberPicker(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun vibrate(view: View) {
     view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
 }

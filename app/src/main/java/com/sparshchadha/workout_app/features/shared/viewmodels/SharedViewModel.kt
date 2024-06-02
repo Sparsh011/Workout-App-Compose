@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sparshchadha.workout_app.application.BaseRepository
 import com.sparshchadha.workout_app.storage.datastore.WorkoutAppDatastorePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,8 @@ private const val TAG = "SharedViewModelTaggg"
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(
-    private val datastorePreference: WorkoutAppDatastorePreference
+    private val datastorePreference: WorkoutAppDatastorePreference,
+    private val baseRepository: BaseRepository
 ) : ViewModel() {
     private val _showPermissionDialog = MutableStateFlow<Boolean?>(null)
     val showPermissionDialog = _showPermissionDialog.asStateFlow()
@@ -132,6 +134,13 @@ class SharedViewModel @Inject constructor(
 
     fun updateInternetStatus(status: Boolean) {
         _isConnectedToInternet.value = status
+    }
+
+    fun sendGoogleIdTokenToBackend(idToken: String?) {
+        if (idToken == null) return
+        viewModelScope.launch(Dispatchers.IO) {
+            baseRepository.sendGoogleIdTokenToBackend(idToken)
+        }
     }
 }
 

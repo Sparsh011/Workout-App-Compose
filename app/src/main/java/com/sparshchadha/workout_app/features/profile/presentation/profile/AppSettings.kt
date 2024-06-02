@@ -21,10 +21,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import com.sparshchadha.workout_app.util.ColorsUtil.bottomBarColor
-import com.sparshchadha.workout_app.util.ColorsUtil.noAchievementColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryBlue
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
-import com.sparshchadha.workout_app.util.ColorsUtil.targetAchievedColor
 import com.sparshchadha.workout_app.util.Dimensions.MEDIUM_PADDING
 import com.sparshchadha.workout_app.util.Dimensions.SMALL_PADDING
 import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
@@ -65,15 +63,15 @@ fun AppSettings(
             }
         )
 
-        AppSettingCategory(
-            text = if (loginToken.isNotBlank()) "Sign Out" else "Sign In",
-            showToggleSwitch = false,
-            isDarkTheme = isDarkTheme,
-            setDarkTheme = setDarkTheme,
-            textColor = if (loginToken.isNotBlank()) noAchievementColor else targetAchievedColor,
-            fontWeight = FontWeight.Normal,
-            onClick = onAuthButtonClick,
-        )
+//        AppSettingCategory(
+//            text = if (loginToken.isNotBlank()) "Sign Out" else "Sign In",
+//            showToggleSwitch = false,
+//            isDarkTheme = isDarkTheme,
+//            setDarkTheme = setDarkTheme,
+//            textColor = if (loginToken.isNotBlank()) noAchievementColor else targetAchievedColor,
+//            fontWeight = FontWeight.Normal,
+//            onClick = onAuthButtonClick,
+//        )
     }
 }
 

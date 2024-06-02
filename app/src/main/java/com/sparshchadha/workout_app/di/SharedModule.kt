@@ -19,6 +19,7 @@ import com.sparshchadha.workout_app.features.food.data.repository.WaterRepositor
 import com.sparshchadha.workout_app.features.food.domain.repository.FoodItemsRepository
 import com.sparshchadha.workout_app.features.food.domain.repository.PexelsRepository
 import com.sparshchadha.workout_app.features.food.domain.repository.WaterRepository
+import com.sparshchadha.workout_app.features.google_auth.AuthApi
 import com.sparshchadha.workout_app.features.gym.data.local.room.dao.GoalsDao
 import com.sparshchadha.workout_app.features.gym.data.local.room.dao.GymExercisesDao
 import com.sparshchadha.workout_app.features.gym.data.local.room.dao.PRDao
@@ -169,6 +170,20 @@ object SharedModule {
             .create(NewsApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideAuthApi(
+        okHttpClient: OkHttpClient,
+    ): AuthApi {
+        return Retrofit.Builder()
+            .baseUrl(AuthApi.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+            .client(okHttpClient)
+            .build()
+            .create(AuthApi::class.java)
+    }
+
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     @Provides
     @Singleton
@@ -311,9 +326,10 @@ object SharedModule {
     @Singleton
     @Provides
     fun provideBaseRepository(
-        workoutAppDatabase: WorkoutAppDatabase
+        workoutAppDatabase: WorkoutAppDatabase,
+        authApi: AuthApi
     ) : BaseRepository{
-        return BaseRepository(workoutAppDatabase = workoutAppDatabase)
+        return BaseRepository(workoutAppDatabase = workoutAppDatabase, authApi)
     }
 
     @Singleton

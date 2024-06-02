@@ -1,6 +1,7 @@
 package com.sparshchadha.workout_app.ui.activity.components
 
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -45,8 +46,10 @@ fun GoogleSignInLauncher(
                         sharedViewModel.updateLoginResult(result = false)
                     }
                 },
-                getAccessToken = {
+                getAccessToken = { googleIdToken ->
                     // send access token to backend to verify.
+//                    sharedViewModel.sendGoogleIdTokenToBackend(googleIdToken)
+                    Log.e("TAG", "GoogleSignInLauncher: idToken - $googleIdToken")
                 }
             )
         }
