@@ -1,6 +1,5 @@
 package com.sparshchadha.workout_app.features.food.presentation.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -232,7 +231,6 @@ class FoodAndWaterViewModel @Inject constructor(
             waterRepository.getGlassesConsumedOn(
                 date = date, month = month, year = "2024"
             ).collect {
-                Log.d(TAG, "getWaterGlassesConsumedOn: $it")
                 _waterGlassesEntity.value = it
             }
         }

@@ -1,7 +1,5 @@
 package com.sparshchadha.workout_app.ui.navigation.nav_graph
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -35,7 +33,6 @@ import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaActivity
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaComposable
 import com.sparshchadha.workout_app.ui.navigation.destinations.yoga.yogaPosesPerformedTodayComposable
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -52,7 +49,7 @@ fun NavGraph(
 
     NavHost(
         navController = navController,
-        startDestination = ScreenRoutes.ProfileScreen.route
+        startDestination = ScreenRoutes.CalorieTracker.route
     ) {
         // Workout Tracker in Bottom Bar
         bottomWorkoutComposable(

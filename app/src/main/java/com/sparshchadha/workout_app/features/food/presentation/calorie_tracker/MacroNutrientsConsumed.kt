@@ -1,5 +1,6 @@
 package com.sparshchadha.workout_app.features.food.presentation.calorie_tracker
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -335,17 +336,20 @@ fun calculateStartAngles(entries: List<PieChartEntry>): List<Float> {
 
 @Composable
 fun PieChart(entries: List<PieChartEntry>, size: Dp) {
+    Log.e(TAG, "PieChart: called")
     Canvas(modifier = Modifier.size(size)) {
         val startAngles = calculateStartAngles(entries)
-        entries.forEachIndexed { index, entry ->
-            drawArc(
-                color = entry.color,
-                startAngle = startAngles[index],
-                sweepAngle = entry.percentage * 360f,
-                useCenter = true,
-                topLeft = Offset.Zero,
-                size = this.size,
-            )
+        entries.forEachIndexed loop@{ index, entry ->
+            if (startAngles[index] > 0.0) {
+                drawArc(
+                    color = entry.color,
+                    startAngle = startAngles[index],
+                    sweepAngle = entry.percentage * 360f,
+                    useCenter = true,
+                    topLeft = Offset.Zero,
+                    size = this.size,
+                )
+            }
         }
     }
 }
