@@ -25,11 +25,14 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
 import com.sparshchadha.workout_app.features.food.presentation.viewmodels.FoodAndWaterViewModel
 import com.sparshchadha.workout_app.ui.components.bottom_bar.ScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.CustomDivider
+import com.sparshchadha.workout_app.ui.components.shared.PieChart
+import com.sparshchadha.workout_app.ui.components.shared.PieChartEntry
 import com.sparshchadha.workout_app.ui.components.shared.ScaffoldTopBar
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.scaffoldBackgroundColor
@@ -48,19 +51,19 @@ fun FoodItemDetails(
     navController: NavHostController,
     globalPaddingValues: PaddingValues,
     foodItemsViewModel: FoodAndWaterViewModel,
-    foodItemId: Int?,
 ) {
-    if (foodItemId != null) {
-        LaunchedEffect(key1 = true) {
-            foodItemsViewModel.getFoodItemById(id = foodItemId)
-        }
-        Log.i("MacroNutrientsConsumed", "FoodItemDetails: called for food entity")
-        val foodItem = foodItemsViewModel.foodItemEntity.value
+    val foodItemId = foodItemsViewModel.dishDetailId.collectAsStateWithLifecycle().value
+    LaunchedEffect(key1 = foodItemId) {
+        foodItemsViewModel.getFoodItemById(id = foodItemId)
+    }
 
+    val foodItem = foodItemsViewModel.foodItemEntity.collectAsStateWithLifecycle().value
+
+    if (foodItemId != -1 && foodItem != null) {
         Scaffold(
             topBar = {
                 ScaffoldTopBar(
-                    topBarDescription = foodItem?.foodItemDetails?.name?.capitalize()
+                    topBarDescription = foodItem.foodItemDetails?.name?.capitalize()
                         ?: "Unable To Get Name!",
                     onBackButtonPressed = {
                         navController.popBackStack(ScreenRoutes.CalorieTracker.route, false)
@@ -101,37 +104,47 @@ fun FoodItemDetails(
 
                 Spacer(modifier = Modifier.height(LARGE_PADDING))
 
-                MacrosPieChart(foodItem = foodItem)
+                foodItem?.let {
+                    MacrosPieChart(foodItem = foodItem)
+                }
 
                 Spacer(modifier = Modifier.height(LARGE_PADDING))
             }
         }
-    } else {
-        // TODO
     }
+
+
 }
 
 @Composable
-fun MacrosPieChart(foodItem: FoodItemEntity?) {
-    val pieCharEntries = mutableListOf<PieChartEntry>()
+fun MacrosPieChart(foodItem: FoodItemEntity) {
+    val pieCharEntries = remember {
+        mutableListOf<PieChartEntry>()
+    }
+
+    val protein by remember {
+        mutableDoubleStateOf(foodItem.foodItemDetails?.protein_g ?: 0.0)
+    }
+    val carbohydrates by remember {
+        mutableDoubleStateOf((foodItem.foodItemDetails?.carbohydrates_total_g ?: 0.0))
+    }
+    val fats by remember {
+        mutableDoubleStateOf(foodItem.foodItemDetails?.fat_total_g ?: 0.0)
+    }
 
     val totalMacros by remember {
         mutableDoubleStateOf(
-            (foodItem?.foodItemDetails?.fat_total_g ?: 0.0) +
-                    (foodItem?.foodItemDetails?.protein_g ?: 0.0) +
-                    (foodItem?.foodItemDetails?.carbohydrates_total_g ?: 0.0)
+            protein +
+                    carbohydrates +
+                    fats
         )
     }
-
-    val protein = (foodItem?.foodItemDetails?.protein_g ?: 0.0 )
-    val carbohydrates = (foodItem?.foodItemDetails?.carbohydrates_total_g ?: 0.0 )
-    val fats = (foodItem?.foodItemDetails?.protein_g ?: 0.0 )
 
     if (protein > 0.0) {
         pieCharEntries.add(
             PieChartEntry(
                 color = COLOR_TO_NUTRIENT_MAP[PROTEIN_G]!!,
-                percentage = ( protein / totalMacros).toFloat()
+                percentage = (protein / totalMacros).toFloat()
             )
         )
     }
@@ -140,7 +153,7 @@ fun MacrosPieChart(foodItem: FoodItemEntity?) {
         pieCharEntries.add(
             PieChartEntry(
                 color = COLOR_TO_NUTRIENT_MAP[Constants.FAT_TOTAL_G]!!,
-                percentage = ((foodItem?.foodItemDetails?.fat_total_g ?: 0.0 ) / totalMacros).toFloat()
+                percentage = (fats / totalMacros).toFloat()
             )
         )
     }
@@ -150,12 +163,12 @@ fun MacrosPieChart(foodItem: FoodItemEntity?) {
         pieCharEntries.add(
             PieChartEntry(
                 color = COLOR_TO_NUTRIENT_MAP[CARBOHYDRATES_TOTAL_G]!!,
-                percentage = ((foodItem?.foodItemDetails?.carbohydrates_total_g ?: 0.0 ) / totalMacros).toFloat()
+                percentage = (carbohydrates / totalMacros).toFloat()
             )
         )
     }
 
-    Log.d("MacroNutrientsConsumed", "MacrosPieChart: calling pie chart")
+    Log.d("MacroNutrientsConsumed", "Pie chart entries - $pieCharEntries")
     PieChart(entries = pieCharEntries, size = Dimensions.PIE_CHART_SIZE)
 }
 

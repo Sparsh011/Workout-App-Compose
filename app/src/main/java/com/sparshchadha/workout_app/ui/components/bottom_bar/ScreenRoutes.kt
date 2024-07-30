@@ -67,7 +67,7 @@ sealed class UtilityScreenRoutes(
     )
 
     object FoodItemDetailsScreen : UtilityScreenRoutes(
-        route = "FoodItemDetails/{foodItemId}",
+        route = "FoodItemDetails",
         title = "Food Item Details"
     )
 

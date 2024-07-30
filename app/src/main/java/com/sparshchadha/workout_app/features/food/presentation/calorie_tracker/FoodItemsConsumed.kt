@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import com.sparshchadha.workout_app.features.food.domain.entities.FoodItemEntity
+import com.sparshchadha.workout_app.ui.components.bottom_bar.UtilityScreenRoutes
 import com.sparshchadha.workout_app.ui.components.shared.NoWorkoutPerformedOrFoodConsumed
 import com.sparshchadha.workout_app.ui.components.ui_state.ErrorDuringFetch
 import com.sparshchadha.workout_app.ui.components.ui_state.ShowLoadingScreen
@@ -34,7 +35,8 @@ import com.sparshchadha.workout_app.util.Resource
 fun FoodItemsConsumed(
     foodItemsConsumed: Resource<List<FoodItemEntity>>?,
     navController: NavController,
-    removeFoodItem: (FoodItemEntity) -> Unit
+    removeFoodItem: (FoodItemEntity) -> Unit,
+    setDetailsFoodItemId: (Int) -> Unit
 ) {
     when (foodItemsConsumed) {
         is Resource.Error -> {
@@ -66,7 +68,8 @@ fun FoodItemsConsumed(
                         FoodItem(
                             consumedFoodItem = foodItemsConsumed.data[index],
                             showFoodItemDetails = {
-                                navController.navigate(route = "FoodItemDetails/${foodItemsConsumed.data[index].id}")
+                                navController.navigate(route = UtilityScreenRoutes.FoodItemDetailsScreen.route)
+                                setDetailsFoodItemId(foodItemsConsumed.data[index].id ?: -1)
                             },
                             removeFoodItem = {
                                 removeFoodItem(it)

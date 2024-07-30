@@ -1,7 +1,5 @@
 package com.sparshchadha.workout_app.features.food.presentation.calorie_tracker
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -53,7 +51,6 @@ import com.sparshchadha.workout_app.util.Extensions.nonScaledSp
 
 private const val TAG = "CalorieTrackerScreen"
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FoodScreen(
     navController: NavHostController,
@@ -62,7 +59,7 @@ fun FoodScreen(
     profileViewModel: ProfileViewModel
 ) {
     val caloriesGoal = profileViewModel.caloriesGoal.collectAsState().value
-    val caloriesConsumed = foodAndWaterViewModel.caloriesConsumed.collectAsState().value ?: "0"
+    val caloriesConsumed = foodAndWaterViewModel.caloriesConsumed.collectAsState().value
     val selectedDateAndMonth =
         foodAndWaterViewModel.selectedDateAndMonthForFoodItems.collectAsState().value
     val waterGlassesGoal = profileViewModel.waterGlassesGoal.collectAsState().value
@@ -198,6 +195,9 @@ fun FoodScreen(
                     navController,
                     removeFoodItem = {
                         foodAndWaterViewModel.removeFoodItem(it)
+                    },
+                    setDetailsFoodItemId = {
+                        foodAndWaterViewModel.setDishDetailId(it)
                     }
                 )
             }

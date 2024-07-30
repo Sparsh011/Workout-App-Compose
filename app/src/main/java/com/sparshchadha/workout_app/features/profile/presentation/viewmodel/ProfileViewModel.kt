@@ -39,7 +39,7 @@ class ProfileViewModel @Inject constructor(
     private val _weightGoal = MutableStateFlow("")
     val weightGoal: StateFlow<String> = _weightGoal
 
-    private val _caloriesGoal = MutableStateFlow("")
+    private val _caloriesGoal = MutableStateFlow("0")
     val caloriesGoal: StateFlow<String> = _caloriesGoal
 
     private val _name = MutableStateFlow("")
