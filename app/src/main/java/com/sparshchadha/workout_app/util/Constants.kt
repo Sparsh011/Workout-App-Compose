@@ -14,5 +14,4 @@ object Constants {
     )
 
     const val REMINDER_DESCRIPTION_KEY = "REMINDER_DESCRIPTION"
-//    val FIREBASE_WEB_CLIENT_ID = "421641706634-a14flpbiidpdsbp85ffnr7vlaujbeoa9.apps.googleusercontent.com"
 }

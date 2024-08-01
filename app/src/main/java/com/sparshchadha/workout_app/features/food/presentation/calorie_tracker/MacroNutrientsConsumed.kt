@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
@@ -37,9 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sparshchadha.workout_app.R
+import com.sparshchadha.workout_app.ui.components.shared.PieChart
+import com.sparshchadha.workout_app.ui.components.shared.PieChartEntry
 import com.sparshchadha.workout_app.util.ColorsUtil.cardBackgroundColor
 import com.sparshchadha.workout_app.util.ColorsUtil.primaryTextColor
 import com.sparshchadha.workout_app.util.ColorsUtil.progressTrackColor
@@ -319,34 +319,6 @@ fun MacroNutrient(
                 .align(CenterVertically)
                 .height(MACRONUTRIENT_TEXT_HEIGHT)
         )
-    }
-}
-
-data class PieChartEntry(val color: Color, val percentage: Float)
-
-fun calculateStartAngles(entries: List<PieChartEntry>): List<Float> {
-    var totalPercentage = 0f
-    return entries.map { entry ->
-        val startAngle = totalPercentage * 360
-        totalPercentage += entry.percentage
-        startAngle
-    }
-}
-
-@Composable
-fun PieChart(entries: List<PieChartEntry>, size: Dp) {
-    Canvas(modifier = Modifier.size(size)) {
-        val startAngles = calculateStartAngles(entries)
-        entries.forEachIndexed { index, entry ->
-            drawArc(
-                color = entry.color,
-                startAngle = startAngles[index],
-                sweepAngle = entry.percentage * 360f,
-                useCenter = true,
-                topLeft = Offset.Zero,
-                size = this.size,
-            )
-        }
     }
 }
 

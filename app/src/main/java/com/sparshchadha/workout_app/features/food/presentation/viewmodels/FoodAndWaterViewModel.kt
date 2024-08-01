@@ -1,7 +1,5 @@
 package com.sparshchadha.workout_app.features.food.presentation.viewmodels
 
-import android.util.Log
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -41,7 +39,7 @@ class FoodAndWaterViewModel @Inject constructor(
     private val _consumedFoodItems = MutableStateFlow<Resource<List<FoodItemEntity>>?>(null)
     val consumedFoodItems = _consumedFoodItems
 
-    private val _caloriesConsumed = MutableStateFlow<String?>(null)
+    private val _caloriesConsumed = MutableStateFlow<String>("0")
     val caloriesConsumed = _caloriesConsumed.asStateFlow()
 
     private val _nutrientsConsumed: MutableMap<String, Double> = mutableStateMapOf()
@@ -50,11 +48,11 @@ class FoodAndWaterViewModel @Inject constructor(
     private val _selectedDateAndMonthForFoodItems = MutableStateFlow(HelperFunctions.getCurrentDateAndMonth())
     val selectedDateAndMonthForFoodItems = _selectedDateAndMonthForFoodItems.asStateFlow()
 
-    private val _foodItemEntity = mutableStateOf<FoodItemEntity?>(null)
-    val foodItemEntity: State<FoodItemEntity?> = _foodItemEntity
+    private val _foodItemEntity = MutableStateFlow<FoodItemEntity?>(null)
+    val foodItemEntity = _foodItemEntity.asStateFlow()
 
-    private val _selectedFoodItem = mutableStateOf<FoodItem?>(null)
-    val selectedFoodItem: State<FoodItem?> = _selectedFoodItem
+    private val _selectedFoodItem = MutableStateFlow<FoodItem?>(null)
+    val selectedFoodItem = _selectedFoodItem.asStateFlow()
 
     private val _savedFoodItems = MutableStateFlow<List<FoodItemEntity>?>(null)
     val savedFoodItems = _savedFoodItems.asStateFlow()
@@ -64,6 +62,9 @@ class FoodAndWaterViewModel @Inject constructor(
 
     private val _waterGlassesEntity = MutableStateFlow<WaterEntity?>(null)
     val waterGlassesEntity = _waterGlassesEntity.asStateFlow()
+
+    private val _dishDetailId = MutableStateFlow(-1)
+    val dishDetailId = _dishDetailId.asStateFlow()
 
     init {
         getFoodItemsConsumedOn()
@@ -202,6 +203,7 @@ class FoodAndWaterViewModel @Inject constructor(
     }
 
     fun getFoodItemById(id: Int) {
+        _foodItemEntity.value = null
         viewModelScope.launch(Dispatchers.IO) {
             foodItemsRepository.getFoodItemById(id = id).collect { response ->
                 withContext(Dispatchers.Main) {
@@ -232,7 +234,6 @@ class FoodAndWaterViewModel @Inject constructor(
             waterRepository.getGlassesConsumedOn(
                 date = date, month = month, year = "2024"
             ).collect {
-                Log.d(TAG, "getWaterGlassesConsumedOn: $it")
                 _waterGlassesEntity.value = it
             }
         }
@@ -257,5 +258,9 @@ class FoodAndWaterViewModel @Inject constructor(
                 _createdItems.value = it
             }
         }
+    }
+
+    fun setDishDetailId(it: Int) {
+        _dishDetailId.value = it
     }
 }
