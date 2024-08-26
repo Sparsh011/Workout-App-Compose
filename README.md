@@ -11,6 +11,10 @@ The Workout App is a fitness application designed to help users track their work
 - Support for light mode and dark mode
 - Set reminders using AlarmManager for exercise, food, or water consumption
 
+## App download link
+<a href="https://play.google.com/store/apps/details?id=com.sparshchadha.workout_app">Playstore Link</a>
+
+
 ## Tech Stack
 
 - Kotlin
