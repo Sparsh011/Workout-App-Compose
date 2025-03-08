@@ -1,3 +1,6 @@
+## App download link
+<a href="https://play.google.com/store/apps/details?id=com.sparshchadha.workout_app">Playstore Link</a>
+
 # Multi Purpose Workout App
 
 The Workout App is a fitness application designed to help users track their workouts, yoga poses, and food items. Users can save their favorite workouts and yoga poses for offline use, as well as add them to their daily workout or yoga routine. The app also allows users to set a daily water intake goal and track the number of glasses consumed each day.
@@ -10,9 +13,6 @@ The Workout App is a fitness application designed to help users track their work
 - Set and track daily water intake goal
 - Support for light mode and dark mode
 - Set reminders using AlarmManager for exercise, food, or water consumption
-
-## App download link
-<a href="https://play.google.com/store/apps/details?id=com.sparshchadha.workout_app">Playstore Link</a>
 
 
 ## Tech Stack
